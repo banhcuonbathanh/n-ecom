@@ -1,0 +1,16 @@
+# Secrets — hard rule 1: .env gitignored from commit #1
+.env
+.env.*
+!.env.example
+
+# Personal / non-project files
+personal.md
+
+# OS noise
+.DS_Store
+
+# Dependencies & build output (stack lands in F-2)
+node_modules/
+.next/
+dist/
+bin/
