@@ -1,0 +1,522 @@
+<title>Ecom Core — Build Plan A→Z</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --defer: #8A93A1;
+    --defer-soft: #ECEEF1;
+    --wire: #F0F1EE;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C;
+      --surface: #171E29;
+      --ink: #E6EAF2;
+      --muted: #97A1B0;
+      --line: #2A3342;
+      --accent: #8AA8F8;
+      --accent-soft: #1D2A4A;
+      --done: #4FC08D;
+      --done-soft: #14332A;
+      --amber: #D9A83E;
+      --amber-soft: #34290F;
+      --defer: #77808E;
+      --defer-soft: #212836;
+      --wire: #1C2431;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C;
+    --surface: #171E29;
+    --ink: #E6EAF2;
+    --muted: #97A1B0;
+    --line: #2A3342;
+    --accent: #8AA8F8;
+    --accent-soft: #1D2A4A;
+    --done: #4FC08D;
+    --done-soft: #14332A;
+    --amber: #D9A83E;
+    --amber-soft: #34290F;
+    --defer: #77808E;
+    --defer-soft: #212836;
+    --wire: #1C2431;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --defer: #8A93A1;
+    --defer-soft: #ECEEF1;
+    --wire: #F0F1EE;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2.1rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.45rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 68ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 62ch; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .stackline {
+    font-family: var(--mono); font-size: 0.8rem; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px;
+    background: var(--surface); margin: 20px 0 0; overflow-x: auto; white-space: nowrap;
+  }
+
+  nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; }
+  nav.toc a {
+    font-family: var(--mono); font-size: 0.75rem; text-decoration: none;
+    color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 12px; background: var(--surface);
+  }
+  nav.toc a:hover, nav.toc a:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
+
+  section { margin-top: 64px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+
+  .diagram-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+  pre.mermaid { margin: 0; display: flex; justify-content: center; }
+
+  ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 10px; }
+  ol.steps li {
+    counter-increment: step; display: grid; grid-template-columns: 30px 1fr; gap: 12px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px;
+  }
+  ol.steps li::before {
+    content: counter(step); font-family: var(--mono); font-size: 0.8rem; font-weight: 700;
+    color: var(--accent); background: var(--accent-soft); border-radius: 50%;
+    width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin-top: 2px;
+  }
+  ol.steps code, .cols code, table code, .glossary code {
+    font-family: var(--mono); font-size: 0.82em; background: var(--accent-soft);
+    border-radius: 4px; padding: 1px 5px; white-space: nowrap;
+  }
+
+  .golden {
+    border-left: 4px solid var(--accent); background: var(--accent-soft);
+    border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 68ch;
+  }
+  .golden strong { font-family: var(--sans); }
+  .golden p { margin: 0; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+  .col-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+  .col-card h4 { font-family: var(--sans); margin: 0 0 4px; font-size: 1rem; }
+  .col-card .sub { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  .col-card ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 0.95rem; }
+  .col-card.be { border-top: 3px solid var(--accent); }
+  .col-card.fe { border-top: 3px solid var(--done); }
+
+  .layers { display: grid; gap: 0; margin: 12px 0; max-width: 560px; }
+  .layer { display: grid; grid-template-columns: 130px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); padding: 10px 14px; align-items: baseline; }
+  .layer:first-child { border-radius: 8px 8px 0 0; }
+  .layer:last-child { border-radius: 0 0 8px 8px; }
+  .layer + .layer { border-top: none; }
+  .layer .name { font-family: var(--mono); font-size: 0.82rem; font-weight: 700; color: var(--accent); }
+  .layer .what { font-size: 0.9rem; color: var(--muted); }
+
+  .phase { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 14px 0; overflow: hidden; }
+  .phase-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; padding: 14px 18px 4px; }
+  .phase-head h4 { font-family: var(--sans); font-size: 1.02rem; margin: 0; }
+  .milestone { padding: 0 18px 12px; color: var(--muted); font-size: 0.92rem; margin: 0; }
+  .milestone b { color: var(--ink); font-weight: 600; }
+  .tasks { list-style: none; margin: 0; padding: 0 18px 14px; display: grid; gap: 6px; }
+  .tasks li { display: grid; grid-template-columns: 58px 1fr; gap: 10px; font-size: 0.9rem; align-items: baseline; }
+  .tasks .id { font-family: var(--mono); font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.next { color: var(--accent); background: var(--accent-soft); }
+  .chip.todo { color: var(--amber); background: var(--amber-soft); }
+  .chip.defer { color: var(--defer); background: var(--defer-soft); }
+
+  .wire-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+  @media (max-width: 640px) { .wire-grid { grid-template-columns: 1fr; } }
+  .wf { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
+  .wf-title { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 8px; }
+  .wf-title .route { color: var(--muted); text-transform: none; letter-spacing: 0; }
+  .wf-body { padding: 14px; display: grid; gap: 8px; min-height: 240px; align-content: start; }
+  .wf-note { padding: 10px 14px; font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--line); margin: 0; }
+  .box { background: var(--wire); border: 1px dashed var(--line); border-radius: 6px; padding: 8px 10px; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  .box.solid { border-style: solid; }
+  .box.cta { background: var(--accent); color: var(--paper); border: none; font-weight: 700; text-align: center; }
+  .box.tall { min-height: 64px; }
+  .row { display: grid; gap: 8px; }
+  .row.c2 { grid-template-columns: 1fr 1fr; }
+  .row.c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .row.c4 { grid-template-columns: repeat(4, 1fr); }
+  .row.side { grid-template-columns: 2fr 1fr; }
+
+  .tok-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 16px 0; font-family: var(--mono); font-size: 0.8rem; }
+  .tok-flow .stage { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+  .tok-flow .stage b { display: block; font-size: 0.85rem; color: var(--accent); }
+  .tok-flow .arrow { color: var(--muted); }
+
+  .swatches { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+  .swatch { width: 108px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .swatch .color { height: 44px; }
+  .swatch .label { font-family: var(--mono); font-size: 0.65rem; padding: 6px 8px; color: var(--muted); line-height: 1.4; }
+  .swatch .label b { display: block; color: var(--ink); font-size: 0.7rem; }
+
+  .type-scale { display: grid; gap: 4px; margin: 12px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px; }
+  .type-row { display: grid; grid-template-columns: 110px 1fr; gap: 16px; align-items: baseline; }
+  .type-row .t-label { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin: 12px 0; }
+  .btn { font-family: var(--sans); font-weight: 600; font-size: 0.9rem; border-radius: 8px; padding: 9px 18px; border: 1px solid transparent; cursor: pointer; }
+  .btn.primary { background: var(--accent); color: var(--paper); }
+  .btn.secondary { background: var(--surface); color: var(--ink); border-color: var(--line); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .badge-demo { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; border-radius: 999px; padding: 4px 10px; }
+  .badge-demo.ok { color: var(--done); background: var(--done-soft); }
+  .badge-demo.warn { color: var(--amber); background: var(--amber-soft); }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--sans); font-size: 0.82rem; letter-spacing: 0.04em; }
+  tr:last-child td { border-bottom: none; }
+
+  .glossary { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; margin: 14px 0; }
+  .glossary dt { font-family: var(--sans); font-weight: 600; font-size: 0.92rem; padding: 12px 16px 0; }
+  .glossary dd { margin: 0; padding: 2px 16px 12px; color: var(--muted); font-size: 0.9rem; border-bottom: 1px solid var(--line); max-width: 70ch; }
+  .glossary dd:last-child { border-bottom: none; }
+
+  .proposal-tag { display: inline-block; font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; color: var(--amber); background: var(--amber-soft); border-radius: 4px; padding: 3px 8px; vertical-align: middle; margin-left: 8px; }
+
+  footer { margin-top: 72px; border-top: 1px solid var(--line); padding-top: 20px; color: var(--muted); font-size: 0.88rem; }
+</style>
+
+<div class="page">
+  <header>
+    <p class="eyebrow">Ecom Core · Session 0 alignment · 2026-07-16</p>
+    <h1>How we build this app, from A to Z</h1>
+    <p class="lede">One page so we both see the same thing: the architecture, the build order, what each page looks like, what the backend and frontend are each responsible for, and what a “design system” means here. Everything marked <span class="proposal-tag" style="margin-left:0">PROPOSAL</span> is waiting for your yes/no.</p>
+    <p class="stackline">Go 1.25 + Gin + sqlc &nbsp;·&nbsp; MySQL 8 + Redis &nbsp;·&nbsp; Next.js + TS + Tailwind &nbsp;·&nbsp; Docker Compose + Caddy + GitHub Actions &nbsp;·&nbsp; v1 = COD, no payment gateway</p>
+    <nav class="toc" aria-label="Sections">
+      <a href="#system">1 The system</a>
+      <a href="#roles">2 BE vs FE</a>
+      <a href="#order">3 Build order</a>
+      <a href="#pages">4 The pages</a>
+      <a href="#design">5 Design system</a>
+      <a href="#words">6 Words we use</a>
+    </nav>
+  </header>
+
+  <section id="system">
+    <div class="sec-head"><span class="sec-num">1</span><h2>The system — five containers, one entry door</h2></div>
+    <p>Everything runs in Docker Compose on your machine. You open <code style="font-family:var(--mono);font-size:0.85em">http://localhost</code> and Caddy decides where the request goes: anything starting with <code style="font-family:var(--mono);font-size:0.85em">/api/</code> goes to the Go backend, everything else goes to the Next.js frontend.</p>
+    <div class="diagram-wrap">
+      <pre class="mermaid">
+flowchart LR
+  B["Your browser<br/>localhost"] --> CD["Caddy :80<br/>reverse proxy"]
+  CD -->|"/api/*"| BE["Go API (Gin)<br/>:8080"]
+  CD -->|"all other paths"| FE["Next.js<br/>:3000"]
+  FE -.->|"SSR data fetch"| BE
+  BE --> DB[("MySQL 8<br/>:3306")]
+  BE --> RD[("Redis<br/>:6379")]
+      </pre>
+    </div>
+    <h3>One concrete example: you click “Add to cart”</h3>
+    <ol class="steps">
+      <li>The product page calls our single API client: <code>POST /api/cart/items {productId, qty: 2}</code>. No component ever calls <code>fetch</code> directly.</li>
+      <li>Caddy sees <code>/api/</code> and passes the request to the Go backend.</li>
+      <li>Backend: <b>handler</b> checks the JSON shape → <b>service</b> checks the business rule (is there stock? cap at available) → <b>repository</b> writes the cart line to MySQL.</li>
+      <li>Backend answers with the full updated cart — or with the error envelope: <code>{"error":{"code":"OUT_OF_STOCK", …}}</code>.</li>
+      <li>TanStack Query updates its cached cart, and every component that shows the cart (the header badge, the mini-cart) re-renders by itself.</li>
+    </ol>
+  </section>
+
+  <section id="roles">
+    <div class="sec-head"><span class="sec-num">2</span><h2>Who does what — backend vs frontend</h2></div>
+    <div class="golden">
+      <p><strong>The one rule that decides everything:</strong> the backend is the source of truth. The frontend never calculates prices, stock, totals, or order status — it displays what the backend returns. If the FE ever needs math on money, that math belongs in the BE.</p>
+    </div>
+    <div class="cols">
+      <div class="col-card be">
+        <h4>Backend owns</h4>
+        <p class="sub">Go + Gin + sqlc · the truth</p>
+        <ul>
+          <li><b>Data</b> — the only thing that reads/writes MySQL and Redis</li>
+          <li><b>Business rules</b> — stock, price snapshot, cancel window, cart merge (PLAN.md §Business rules)</li>
+          <li><b>Real validation</b> — the check that counts; FE validation is only comfort</li>
+          <li><b>Auth</b> — passwords, JWT signing, who may see which order</li>
+          <li><b>The error envelope</b> — every endpoint, same shape, always</li>
+        </ul>
+      </div>
+      <div class="col-card fe">
+        <h4>Frontend owns</h4>
+        <p class="sub">Next.js + TS + Tailwind · the experience</p>
+        <ul>
+          <li><b>Pages &amp; navigation</b> — routes, layout, SEO for the catalog</li>
+          <li><b>Server data</b> — fetched and cached via TanStack Query, never copied into a store</li>
+          <li><b>UI state</b> — “is the cart drawer open” — Zustand, and only this kind of state</li>
+          <li><b>Forms</b> — React Hook Form + Zod for instant feedback before submit</li>
+          <li><b>One API client</b> — <code>fe/src/lib/api/</code>, the single door to the BE</li>
+        </ul>
+      </div>
+    </div>
+    <h3>Inside the backend: four layers, no skipping</h3>
+    <div class="layers">
+      <div class="layer"><span class="name">handler</span><span class="what">HTTP only — parse request, call service, format response. Zero business logic.</span></div>
+      <div class="layer"><span class="name">service</span><span class="what">Business rules live here — “stock decrements at placement”, “cancel only before shipped”.</span></div>
+      <div class="layer"><span class="name">repository</span><span class="what">SQL only, generated by sqlc from written queries. No rules, no HTTP.</span></div>
+      <div class="layer"><span class="name">db</span><span class="what">MySQL 8. Schema changes only through migrations, never by hand.</span></div>
+    </div>
+    <p>Why so strict: when a bug appears, its location tells you where to look. A wrong total is always the service. A broken query is always the repository. This is what keeps the codebase maintainable when it grows.</p>
+  </section>
+
+  <section id="order">
+    <div class="sec-head"><span class="sec-num">3</span><h2>Build order — every phase ends with something you can click</h2></div>
+    <p>We build in vertical slices: schema → API → page, one domain at a time. No “backend for three weeks first”. After each phase the app can do one more real thing, and each task is one session with its own receipt.</p>
+
+    <div class="phase">
+      <div class="phase-head"><h4>Phase F — Foundation</h4><span class="chip next">in progress</span></div>
+      <p class="milestone">Milestone: <b>an empty but running shop</b> — one command starts everything, CI is green.</p>
+      <ul class="tasks">
+        <li><span class="id">F-1</span><span>Decisions: stack, scope, error contract <span class="chip done">done</span></span></li>
+        <li><span class="id">F-2</span><span>Compose skeleton: hello-world BE + FE + healthcheck <span class="chip next">next</span></span></li>
+        <li><span class="id">F-3</span><span>MySQL + migration tool + first migration <span class="chip todo">todo</span></span></li>
+        <li><span class="id">F-4</span><span>Error envelope on a real endpoint + API client + CI <span class="chip todo">todo</span></span></li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><h4>Phase 1 — Catalog</h4><span class="chip todo">todo</span></div>
+      <p class="milestone">Milestone: <b>you can browse the shop</b> — grid, category filter, search, product page.</p>
+      <ul class="tasks">
+        <li><span class="id">C-1</span><span>Products + categories schema, seed ≥ 10 products</span></li>
+        <li><span class="id">C-2</span><span>BE: product list (paging, filter) + product detail</span></li>
+        <li><span class="id">C-3</span><span>BE: categories + search</span></li>
+        <li><span class="id">C-4</span><span>FE: product grid page — <b>first page with the design system</b></span></li>
+        <li><span class="id">C-5</span><span>FE: product detail page</span></li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><h4>Phase 2 — Cart &amp; Checkout</h4><span class="chip todo">todo</span></div>
+      <p class="milestone">Milestone: <b>you can buy</b> — guest cart, address form, place a COD order.</p>
+      <ul class="tasks">
+        <li><span class="id">CC-1</span><span>Cart schema (guest cart = cookie token, 30 days)</span></li>
+        <li><span class="id">CC-2</span><span>BE: cart add / update / remove, stock-capped</span></li>
+        <li><span class="id">CC-3</span><span>FE: cart page + add-to-cart everywhere</span></li>
+        <li><span class="id">CC-4</span><span>BE: checkout — price snapshot, atomic stock decrement (needs O-1)</span></li>
+        <li><span class="id">CC-5</span><span>FE: checkout flow → confirmation with order number</span></li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><h4>Phase 3 — Orders</h4><span class="chip todo">todo</span></div>
+      <p class="milestone">Milestone: <b>you can follow your order</b> — history, status, cancel while allowed.</p>
+      <ul class="tasks">
+        <li><span class="id">O-1</span><span>Orders + order_lines schema, status enum: placed → confirmed → shipped → delivered / cancelled</span></li>
+        <li><span class="id">O-2</span><span>BE: my orders, detail, cancel (restores stock)</span></li>
+        <li><span class="id">O-3</span><span>FE: order history + tracking view</span></li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><h4>Phase 4 — Accounts</h4><span class="chip todo">todo</span></div>
+      <p class="milestone">Milestone: <b>the shop knows you</b> — register, login, guest cart merges, personal history.</p>
+      <ul class="tasks">
+        <li><span class="id">A-1</span><span>Users schema + register/login (bcrypt, JWT) + middleware</span></li>
+        <li><span class="id">A-2</span><span>FE: auth pages + session in the API client</span></li>
+        <li><span class="id">A-3</span><span>Cart merge on login + orders tied to the account</span></li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><h4>Later — deliberately not in v1</h4><span class="chip defer">deferred</span></div>
+      <ul class="tasks" style="padding-top:10px">
+        <li><span class="id">—</span><span>Payment gateway (v1 is cash-on-delivery; a <code>paid</code> status is added then)</span></li>
+        <li><span class="id">—</span><span>Admin panel (v1 manages products with SQL seed scripts)</span></li>
+        <li><span class="id">—</span><span>AI shopping assistant</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="pages">
+    <div class="sec-head"><span class="sec-num">4</span><h2>The pages — what the shop looks like</h2></div>
+    <p>Seven screens make the whole v1. Wireframes below show structure, not final styling — the design system in section 5 decides how they actually look.</p>
+    <div class="wire-grid">
+
+      <div class="wf">
+        <div class="wf-title"><span>Shop / product grid</span><span class="route">/</span></div>
+        <div class="wf-body">
+          <div class="row c3"><div class="box solid">logo</div><div class="box">search…</div><div class="box solid">cart (2)</div></div>
+          <div class="row c4"><div class="box">All</div><div class="box">Category A</div><div class="box">Category B</div><div class="box">Category C</div></div>
+          <div class="row c3"><div class="box tall">product<br>img · name · price</div><div class="box tall">product</div><div class="box tall">product</div></div>
+          <div class="row c3"><div class="box tall">product</div><div class="box tall">product</div><div class="box tall">product</div></div>
+          <div class="row c3"><div class="box">‹ prev</div><div class="box">page 1 / 4</div><div class="box">next ›</div></div>
+        </div>
+        <p class="wf-note">Built in C-4. Server-rendered for SEO. Category chips filter, search box hits C-3.</p>
+      </div>
+
+      <div class="wf">
+        <div class="wf-title"><span>Product detail</span><span class="route">/products/[slug]</span></div>
+        <div class="wf-body">
+          <div class="row side">
+            <div class="box tall" style="min-height:110px">image</div>
+            <div class="row">
+              <div class="box solid">name + price</div>
+              <div class="box">stock: 14 left</div>
+              <div class="box">qty − 1 +</div>
+              <div class="box cta">Add to cart</div>
+            </div>
+          </div>
+          <div class="box tall">description</div>
+        </div>
+        <p class="wf-note">Built in C-5. Price and stock always come from the API — never hard-coded.</p>
+      </div>
+
+      <div class="wf">
+        <div class="wf-title"><span>Cart</span><span class="route">/cart</span></div>
+        <div class="wf-body">
+          <div class="row side"><div class="box">item · qty − 2 + · line total · remove</div><div class="row"><div class="box solid">subtotal</div><div class="box cta">Checkout</div></div></div>
+          <div class="box">item · qty − 1 + · line total · remove</div>
+          <div class="box">item · qty − 1 + · line total · remove</div>
+        </div>
+        <p class="wf-note">Built in CC-3. Works without login (guest cart cookie). Totals computed by the BE.</p>
+      </div>
+
+      <div class="wf">
+        <div class="wf-title"><span>Checkout</span><span class="route">/checkout</span></div>
+        <div class="wf-body">
+          <div class="row side">
+            <div class="row">
+              <div class="box solid">delivery address (RHF + Zod form)</div>
+              <div class="box">name · phone · address · note</div>
+              <div class="box">shipping method: standard</div>
+            </div>
+            <div class="row">
+              <div class="box">order summary<br>3 items</div>
+              <div class="box solid">total</div>
+              <div class="box cta">Place order (COD)</div>
+            </div>
+          </div>
+        </div>
+        <p class="wf-note">Built in CC-5. Placing the order snapshots prices and decrements stock atomically (CC-4).</p>
+      </div>
+
+      <div class="wf">
+        <div class="wf-title"><span>Order history &amp; detail</span><span class="route">/orders · /orders/[id]</span></div>
+        <div class="wf-body">
+          <div class="box">#1024 · 2026-07-20 · <b>confirmed</b> · 3 items · total</div>
+          <div class="box">#1019 · 2026-07-12 · <b>delivered</b> · 1 item · total</div>
+          <div class="box solid">detail: placed ─● confirmed ─○ shipped ─○ delivered</div>
+          <div class="row c2"><div class="box">order lines (frozen prices)</div><div class="box cta">Cancel order</div></div>
+        </div>
+        <p class="wf-note">Built in O-3. Cancel button only appears while status is placed/confirmed (rule 2).</p>
+      </div>
+
+      <div class="wf">
+        <div class="wf-title"><span>Login / Register</span><span class="route">/login · /register</span></div>
+        <div class="wf-body">
+          <div class="box solid">email</div>
+          <div class="box solid">password</div>
+          <div class="box cta">Sign in</div>
+          <div class="box">No account? Create one →</div>
+          <div class="box">on login: guest cart merges into your cart</div>
+        </div>
+        <p class="wf-note">Built in A-2. JWT stored by the API client; every later request carries it.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="design">
+    <div class="sec-head"><span class="sec-num">5</span><h2>Design system — decide once, reuse everywhere <span class="proposal-tag">proposal</span></h2></div>
+    <p>A design system is <b>not</b> a tool or a library. It is a small set of visual decisions we make once — colors, text sizes, spacing, corner radius — plus a small set of reusable components built from those decisions. Every page is then assembled from the same parts, so the whole shop looks like one product and new pages get faster to build, not slower.</p>
+    <div class="tok-flow">
+      <div class="stage"><b>1 · Tokens</b>colors · type scale · spacing · radius<br>→ Tailwind theme config</div>
+      <span class="arrow">→</span>
+      <div class="stage"><b>2 · Components</b>Button · Input · Badge · Card<br>ProductCard · QtyStepper · Toast<br>→ <span style="font-size:0.75rem">fe/src/components/ui/</span></div>
+      <span class="arrow">→</span>
+      <div class="stage"><b>3 · Pages</b>compose components only —<br>no page invents its own button</div>
+    </div>
+
+    <h3>Proposed tokens (accent color is one line to swap later)</h3>
+    <div class="swatches">
+      <div class="swatch"><div class="color" style="background:#111827"></div><div class="label"><b>ink</b>#111827<br>text, headings</div></div>
+      <div class="swatch"><div class="color" style="background:#6B7280"></div><div class="label"><b>muted</b>#6B7280<br>secondary text</div></div>
+      <div class="swatch"><div class="color" style="background:#FAFAF9;border-bottom:1px solid var(--line)"></div><div class="label"><b>surface</b>#FAFAF9<br>page background</div></div>
+      <div class="swatch"><div class="color" style="background:#0F766E"></div><div class="label"><b>accent</b>#0F766E<br>buttons, links, focus</div></div>
+      <div class="swatch"><div class="color" style="background:#B45309"></div><div class="label"><b>warning</b>#B45309<br>low stock, pending</div></div>
+      <div class="swatch"><div class="color" style="background:#B91C1C"></div><div class="label"><b>danger</b>#B91C1C<br>errors, cancelled</div></div>
+    </div>
+
+    <div class="type-scale">
+      <div class="type-row"><span class="t-label">display · 32px</span><span style="font-family:var(--sans);font-size:2rem;font-weight:700">Page titles</span></div>
+      <div class="type-row"><span class="t-label">heading · 24px</span><span style="font-family:var(--sans);font-size:1.5rem;font-weight:600">Section headings</span></div>
+      <div class="type-row"><span class="t-label">title · 18px</span><span style="font-size:1.125rem;font-weight:600">Product names, card titles</span></div>
+      <div class="type-row"><span class="t-label">body · 16px</span><span>Descriptions and running text</span></div>
+      <div class="type-row"><span class="t-label">small · 14px</span><span style="font-size:0.875rem;color:var(--muted)">Meta info, helper text under form fields</span></div>
+      <div class="type-row"><span class="t-label">label · 12px</span><span style="font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">Badges and labels</span></div>
+    </div>
+
+    <p>Spacing on a 4px base (4 · 8 · 12 · 16 · 24 · 32 · 48) — Tailwind's default scale, we just commit to it. One corner radius: 8px. Order-status colors map to the semantic tokens, so “delivered” is always the same green everywhere.</p>
+
+    <h3>What the components feel like</h3>
+    <div class="demo-row">
+      <button class="btn primary" type="button">Add to cart</button>
+      <button class="btn secondary" type="button">View details</button>
+      <span class="badge-demo ok">DELIVERED</span>
+      <span class="badge-demo warn">LOW STOCK · 3 LEFT</span>
+    </div>
+    <p>The rule that makes it a <i>system</i>: pages never use raw color classes like <code style="font-family:var(--mono);font-size:0.85em">bg-teal-600</code> — they use the token (<code style="font-family:var(--mono);font-size:0.85em">bg-accent</code>) or the component. This lands as a task before C-4 (the first real page), gets written into PLAN.md once you confirm, and the accent color stays a one-line change until you have a brand.</p>
+  </section>
+
+  <section id="words">
+    <div class="sec-head"><span class="sec-num">6</span><h2>Words we keep using — so they mean the same thing</h2></div>
+    <dl class="glossary">
+      <dt>Harness</dt><dd>The <code>harness/</code> folder: plan, tasks, state, receipts. It is the project's memory — every session resumes from these files, not from chat history.</dd>
+      <dt>Task · AC · receipt</dt><dd>A task is one session of work with an acceptance criterion (AC) — the sentence that defines “done”. A receipt is the proof (test output, curl transcript, screenshot) logged in VERIFICATION.md. No receipt, no ✅.</dd>
+      <dt>Vertical slice</dt><dd>Building one feature through all layers (schema → API → page) before starting the next feature. Opposite of “all backend first”.</dd>
+      <dt>Migration</dt><dd>A numbered SQL file that changes the database schema, with an up (apply) and down (undo). The only allowed way to change the schema.</dd>
+      <dt>Error envelope</dt><dd>The one JSON shape every API error uses: <code>{"error":{"code","message","details"}}</code>. The FE handles errors in one place because they always look the same.</dd>
+      <dt>Price snapshot</dt><dd>At checkout, the order copies the product's current price into the order line. Later price changes never affect existing orders.</dd>
+      <dt>Guest cart</dt><dd>A cart identified by a random cookie token instead of a user — shopping works without an account; on login it merges into the account's cart.</dd>
+      <dt>COD</dt><dd>Cash on delivery — v1 takes no online payment, so an order is confirmed manually and paid on arrival.</dd>
+      <dt>Design token</dt><dd>One named visual decision (“accent = #0F766E”, “radius = 8px”) that components reference instead of hard-coding values.</dd>
+    </dl>
+  </section>
+
+  <footer>
+    <p><b>Next step:</b> F-2 — the compose skeleton (hello-world BE + FE + healthcheck). Before that: tell me anything on this page that does not match the picture in your head — especially the design-system proposal (section 5), which needs your confirmation before it becomes a task and lands in PLAN.md.</p>
+  </footer>
+</div>

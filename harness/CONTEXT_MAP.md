@@ -44,3 +44,4 @@
 | `harness/TOOLS.md` | Tools/MCP | tool schemas + gating rules |
 | `harness/SUBAGENTS.md` | Delegation | when to spawn |
 | `harness/SKILLS.md` | Playbooks | recurring procedures |
+| `harness/diagrams/build-plan.html` | Visual A→Z overview (architecture, BE/FE roles, wireframes, design system) | nothing — orientation snapshot from Session 0; on any conflict PLAN.md/TASKS.md win |
