@@ -32,4 +32,18 @@
 
 -->
 
-*(empty — no tasks completed yet)*
+### F-1 — Session 0: decide stack + MVP domains, fill PLAN.md · 2026-07-16
+**AC:** No `⬜ DECIDE` left in PLAN.md §Stack/§Domains
+**Receipt:**
+```
+$ grep -cn "DECIDE" harness/PLAN.md harness/ENVIRONMENT.md
+harness/ENVIRONMENT.md:0
+harness/PLAN.md:0
+(grep exit=1 — no matches)
+```
+Decisions (owner-confirmed via Q&A): Go 1.25+Gin+sqlc+MySQL 8+Redis · Next.js App
+Router+TS strict+Tailwind stack · Compose+Caddy+GH Actions · Payment/Admin/AI deferred ·
+v1 = Catalog/Cart/Checkout/Orders/Accounts · nested error envelope · git init'd
+(root commit `0b727a8`, branch `main`). Phases 1–4 broken into C-1…5, CC-1…5,
+O-1…3, A-1…3 in TASKS.md.
+**Verdict:** AC met — marked ✅ in TASKS.md.

@@ -7,31 +7,47 @@
 
 ## Dev stack
 
-⬜ DECIDE in Session 0 (suggested: Docker Compose, one service per component).
+✅ Decided Session 0: Docker Compose, one service per component. Ports below are the
+plan; F-2 makes them real (fix this table if F-2 changes anything — rule 5).
 
 | Service | Port | Notes |
 |---|---|---|
-| backend | ⬜ | |
-| frontend | ⬜ | |
-| db | ⬜ | |
-| cache | ⬜ | |
+| caddy | 80 | reverse proxy, single dev entrypoint → `/api/*` → be, rest → fe |
+| backend (be) | 8080 | Go + Gin, internal; reached via caddy |
+| frontend (fe) | 3000 | Next.js dev server, internal; reached via caddy |
+| db | 3306 | MySQL 8, exposed to host for GUI clients |
+| cache | 6379 | Redis |
 
 ## Commands
 
 ```bash
-# ⬜ fill with real commands once the stack exists — examples:
+# Planned for the decided stack — F-2/F-3 confirm each one works, then remove this note.
 docker compose up -d                 # full stack
-docker compose up -d --build be|fe   # after code changes
-docker compose logs -f be
-# build / test / migrate commands per stack choice
+docker compose up -d --build be      # rebuild backend after code changes
+docker compose up -d --build fe      # rebuild frontend
+docker compose logs -f be            # tail backend logs
+
+# Backend (run inside be/ or via the be container)
+go build ./... && go vet ./...       # build check
+go test ./...                        # tests
+sqlc generate                        # regen repository code after query changes
+
+# Frontend (run inside fe/)
+npm run dev                          # local dev outside compose
+npm run build && npm run lint        # build + lint check
+
+# Migrations — tool decided in F-3; record exact up/down commands here then.
 ```
 
 ## Environment variables
 
 | Var | Where it lives | Rule |
 |---|---|---|
-| `⬜ DB_DSN` etc. | `.env` (gitignored) + `.env.example` (committed, no values) | every new var goes in BOTH |
-| AI keys (e.g. `ANTHROPIC_API_KEY`) | backend env ONLY | must never reach the frontend or the repo |
+| `DB_DSN` | `.env` (gitignored) + `.env.example` (committed, no values) | every new var goes in BOTH |
+| `REDIS_ADDR` | `.env` + `.env.example` | same |
+| `JWT_SECRET` | `.env` + `.env.example` (empty value) | backend only; Accounts phase |
+| `NEXT_PUBLIC_API_BASE_URL` | `fe` env | the ONLY var the FE gets; everything else is BE-side |
+| AI keys (e.g. `ANTHROPIC_API_KEY`) | backend env ONLY (when AI phase opens) | must never reach the frontend or the repo |
 
 ## Secrets rules (non-negotiable)
 

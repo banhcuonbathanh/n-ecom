@@ -15,19 +15,26 @@ IMPLEMENT → SELF-REVIEW → VERIFY (receipt) → CHECKPOINT.
 
 ## Queued prompts
 
-### F-1 — Session 0: Foundation decisions
-```
-Read CLAUDE.md and harness/PLAN.md. Walk me through every ⬜ DECIDE block one at a
-time — give me your recommendation with a one-line reason, let me confirm or override.
-Then write the decisions into PLAN.md + ENVIRONMENT.md, break Phases 1–4 into
-session-sized tasks in TASKS.md, and checkpoint STATE.md.
-```
-
 ### F-2 — Dev stack skeleton
 ```
 Read CLAUDE.md + STATE.md. Do task F-2: compose stack with hello-world BE + FE and a
 healthcheck endpoint. ALIGN with the exact file list before writing anything.
 Receipt: `docker compose up` output + curl of the health endpoint.
+```
+
+### F-3 — DB + migration tooling + first migration
+```
+Read CLAUDE.md + STATE.md. Do task F-3: pick the migration tool (recommend one first),
+wire it to the compose MySQL, ship the first migration, start the schema doc.
+ALIGN before writing. Receipt: migrate up → down → up transcript.
+```
+
+### F-4 — Error contract + API client + CI
+```
+Read CLAUDE.md + STATE.md + PLAN.md §Architecture rules (error envelope is decided
+there). Do task F-4: implement the envelope on one real endpoint, create the single
+FE API client module, add GitHub Actions build+test on push. ALIGN first.
+Receipt: curl showing the envelope + a green CI run.
 ```
 
 <!-- Add one block per registered task. Delete blocks when the task is ✅. -->

@@ -3,59 +3,88 @@
 > This file delivers concrete context so the AI never guesses: stack, domains,
 > architecture, and an **exact file map**. Code references must be exact paths —
 > a fresh session opens precisely the right files instead of grepping.
-> Fill every `⬜ DECIDE` block in Session 0, together.
+> Session 0 (2026-07-16) filled every decision block; new domains add sections here first.
 
 ---
 
 ## Stack
 
-⬜ DECIDE — record final choices here. Suggested starting point (proven on the
-restaurant project, adjust freely):
+✅ Decided 2026-07-16 (Session 0, F-1):
 
 | Layer | Choice | Notes |
 |---|---|---|
-| Backend | ⬜ (e.g. Go 1.25 + Gin + sqlc + MySQL 8 + Redis) | |
-| Frontend | ⬜ (e.g. Next.js App Router + TS strict + Tailwind + Zustand + TanStack Query + RHF/Zod) | |
-| Infra | ⬜ (e.g. Docker Compose + Caddy + GitHub Actions) | |
-| Payments | ⬜ (gateway + sandbox) | |
-| AI features | ⬜ (Anthropic API — model via env, key BE-only) | |
+| Backend | Go 1.25 + Gin + sqlc + MySQL 8 + Redis | Restaurant-project baseline; reuse its patterns |
+| Frontend | Next.js App Router + TS strict + Tailwind + Zustand + TanStack Query + RHF/Zod | SSR for catalog SEO |
+| Infra | Docker Compose + Caddy + GitHub Actions | CI = build + test on push (F-4) |
+| Payments | ⏸ DEFERRED — no gateway in v1 | Orders are COD/manual-confirmation; revisit when Payment phase opens |
+| AI features | ⏸ DEFERRED — AI assistant not in v1 | When added: Anthropic API, model via env, key BE-only |
 
 ## Architecture rules (fixed once decided — violations are bugs)
 
 - BE layering (strict): `handler → service → repository → db`. No layer skipping.
 - FE state (strict): server state → query library · client state → store ·
   forms → schema-validated · all API calls through one client module.
-- One error contract: every endpoint returns the same error envelope. Define it in
-  Session 0 and record it here.
+- One error contract: every endpoint returns the same error envelope (decided Session 0):
+
+  ```json
+  {
+    "error": {
+      "code": "VALIDATION_FAILED",
+      "message": "Quantity must be at least 1",
+      "details": [{ "field": "quantity", "issue": "min" }]
+    }
+  }
+  ```
+
+  `code` = stable machine-readable SCREAMING_SNAKE enum · `message` = human-readable ·
+  `details` = optional array for per-field issues. HTTP status carries the class
+  (400/401/403/404/409/422/500); `code` carries the specific reason.
 - All shared constants (storage keys, event names, status enums) live in ONE file each.
 
 ## Domains (MVP scope)
 
-⬜ DECIDE — check what is in v1, strike what is not:
+✅ Decided 2026-07-16 (Session 0, F-1):
 
-- [ ] Catalog — products, categories, search, product detail
-- [ ] Cart — add/update/remove, guest cart, merge on login
-- [ ] Checkout — address, shipping method, order placement
-- [ ] Orders — lifecycle (placed → paid → shipped → delivered / cancelled), tracking
-- [ ] Payment — gateway integration, webhooks, refunds
-- [ ] Accounts — register/login, JWT, profile, order history
-- [ ] Admin — product CRUD, order management, dashboard
-- [ ] AI assistant — shopping chat (reuse the confirm-gated tool pattern)
+- [x] Catalog — products, categories, search, product detail
+- [x] Cart — add/update/remove, guest cart, merge on login
+- [x] Checkout — address, shipping method, order placement
+- [x] Orders — lifecycle (placed → confirmed → shipped → delivered / cancelled), tracking
+- [x] Accounts — register/login, JWT, profile, order history
+- ~~Payment~~ — ⏸ deferred; v1 orders are COD/manual-confirmation
+- ~~Admin~~ — ⏸ deferred; v1 seeds/manages products via SQL scripts
+- ~~AI assistant~~ — ⏸ deferred to a later phase
 
 ## Business rules (single source)
 
-⬜ Fill as decided. Examples of the kind of rule that MUST live here, not in code comments:
-- When can a customer cancel an order? (status window)
-- What happens to stock on order placement vs. payment?
-- Price snapshot: order lines freeze price at checkout — never re-read live price.
+Proposed in Session 0 — owner may adjust before the affected task starts; a change
+here after code lands is a task of its own.
+
+1. **Order lifecycle (v1, no payment gateway):**
+   `placed → confirmed → shipped → delivered`, terminal alternative `cancelled`.
+   "confirmed" = manual/COD confirmation; a `paid` status is added when Payment lands.
+2. **Cancel window:** customer may cancel while status ∈ {placed, confirmed};
+   never after `shipped`.
+3. **Stock:** decremented at order placement (there is no payment step in v1);
+   restored in full on cancellation. Placement fails atomically if any line lacks stock.
+4. **Price snapshot:** order lines freeze unit price + product name at checkout —
+   never re-read live price for an existing order.
+5. **Guest cart:** identified by an opaque cookie token, 30-day expiry. On login it is
+   merged into the account cart: quantities summed per product, capped at available stock.
 
 ## File map
 
 > Update this table whenever a new module lands. Exact paths only.
 
+Planned layout — becomes real in F-2; update rows to exact files as modules land.
+
 | Area | Path | What lives there |
 |---|---|---|
-| ⬜ | ⬜ | ⬜ |
+| Backend | `be/` | Go module: `cmd/api/main.go`, `internal/{handler,service,repository}/`, `db/` |
+| Migrations | `be/db/migrations/` | numbered SQL up/down pairs (F-3 picks the tool) |
+| sqlc | `be/db/queries/` + `be/internal/repository/` (generated) | SQL sources and generated code |
+| Frontend | `fe/` | Next.js app: `src/app/` routes, `src/lib/api/` (the ONE API client), `src/stores/` |
+| Shared constants | `be/internal/domain/constants.go` · `fe/src/lib/constants.ts` | status enums, storage keys, event names — one file per side |
+| Infra | `docker-compose.yml` + `Caddyfile` + `.github/workflows/` | dev stack + CI |
 
 ## Diagrams
 
