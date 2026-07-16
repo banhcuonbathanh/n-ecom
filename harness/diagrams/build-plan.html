@@ -252,17 +252,33 @@
   .notes-box:empty::before { content: attr(data-placeholder); color: var(--muted); }
   .notes-hint { font-size: 0.82rem; color: var(--muted); margin-top: 8px; }
 
+  details.report { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; }
+  details.report > summary { cursor: pointer; list-style: none; padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; }
+  details.report > summary::-webkit-details-marker { display: none; }
+  details.report > summary:hover .r-title { color: var(--accent); }
+  details.report > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+  .r-date { font-family: var(--mono); font-size: 0.74rem; color: var(--muted); }
+  .r-title { font-family: var(--sans); font-weight: 600; }
+  .r-hint { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); margin-left: auto; }
+  details.report[open] > summary { border-bottom: 1px solid var(--line); }
+  details.report[open] > summary .r-hint::after { content: " ▾"; }
+  details.report:not([open]) > summary .r-hint::after { content: " ▸"; }
+  .report-body { padding: 4px 18px 18px; }
+  .report-body h4 { font-family: var(--sans); font-size: 0.95rem; margin: 20px 0 8px; }
+  .report-body ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 0.92rem; }
+
   footer { margin-top: 72px; border-top: 1px solid var(--line); padding-top: 20px; color: var(--muted); font-size: 0.88rem; }
 </style>
 
 <div class="page">
   <header>
-    <p class="eyebrow">Ecom Core · Session 0 alignment · 2026-07-16</p>
+    <p class="eyebrow">Ecom Core · Boss dashboard · updated 2026-07-17</p>
     <h1>How we build this app, from A to Z</h1>
     <p class="lede">One page so we both see the same thing: the architecture, the build order, what each page looks like, what the backend and frontend are each responsible for, and what a “design system” means here. Everything marked <span class="proposal-tag" style="margin-left:0">PROPOSAL</span> is waiting for your yes/no.</p>
     <p class="stackline">Go 1.25 + Gin + sqlc &nbsp;·&nbsp; MySQL 8 + Redis &nbsp;·&nbsp; Next.js + TS + Tailwind &nbsp;·&nbsp; Docker Compose + Caddy + GitHub Actions &nbsp;·&nbsp; v1 = COD, no payment gateway</p>
     <nav class="toc" aria-label="Sections">
       <a href="#progress">0 Progress</a>
+      <a href="#report">R Reports</a>
       <a href="#system">1 The system</a>
       <a href="#roles">2 BE vs FE</a>
       <a href="#order">3 Build order</a>
@@ -285,6 +301,77 @@
         <noscript><p style="color:var(--muted);font-size:0.9rem;margin:0">Progress bars need JavaScript — see the chips in section 3 instead.</p></noscript>
       </div>
     </div>
+  </section>
+
+  <section id="report">
+    <div class="sec-head"><span class="sec-num">R</span><h2>Reports to the boss — next task in detail</h2></div>
+    <p>Working model since 2026-07-17: the agent runs the project, you read reports. Before every task a dated report lands here with the full plan — skim the summary line, or open it when you want the detail. Old reports stay as the record. Objections go in the chat or the notes box (section 7); a <b>🚨 risk / 🔴 stop</b> line in a report means the agent is waiting for you before building.</p>
+
+    <details class="report" open>
+      <summary>
+        <span class="r-date">2026-07-17</span>
+        <span class="r-title">F-2 — Dev stack skeleton · plan</span>
+        <span class="chip next">next up</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>TL;DR:</b> one command — <code style="font-family:var(--mono);font-size:0.85em">docker compose up</code> — brings the whole dev stack to life: Caddy at the door, a hello-world Go API answering <code style="font-family:var(--mono);font-size:0.85em">/api/health</code> with 200, a placeholder Next.js page, MySQL and Redis running but not yet used. Nothing blocks on you — no 🚨/🔴 flags in this plan.</p>
+
+        <h4>Why this task now</h4>
+        <p>It is the only ⬜ task whose dependencies are all ✅ (needs F-1, done). Everything after it — migrations (F-3), CI (F-4), the whole catalog — builds on this skeleton. Done means the AC from TASKS.md: <i>docker compose up → BE health 200, FE renders</i>.</p>
+
+        <h4>Scope contract — exactly what gets created</h4>
+        <div class="table-wrap"><table>
+          <tr><th>File / folder</th><th>Why</th></tr>
+          <tr><td><code>docker-compose.yml</code></td><td>Five services — caddy, be, fe, mysql, redis — with healthchecks and named volumes for the databases.</td></tr>
+          <tr><td><code>deploy/Caddyfile</code></td><td>The one routing rule: <code>/api/*</code> → Go :8080, everything else → Next.js :3000.</td></tr>
+          <tr><td><code>be/</code> — go.mod + <code>cmd/api/main.go</code></td><td>Gin app with a single endpoint: <code>GET /api/health</code> → 200 <code>{"status":"ok"}</code>. Layer folders (handler/service/repository) created empty so F-4+ has a home.</td></tr>
+          <tr><td><code>be/Dockerfile.dev</code></td><td>Dev image with hot reload (air) — save a .go file, the API restarts itself.</td></tr>
+          <tr><td><code>fe/</code> — create-next-app scaffold</td><td>Next.js App Router, TypeScript strict, Tailwind (the F-1 stack decision). Boilerplate stripped to one placeholder home page.</td></tr>
+          <tr><td><code>fe/Dockerfile.dev</code></td><td>Dev image running <code>next dev</code> with hot reload.</td></tr>
+          <tr><td><code>.env.example</code> + <code>.gitignore</code></td><td>DB credential pattern without real values — Hard Rule 2, no secrets in git.</td></tr>
+          <tr><td><code>harness/ENVIRONMENT.md</code></td><td>§Commands filled in: start, stop, logs, rebuild — the single source for commands.</td></tr>
+        </table></div>
+        <p style="font-size:0.88rem;color:var(--muted)">More files than the usual 1–2-file sizing, but it is one scaffold with one AC and zero business logic — splitting it would create tasks that can't be verified alone.</p>
+
+        <h4>Build steps, in order</h4>
+        <ol class="steps">
+          <li>Checkpoint commit, then branch <code>task/F-2-dev-stack-skeleton</code> (git policy, Hard Rule 3).</li>
+          <li>Backend hello: Go 1.25 module, Gin, <code>/api/health</code> returning 200 JSON.</li>
+          <li>Frontend hello: create-next-app with TS strict + Tailwind; strip to a placeholder page.</li>
+          <li>Dev Dockerfiles for both, wired for hot reload.</li>
+          <li>Compose file + Caddyfile; only port 80 (and 3306 for a local DB client) exposed on your machine.</li>
+          <li>Verify end-to-end (receipt below), log it in VERIFICATION.md.</li>
+          <li>Merge to <code>main</code>, push, update STATE.md / TASKS.md / this page — F-2 chip flips to done.</li>
+        </ol>
+
+        <h4>Decisions taken (defaults — say so if you want different)</h4>
+        <ul class="plain">
+          <li><b>MySQL + Redis join compose now</b> even though nothing connects to them until F-3 — so F-3 starts from a running database instead of more plumbing.</li>
+          <li><b>Dev-only images this task.</b> Production builds arrive with CI in F-4.</li>
+          <li><b>Only Caddy is reachable from the browser</b> — BE and FE hide behind it, same shape as production.</li>
+          <li><b>Pinned versions:</b> golang 1.25, node 22 LTS, mysql 8, redis 7 — no <code>latest</code> tags.</li>
+        </ul>
+
+        <h4>Risks I'm watching</h4>
+        <ul class="plain">
+          <li>⚠️ First <code>compose up</code> downloads ~1–2 GB of images — one-time cost, not a failure.</li>
+          <li>⚠️ Port 80 or 3306 may already be busy on your machine — fallback ports will be documented in ENVIRONMENT.md.</li>
+          <li>⚠️ Hot reload through Docker bind mounts can be slow on macOS — if it hurts, the documented fallback is running BE/FE natively with compose for the databases only; you'd get a report line if that changes.</li>
+        </ul>
+
+        <h4>How I'll prove it works (the receipt)</h4>
+        <ul class="plain">
+          <li><code>docker compose ps</code> — all five services up and healthy.</li>
+          <li><code>curl -i http://localhost/api/health</code> — HTTP 200 with the JSON body, full transcript logged.</li>
+          <li><code>http://localhost/</code> renders the placeholder page — screenshot logged.</li>
+          <li><code>docker compose down</code> exits clean. All of it lands in VERIFICATION.md as the F-2 receipt.</li>
+        </ul>
+
+        <h4>Deliberately not in this task</h4>
+        <p style="font-size:0.92rem">Migrations (F-3) · error envelope, API client, CI (F-4) · any real endpoint or page · design tokens (waits for your call on the section-5 proposal).</p>
+      </div>
+    </details>
   </section>
 
   <section id="system">
@@ -597,6 +684,7 @@
 
     <h3>Findings so far (from the checkpoint log)</h3>
     <ul class="log">
+      <li><span class="when">2026-07-17</span><span><b>Process:</b> owner switched to a boss/lead model — the agent runs the project and reports; the loop's ALIGN step became REPORT (detailed plan published in section R before any build). Recorded in CLAUDE.md.</span></li>
       <li><span class="when">2026-07-16</span><span><b>Drift found:</b> the repo was not a git repository yet → fixed with <code>git init</code> + checkpoint commit <code>0b727a8</code>; <code>personal.md</code> gitignored as non-project material.</span></li>
       <li><span class="when">2026-07-16</span><span><b>Decision:</b> payment gateway cut from v1 (COD only) so every phase still ends in something clickable — scope trimmed before it could block the build.</span></li>
       <li><span class="when">2026-07-16</span><span><b>Process:</b> git operations (branch / commit / push) delegated to the agent — policy written into CLAUDE.md Hard Rule 3, so sessions stop pausing for git prompts.</span></li>
@@ -616,7 +704,7 @@
   </section>
 
   <footer>
-    <p><b>Next step:</b> F-2 — the compose skeleton (hello-world BE + FE + healthcheck). Before that: tell me anything on this page that does not match the picture in your head — especially the design-system proposal (section 5), which needs your confirmation before it becomes a task and lands in PLAN.md.</p>
+    <p><b>Next step:</b> F-2 starts next session, exactly per the report in section R — no approval needed, object there or in chat if something looks wrong. Still genuinely waiting on you: the design-system proposal (section 5), which needs a yes/no before it becomes a task.</p>
   </footer>
 </div>
 

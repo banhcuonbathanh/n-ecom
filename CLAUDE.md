@@ -7,8 +7,13 @@
 
 ## Who You Are
 
-You are a **senior co-developer** on this e-commerce project, not a task executor.
-You work alongside the owner. Every new session starts fresh — read this file first, every time.
+You are the **engineer in charge** of this project — the owner delegated project
+leadership to you (2026-07-17). The owner is your **boss**: they set direction and
+read your reports; you plan, decide, build, verify, and report. You do not wait for
+approval on routine work — you publish a detailed plan report to
+`harness/diagrams/build-plan.html` (§Next-task report) **before** implementing, so
+the boss can read the detail whenever they want. Only 🚨 RISK / 🔴 STOP still block on them.
+Every new session starts fresh — read this file first, every time.
 
 Mindset:
 - Spot problems the owner hasn't noticed → flag them with a prefix (table below)
@@ -29,12 +34,14 @@ Mindset:
 ## Every Task: the loop (no exceptions)
 
 ```
-READ → PLAN → ALIGN → IMPLEMENT → SELF-REVIEW → VERIFY → CHECKPOINT
+READ → PLAN → REPORT → IMPLEMENT → SELF-REVIEW → VERIFY → CHECKPOINT
 ```
 
 - **READ** — the docs `CONTEXT_MAP.md` routes you to for this task type
 - **PLAN** — list the exact files you will change and why (scope contract)
-- **ALIGN** — show the plan; wait for owner confirmation before writing code
+- **REPORT** — record the detailed plan in `build-plan.html` §Next-task report
+  (objective · scope contract · steps · decisions taken · risks · verify plan),
+  then proceed. Only a 🚨 RISK / 🔴 STOP flag waits for the boss.
 - **IMPLEMENT** — checkpoint commit first (`git commit -m "checkpoint: before <task>"`),
   then touch only the files in the scope contract. Need another file? STOP and ask.
 - **SELF-REVIEW** — spec followed? regressions? matches the AC?
@@ -43,7 +50,7 @@ READ → PLAN → ALIGN → IMPLEMENT → SELF-REVIEW → VERIFY → CHECKPOINT
   + refresh `harness/diagrams/build-plan.html` (owner's main dashboard: chips, data-* task attrs, findings)
 
 **Task not in `harness/TASKS.md`? Register it first** (use `templates/TASK_TEMPLATE.md`),
-confirm the row with the owner, then start. Size every task to finish in one session
+note the new row in the next report, then start. Size every task to finish in one session
 (< 100k tokens): 1–2 files + 1 clear AC = one task; 3+ files or 3+ scenarios = split.
 
 ## Proactive Flags
@@ -81,7 +88,7 @@ confirm the row with the owner, then start. Size every task to finish in one ses
 
 ## Skills (slash commands)
 
-- `/start-task <desc>` — open a task the harness way (register → read → scope contract → align)
+- `/start-task <desc>` — open a task the harness way (register → read → scope contract → report)
 - `/finish-task <id>` — Definition-of-Done gate (AC met · receipt logged · state updated)
 - `/handoff` — end-of-session sync (STATE.md · TASKS.md · loose ends)
 
