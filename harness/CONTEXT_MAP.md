@@ -37,6 +37,8 @@
 |---|---|---|
 | `CLAUDE.md` | Agent identity + workflow | rules of engagement |
 | `harness/PLAN.md` | Architecture | stack, domains, business rules, file map |
+| `harness/ARCHITECTURE.md` | Components & alignment (F-6) | component inventory, layer contracts, FE↔BE contract, Redis policy, alignment gates |
+| `harness/diagrams/architecture.html` | Visual mirror of ARCHITECTURE.md | nothing — on any conflict the markdown wins |
 | `harness/TASKS.md` | Task list | statuses, deps, ACs |
 | `harness/STATE.md` | Checkpoint log | decisions, resume point |
 | `harness/VERIFICATION.md` | Receipts | proof of done |

@@ -123,7 +123,7 @@
   }
   ol.steps code, .cols code, table code, .glossary code {
     font-family: var(--mono); font-size: 0.82em; background: var(--accent-soft);
-    border-radius: 4px; padding: 1px 5px; white-space: nowrap;
+    border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere;
   }
 
   .golden {
@@ -305,7 +305,24 @@
 
   <section id="report">
     <div class="sec-head"><span class="sec-num">R</span><h2>Reports to the boss — next task in detail</h2></div>
-    <p>Working model since 2026-07-17: the agent runs the project, you read reports. Before every task a dated report lands here with the full plan — skim the summary line, or open it when you want the detail. Old reports stay as the record. Objections go in the chat or the notes box (section 7); a <b>🚨 risk / 🔴 stop</b> line in a report means the agent is waiting for you before building.</p>
+    <p>Working model since 2026-07-17: the agent runs the project, you read reports. Before every task a dated report lands here with the full plan — skim the summary line, or open it when you want the detail. <b>Since 2026-07-17 every next task also gets its own visual plan page</b> — <code style="font-family:var(--mono);font-size:0.85em">harness/diagrams/task-&lt;id&gt;.html</code>, linked from its report — with the architecture, files, steps and receipt checklist drawn out in full. Old reports stay as the record. Objections go in the chat or the notes box (section 7); a <b>🚨 risk / 🔴 stop</b> line in a report means the agent is waiting for you before building.</p>
+
+    <details class="report">
+      <summary>
+        <span class="r-date">2026-07-17</span>
+        <span class="r-title">F-6 — Components &amp; alignment blueprint · delivered</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> how the structure stays aligned — how many components, what each does, how FE and Redis fit in. Answered in full: <a href="architecture.html">architecture.html</a> (visual) · <code style="font-family:var(--mono);font-size:0.85em">harness/ARCHITECTURE.md</code> (source of truth) · live copy: <a href="https://claude.ai/code/artifact/1e7d1660-696b-47af-ac13-da5896b51447">claude.ai artifact</a>.</p>
+        <p><b>TL;DR:</b> 5 runtime containers (Caddy · Go API · Next.js · MySQL · Redis) — 4 strict backend layers × 5 domain modules (catalog, cart, checkout, orders, accounts) + 5 platform packages — FE talks only to <code style="font-family:var(--mono);font-size:0.85em">/api/*</code> through one client with mirrored DTOs — and alignment is enforced by 8 named gates wired into the task loop, not by good intentions.</p>
+        <h4>One decision needs your eye 💡</h4>
+        <p><b>Redis policy is a PROPOSAL</b> (§4 of the page): v1 Redis = catalog read cache + auth rate limiting only; carts, sessions and orders stay in MySQL; Redis must always be safe to wipe. Silence = accepted; it locks in when C-2 starts.</p>
+        <h4>Nothing blocks on you</h4>
+        <p style="font-size:0.92rem">No 🚨/🔴 flags. F-2 (below) is still the next build task — this was a documentation task registered as F-6, receipt in VERIFICATION.md.</p>
+      </div>
+    </details>
 
     <details class="report" open>
       <summary>
@@ -315,7 +332,8 @@
         <span class="r-hint">detail</span>
       </summary>
       <div class="report-body">
-        <p style="margin-top:14px"><b>TL;DR:</b> one command — <code style="font-family:var(--mono);font-size:0.85em">docker compose up</code> — brings the whole dev stack to life: Caddy at the door, a hello-world Go API answering <code style="font-family:var(--mono);font-size:0.85em">/api/health</code> with 200, a placeholder Next.js page, MySQL and Redis running but not yet used. Nothing blocks on you — no 🚨/🔴 flags in this plan.</p>
+        <p style="margin-top:14px"><b>Full visual plan:</b> <a href="task-F-2.html">task-F-2.html</a> — architecture diagram, file tree, service table, startup order, hot-reload loop, git flow and the receipt checklist, all drawn out. Below is the same plan in short form.</p>
+        <p><b>TL;DR:</b> one command — <code style="font-family:var(--mono);font-size:0.85em">docker compose up</code> — brings the whole dev stack to life: Caddy at the door, a hello-world Go API answering <code style="font-family:var(--mono);font-size:0.85em">/api/health</code> with 200, a placeholder Next.js page, MySQL and Redis running but not yet used. Nothing blocks on you — no 🚨/🔴 flags in this plan.</p>
 
         <h4>Why this task now</h4>
         <p>It is the only ⬜ task whose dependencies are all ✅ (needs F-1, done). Everything after it — migrations (F-3), CI (F-4), the whole catalog — builds on this skeleton. Done means the AC from TASKS.md: <i>docker compose up → BE health 200, FE renders</i>.</p>

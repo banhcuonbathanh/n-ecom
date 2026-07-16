@@ -92,6 +92,10 @@ Planned layout — becomes real in F-2; update rows to exact files as modules la
 Keep sequence/architecture diagrams next to this file (`harness/diagrams/`),
 one file per flow (e.g. `checkout-flow.md` with a Mermaid diagram). Link them here.
 
+- `harness/ARCHITECTURE.md` — components & alignment blueprint (F-6): component
+  inventory, layer contracts, FE↔BE interaction, Redis policy, alignment gates.
+  Visual mirror: `harness/diagrams/architecture.html`
+  (live copy: https://claude.ai/code/artifact/1e7d1660-696b-47af-ac13-da5896b51447).
 - `harness/diagrams/build-plan.html` — visual A→Z overview from Session 0
   (architecture, BE/FE roles, build order, page wireframes, design-system proposal).
   Open in a browser. Live copy: https://claude.ai/code/artifact/fde30858-c763-47f8-9f0c-2f9ac3a53bd4

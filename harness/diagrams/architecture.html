@@ -1,0 +1,283 @@
+<title>Ecom Core — Components & Alignment</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3382C;
+    --red-soft: #F8E7E4;
+    --wire: #F0F1EE;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E58278; --red-soft: #3A1D19; --wire: #1C2431;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E58278; --red-soft: #3A1D19; --wire: #1C2431;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4; --wire: #F0F1EE;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2.1rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.45rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 68ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 62ch; }
+  code, td code, li code { font-family: var(--mono); font-size: 0.82em; background: var(--accent-soft); border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
+
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; }
+  nav.toc a { font-family: var(--mono); font-size: 0.75rem; text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: var(--surface); }
+  nav.toc a:hover, nav.toc a:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
+
+  section { margin-top: 64px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+
+  .diagram-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 68ch; }
+  .golden strong { font-family: var(--sans); }
+  .golden p { margin: 0; }
+  .golden.warn { border-left-color: var(--amber); background: var(--amber-soft); }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--sans); font-size: 0.82rem; letter-spacing: 0.04em; }
+  tr:last-child td { border-bottom: none; }
+  td.no { color: var(--red); font-size: 0.88rem; }
+  .num { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .layers { display: grid; gap: 0; margin: 12px 0; max-width: 640px; }
+  .layer { display: grid; grid-template-columns: 120px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); padding: 10px 14px; align-items: baseline; }
+  .layer:first-child { border-radius: 8px 8px 0 0; }
+  .layer:last-child { border-radius: 0 0 8px 8px; }
+  .layer + .layer { border-top: none; }
+  .layer .name { font-family: var(--mono); font-size: 0.82rem; font-weight: 700; color: var(--accent); }
+  .layer .what { font-size: 0.9rem; color: var(--muted); }
+  .layer .what b { color: var(--ink); font-weight: 600; }
+
+  ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 10px; }
+  ol.steps li { counter-increment: step; display: grid; grid-template-columns: 30px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+  ol.steps li::before { content: counter(step); font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+  .col-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+  .col-card h4 { font-family: var(--sans); margin: 0 0 4px; font-size: 1rem; }
+  .col-card .sub { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  .col-card ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 0.95rem; }
+  .col-card.yes { border-top: 3px solid var(--done); }
+  .col-card.no { border-top: 3px solid var(--red); }
+
+  .proposal-tag { display: inline-block; font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; color: var(--amber); background: var(--amber-soft); border-radius: 4px; padding: 3px 8px; vertical-align: middle; margin-left: 8px; }
+
+  ul.checklist { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; max-width: 68ch; }
+  ul.checklist li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 9px 13px; font-size: 0.92rem; }
+  ul.checklist li::before { content: "☐"; color: var(--accent); font-size: 1rem; line-height: 1.4; }
+
+  footer { margin-top: 72px; border-top: 1px solid var(--line); padding-top: 20px; color: var(--muted); font-size: 0.88rem; }
+</style>
+
+<div class="page">
+  <header>
+    <p class="eyebrow">Ecom Core · Architecture &amp; alignment · F-6 · 2026-07-17</p>
+    <h1>The components — and how they stay aligned</h1>
+    <p class="lede">Five containers, four backend layers, five domains, one API client — this page names every component, what it may and may not do, how the frontend and Redis fit in, and the eight gates that keep the structure from drifting as the build grows. Source of truth: <code>harness/ARCHITECTURE.md</code>.</p>
+    <nav class="toc" aria-label="Sections">
+      <a href="#map">1 Runtime map</a>
+      <a href="#layers">2 Inside the backend</a>
+      <a href="#febe">3 FE ↔ BE contract</a>
+      <a href="#redis">4 Redis policy</a>
+      <a href="#gates">5 Alignment gates</a>
+    </nav>
+  </header>
+
+  <section id="map">
+    <div class="sec-head"><span class="sec-num">1</span><h2>Runtime map — 5 containers, one entry door</h2></div>
+    <p>Everything the browser can reach goes through Caddy. Behind it, only the Go API touches the data stores; the frontend's entire world is <code>/api/*</code> over HTTP.</p>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 760 320" role="img" aria-label="Runtime diagram: the browser talks to Caddy on port 80; Caddy routes /api/* to the Go API and other paths to Next.js; only the Go API talks to MySQL (source of truth) and Redis (cache); Next.js fetches SSR data from the Go API" style="width:100%;max-width:760px;display:block;margin:0 auto;font-family:var(--mono)">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/>
+          </marker>
+        </defs>
+        <line x1="140" y1="170" x2="206" y2="170" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="340" y1="155" x2="416" y2="92" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="378" y="106" text-anchor="middle" font-size="11" fill="var(--muted)">/api/*</text>
+        <line x1="340" y1="185" x2="416" y2="248" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="363" y="266" text-anchor="middle" font-size="11" fill="var(--muted)">other paths</text>
+        <line x1="490" y1="220" x2="490" y2="124" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+        <text x="500" y="175" font-size="11" fill="var(--muted)">SSR fetch</text>
+        <line x1="560" y1="68" x2="626" y2="50" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="600" y="44" text-anchor="middle" font-size="10.5" fill="var(--muted)">truth</text>
+        <line x1="560" y1="100" x2="626" y2="130" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+        <text x="606" y="130" text-anchor="middle" font-size="10.5" fill="var(--muted)">cache</text>
+        <rect x="10" y="135" width="130" height="70" rx="8" fill="var(--wire)" stroke="var(--line)"/>
+        <text x="75" y="165" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Browser</text>
+        <text x="75" y="183" text-anchor="middle" font-size="11.5" fill="var(--muted)">localhost</text>
+        <rect x="210" y="135" width="130" height="70" rx="8" fill="var(--wire)" stroke="var(--line)"/>
+        <text x="275" y="165" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Caddy :80</text>
+        <text x="275" y="183" text-anchor="middle" font-size="11.5" fill="var(--muted)">reverse proxy</text>
+        <rect x="420" y="50" width="140" height="70" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="490" y="80" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Go API (Gin)</text>
+        <text x="490" y="98" text-anchor="middle" font-size="11.5" fill="var(--muted)">:8080 · all logic</text>
+        <rect x="420" y="220" width="140" height="70" rx="8" fill="var(--done-soft)" stroke="var(--done)"/>
+        <text x="490" y="250" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Next.js</text>
+        <text x="490" y="268" text-anchor="middle" font-size="11.5" fill="var(--muted)">:3000 · rendering</text>
+        <rect x="630" y="22" width="118" height="56" rx="8" fill="var(--wire)" stroke="var(--line)"/>
+        <text x="689" y="45" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">MySQL 8</text>
+        <text x="689" y="63" text-anchor="middle" font-size="11.5" fill="var(--muted)">source of truth</text>
+        <rect x="630" y="107" width="118" height="56" rx="8" fill="var(--wire)" stroke="var(--line)" stroke-dasharray="5 3"/>
+        <text x="689" y="130" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Redis 7</text>
+        <text x="689" y="148" text-anchor="middle" font-size="11.5" fill="var(--muted)">disposable cache</text>
+      </svg>
+    </div>
+    <div class="table-wrap"><table>
+      <tr><th></th><th>Component</th><th>Responsibility</th><th>Talks to</th><th>Never does</th></tr>
+      <tr><td class="num">1</td><td><b>Caddy</b> :80</td><td>Single public entry; routes <code>/api/*</code> → Go, the rest → Next.js</td><td>Go API, Next.js</td><td class="no">business logic, auth</td></tr>
+      <tr><td class="num">2</td><td><b>Go API</b> :8080</td><td>ALL business logic, validation, auth, the error envelope</td><td>MySQL, Redis</td><td class="no">rendering HTML</td></tr>
+      <tr><td class="num">3</td><td><b>Next.js</b> :3000</td><td>Rendering + UX state; SSR fetches from the Go API</td><td>Go API only</td><td class="no">touching MySQL/Redis, business rules</td></tr>
+      <tr><td class="num">4</td><td><b>MySQL 8</b> :3306</td><td>The only source of truth — every business fact</td><td>—</td><td>—</td></tr>
+      <tr><td class="num">5</td><td><b>Redis 7</b> :6379</td><td>Disposable accelerator: cache + ephemeral counters</td><td>—</td><td class="no">holding data not rebuildable from MySQL</td></tr>
+    </table></div>
+    <div class="golden"><p><strong>Two hard consequences:</strong> the frontend never talks to MySQL or Redis — and <code>redis-cli FLUSHALL</code> must never lose a business fact. If losing a key loses data, the data was in the wrong store: that's a bug.</p></div>
+  </section>
+
+  <section id="layers">
+    <div class="sec-head"><span class="sec-num">2</span><h2>Inside the backend — 4 layers × 5 domains + platform packages</h2></div>
+    <p>Every request crosses the same four layers, top to bottom, no skipping. A lower layer importing a higher one — or a handler reaching straight into a repository — is a bug by definition (PLAN.md §Architecture rules).</p>
+    <div class="layers">
+      <div class="layer"><span class="name">handler</span><span class="what"><b>May:</b> parse/validate request shape, call ONE service, write response/envelope. <b>Never:</b> business rules, SQL, Redis.</span></div>
+      <div class="layer"><span class="name">service</span><span class="what"><b>May:</b> business rules (stock, cancel window, merge), orchestrate repos, use the <code>Cache</code> interface. <b>Never:</b> parse HTTP, write SQL.</span></div>
+      <div class="layer"><span class="name">repository</span><span class="what"><b>May:</b> sqlc-generated + hand-written MySQL access. <b>Never:</b> business rules, HTTP, Redis.</span></div>
+      <div class="layer"><span class="name">db</span><span class="what">SQL sources: <code>db/queries/*.sql</code> + numbered migrations.</span></div>
+    </div>
+    <h3>The 5 domain modules</h3>
+    <div class="table-wrap"><table>
+      <tr><th>Domain</th><th>Owns</th><th>Key service responsibilities</th></tr>
+      <tr><td><b>catalog</b></td><td>products, categories, search</td><td>list / detail / search reads — the only v1 Redis-cached domain</td></tr>
+      <tr><td><b>cart</b></td><td>guest + user carts</td><td>add / update / remove, stock cap, merge-on-login (rule 5)</td></tr>
+      <tr><td><b>checkout</b></td><td>order placement (no tables of its own)</td><td>address validation, price snapshot, atomic stock decrement — orchestrates cart + orders repos (rules 3–4)</td></tr>
+      <tr><td><b>orders</b></td><td>orders, order_lines, lifecycle</td><td>my-orders, detail, cancel window + stock restore (rules 1–3)</td></tr>
+      <tr><td><b>accounts</b></td><td>users, auth</td><td>register / login, bcrypt, JWT issue &amp; verify</td></tr>
+    </table></div>
+    <h3>The 5 platform packages (cross-cutting, zero domain logic)</h3>
+    <div class="table-wrap"><table>
+      <tr><th>Package</th><th>Responsibility</th></tr>
+      <tr><td><code>platform/errs</code></td><td>the ONE error-envelope type + writer — every handler error goes through it</td></tr>
+      <tr><td><code>platform/middleware</code></td><td>JWT auth, request logging, panic recovery</td></tr>
+      <tr><td><code>platform/cache</code></td><td>the ONLY package importing the redis client; exposes a small <code>Cache</code> interface</td></tr>
+      <tr><td><code>platform/config</code></td><td>env parsing — the only reader of <code>os.Getenv</code></td></tr>
+      <tr><td><code>domain/constants.go</code></td><td>status enums, cookie names, error codes — one file, one home</td></tr>
+    </table></div>
+  </section>
+
+  <section id="febe">
+    <div class="sec-head"><span class="sec-num">3</span><h2>FE ↔ BE — one client, one envelope, mirrored types</h2></div>
+    <div class="table-wrap"><table>
+      <tr><th>Rule</th><th>Detail</th></tr>
+      <tr><td><b>One API client</b></td><td><code>fe/src/lib/api/</code> is the only module calling <code>fetch</code>. Components import typed functions, never raw fetch.</td></tr>
+      <tr><td><b>Two URLs, one switch</b></td><td>Browser → relative <code>/api/*</code> (Caddy routes it); SSR → internal <code>http://be:8080</code>. The switch lives inside the client, nowhere else.</td></tr>
+      <tr><td><b>One error shape</b></td><td>The client parses <code>{"error":{code,message,details}}</code> in one place and throws a typed <code>ApiError</code>. UI switches on <code>code</code>, never on message strings.</td></tr>
+      <tr><td><b>Mirrored DTOs</b></td><td><code>fe/src/lib/api/types.ts</code> mirrors the Go DTOs 1:1. A BE task that changes a DTO updates this file in the same scope contract — that is the sync mechanism.</td></tr>
+      <tr><td><b>State handling</b></td><td>cache keys, loading/error policy, stores → owned by <code>FE_STATE.md</code> (F-5), not repeated here.</td></tr>
+    </table></div>
+    <h3>Worked example — “Add to cart” on a cached catalog</h3>
+    <ol class="steps">
+      <li>Product page calls the API client: <code>POST /api/cart/items</code>. Caddy hands it to the Go API.</li>
+      <li><b>handler</b> checks the JSON shape → <b>cart service</b> checks stock (business rule) → <b>repository</b> writes the cart line to MySQL. Redis is not involved — carts are business facts.</li>
+      <li>On failure the handler answers through <code>platform/errs</code>: <code>{"error":{"code":"OUT_OF_STOCK",…}}</code> — the FE client turns it into a typed error, the UI switches on the code.</li>
+      <li>Meanwhile a product-detail read goes: <b>catalog service</b> → <code>Cache.Get("v1:catalog:product:42")</code> → hit? return · miss? repository → MySQL → <code>Cache.Set</code> (60 s TTL) → return.</li>
+      <li>TanStack Query updates its cart cache; badge and mini-cart re-render by themselves (see FE_STATE.md).</li>
+    </ol>
+  </section>
+
+  <section id="redis">
+    <div class="sec-head"><span class="sec-num">4</span><h2>Redis policy — disposable accelerator, never a record <span class="proposal-tag">proposal</span></h2></div>
+    <p>Redis is in the stack since F-1 but its job was never pinned down. This is the proposal — say so before C-2 starts if you want it different.</p>
+    <div class="cols">
+      <div class="col-card yes">
+        <h4>Redis IS for</h4>
+        <p class="sub">v1 — nothing else</p>
+        <ul>
+          <li><b>Catalog read cache</b> — cache-aside in the catalog service: product detail + list pages, 60 s TTL (lands with C-2)</li>
+          <li><b>Rate limiting</b> on auth endpoints — arrives with A-1, not before</li>
+        </ul>
+      </div>
+      <div class="col-card no">
+        <h4>Redis is NOT for</h4>
+        <p class="sub">explicit non-uses</p>
+        <ul>
+          <li><b>Cart</b> — MySQL with a cookie token (PLAN rule 5)</li>
+          <li><b>Sessions</b> — JWT is stateless</li>
+          <li><b>Orders / stock</b> — transactional, MySQL only</li>
+        </ul>
+      </div>
+    </div>
+    <div class="table-wrap"><table>
+      <tr><th>Rule</th><th>Detail</th></tr>
+      <tr><td>Access</td><td>only <code>platform/cache</code> imports the redis client; services use the <code>Cache</code> interface; handlers and repositories never see Redis</td></tr>
+      <tr><td>Keys</td><td><code>v1:{domain}:{entity}:{id}</code> — e.g. <code>v1:catalog:product:42</code>, <code>v1:catalog:list:{filterhash}</code></td></tr>
+      <tr><td>Expiry</td><td>TTL-first (60 s catalog) + explicit <code>Del</code> on any write path that mutates the cached entity</td></tr>
+      <tr><td>Degradation</td><td>Redis down ⇒ log + fall through to MySQL. A cache outage slows the shop, never breaks it — every cached path must work with the cache stubbed out.</td></tr>
+    </table></div>
+  </section>
+
+  <section id="gates">
+    <div class="sec-head"><span class="sec-num">5</span><h2>Alignment — 8 gates, each firing at a fixed moment</h2></div>
+    <p>Alignment is not good intentions; it is gates wired into the task loop (<code>READ → PLAN → REPORT → IMPLEMENT → SELF-REVIEW → VERIFY → CHECKPOINT</code>). Skipping one is a Hard-Rule violation, not a style choice.</p>
+    <div class="table-wrap"><table>
+      <tr><th></th><th>Gate</th><th>Fires when</th><th>Prevents</th></tr>
+      <tr><td class="num">1</td><td><b>Docs as law</b> — PLAN.md + ARCHITECTURE.md; one fact, one home</td><td>READ step</td><td>two sessions holding different pictures of the system</td></tr>
+      <tr><td class="num">2</td><td><b>Scope contract</b> — exact files listed before code; extra file ⇒ STOP</td><td>PLAN / REPORT</td><td>sprawl, accidental cross-domain edits</td></tr>
+      <tr><td class="num">3</td><td><b>Layer-contract check</b> — §2 table reviewed against the diff</td><td>SELF-REVIEW</td><td>layer skipping; redis/sql imports in the wrong package</td></tr>
+      <tr><td class="num">4</td><td><b>Single-file choke points</b> — one API client, one error writer, one constants file per side, one cache adapter</td><td>by construction</td><td>drift by duplication; N copies of an enum</td></tr>
+      <tr><td class="num">5</td><td><b>Receipts</b> — curl/screenshot proof in VERIFICATION.md; curl transcripts double as the living API contract</td><td>VERIFY</td><td>“works on my telling” ✅s; FE building against an imagined API</td></tr>
+      <tr><td class="num">6</td><td><b>CI</b> (F-4) — build + test on push; then import-boundary lint (depguard) so §2's arrows are machine-checked</td><td>every push</td><td>layering decaying silently as code grows</td></tr>
+      <tr><td class="num">7</td><td><b>Drift rule</b> (Hard Rule 5) — code wins, doc fixed in the same task</td><td>any mismatch noticed</td><td>docs poisoning future sessions' context</td></tr>
+      <tr><td class="num">8</td><td><b>DTO mirror rule</b> — BE DTO change ⇒ <code>types.ts</code> in the same scope contract</td><td>any contract-touching task</td><td>FE/BE shape mismatch</td></tr>
+    </table></div>
+    <h3>Per-task checklist (run at SELF-REVIEW, every task)</h3>
+    <ul class="checklist">
+      <li>Every changed file was in the scope contract.</li>
+      <li>No import crosses a layer arrow in §2 (grep handlers for <code>repository|redis</code>, repos for <code>gin|redis</code>).</li>
+      <li>Errors leave handlers only via <code>platform/errs</code>.</li>
+      <li>New enum/constant landed in the ONE constants file per side, nowhere else.</li>
+      <li>If a DTO changed → <code>types.ts</code> changed in the same diff.</li>
+      <li>If code contradicted a harness doc → doc fixed, noted in STATE.md.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Ecom Core · F-6 · generated 2026-07-17. Source of truth is <code>harness/ARCHITECTURE.md</code> (this page is its visual mirror); stack, domains and business rules live in <code>harness/PLAN.md</code>. On any conflict, the markdown wins.
+  </footer>
+</div>

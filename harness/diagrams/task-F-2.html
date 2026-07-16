@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-2 — Dev stack skeleton · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --defer: #8A93A1;
+    --defer-soft: #ECEEF1;
+    --wire: #F0F1EE;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --defer: #77808E; --defer-soft: #212836; --wire: #1C2431;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --defer: #77808E; --defer-soft: #212836; --wire: #1C2431;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --defer: #8A93A1; --defer-soft: #ECEEF1; --wire: #F0F1EE;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.next { color: var(--accent); background: var(--accent-soft); }
+  .chip.todo { color: var(--amber); background: var(--amber-soft); }
+
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+
+  nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; }
+  nav.toc a { font-family: var(--mono); font-size: 0.74rem; text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: var(--surface); }
+  nav.toc a:hover, nav.toc a:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
+
+  section { margin-top: 60px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+
+  .diagram-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+  .diagram-cap { font-size: 0.85rem; color: var(--muted); margin: 10px 4px 0; }
+
+  code, .tree code { font-family: var(--mono); font-size: 0.82em; background: var(--accent-soft); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+
+  pre.tree { font-family: var(--mono); font-size: 0.8rem; line-height: 1.7; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 22px; overflow-x: auto; margin: 16px 0; color: var(--muted); }
+  pre.tree b { color: var(--ink); font-weight: 600; }
+  pre.tree .new { color: var(--accent); font-weight: 700; }
+  pre.tree .note { color: var(--muted); font-style: italic; }
+
+  ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 10px; }
+  ol.steps li { counter-increment: step; display: grid; grid-template-columns: 30px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+  ol.steps li::before { content: counter(step); font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  ol.steps .cmd { display: block; font-family: var(--mono); font-size: 0.76rem; color: var(--muted); margin-top: 4px; overflow-wrap: anywhere; }
+
+  .tok-flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; margin: 16px 0; font-family: var(--mono); font-size: 0.78rem; }
+  .tok-flow .stage { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+  .tok-flow .stage b { display: block; font-size: 0.84rem; color: var(--accent); margin-bottom: 2px; }
+  .tok-flow .arrow { color: var(--muted); align-self: center; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 14px 0; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--sans); font-size: 0.8rem; letter-spacing: 0.04em; }
+  tr:last-child td { border-bottom: none; }
+  td.mono, th.mono { font-family: var(--mono); font-size: 0.78rem; white-space: nowrap; }
+
+  ul.plain { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 8px; font-size: 0.94rem; max-width: 72ch; }
+
+  .risk { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 10px 0; max-width: 70ch; font-size: 0.94rem; }
+  .risk b { font-family: var(--sans); }
+  .risk .fb { display: block; margin-top: 4px; color: var(--muted); font-size: 0.88rem; }
+
+  .check { display: grid; grid-template-columns: 28px 1fr; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin: 8px 0; font-size: 0.92rem; }
+  .check .tick { color: var(--done); font-weight: 700; }
+  .check .cmd { display: block; font-family: var(--mono); font-size: 0.76rem; color: var(--muted); margin-top: 3px; }
+
+  footer { margin-top: 72px; border-top: 1px solid var(--line); padding-top: 20px; color: var(--muted); font-size: 0.88rem; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <p><a class="back" href="build-plan.html">← back to the build-plan dashboard</a></p>
+    <p class="eyebrow">Ecom Core · Task plan · published 2026-07-17</p>
+    <h1>F-2 — Dev stack skeleton</h1>
+    <p class="lede">One command — <code>docker compose up</code> — brings the whole dev stack to life: Caddy at the door, a hello-world Go API answering <code>/api/health</code> with 200, a placeholder Next.js page, MySQL and Redis running but not yet used. This page is the full visual plan; the short version lives in the dashboard's report section.</p>
+    <div class="facts">
+      <div class="fact"><span class="k">status</span><span class="v"><span class="chip next">next up</span></span></div>
+      <div class="fact"><span class="k">depends on</span><span class="v">F-1 <span class="chip done">done</span></span></div>
+      <div class="fact"><span class="k">unblocks</span><span class="v">F-3 · F-4 → everything</span></div>
+      <div class="fact"><span class="k">branch</span><span class="v">task/F-2-dev-stack-skeleton</span></div>
+      <div class="fact"><span class="k">flags</span><span class="v">none — no 🚨 / 🔴</span></div>
+    </div>
+    <div class="golden">
+      <p><strong>Done means (AC from TASKS.md):</strong> <code>docker compose up</code> → backend health endpoint returns 200, frontend renders a page. Receipt logged in VERIFICATION.md before the ✅.</p>
+    </div>
+    <nav class="toc" aria-label="Sections">
+      <a href="#target">1 Target architecture</a>
+      <a href="#files">2 Files created</a>
+      <a href="#services">3 The five services</a>
+      <a href="#startup">4 Startup order</a>
+      <a href="#reload">5 Hot reload</a>
+      <a href="#steps">6 Build steps</a>
+      <a href="#git">7 Git flow</a>
+      <a href="#decisions">8 Decisions</a>
+      <a href="#risks">9 Risks</a>
+      <a href="#verify">10 Verification</a>
+      <a href="#scope">11 Not in this task</a>
+    </nav>
+  </header>
+
+  <section id="target">
+    <div class="sec-head"><span class="sec-num">1</span><h2>Target architecture — what exists when F-2 is done</h2></div>
+    <p>Five containers on one compose network. Only two ports ever reach your machine: <b>:80</b> (Caddy, the one entry door) and <b>:3306</b> (MySQL, so you can poke the database with a local client). Backend and frontend are hidden behind Caddy — the same shape production will have.</p>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 880 600" role="img" aria-label="F-2 target architecture: the browser reaches Caddy on published port 80; inside the compose network Caddy routes /api/* to the Go backend on 8080 and all other paths to Next.js on 3000; the backend has wired but unused connections to MySQL and Redis; MySQL publishes 3306 to the host; MySQL and Redis persist to named volumes; the be and fe source folders are bind-mounted for hot reload" style="width:100%;max-width:880px;display:block;margin:0 auto;font-family:var(--mono)">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/>
+          </marker>
+        </defs>
+
+        <!-- compose network boundary -->
+        <rect x="190" y="18" width="676" height="564" rx="12" fill="none" stroke="var(--line)" stroke-dasharray="6 6"/>
+        <text x="206" y="42" font-size="11" fill="var(--muted)">docker compose · one private network · started by a single command</text>
+
+        <!-- bind mount: be source -->
+        <rect x="420" y="58" width="160" height="38" rx="6" fill="none" stroke="var(--line)" stroke-dasharray="3 4"/>
+        <text x="500" y="76" text-anchor="middle" font-size="10.5" fill="var(--muted)">./be source</text>
+        <text x="500" y="89" text-anchor="middle" font-size="10" fill="var(--muted)">bind mount</text>
+        <line x1="500" y1="96" x2="500" y2="118" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+
+        <!-- BE -->
+        <rect x="420" y="122" width="160" height="84" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <text x="500" y="152" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">be · Go 1.25 + Gin</text>
+        <text x="500" y="170" text-anchor="middle" font-size="11" fill="var(--muted)">:8080 · air hot reload</text>
+        <text x="500" y="186" text-anchor="middle" font-size="10.5" fill="var(--done)">✓ health: GET /api/health</text>
+
+        <!-- FE -->
+        <rect x="420" y="400" width="160" height="84" rx="8" fill="var(--done-soft)" stroke="var(--done)"/>
+        <text x="500" y="430" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">fe · Next.js + TS</text>
+        <text x="500" y="448" text-anchor="middle" font-size="11" fill="var(--muted)">:3000 · next dev (HMR)</text>
+        <text x="500" y="464" text-anchor="middle" font-size="10.5" fill="var(--done)">✓ health: 200 on /</text>
+
+        <!-- bind mount: fe source -->
+        <rect x="420" y="512" width="160" height="38" rx="6" fill="none" stroke="var(--line)" stroke-dasharray="3 4"/>
+        <text x="500" y="530" text-anchor="middle" font-size="10.5" fill="var(--muted)">./fe source</text>
+        <text x="500" y="543" text-anchor="middle" font-size="10" fill="var(--muted)">bind mount</text>
+        <line x1="500" y1="512" x2="500" y2="490" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+
+        <!-- Caddy -->
+        <rect x="216" y="262" width="140" height="84" rx="8" fill="var(--wire)" stroke="var(--ink)" stroke-width="1.4"/>
+        <text x="286" y="292" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">caddy :80</text>
+        <text x="286" y="310" text-anchor="middle" font-size="11" fill="var(--muted)">reverse proxy</text>
+        <text x="286" y="326" text-anchor="middle" font-size="10.5" fill="var(--muted)">the only entry door</text>
+
+        <!-- MySQL -->
+        <rect x="660" y="60" width="170" height="70" rx="8" fill="var(--wire)" stroke="var(--line)"/>
+        <text x="745" y="88" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">mysql:8</text>
+        <text x="745" y="106" text-anchor="middle" font-size="10.5" fill="var(--muted)">:3306 → host :3306</text>
+        <text x="745" y="120" text-anchor="middle" font-size="10.5" fill="var(--done)">✓ health: mysqladmin ping</text>
+        <rect x="686" y="142" width="118" height="30" rx="15" fill="none" stroke="var(--line)"/>
+        <text x="745" y="161" text-anchor="middle" font-size="10" fill="var(--muted)">vol: mysql-data</text>
+        <line x1="745" y1="130" x2="745" y2="142" stroke="var(--muted)" stroke-width="1.2"/>
+
+        <!-- Redis -->
+        <rect x="660" y="210" width="170" height="70" rx="8" fill="var(--wire)" stroke="var(--line)"/>
+        <text x="745" y="238" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">redis:7</text>
+        <text x="745" y="256" text-anchor="middle" font-size="10.5" fill="var(--muted)">:6379 · internal only</text>
+        <text x="745" y="270" text-anchor="middle" font-size="10.5" fill="var(--done)">✓ health: redis-cli ping</text>
+        <rect x="686" y="292" width="118" height="30" rx="15" fill="none" stroke="var(--line)"/>
+        <text x="745" y="311" text-anchor="middle" font-size="10" fill="var(--muted)">vol: redis-data</text>
+        <line x1="745" y1="280" x2="745" y2="292" stroke="var(--muted)" stroke-width="1.2"/>
+
+        <!-- Browser (outside network) -->
+        <rect x="16" y="262" width="130" height="84" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+        <text x="81" y="296" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Your browser</text>
+        <text x="81" y="314" text-anchor="middle" font-size="11" fill="var(--muted)">http://localhost</text>
+
+        <!-- edges -->
+        <line x1="146" y1="304" x2="212" y2="304" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="179" y="296" text-anchor="middle" font-size="10.5" fill="var(--muted)">:80</text>
+
+        <line x1="356" y1="284" x2="416" y2="184" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="368" y="222" font-size="10.5" fill="var(--muted)">/api/*</text>
+
+        <line x1="356" y1="324" x2="416" y2="424" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="352" y="386" font-size="10.5" fill="var(--muted)">all other paths</text>
+
+        <line x1="540" y1="400" x2="540" y2="210" stroke="var(--muted)" stroke-width="1.3" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+        <text x="548" y="308" font-size="10.5" fill="var(--muted)">SSR fetch (later)</text>
+
+        <line x1="580" y1="148" x2="656" y2="105" stroke="var(--defer)" stroke-width="1.3" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+        <text x="588" y="112" font-size="10" fill="var(--defer)">wired · unused until F-3</text>
+
+        <line x1="580" y1="180" x2="656" y2="235" stroke="var(--defer)" stroke-width="1.3" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+        <text x="596" y="228" font-size="10" fill="var(--defer)">unused until later</text>
+      </svg>
+      <p class="diagram-cap">Solid arrows = live request paths in F-2. Dashed grey arrows = connections that exist in compose but carry no traffic yet — F-3 (migrations) is the first task to actually talk to MySQL. Green ✓ lines are the compose healthchecks that gate startup order (section 4).</p>
+    </div>
+  </section>
+
+  <section id="files">
+    <div class="sec-head"><span class="sec-num">2</span><h2>Files created — the scope contract as a tree</h2></div>
+    <p>Everything <span style="color:var(--accent);font-weight:700">blue</span> is new in this task. Touching any file outside this tree means STOP and re-scope (loop rule). More files than the usual 1–2-file sizing, but it is one scaffold with one AC and zero business logic — splitting it would create tasks that can't be verified alone.</p>
+    <pre class="tree">
+<b>ecom-core/</b>
+├─ <span class="new">docker-compose.yml</span>          <span class="note">← 5 services · healthchecks · named volumes</span>
+├─ <span class="new">.env.example</span>                <span class="note">← DB credential pattern, no real values (Hard Rule 2)</span>
+├─ <span class="new">.gitignore</span>                  <span class="note">← updated: .env · node_modules · build output</span>
+├─ deploy/
+│  └─ <span class="new">Caddyfile</span>                <span class="note">← one rule: /api/* → be:8080 · rest → fe:3000</span>
+├─ be/
+│  ├─ <span class="new">go.mod</span>                   <span class="note">← Go 1.25 module + Gin</span>
+│  ├─ <span class="new">Dockerfile.dev</span>           <span class="note">← golang:1.25 + air (hot reload, config included)</span>
+│  ├─ cmd/api/
+│  │  └─ <span class="new">main.go</span>               <span class="note">← GET /api/health → 200 {"status":"ok"}</span>
+│  └─ internal/
+│     ├─ <span class="new">handler/</span>              <span class="note">← empty — F-4 puts the first real handler here</span>
+│     ├─ <span class="new">service/</span>              <span class="note">← empty — business rules land here from C-2 on</span>
+│     └─ <span class="new">repository/</span>           <span class="note">← empty — sqlc output home, from F-3 on</span>
+├─ fe/
+│  ├─ <span class="new">Dockerfile.dev</span>           <span class="note">← node:22 + next dev (HMR)</span>
+│  ├─ <span class="new">package.json + scaffold</span>  <span class="note">← create-next-app: App Router · TS strict · Tailwind</span>
+│  └─ src/app/
+│     └─ <span class="new">page.tsx</span>              <span class="note">← boilerplate stripped to one placeholder home</span>
+└─ harness/
+   └─ <span class="new">ENVIRONMENT.md</span>           <span class="note">← §Commands filled: start · stop · logs · rebuild</span>
+    </pre>
+    <p style="font-size:0.9rem;color:var(--muted)">The empty <code>internal/</code> layer folders cost nothing now and mean F-3/F-4 never have to decide where code goes — the four-layer rule (handler → service → repository → db) is baked into the folder shape from day one.</p>
+  </section>
+
+  <section id="services">
+    <div class="sec-head"><span class="sec-num">3</span><h2>The five services — one row each, nothing hidden</h2></div>
+    <div class="table-wrap"><table>
+      <tr><th>Service</th><th>Image (pinned — no <code>latest</code>)</th><th class="mono">Port</th><th>Reaches your machine?</th><th>Healthcheck</th><th>Data survives restart?</th></tr>
+      <tr><td class="mono">caddy</td><td><code>caddy:2</code></td><td class="mono">80</td><td><b>Yes</b> — <code>localhost:80</code>, the entry door</td><td>waits for be + fe</td><td>— stateless</td></tr>
+      <tr><td class="mono">be</td><td>built from <code>be/Dockerfile.dev</code> (golang 1.25 + air)</td><td class="mono">8080</td><td>No — only via Caddy</td><td><code>GET /api/health</code> → 200</td><td>— code is bind-mounted</td></tr>
+      <tr><td class="mono">fe</td><td>built from <code>fe/Dockerfile.dev</code> (node 22 LTS)</td><td class="mono">3000</td><td>No — only via Caddy</td><td>HTTP 200 on <code>/</code></td><td>— code is bind-mounted</td></tr>
+      <tr><td class="mono">mysql</td><td><code>mysql:8</code></td><td class="mono">3306</td><td><b>Yes</b> — <code>localhost:3306</code> for a local DB client</td><td><code>mysqladmin ping</code></td><td><b>Yes</b> — volume <code>mysql-data</code></td></tr>
+      <tr><td class="mono">redis</td><td><code>redis:7</code></td><td class="mono">6379</td><td>No — internal only</td><td><code>redis-cli ping</code></td><td><b>Yes</b> — volume <code>redis-data</code></td></tr>
+    </table></div>
+    <p>Credentials come from <code>.env</code> (never committed); <code>.env.example</code> shows the shape with placeholder values. Compose reads it automatically.</p>
+  </section>
+
+  <section id="startup">
+    <div class="sec-head"><span class="sec-num">4</span><h2>Startup order — healthchecks gate the chain</h2></div>
+    <p><code>depends_on … condition: service_healthy</code> means services come up in a guaranteed order instead of racing each other. The same green ✓ checks from the architecture diagram drive this chain:</p>
+    <div class="tok-flow">
+      <div class="stage"><b>1 · databases</b>mysql + redis start,<br>healthchecks must pass</div>
+      <span class="arrow">→</span>
+      <div class="stage"><b>2 · apps</b>be + fe start<br>(be waits for the DBs)</div>
+      <span class="arrow">→</span>
+      <div class="stage"><b>3 · door opens</b>caddy starts once<br>be + fe are healthy</div>
+      <span class="arrow">→</span>
+      <div class="stage"><b>4 · proof</b>curl /api/health → 200<br>localhost/ renders</div>
+    </div>
+    <p style="font-size:0.9rem;color:var(--muted)">Why bother in F-2: from F-3 on, the backend will connect to MySQL at boot. Getting the ordering right now means F-3 never sees a "connection refused because MySQL was still starting" flake.</p>
+  </section>
+
+  <section id="reload">
+    <div class="sec-head"><span class="sec-num">5</span><h2>Hot reload — the edit loop we live in every day after this</h2></div>
+    <p>The dev images do not bake the code in — they bind-mount the source folders. Saving a file on your machine is instantly visible inside the container, and a watcher restarts/reloads the app:</p>
+    <div class="tok-flow">
+      <div class="stage"><b>you save a file</b>be/…/main.go<br>or fe/src/…/page.tsx</div>
+      <span class="arrow">→</span>
+      <div class="stage"><b>bind mount</b>the container sees the<br>change immediately</div>
+      <span class="arrow">→</span>
+      <div class="stage"><b>watcher reacts</b>Go: air recompiles + restarts<br>Next: HMR patches the page</div>
+      <span class="arrow">→</span>
+      <div class="stage"><b>browser</b>refresh (BE) or<br>auto-update (FE) — seconds</div>
+    </div>
+    <p style="font-size:0.9rem;color:var(--muted)">No <code>docker compose build</code> in the daily loop — rebuilds are only needed when dependencies change (a new Go module, a new npm package).</p>
+  </section>
+
+  <section id="steps">
+    <div class="sec-head"><span class="sec-num">6</span><h2>Build steps, in order — each one leaves something testable</h2></div>
+    <ol class="steps">
+      <li><span><b>Checkpoint + branch.</b> Commit the current state, then branch off (git policy, Hard Rule 3).<span class="cmd">git commit -m "checkpoint: before F-2" · git switch -c task/F-2-dev-stack-skeleton</span></span></li>
+      <li><span><b>Backend hello, natively first.</b> Go 1.25 module, Gin, one route: <code>GET /api/health</code> → 200 <code>{"status":"ok"}</code>. Prove it with a local run before any Docker enters the picture — fast feedback beats debugging through containers.<span class="cmd">cd be && go run ./cmd/api · curl -i localhost:8080/api/health</span></span></li>
+      <li><span><b>Backend dev image.</b> <code>be/Dockerfile.dev</code> on golang:1.25 with air installed — save a .go file, the API restarts itself.</span></li>
+      <li><span><b>Frontend hello.</b> create-next-app with the F-1 decisions (App Router, TS strict, Tailwind); strip the boilerplate to one placeholder home page.<span class="cmd">npx create-next-app@latest fe --ts --tailwind --app</span></span></li>
+      <li><span><b>Frontend dev image.</b> <code>fe/Dockerfile.dev</code> on node:22 running <code>next dev</code> with HMR.</span></li>
+      <li><span><b>Caddyfile.</b> The single routing rule: <code>/api/*</code> → be:8080, everything else → fe:3000.</span></li>
+      <li><span><b>Compose file.</b> Five services, healthchecks, <code>depends_on</code> chain from section 4, named volumes, env from <code>.env</code>. Plus <code>.env.example</code> and the <code>.gitignore</code> update.</span></li>
+      <li><span><b>Verify end-to-end.</b> Run the full receipt checklist from section 10, capture transcripts + screenshot into <code>harness/VERIFICATION.md</code>.</span></li>
+      <li><span><b>Document commands.</b> Fill <code>harness/ENVIRONMENT.md §Commands</code> — start, stop, logs, rebuild — the single source for commands (CLAUDE.md rule: no duplication).</span></li>
+      <li><span><b>Close out.</b> Merge to <code>main</code>, push, flip the F-2 chip on the dashboard, update STATE.md + TASKS.md.<span class="cmd">git switch main && git merge task/F-2-dev-stack-skeleton && git push</span></span></li>
+    </ol>
+  </section>
+
+  <section id="git">
+    <div class="sec-head"><span class="sec-num">7</span><h2>Git flow for this task — per the delegated policy</h2></div>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 860 170" role="img" aria-label="Git flow: a checkpoint commit on main, then a task branch with commits for the backend hello, frontend hello, compose plus caddy, and the verify receipt; the branch merges back to main only after the receipt, then main is pushed to origin" style="width:100%;max-width:860px;display:block;margin:0 auto;font-family:var(--mono)">
+        <defs>
+          <marker id="garr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/>
+          </marker>
+        </defs>
+        <!-- main line -->
+        <line x1="30" y1="55" x2="830" y2="55" stroke="var(--line)" stroke-width="2"/>
+        <text x="30" y="38" font-size="11" fill="var(--muted)">main</text>
+        <!-- branch line -->
+        <line x1="120" y1="120" x2="640" y2="120" stroke="var(--accent)" stroke-width="2"/>
+        <text x="140" y="145" font-size="11" fill="var(--accent)">task/F-2-dev-stack-skeleton</text>
+        <!-- branch off / merge back -->
+        <path d="M 70 55 Q 95 55 120 120" fill="none" stroke="var(--accent)" stroke-width="2"/>
+        <path d="M 640 120 Q 680 120 705 55" fill="none" stroke="var(--accent)" stroke-width="2"/>
+        <!-- commits on main -->
+        <circle cx="70" cy="55" r="7" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+        <text x="70" y="24" text-anchor="middle" font-size="10.5" fill="var(--muted)">checkpoint:</text>
+        <text x="70" y="36" text-anchor="middle" font-size="10.5" fill="var(--muted)">before F-2</text>
+        <circle cx="705" cy="55" r="7" fill="var(--done-soft)" stroke="var(--done)" stroke-width="2"/>
+        <text x="705" y="30" text-anchor="middle" font-size="10.5" fill="var(--done)">merge after receipt</text>
+        <!-- push arrow -->
+        <line x1="740" y1="55" x2="810" y2="55" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#garr)"/>
+        <text x="775" y="42" text-anchor="middle" font-size="10.5" fill="var(--muted)">push origin</text>
+        <!-- commits on branch -->
+        <circle cx="200" cy="120" r="6" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="200" y="100" text-anchor="middle" font-size="10.5" fill="var(--muted)">BE hello</text>
+        <circle cx="330" cy="120" r="6" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="330" y="100" text-anchor="middle" font-size="10.5" fill="var(--muted)">FE hello</text>
+        <circle cx="460" cy="120" r="6" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="460" y="100" text-anchor="middle" font-size="10.5" fill="var(--muted)">compose + caddy</text>
+        <circle cx="590" cy="120" r="6" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="590" y="100" text-anchor="middle" font-size="10.5" fill="var(--muted)">verify receipt</text>
+      </svg>
+      <p class="diagram-cap">Code task → own branch, merged to <code>main</code> only after the VERIFY receipt lands in VERIFICATION.md, then pushed to <code>origin</code> (github.com/banhcuonbathanh/n-ecom) — exactly the Hard Rule 3 policy, no approval prompts.</p>
+    </div>
+  </section>
+
+  <section id="decisions">
+    <div class="sec-head"><span class="sec-num">8</span><h2>Decisions taken — defaults; say so if you want different</h2></div>
+    <ul class="plain">
+      <li><b>MySQL + Redis join compose now</b>, even though nothing connects to them until F-3 — so F-3 starts from a running, healthchecked database instead of more plumbing.</li>
+      <li><b>Dev-only images this task.</b> Production builds (multi-stage, small images) arrive with CI in F-4.</li>
+      <li><b>Only Caddy is reachable from the browser</b> — BE and FE hide behind it, same shape as production. MySQL's 3306 is the one convenience exception, for your local DB client.</li>
+      <li><b>Pinned versions:</b> golang 1.25 · node 22 LTS · mysql 8 · redis 7 — no <code>latest</code> tags, so the stack behaves the same on any machine and on any day.</li>
+      <li><b>Health endpoint lives at <code>/api/health</code></b> (not <code>/health</code>) so it travels through Caddy like every real API route — the check proves the whole path, not just the process.</li>
+    </ul>
+  </section>
+
+  <section id="risks">
+    <div class="sec-head"><span class="sec-num">9</span><h2>Risks I'm watching — each with its fallback</h2></div>
+    <div class="risk"><b>⚠️ First start is slow.</b> The first <code>compose up</code> downloads ~1–2 GB of images.<span class="fb">Fallback: none needed — one-time cost, not a failure. Later starts are seconds.</span></div>
+    <div class="risk"><b>⚠️ Port collisions.</b> Port 80 or 3306 may already be busy on your machine.<span class="fb">Fallback: alternate host ports, documented in ENVIRONMENT.md so there is exactly one place to look.</span></div>
+    <div class="risk"><b>⚠️ Docker bind mounts on macOS can make hot reload sluggish.</b><span class="fb">Fallback: run BE/FE natively and keep compose for the databases only — documented, and you'd get a report line if we switch.</span></div>
+  </section>
+
+  <section id="verify">
+    <div class="sec-head"><span class="sec-num">10</span><h2>Verification — the receipt, before any ✅</h2></div>
+    <p>Hard Rule 1: no receipt, no done. All of the below lands in <code>harness/VERIFICATION.md</code> as the F-2 receipt row — transcripts pasted, screenshot linked.</p>
+    <div class="check"><span class="tick">1</span><span>All five services up and <b>healthy</b>.<span class="cmd">docker compose up -d && docker compose ps</span></span></div>
+    <div class="check"><span class="tick">2</span><span>Backend answers through the front door: HTTP <b>200</b> with the JSON body — full transcript logged.<span class="cmd">curl -i http://localhost/api/health   →   200 · {"status":"ok"}</span></span></div>
+    <div class="check"><span class="tick">3</span><span>Frontend renders the placeholder page — screenshot logged.<span class="cmd">open http://localhost/</span></span></div>
+    <div class="check"><span class="tick">4</span><span>Hot reload proven: edit the health message in <code>main.go</code>, save, curl again — new body without any rebuild command.</span></div>
+    <div class="check"><span class="tick">5</span><span>Clean shutdown; volumes survive so a restart keeps DB data.<span class="cmd">docker compose down && docker compose up -d</span></span></div>
+    <p style="font-size:0.9rem;color:var(--muted)">Then and only then: TASKS.md F-2 → ✅, STATE.md checkpoint, dashboard chip flips to <span class="chip done">done</span>, merge + push.</p>
+  </section>
+
+  <section id="scope">
+    <div class="sec-head"><span class="sec-num">11</span><h2>Deliberately not in this task</h2></div>
+    <ul class="plain">
+      <li><b>Migrations</b> — F-3 owns the migration tool and the first schema change.</li>
+      <li><b>Error envelope, API client, CI</b> — F-4; the health endpoint intentionally predates the envelope.</li>
+      <li><b>Any real endpoint or page</b> — the catalog starts in Phase 1.</li>
+      <li><b>Design tokens</b> — waits for your yes/no on the dashboard's section-5 proposal.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p><b>Status:</b> plan published 2026-07-17 · no 🚨/🔴 flags — the build starts next session exactly as written here unless you object in chat or the dashboard notes box. Progress and the final receipt will show on the <a class="back" href="build-plan.html">dashboard</a>.</p>
+  </footer>
+</div>
+</body>
+</html>

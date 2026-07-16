@@ -40,8 +40,11 @@ READ → PLAN → REPORT → IMPLEMENT → SELF-REVIEW → VERIFY → CHECKPOINT
 - **READ** — the docs `CONTEXT_MAP.md` routes you to for this task type
 - **PLAN** — list the exact files you will change and why (scope contract)
 - **REPORT** — record the detailed plan in `build-plan.html` §Next-task report
-  (objective · scope contract · steps · decisions taken · risks · verify plan),
-  then proceed. Only a 🚨 RISK / 🔴 STOP flag waits for the boss.
+  (objective · scope contract · steps · decisions taken · risks · verify plan)
+  **and** publish a dedicated visual plan page `harness/diagrams/task-<id>.html`
+  (owner rule 2026-07-17: every next task gets its own detailed HTML with diagrams —
+  architecture, file tree, steps, receipt checklist), linked from the report.
+  Then proceed. Only a 🚨 RISK / 🔴 STOP flag waits for the boss.
 - **IMPLEMENT** — checkpoint commit first (`git commit -m "checkpoint: before <task>"`),
   then touch only the files in the scope contract. Need another file? STOP and ask.
 - **SELF-REVIEW** — spec followed? regressions? matches the AC?
