@@ -8,15 +8,30 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-6 done — components & alignment blueprint documented (ARCHITECTURE.md
-  + diagrams/architecture.html).
+- **Status:** ✅ F-7 done — design system reference page (diagrams/design-system.html):
+  tokens, button deep-dive, full component inventory.
 - **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`.
 - **Open decisions:** Redis policy is a 💡 proposal (ARCHITECTURE.md §4) — silence =
-  accepted, locks in when C-2 starts. Deferred (not open): payment gateway, Admin, AI.
+  accepted, locks in when C-2 starts. Brand-primary hue is a 💡 proposal
+  (design-system.html §8) — owner may swap before C-4. ⚠ FLAG: uncommitted owner edit
+  in architecture.html (`--muted` → #0066ff) left in the working tree — confirm or revert.
+  Deferred (not open): payment gateway, Admin, AI.
 
 ---
 
 ## Checkpoint log
+
+### 2026-07-17 — Session 3 (F-7): design system reference page
+- Done: F-7 ✅ — `harness/diagrams/design-system.html` (tokens: color/type/spacing/
+  radius/shadow · button deep-dive: anatomy, 6 variants, 3 sizes + icon, 5-state
+  matrix, compositions, do/don't, Tailwind→CVA mapping · forms, feedback, overlays,
+  nav, commerce patterns · §8 component→file→task ownership map). Receipt in
+  VERIFICATION.md; live artifact copy linked there.
+- Decisions: 💡 brand primary = #2B59D9 (harness blue), danger doubles as sale color —
+  owner may swap the hue any time before C-4 (one token change).
+- Drift fixed / found: ⚠ uncommitted owner edit in architecture.html
+  (`--muted` #5C6675 → #0066ff) — NOT committed, left for owner to confirm/revert.
+- Next: F-2 (dev stack skeleton), per task-F-2.html.
 
 ### 2026-07-17 — Session 2 (F-6): components & alignment blueprint
 - Done: F-6 ✅ — `harness/ARCHITECTURE.md` (5 containers, 4 layers × 5 domains +

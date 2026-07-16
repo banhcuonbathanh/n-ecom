@@ -17,6 +17,7 @@
 | F-4 | Error contract + API client + CI (build+test on push) | F-2 | one endpoint returns the envelope; CI green | ⬜ | |
 | F-5 | FE state & loading architecture doc (`harness/FE_STATE.md` + diagram) | F-1 | Doc covers 4 state kinds, loading/error policy, cache map, folder layout; HTML diagram renders | ✅ | VERIFICATION.md 2026-07-17 |
 | F-6 | Component & alignment architecture doc (`harness/ARCHITECTURE.md` + `harness/diagrams/architecture.html`) | F-1 | Doc covers component inventory + responsibilities, layer contracts, FE↔BE and Redis interaction, alignment-enforcement gates; HTML diagram renders | ✅ | VERIFICATION.md 2026-07-17 |
+| F-7 | Design system reference page (`harness/diagrams/design-system.html`) — tokens + button deep-dive + all component specimens | F-1, F-5 | Page covers tokens (color/type/spacing/radius/shadow), button anatomy/6 variants/3 sizes/5-state matrix, forms, feedback, overlays, nav, commerce patterns; HTML renders both themes | ✅ | VERIFICATION.md 2026-07-17 |
 
 ## Phase 1 — Catalog
 

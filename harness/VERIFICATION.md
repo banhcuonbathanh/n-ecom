@@ -32,6 +32,21 @@
 
 -->
 
+### F-7 — Design system reference page · 2026-07-17
+**AC:** Page covers tokens (color/type/spacing/radius/shadow), button anatomy/6 variants/3 sizes/5-state matrix, forms, feedback, overlays, nav, commerce patterns; HTML renders both themes
+**Receipt:**
+```
+$ python3 tag-balance-check design-system.html    # HTMLParser walk, void-aware
+errors: none
+unclosed: none
+$ grep -c '<section' harness/diagrams/design-system.html && wc -l harness/diagrams/design-system.html
+8                                   # sections: foundations, buttons, forms, feedback,
+    1065 harness/diagrams/design-system.html      # overlays, nav, commerce, usage rules
+```
+HTML renders (light + dark via token swap) — published live copy (private):
+https://claude.ai/code/artifact/cae73410-811f-40d3-9d9e-355a84deaacd
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-6 — Component & alignment architecture doc · 2026-07-17
 **AC:** Doc covers component inventory + responsibilities, layer contracts, FE↔BE and Redis interaction, alignment-enforcement gates; HTML diagram renders
 **Receipt:**
