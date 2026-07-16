@@ -16,6 +16,15 @@
 
 ## Checkpoint log
 
+### 2026-07-16 — Session 0c: remote + git autonomy
+- Done: repo pushed to GitHub — `origin` = github.com/banhcuonbathanh/n-ecom,
+  `main` tracks `origin/main`.
+- Decisions: owner delegated all git ops (branch/commit/push) to the agent —
+  CLAUDE.md Hard Rule 3 rewritten with the policy (docs → `main` direct; code
+  tasks → `task/<id>-<slug>` branch, merge after receipt; push per task + handoff).
+- Drift fixed / found: none.
+- Next: unchanged — F-2 (dev stack skeleton).
+
 ### 2026-07-16 — Session 0b (F-1): foundation decisions
 - Done: F-1 ✅ (receipt in VERIFICATION.md).
 - Decisions: Go 1.25+Gin+sqlc+MySQL 8+Redis · Next.js App Router+TS strict+Tailwind+

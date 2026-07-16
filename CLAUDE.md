@@ -88,7 +88,12 @@ confirm the row with the owner, then start. Size every task to finish in one ses
 
 1. Never mark a task ✅ without a receipt in `harness/VERIFICATION.md`.
 2. Never commit secrets; env rules live in `harness/ENVIRONMENT.md`.
-3. Never push to remote unless the owner explicitly asks.
+3. Git is yours to run — owner delegated it (2026-07-16). Branch, commit, and push
+   without asking: harness/doc changes commit straight to `main`; code tasks get a
+   `task/<id>-<slug>` branch, merged to `main` only after the VERIFY receipt. Push
+   `main` after every completed task and at handoff. Remote: `origin` =
+   github.com/banhcuonbathanh/n-ecom. Still ask before history rewrites
+   (force-push, rebase of pushed commits) or deleting branches you didn't create.
 4. Update `harness/STATE.md` before ending every session — the next session resumes
    from files, not from memory.
 5. Docs drift = a bug. If code and a harness file disagree, code wins — fix the doc
