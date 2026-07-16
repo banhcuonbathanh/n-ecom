@@ -10,7 +10,7 @@
 | Task type | Read | Skip |
 |---|---|---|
 | New BE endpoint | `PLAN.md §Stack §Architecture` + domain section + `TOOLS.md` if AI-related | FE docs |
-| New FE page/component | `PLAN.md §Architecture (FE)` + domain section | BE internals (use API contract only) |
+| New FE page/component | `FE_STATE.md` + `PLAN.md §Architecture (FE)` + domain section | BE internals (use API contract only) |
 | DB migration | `PLAN.md §File map (db)` + migration skill in `SKILLS.md` | everything else |
 | Bug fix | `STATE.md` (recent decisions) + the failing area's PLAN section | unrelated domains |
 | Infra / DevOps | `ENVIRONMENT.md` | domain specs |
@@ -45,3 +45,5 @@
 | `harness/SUBAGENTS.md` | Delegation | when to spawn |
 | `harness/SKILLS.md` | Playbooks | recurring procedures |
 | `harness/diagrams/build-plan.html` | Visual A→Z overview (architecture, BE/FE roles, wireframes, design system) | nothing — orientation snapshot from Session 0; on any conflict PLAN.md/TASKS.md win |
+| `harness/FE_STATE.md` | FE state & loading design (F-5) | state ownership, cache/invalidation map, loading/error tiers, FE folder layout |
+| `harness/diagrams/fe-state-loading.html` | Visual companion to FE_STATE.md | nothing — snapshot; FE_STATE.md wins |

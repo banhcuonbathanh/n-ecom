@@ -32,6 +32,21 @@
 
 -->
 
+### F-5 — FE state & loading architecture doc · 2026-07-17
+**AC:** Doc covers 4 state kinds, loading/error policy, cache map, folder layout; HTML diagram renders
+**Receipt:**
+```
+$ grep -c '^## ' harness/FE_STATE.md && grep -n '<title>' harness/diagrams/fe-state-loading.html \
+    && wc -l harness/FE_STATE.md harness/diagrams/fe-state-loading.html
+9                                   # sections: 5 state kinds (superset of AC's 4), data flow,
+1:<title>FE State & Loading Design — ecom-core</title>   # cache map, loading/error tiers,
+     194 harness/FE_STATE.md                             # SSR split, forms, session, folders, rules
+     362 harness/diagrams/fe-state-loading.html
+```
+HTML renders — published live copy (private):
+https://claude.ai/code/artifact/2343defd-c86f-4e79-a785-5b4138508c15
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-1 — Session 0: decide stack + MVP domains, fill PLAN.md · 2026-07-16
 **AC:** No `⬜ DECIDE` left in PLAN.md §Stack/§Domains
 **Receipt:**

@@ -24,6 +24,7 @@
 - BE layering (strict): `handler → service → repository → db`. No layer skipping.
 - FE state (strict): server state → query library · client state → store ·
   forms → schema-validated · all API calls through one client module.
+  Full design (state ownership, cache map, loading/error tiers): `harness/FE_STATE.md`.
 - One error contract: every endpoint returns the same error envelope (decided Session 0):
 
   ```json
@@ -95,3 +96,7 @@ one file per flow (e.g. `checkout-flow.md` with a Mermaid diagram). Link them he
   (architecture, BE/FE roles, build order, page wireframes, design-system proposal).
   Open in a browser. Live copy: https://claude.ai/code/artifact/fde30858-c763-47f8-9f0c-2f9ac3a53bd4
   Snapshot, not a source of truth — this file and TASKS.md win on any conflict.
+- `harness/diagrams/fe-state-loading.html` — F-5 visual companion to `harness/FE_STATE.md`
+  (state ownership, data flow, cache map, loading/error tiers). Live copy:
+  https://claude.ai/code/artifact/2343defd-c86f-4e79-a785-5b4138508c15
+  Snapshot — `FE_STATE.md` wins on any conflict.

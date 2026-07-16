@@ -1,0 +1,362 @@
+<title>FE State & Loading Design — ecom-core</title>
+<style>
+  :root {
+    --bg: #f7f9f9;
+    --surface: #ffffff;
+    --surface-2: #eef2f2;
+    --ink: #1c2626;
+    --ink-2: #55696b;
+    --line: #d9e1e1;
+    --accent: #0f766e;
+    --accent-ink: #0f766e;
+    --accent-soft: #e2f1ef;
+    --warn: #b45309;
+    --warn-soft: #fdf0e0;
+    --k1: #0f766e; --k1-soft: #e2f1ef;   /* server */
+    --k2: #1d4ed8; --k2-soft: #e4ebfc;   /* url */
+    --k3: #7c3aed; --k3-soft: #efe8fc;   /* form */
+    --k4: #b45309; --k4-soft: #fdf0e0;   /* client/ui */
+    --k5: #be185d; --k5-soft: #fbe7f0;   /* session */
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #101717; --surface: #182020; --surface-2: #1f2a2a;
+      --ink: #e4ecec; --ink-2: #94a8a8; --line: #2b3838;
+      --accent: #2dd4bf; --accent-ink: #5eead4; --accent-soft: #12302c;
+      --warn: #f5a952; --warn-soft: #33260f;
+      --k1: #2dd4bf; --k1-soft: #12302c;
+      --k2: #7ca6f7; --k2-soft: #15223f;
+      --k3: #b795f8; --k3-soft: #261b3d;
+      --k4: #f5a952; --k4-soft: #33260f;
+      --k5: #f27bab; --k5-soft: #3a1526;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101717; --surface: #182020; --surface-2: #1f2a2a;
+    --ink: #e4ecec; --ink-2: #94a8a8; --line: #2b3838;
+    --accent: #2dd4bf; --accent-ink: #5eead4; --accent-soft: #12302c;
+    --warn: #f5a952; --warn-soft: #33260f;
+    --k1: #2dd4bf; --k1-soft: #12302c;
+    --k2: #7ca6f7; --k2-soft: #15223f;
+    --k3: #b795f8; --k3-soft: #261b3d;
+    --k4: #f5a952; --k4-soft: #33260f;
+    --k5: #f27bab; --k5-soft: #3a1526;
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f9f9; --surface: #ffffff; --surface-2: #eef2f2;
+    --ink: #1c2626; --ink-2: #55696b; --line: #d9e1e1;
+    --accent: #0f766e; --accent-ink: #0f766e; --accent-soft: #e2f1ef;
+    --warn: #b45309; --warn-soft: #fdf0e0;
+    --k1: #0f766e; --k1-soft: #e2f1ef;
+    --k2: #1d4ed8; --k2-soft: #e4ebfc;
+    --k3: #7c3aed; --k3-soft: #efe8fc;
+    --k4: #b45309; --k4-soft: #fdf0e0;
+    --k5: #be185d; --k5-soft: #fbe7f0;
+  }
+
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0; padding: 40px 20px 80px;
+  }
+  .page { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 44px; }
+
+  header .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent-ink); margin-bottom: 10px;
+  }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 10px; text-wrap: balance; letter-spacing: -.01em; }
+  header p.lede { color: var(--ink-2); max-width: 62ch; margin: 0; }
+  header p.lede code { font-family: var(--mono); font-size: 13px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+
+  section > h2 {
+    font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-2); margin: 0 0 4px; font-family: var(--mono); font-weight: 600;
+  }
+  section > h2 .num { color: var(--accent-ink); margin-right: 8px; }
+  section > p.note { margin: 0 0 16px; color: var(--ink-2); max-width: 70ch; font-size: 14px; }
+
+  /* state-kind cards */
+  .kinds { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .kind {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px;
+    border-top: 3px solid var(--kc, var(--accent));
+  }
+  .kind .chip {
+    align-self: flex-start; font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--kc); background: var(--ks); padding: 2px 8px; border-radius: 99px;
+  }
+  .kind h3 { margin: 2px 0 0; font-size: 15px; }
+  .kind .owner { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+  .kind .ex { font-size: 13px; color: var(--ink-2); }
+  .kind .never { font-size: 12px; color: var(--warn); }
+  .kind .never::before { content: "✕ never: "; font-weight: 600; }
+  .k1 { --kc: var(--k1); --ks: var(--k1-soft); }
+  .k2 { --kc: var(--k2); --ks: var(--k2-soft); }
+  .k3 { --kc: var(--k3); --ks: var(--k3-soft); }
+  .k4 { --kc: var(--k4); --ks: var(--k4-soft); }
+  .k5 { --kc: var(--k5); --ks: var(--k5-soft); }
+
+  /* decision flow */
+  .decide { display: flex; flex-direction: column; gap: 0; margin-top: 16px; }
+  .decide .q {
+    display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; align-items: center;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px;
+  }
+  .decide .q + .q { margin-top: 0; }
+  .decide .arrow { text-align: center; color: var(--ink-2); font-size: 12px; padding: 2px 0; font-family: var(--mono); }
+  .decide .q .ans {
+    font-family: var(--mono); font-size: 12px; font-weight: 600; white-space: nowrap;
+    color: var(--kc, var(--ink)); background: var(--ks, var(--surface-2)); padding: 3px 10px; border-radius: 99px;
+  }
+  .decide .q span.qq { font-size: 14px; }
+
+  /* data flow diagram */
+  .flow { display: flex; flex-direction: column; align-items: stretch; gap: 0; max-width: 560px; margin: 16px auto 0; }
+  .flow .box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 16px; text-align: center;
+  }
+  .flow .box b { display: block; font-family: var(--mono); font-size: 13px; }
+  .flow .box small { color: var(--ink-2); font-size: 12px; }
+  .flow .box.hot { border-color: var(--accent); background: var(--accent-soft); }
+  .flow .down { text-align: center; color: var(--ink-2); font-size: 14px; line-height: 1.6; }
+  .flow .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; background: var(--surface); }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  th { text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+       color: var(--ink-2); font-weight: 600; padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code, li code, p code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+  td .stale { font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 12.5px; }
+
+  /* loading tiers */
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .tier { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+  .tier h3 { margin: 0 0 4px; font-size: 15px; }
+  .tier .tag { font-family: var(--mono); font-size: 11px; color: var(--accent-ink); }
+  .tier p { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-2); }
+  .tier ul { margin: 8px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); }
+  .tier li { margin: 3px 0; }
+  .tier li b { color: var(--ink); font-weight: 600; }
+
+  .callout {
+    border: 1px solid var(--line); border-left: 3px solid var(--warn); background: var(--warn-soft);
+    border-radius: 8px; padding: 12px 16px; font-size: 13.5px; margin-top: 12px;
+  }
+  .callout b { color: var(--warn); }
+
+  pre.tree {
+    font-family: var(--mono); font-size: 12.5px; line-height: 1.6; margin: 0;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 16px 20px; overflow-x: auto; color: var(--ink);
+  }
+  pre.tree .c { color: var(--ink-2); }
+  pre.tree .hot { color: var(--accent-ink); font-weight: 600; }
+
+  ol.rules { margin: 12px 0 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+  ol.rules li::marker { font-family: var(--mono); color: var(--accent-ink); font-weight: 600; }
+
+  footer { color: var(--ink-2); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 16px; }
+  footer code { font-family: var(--mono); background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+  a { color: var(--accent-ink); }
+  @media (max-width: 640px) { .flow .pair { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page">
+
+<header>
+  <div class="eyebrow">ecom-core · harness/diagrams · F-5 · 2026-07-17</div>
+  <h1>Frontend State &amp; Loading Design</h1>
+  <p class="lede">How every piece of FE state gets exactly one owner, how data flows through the one API
+  client, and what users see while it loads or fails. Source of truth: <code>harness/FE_STATE.md</code> —
+  this page is the visual companion. Stack: Next.js App Router · TanStack Query · Zustand · RHF/Zod.</p>
+</header>
+
+<section>
+  <h2><span class="num">01</span>Five kinds of state, five owners</h2>
+  <p class="note">Every piece of state lives in exactly one place. Duplicating it (cart badge in a store
+  <em>and</em> in the query cache) is the classic source of stale-UI bugs — banned by rule.</p>
+  <div class="kinds">
+    <div class="kind k1">
+      <span class="chip">SERVER</span>
+      <h3>Server state</h3>
+      <span class="owner">TanStack Query</span>
+      <span class="ex">products · categories · cart · orders · me</span>
+      <span class="never">copy into Zustand</span>
+    </div>
+    <div class="kind k2">
+      <span class="chip">URL</span>
+      <h3>URL state</h3>
+      <span class="owner">searchParams / route params</span>
+      <span class="ex">category filter · page · search query · product id</span>
+      <span class="never">mirror in a store</span>
+    </div>
+    <div class="kind k3">
+      <span class="chip">FORM</span>
+      <h3>Form state</h3>
+      <span class="owner">React Hook Form + Zod</span>
+      <span class="ex">address · login/register · quantity stepper</span>
+      <span class="never">control inputs via Zustand</span>
+    </div>
+    <div class="kind k4">
+      <span class="chip">CLIENT/UI</span>
+      <h3>Client state</h3>
+      <span class="owner">Zustand (shared) · useState (local)</span>
+      <span class="ex">cart drawer · toasts · mobile nav</span>
+      <span class="never">put fetched data here</span>
+    </div>
+    <div class="kind k5">
+      <span class="chip">SESSION</span>
+      <h3>Session state</h3>
+      <span class="owner">httpOnly JWT cookie + useMe()</span>
+      <span class="ex">"who am I" · logged-in header</span>
+      <span class="never">JWT in localStorage/store</span>
+    </div>
+  </div>
+
+  <div class="decide">
+    <div class="q k1"><span class="qq">Does it come from the API?</span><span class="ans">→ TanStack Query</span></div>
+    <div class="arrow">no ↓</div>
+    <div class="q k2"><span class="qq">Should a shared / reloaded URL keep it?</span><span class="ans">→ searchParams</span></div>
+    <div class="arrow">no ↓</div>
+    <div class="q k3"><span class="qq">Is it a form the user is filling in?</span><span class="ans">→ RHF + Zod</span></div>
+    <div class="arrow">no ↓</div>
+    <div class="q k4"><span class="qq">Needed by more than one distant component?</span><span class="ans">→ Zustand slice</span></div>
+    <div class="arrow">no ↓</div>
+    <div class="q"><span class="qq">Otherwise it's local</span><span class="ans">→ useState</span></div>
+  </div>
+  <div class="callout"><b>Zustand is the last resort,</b> not the default. Expected v1 store surface:
+  one <code>ui</code> slice (drawer, nav, toasts). The cart badge count reads the <code>['cart']</code> query — never a store.</div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>Data flow — one straight line</h2>
+  <p class="note">Components import hooks; hooks call typed endpoint functions; every request goes through
+  the single client. No fetch in components, no inline query keys, ever.</p>
+  <div class="flow">
+    <div class="pair">
+      <div class="box"><b>Route (RSC)</b><small>prefetchQuery → HydrationBoundary — warm cache, SEO paint</small></div>
+      <div class="box"><b>Client component</b><small>useQuery / useMutation only</small></div>
+    </div>
+    <div class="down">↓</div>
+    <div class="box"><b>queries/&lt;domain&gt;.ts</b><small>hooks + invalidation maps · keys from <b>queries/keys.ts</b></small></div>
+    <div class="down">↓</div>
+    <div class="box"><b>lib/api/&lt;domain&gt;.ts</b><small>plain typed async functions — no React</small></div>
+    <div class="down">↓</div>
+    <div class="box hot"><b>lib/api/client.ts</b><small>THE one client · credentials: include · error envelope → typed ApiError {status, code, message, details}</small></div>
+    <div class="down">↓</div>
+    <div class="box"><b>Go API</b><small>Gin · error envelope from PLAN.md</small></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Cache &amp; invalidation policy</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Query</th><th>staleTime</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td><code>['products', {page, category, q}]</code></td><td><span class="stale">60 s</span></td><td><code>keepPreviousData</code> — no grid flash on page/filter change</td></tr>
+      <tr><td><code>['product', id]</code></td><td><span class="stale">60 s</span></td><td>prefetched on card hover for instant navigation</td></tr>
+      <tr><td><code>['categories']</code></td><td><span class="stale">5 min</span></td><td>near-static</td></tr>
+      <tr><td><code>['cart']</code></td><td><span class="stale">0</span></td><td>always fresh; refetch on window focus</td></tr>
+      <tr><td><code>['orders']</code> / <code>['orders', id]</code></td><td><span class="stale">30 s</span></td><td>—</td></tr>
+      <tr><td><code>['me']</code></td><td><span class="stale">5 min</span></td><td>401 ⇒ null = guest, not an error</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="tablewrap" style="margin-top:12px">
+  <table>
+    <thead><tr><th>Mutation</th><th>Invalidates</th><th>Extra</th></tr></thead>
+    <tbody>
+      <tr><td>add / update / remove cart line</td><td><code>['cart']</code></td><td>optimistic + rollback (§04)</td></tr>
+      <tr><td>place order</td><td><code>['cart']</code> · <code>['orders']</code></td><td>redirect to confirmation</td></tr>
+      <tr><td>cancel order</td><td><code>['orders']</code> · <code>['orders', id]</code> · product detail</td><td>stock restored server-side</td></tr>
+      <tr><td>login / register</td><td><code>['cart']</code> (merge) · <code>['me']</code> · <code>['orders']</code></td><td>guest-cart merge, rule 5</td></tr>
+      <tr><td>logout</td><td><code>queryClient.clear()</code></td><td>drop everything user-scoped</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>Loading &amp; error — three tiers, never stacked spinners</h2>
+  <div class="tiers">
+    <div class="tier">
+      <span class="tag">TIER 1 · ROUTE</span>
+      <h3>loading.tsx / error.tsx</h3>
+      <p>Every segment ships both. Skeleton mirrors the real layout (grid skeleton for
+      <code>/products</code>, detail skeleton for <code>/products/[id]</code>). Never a centered global spinner.
+      <code>error.tsx</code> offers retry via <code>reset()</code>.</p>
+    </div>
+    <div class="tier">
+      <span class="tag">TIER 2 · QUERY</span>
+      <h3>Component states</h3>
+      <ul>
+        <li><b>isPending</b> (no data yet) → in-place skeleton</li>
+        <li><b>isFetching</b> (has data) → keep old data visible, subtle hint, no layout jump</li>
+        <li><b>empty result</b> → dedicated empty state + clear-filter action</li>
+        <li><b>error</b> → inline message + Retry (<code>refetch()</code>), shell stays alive</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <span class="tag">TIER 3 · MUTATION</span>
+      <h3>Inline pending</h3>
+      <ul>
+        <li>firing button: disabled + spinner, label kept ("Adding…")</li>
+        <li>failure → toast with envelope <code>message</code></li>
+        <li>field errors: envelope <code>details[]</code> → RHF <code>setError</code> — same UI as Zod errors</li>
+        <li>branch on <code>ApiError.code</code>, never message text</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><b>Optimistic updates: cart only.</b> <code>onMutate</code> snapshots →
+  apply locally → <code>onError</code> rollback + toast → <code>onSettled</code> invalidate.
+  Checkout and orders are always pessimistic — stock decrement is atomic on the server (rule 3).
+  Retry: queries 2× (never on 4xx) · mutations 0×.</div>
+</section>
+
+<section>
+  <h2><span class="num">05</span>Folder layout</h2>
+  <pre class="tree">fe/src/
+  app/                        <span class="c"># each segment: page.tsx + loading.tsx + error.tsx</span>
+  lib/
+    api/<span class="hot">client.ts</span>            <span class="c"># THE one fetch wrapper + ApiError</span>
+    api/{catalog,cart,orders,auth}.ts
+    validation/{checkout,auth}.ts   <span class="c"># Zod schemas — types via z.infer</span>
+    constants.ts              <span class="c"># storage keys, event names (one file, PLAN.md rule)</span>
+  queries/
+    <span class="hot">keys.ts</span>                   <span class="c"># query-key factory — single source</span>
+    {catalog,cart,orders,auth}.ts   <span class="c"># useX hooks + invalidation maps</span>
+  stores/
+    ui.store.ts               <span class="c"># drawer, nav, toasts — the ONLY expected v1 store</span>
+  components/
+    ui/                       <span class="c"># Skeleton, Spinner, Toast, EmptyState, Button</span>
+    {catalog,cart,checkout,orders}/ <span class="c"># domain components (client leaves)</span>
+  providers.tsx               <span class="c"># QueryClientProvider + defaults + Toaster</span></pre>
+</section>
+
+<section>
+  <h2><span class="num">06</span>Hard FE rules — violations are bugs</h2>
+  <ol class="rules">
+    <li>Server data is read only via a hook in <code>queries/</code> — no fetch in components, no API data in Zustand.</li>
+    <li>Filter / page / search live in the URL — back button and shared links reproduce the exact view.</li>
+    <li>Every route segment ships <code>loading.tsx</code> + <code>error.tsx</code> with layout-shaped skeletons.</li>
+    <li>Optimistic updates for cart mutations only; checkout/orders always pessimistic.</li>
+    <li>Branch on <code>ApiError.code</code>, never on message text.</li>
+    <li>Query keys come from <code>queries/keys.ts</code> only.</li>
+    <li>A new Zustand slice requires a note in <code>FE_STATE.md</code> first (expected v1: <code>ui</code> only).</li>
+  </ol>
+</section>
+
+<footer>
+  Snapshot, not a source of truth — on any conflict <code>harness/FE_STATE.md</code> and
+  <code>PLAN.md</code> win. Server/client split: RSC prefetch + HydrationBoundary for catalog SEO;
+  <code>'use client'</code> pushed to the leaves (buttons, forms, badge) — a page is never wholly client.
+</footer>
+
+</div>

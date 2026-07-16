@@ -8,13 +8,34 @@
 
 ## Current resume point
 
-- **Status:** ✅ Session 0 done — all foundation decisions taken, phases broken into tasks.
-- **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`.
+- **Status:** ✅ F-5 done — FE state & loading design documented. F-6 (component/alignment
+  architecture doc) registered 🔄 by owner, not started by agent.
+- **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`. F-6 also open.
 - **Open decisions:** none blocking. Deferred (not open): payment gateway, Admin, AI assistant.
 
 ---
 
 ## Checkpoint log
+
+### 2026-07-17 — Session 1 (F-5): FE state & loading design
+- Done: F-5 ✅ — `harness/FE_STATE.md` (5 state kinds w/ owners, one-client data flow,
+  query-key factory, cache/invalidation map, 3-tier loading/error policy, optimistic =
+  cart-only, RSC prefetch+hydration for SEO, FE folder layout, 7 hard FE rules) +
+  `harness/diagrams/fe-state-loading.html` (receipt in VERIFICATION.md).
+- Decisions: JWT in httpOnly cookie (never JS-readable) · URL owns filter/page/search ·
+  Zustand = `ui` slice only in v1 · errors branch on `ApiError.code`.
+- Drift fixed / found: none. Owner added F-6 row (🔄) mid-session — untouched.
+- Next: F-2 (dev stack skeleton); F-6 when owner kicks it off.
+
+### 2026-07-17 — Session 0d: per-task visual plan pages
+- Done: `harness/diagrams/task-F-2.html` published — full visual F-2 plan
+  (architecture SVG, file tree, service table, startup order, hot reload, git flow,
+  receipt checklist); linked from build-plan.html §R.
+- Decisions: owner rule — every next task gets its own detailed HTML plan page at
+  `harness/diagrams/task-<id>.html` before implementation; written into the
+  CLAUDE.md loop's REPORT step.
+- Drift fixed / found: none.
+- Next: unchanged — F-2 (dev stack skeleton), build exactly per task-F-2.html.
 
 ### 2026-07-16 — Session 0c: remote + git autonomy
 - Done: repo pushed to GitHub — `origin` = github.com/banhcuonbathanh/n-ecom,
