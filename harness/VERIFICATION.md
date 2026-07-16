@@ -32,6 +32,21 @@
 
 -->
 
+### F-6 — Component & alignment architecture doc · 2026-07-17
+**AC:** Doc covers component inventory + responsibilities, layer contracts, FE↔BE and Redis interaction, alignment-enforcement gates; HTML diagram renders
+**Receipt:**
+```
+$ grep -c '^## ' harness/ARCHITECTURE.md && grep -n '<title>' harness/diagrams/architecture.html \
+    && wc -l harness/ARCHITECTURE.md harness/diagrams/architecture.html
+6                                   # sections: runtime components, BE layers/domains/platform,
+1:<title>Ecom Core — Components & Alignment</title>   # FE↔BE contract, Redis policy,
+     117 harness/ARCHITECTURE.md                       # alignment gates, diagrams
+     283 harness/diagrams/architecture.html
+```
+HTML renders — published live copy (private):
+https://claude.ai/code/artifact/1e7d1660-696b-47af-ac13-da5896b51447
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-5 — FE state & loading architecture doc · 2026-07-17
 **AC:** Doc covers 4 state kinds, loading/error policy, cache map, folder layout; HTML diagram renders
 **Receipt:**

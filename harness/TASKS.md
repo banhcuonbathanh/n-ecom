@@ -16,7 +16,7 @@
 | F-3 | DB + migration tooling + first migration | F-2 | migrate up/down clean; schema doc started | ⬜ | |
 | F-4 | Error contract + API client + CI (build+test on push) | F-2 | one endpoint returns the envelope; CI green | ⬜ | |
 | F-5 | FE state & loading architecture doc (`harness/FE_STATE.md` + diagram) | F-1 | Doc covers 4 state kinds, loading/error policy, cache map, folder layout; HTML diagram renders | ✅ | VERIFICATION.md 2026-07-17 |
-| F-6 | Component & alignment architecture doc (`harness/ARCHITECTURE.md` + `harness/diagrams/architecture.html`) | F-1 | Doc covers component inventory + responsibilities, layer contracts, FE↔BE and Redis interaction, alignment-enforcement gates; HTML diagram renders | 🔄 | |
+| F-6 | Component & alignment architecture doc (`harness/ARCHITECTURE.md` + `harness/diagrams/architecture.html`) | F-1 | Doc covers component inventory + responsibilities, layer contracts, FE↔BE and Redis interaction, alignment-enforcement gates; HTML diagram renders | ✅ | VERIFICATION.md 2026-07-17 |
 
 ## Phase 1 — Catalog
 

@@ -71,7 +71,8 @@ A lower layer importing a higher one, or a skip (handler→repository), is a bug
   the same task's scope contract — that is the FE/BE sync mechanism.
 - **State handling** (cache keys, loading/error policy, stores) is owned by
   `FE_STATE.md` — read that, not this file, for FE-internal structure.
-- **Auth:** JWT from A-1; attachment/storage decided in A-2's scope contract.
+- **Auth:** JWT from A-1, carried in an httpOnly cookie — never JS-readable
+  (decided F-5, see `FE_STATE.md` + STATE.md 2026-07-17).
 
 ## 4. Redis policy 💡 *proposal — owner may adjust before C-2 starts*
 

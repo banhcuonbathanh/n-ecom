@@ -8,14 +8,27 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-5 done — FE state & loading design documented. F-6 (component/alignment
-  architecture doc) registered 🔄 by owner, not started by agent.
-- **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`. F-6 also open.
-- **Open decisions:** none blocking. Deferred (not open): payment gateway, Admin, AI assistant.
+- **Status:** ✅ F-6 done — components & alignment blueprint documented (ARCHITECTURE.md
+  + diagrams/architecture.html).
+- **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`.
+- **Open decisions:** Redis policy is a 💡 proposal (ARCHITECTURE.md §4) — silence =
+  accepted, locks in when C-2 starts. Deferred (not open): payment gateway, Admin, AI.
 
 ---
 
 ## Checkpoint log
+
+### 2026-07-17 — Session 2 (F-6): components & alignment blueprint
+- Done: F-6 ✅ — `harness/ARCHITECTURE.md` (5 containers, 4 layers × 5 domains +
+  5 platform pkgs, FE↔BE contract, Redis policy proposal, 8 alignment gates +
+  SELF-REVIEW checklist) + `harness/diagrams/architecture.html` (receipt in
+  VERIFICATION.md; live copy linked in PLAN.md §Diagrams).
+- Decisions: 💡 Redis = catalog cache + auth rate-limit only, always wipeable,
+  only `platform/cache` imports the client — owner may veto before C-2.
+- Drift fixed / found: ARCHITECTURE.md auth line aligned to F-5's httpOnly-cookie
+  decision; committed Session 0d leftovers (CLAUDE.md REPORT rule, task-F-2.html)
+  found dangling in the working tree.
+- Next: F-2 (dev stack skeleton), per task-F-2.html.
 
 ### 2026-07-17 — Session 1 (F-5): FE state & loading design
 - Done: F-5 ✅ — `harness/FE_STATE.md` (5 state kinds w/ owners, one-client data flow,
