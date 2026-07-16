@@ -40,6 +40,7 @@ READ → PLAN → ALIGN → IMPLEMENT → SELF-REVIEW → VERIFY → CHECKPOINT
 - **SELF-REVIEW** — spec followed? regressions? matches the AC?
 - **VERIFY** — produce a receipt (build/test/curl/screenshot) → log in `harness/VERIFICATION.md`
 - **CHECKPOINT** — update `harness/STATE.md` + task status in `harness/TASKS.md`
+  + refresh `harness/diagrams/build-plan.html` (owner's main dashboard: chips, data-* task attrs, findings)
 
 **Task not in `harness/TASKS.md`? Register it first** (use `templates/TASK_TEMPLATE.md`),
 confirm the row with the owner, then start. Size every task to finish in one session
@@ -74,7 +75,7 @@ confirm the row with the owner, then start. Size every task to finish in one ses
 | `harness/STATE.md` | 6 Durable State | Session start + before session end |
 | `harness/TASKS.md` | 7 Orchestration | Session start; after every task |
 | `harness/PROMPTS.md` | 7 Orchestration | Owner: to kick off the next session |
-| `harness/SUBAGENTS.md` | 8 Sub-agents | Task is big/separable — check before doing it inline |
+| `harness/SUBAGENTS.md` | 8 Sub-agents | Task is big/separable — standing auto-delegation rules live there (long session ≠ reason to spawn) |
 | `harness/SKILLS.md` | 9 Skills & Procedures | Recurring job — check for a playbook first |
 | `harness/VERIFICATION.md` | 10 Verification | End of EVERY task |
 
