@@ -13,8 +13,8 @@
 
 | Layer | Choice | Notes |
 |---|---|---|
-| Backend | Go 1.25 + Gin + sqlc + MySQL 8 + Redis | Restaurant-project baseline; reuse its patterns |
-| Frontend | Next.js App Router + TS strict + Tailwind + Zustand + TanStack Query + RHF/Zod | SSR for catalog SEO |
+| Backend | Go 1.26 + Gin + sqlc + MySQL 9.7 LTS + Redis 8 | Restaurant-project baseline; versions bumped to verified-latest 2026-07-17 (was Go 1.25 / MySQL 8) |
+| Frontend | Next.js 16 App Router + TS strict + Tailwind 4 + Zustand 5 + TanStack Query 5 + RHF 7/Zod 4 | SSR for catalog SEO; majors verified latest 2026-07-17 — F-2 pins exact versions |
 | Infra | Docker Compose + Caddy + GitHub Actions | CI = build + test on push (F-4) |
 | Payments | ⏸ DEFERRED — no gateway in v1 | Orders are COD/manual-confirmation; revisit when Payment phase opens |
 | AI features | ⏸ DEFERRED — AI assistant not in v1 | When added: Anthropic API, model via env, key BE-only |

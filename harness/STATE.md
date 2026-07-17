@@ -21,6 +21,15 @@
 
 ## Checkpoint log
 
+### 2026-07-17 — Stack versions bumped to verified-latest (pre-F-2)
+- Done: PLAN.md §Stack updated after live version check — Go 1.25→1.26,
+  MySQL 8→9.7 LTS, Redis→8; FE majors pinned (Next 16, Tailwind 4, Zustand 5,
+  TanStack Query 5, RHF 7 + Zod 4). F-5/F-6 design patterns confirmed current.
+- Decisions: F-2 pins exact versions in Dockerfiles/go.mod/package.json;
+  Zod must be v4 (+ matching @hookform/resolvers major), not v3.
+- Drift fixed / found: none (no code exists yet — doc-only bump).
+- Next: unchanged — F-2 (dev stack skeleton).
+
 ### 2026-07-17 — Session 3 (F-7): design system reference page
 - Done: F-7 ✅ — `harness/diagrams/design-system.html` (tokens: color/type/spacing/
   radius/shadow · button deep-dive: anatomy, 6 variants, 3 sizes + icon, 5-state
