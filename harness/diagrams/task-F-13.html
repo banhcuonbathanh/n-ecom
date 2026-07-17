@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-13 — DevOps operations doc · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  ul.check { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  ul.check li::before { content: "☐ "; font-family: var(--mono); color: var(--accent); }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · task plan · 2026-07-18</div>
+  <h1>F-13 — DevOps operations doc from <code>reference/docs/devops</code></h1>
+  <p class="lede">The owner pointed at the reference project's four DevOps docs — system guide,
+  Docker local-dev guide, deploy runbook, rollback plan — and asked to consider making one for
+  this project. The answer: one operational doc, <code>harness/DEVOPS.md</code>, adapted to our
+  decided stack, plus its visual companion.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip done">delivered</span></span></div>
+    <div class="fact"><span class="k">deps</span><span class="v">F-1 ✅ · F-9 ✅</span></div>
+    <div class="fact"><span class="k">type</span><span class="v">documentation</span></div>
+    <div class="fact"><span class="k">branch</span><span class="v">main (doc task, Hard Rule 3)</span></div>
+  </div>
+  <div class="golden">
+    <p><b>AC (TASKS.md):</b> doc covers DevOps file ownership, compose/Dockerfile/Caddy patterns
+    (our stack versions), CI/CD + image tagging, rollback procedures + severity/SLA, Stage A/B
+    go-live runbook, backups, pre-deploy checklist, hard rules; <b>zero facts duplicated from
+    ENVIRONMENT.md</b> (links instead); HTML renders.</p>
+  </div>
+  <div class="flag">
+    <p><b>⚠️ FLAG — parallel sessions.</b> While registering this task, two sibling sessions were
+    found mid-flight in TASKS.md (F-10 BE playbook · F-12 FE conventions). This task was renumbered
+    F-10 → F-13 to clear the ID collision. Edits to shared files (TASKS.md, build-plan.html,
+    CONTEXT_MAP.md, README.md) are kept additive so the sessions merge cleanly.</p>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>Where the new doc sits — one fact, one home</h2></div>
+  <p>Three docs already touch DevOps ground. <code>DEVOPS.md</code> takes the layer none of them own:
+  <em>how deployment actually operates</em>.</p>
+  <pre class="diagram">
+ reference/docs/devops (4 files, old stack)          ecom-core harness (after F-13)
+ ┌─────────────────────────────┐
+ │ DEVOPS_SYSTEM_GUIDE.md      │ adapt         OVERALL_PLAN.md §5   strategy: 2-stage go-live,
+ │ DOCKER_GUIDE.md             │ ────▶              │               10-service target, CI shape
+ │ DEPLOY_RUNBOOK.md           │  not               ▼
+ │ ROLLBACK_PLAN.md            │  copy    ┌── DEVOPS.md (NEW) ──────────────────────┐
+ └─────────────────────────────┘          │ operations: file ownership · image      │
+   old: MySQL 8 / Go 1.25 / Next 14       │ patterns · pipeline stages · tagging ·  │
+   ours: MySQL 9.7 / Go 1.26 / Next 16    │ rollback · runbooks · backups · checks  │
+   VNPay day-1 → deferred (COD v1)        └────────┬────────────────────────────────┘
+                                                   │ links to, never repeats
+                                                   ▼
+                                          ENVIRONMENT.md   dev commands · ports · env vars
+                                          diagrams/devops.html   visual mirror (MD wins)</pre>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Scope contract — exactly what changes</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>File</th><th>Change</th><th>Why</th></tr>
+    <tr><td><code>harness/DEVOPS.md</code></td><td>new</td><td>The deliverable — operational DevOps doc, single owner of pipeline/deploy/rollback/backup facts.</td></tr>
+    <tr><td><code>harness/diagrams/devops.html</code></td><td>new</td><td>Visual companion (stack topology, pipeline flow, rollback decision tree). MD wins on conflict.</td></tr>
+    <tr><td><code>harness/diagrams/task-F-13.html</code></td><td>new</td><td>This page — owner rule 2026-07-17.</td></tr>
+    <tr><td><code>harness/diagrams/build-plan.html</code></td><td>§R entry</td><td>Report to the boss (REPORT step).</td></tr>
+    <tr><td><code>harness/CONTEXT_MAP.md</code> · <code>harness/README.md</code></td><td>rows</td><td>Hard Rule 6 — doc inventory + index for the three new files; route Infra/DevOps tasks to DEVOPS.md.</td></tr>
+    <tr><td><code>harness/TASKS.md</code> · <code>STATE.md</code> · <code>VERIFICATION.md</code></td><td>rows</td><td>Loop bookkeeping: status, checkpoint, receipt.</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>DEVOPS.md outline — what it will own</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>§</th><th>Section</th><th>Adapted from</th><th>Key adaptations for our project</th></tr>
+    <tr><td>1</td><td>Truth boundaries + DevOps file ownership</td><td>SYSTEM_GUIDE §0</td><td>Ownership = task scope contracts, not team seats (one agent builds everything here).</td></tr>
+    <tr><td>2</td><td>Compose stack &amp; startup order</td><td>SYSTEM_GUIDE §2</td><td>5 dev services (F-2) → 10 with observability (OPS phase); healthcheck chain; Caddy sole public entry.</td></tr>
+    <tr><td>3</td><td>Image patterns</td><td>SYSTEM_GUIDE §3</td><td>Go <b>1.26</b> distroless multi-stage · Next <b>16</b> standalone on Node 22 · MySQL <b>9.7</b> · Redis <b>8</b> (plain, not redis-stack — F-6 cache-only policy).</td></tr>
+    <tr><td>4</td><td>Caddyfile (dev + prod)</td><td>SYSTEM_GUIDE §6</td><td>Route table matches OVERALL_PLAN §5; ACME_EMAIL never-empty rule inherited.</td></tr>
+    <tr><td>5</td><td>CI/CD pipeline + image tagging</td><td>SYSTEM_GUIDE §7 + ROLLBACK §2</td><td>FE build/test included from day 1 (old CI was BE-only); SHA + semver tags to GHCR under <code>banhcuonbathanh/n-ecom</code>; keep two prod tags.</td></tr>
+    <tr><td>6</td><td>Rollback procedures</td><td>ROLLBACK §3–6</td><td>Decision tree, code-only vs with-migration paths, post-rollback checklist; migration tool row stays ⬜ until F-3 decides.</td></tr>
+    <tr><td>7</td><td>Two-stage go-live runbook</td><td>DEPLOY_RUNBOOK</td><td>Stage A Mac LAN → Stage B VPS; the six hard-won gotchas become numbered rules; no payment webhooks in v1 (COD).</td></tr>
+    <tr><td>8</td><td>Backups &amp; monitoring ops</td><td>DEPLOY §B4</td><td>Nightly mysqldump cron, 14-day retention; Grafana via SSH tunnel only.</td></tr>
+    <tr><td>9</td><td>Severity / SLA + incident template</td><td>ROLLBACK §1, §7</td><td>Trimmed to a one-owner shop: P0/P1/P2 with realistic response targets.</td></tr>
+    <tr><td>10</td><td>Pre-deploy checklist + hard rules</td><td>ROLLBACK §9 + gotchas</td><td>The gate CI and the agent run before every prod deploy.</td></tr>
+  </table></div>
+  <p style="margin-top:14px"><b>Deliberately NOT in the doc:</b> dev commands, ports, env-var
+  tables (ENVIRONMENT.md owns those — the doc links); DevOps strategy rationale (OVERALL_PLAN §5);
+  local-dev troubleshooting beyond deploy concerns (lands in ENVIRONMENT.md when F-2 makes the
+  stack real).</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Build steps</h2></div>
+  <ol class="steps">
+    <li>Checkpoint commit + register F-13 (done — renumbered from F-10 after the ID collision).</li>
+    <li>Publish this plan page + build-plan.html §R report, then proceed (no 🚨/🔴 flags).</li>
+    <li>Write <code>harness/DEVOPS.md</code> per the outline above.</li>
+    <li>Write <code>harness/diagrams/devops.html</code> — topology, pipeline, rollback tree.</li>
+    <li>Hard Rule 6: CONTEXT_MAP inventory + routing row, README index rows.</li>
+    <li>SELF-REVIEW against the AC, esp. the zero-duplication clause.</li>
+    <li>VERIFY: both HTML pages render (light + dark), MD link-check → receipt in VERIFICATION.md.</li>
+    <li>CHECKPOINT: TASKS.md ✅, STATE.md entry, build-plan.html chip, push main.</li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Decisions taken (defaults — say so if you want different)</h2></div>
+  <ul class="plain">
+    <li><b>One doc, not four.</b> The reference splits guide/docker/deploy/rollback across files for
+    a multi-person team; our harness is agent-operated — one <code>DEVOPS.md</code> with strong sections
+    beats four files that drift.</li>
+    <li><b>Ops facts move in now, even though no code exists.</b> Like FE_STATE/BE_STATE, this is a
+    design-ahead doc: F-2/F-4/OPS tasks build <em>against</em> it instead of re-deriving it.</li>
+    <li><b>Reference gotchas inherited as hard rules</b>, not anecdotes — same treatment F-9 gave the
+    lessons register.</li>
+    <li><b>Registry = GHCR under the existing repo</b> (<code>ghcr.io/banhcuonbathanh/n-ecom-*</code>) —
+    no new infrastructure decision needed.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Receipt checklist (→ VERIFICATION.md)</h2></div>
+  <ul class="check">
+    <li><code>DEVOPS.md</code> covers every AC bullet (section map above, §1–§10).</li>
+    <li>Grep proves no command/port/env-var table duplicated from ENVIRONMENT.md.</li>
+    <li><code>devops.html</code> + <code>task-F-13.html</code> open and render in light and dark.</li>
+    <li>CONTEXT_MAP + README rows added in the same change (Hard Rule 6).</li>
+    <li>TASKS.md F-13 ✅ with receipt link · STATE.md checkpoint · pushed to main.</li>
+  </ul>
+</section>
+
+<footer>F-13 plan page · generated 2026-07-18 · source of truth: TASKS.md row F-13 + harness/DEVOPS.md once delivered.</footer>
+</div>
+</body>
+</html>

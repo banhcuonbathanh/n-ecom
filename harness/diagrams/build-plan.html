@@ -309,6 +309,36 @@
 
     <details class="report" open>
       <summary>
+        <span class="r-date">2026-07-18</span>
+        <span class="r-title">F-13 — DevOps operations doc from reference/docs/devops · delivered</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> "take a look at <code style="font-family:var(--mono);font-size:0.85em">reference/docs/devops</code> and consider making one for our project." Delivered: <code style="font-family:var(--mono);font-size:0.85em">harness/DEVOPS.md</code> (source of truth) · <a href="devops.html">devops.html</a> (visual) · plan page <a href="task-F-13.html">task-F-13.html</a>.</p>
+        <p><b>TL;DR:</b> the reference's four DevOps files (system guide · Docker guide · deploy runbook · rollback plan) collapse into one operational doc adapted to our decided stack — Go 1.26 distroless images, Next 16 standalone, MySQL 9.7, plain Redis 8, GHCR images under the <code style="font-family:var(--mono);font-size:0.85em">n-ecom</code> repo, no payment webhooks in v1 (COD). It owns what no harness doc owned yet: image build patterns, CI/CD pipeline stages + image tagging, rollback procedures with severity/SLA, the Stage A (Mac LAN) / Stage B (VPS) go-live runbook, backup policy, and the pre-deploy checklist. Commands, ports and env vars stay in ENVIRONMENT.md (linked, never repeated); DevOps strategy stays in OVERALL_PLAN §5.</p>
+        <h4>One flag for your awareness ⚠️</h4>
+        <p><b>Task-id collision with the two sibling sessions</b> (all three registered around "F-10" at once) — resolved by renumbering: BE playbook = F-11, FE conventions = F-12, this DevOps doc = F-13. All edits to shared harness files were kept additive. Nothing blocks on you — no 🚨/🔴 flags. Receipt in VERIFICATION.md.</p>
+      </div>
+    </details>
+
+    <details class="report" open>
+      <summary>
+        <span class="r-date">2026-07-18</span>
+        <span class="r-title">F-12 — FE code-convention rules from reference/docs/fe · plan</span>
+        <span class="chip next">in progress</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> "look at <code style="font-family:var(--mono);font-size:0.85em">reference/docs/fe</code> and consider making a rule or guideline." Gap analysis: the reference's behavioral lessons are already in OVERALL_PLAN §6 and state ownership in FE_STATE.md — what has no home is its <b>code-convention layer</b>. Full visual plan: <a href="task-F-12.html">task-F-12.html</a>.</p>
+        <p><b>TL;DR:</b> seven one-line hard rules join <code style="font-family:var(--mono);font-size:0.85em">FE_STATE.md §9</code> (rules 8–14): design tokens only, one <code style="font-family:var(--mono);font-size:0.85em">formatVND()</code> helper, FE types mirror BE field names byte-for-byte, derived state computed never stored, HTTP-method parity with BE routes, staff/admin screens use see-all endpoints, asset URLs built from env not stored. Plus one Tailwind-JIT rebuild gotcha in ENVIRONMENT.md. Deliberately <b>no new doc</b> — the rules land where every FE task already reads.</p>
+        <h4>Two flags for your eye ⚠️</h4>
+        <p><b>1 — Cart-pivot drift:</b> FE_STATE.md §1 still describes the pre-F-9 server-side cart; fixed with a dated supersession note (full rework waits for the T-phase cart task). <b>2 — Task-id collision:</b> three parallel sessions all registered "F-10"; resolved — this task took F-12, DevOps renumbered to F-13, BE playbook kept F-10. Nothing blocks on you.</p>
+      </div>
+    </details>
+
+    <details class="report">
+      <summary>
         <span class="r-date">2026-07-17</span>
         <span class="r-title">F-9 — Overall build plan from reference/08_pages · delivered</span>
         <span class="chip done">done</span>
