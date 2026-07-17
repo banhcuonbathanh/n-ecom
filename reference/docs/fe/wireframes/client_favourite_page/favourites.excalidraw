@@ -1,0 +1,950 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "scr1-lbl", "type": "text", "x": 15, "y": -28, "width": 220, "height": 20,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "Screen 1 — ❤ Yêu thích", "fontSize": 13, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "seed": 1001, "version": 1,
+      "versionNonce": 1001, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-nav-bg", "type": "rectangle", "x": 0, "y": 0, "width": 420, "height": 52,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1002, "version": 1, "versionNonce": 1002, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-nav-back", "type": "text", "x": 12, "y": 14, "width": 24, "height": 24,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "←", "fontSize": 18, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1003, "version": 1, "versionNonce": 1003, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-nav-title", "type": "text", "x": 44, "y": 14, "width": 160, "height": 24,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "❤ Yêu thích", "fontSize": 18, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1004, "version": 1, "versionNonce": 1004, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-nav-cart", "type": "text", "x": 384, "y": 14, "width": 28, "height": 24,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "🛒", "fontSize": 18, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1005, "version": 1, "versionNonce": 1005, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-meta", "type": "text", "x": 0, "y": 54, "width": 420, "height": 16,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "ZA sticky z-20 | ZB filter z-10 | ZC scroll | ZD footer",
+      "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1006, "version": 1, "versionNonce": 1006, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-zb-bg", "type": "rectangle", "x": 0, "y": 72, "width": 420, "height": 44,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "#f1f5f9",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1007, "version": 1, "versionNonce": 1007, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-tab-all-bg", "type": "rectangle", "x": 8, "y": 78, "width": 88, "height": 32,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#fff7ed",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1008, "version": 1, "versionNonce": 1008, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-tab-all-txt", "type": "text", "x": 8, "y": 86, "width": 88, "height": 18,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Tất cả (3)", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1009, "version": 1, "versionNonce": 1009, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-tab-mon-bg", "type": "rectangle", "x": 104, "y": 78, "width": 88, "height": 32,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1010, "version": 1, "versionNonce": 1010, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-tab-mon-txt", "type": "text", "x": 104, "y": 86, "width": 88, "height": 18,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Món lẻ (2)", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1011, "version": 1, "versionNonce": 1011, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-tab-combo-bg", "type": "rectangle", "x": 200, "y": 78, "width": 80, "height": 32,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1012, "version": 1, "versionNonce": 1012, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-tab-combo-txt", "type": "text", "x": 200, "y": 86, "width": 80, "height": 18,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Combo (1)", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1013, "version": 1, "versionNonce": 1013, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-zc-bg", "type": "rectangle", "x": 0, "y": 118, "width": 420, "height": 504,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#f8fafc",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1014, "version": 1, "versionNonce": 1014, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-bg", "type": "rectangle", "x": 8, "y": 126, "width": 404, "height": 192,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1015, "version": 1, "versionNonce": 1015, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-img", "type": "rectangle", "x": 16, "y": 134, "width": 80, "height": 80,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#e2e8f0",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 1, "opacity": 100,
+      "seed": 1016, "version": 1, "versionNonce": 1016, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-badge", "type": "text", "x": 16, "y": 134, "width": 50, "height": 16,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "COMBO", "fontSize": 10, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1017, "version": 1, "versionNonce": 1017, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-name", "type": "text", "x": 106, "y": 136, "width": 240, "height": 20,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Combo Gia Đình", "fontSize": 14, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1018, "version": 1, "versionNonce": 1018, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-price", "type": "text", "x": 106, "y": 158, "width": 120, "height": 18,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "180,000₫", "fontSize": 13, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1019, "version": 1, "versionNonce": 1019, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-hrt-bg", "type": "rectangle", "x": 364, "y": 130, "width": 36, "height": 36,
+      "angle": 0, "strokeColor": "#fca5a5", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1020, "version": 1, "versionNonce": 1020, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-hrt", "type": "text", "x": 372, "y": 138, "width": 20, "height": 20,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "♥", "fontSize": 16, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1021, "version": 1, "versionNonce": 1021, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-div1", "type": "line", "x": 106, "y": 222, "width": 294, "height": 0,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "points": [[0, 0], [294, 0]],
+      "seed": 1022, "version": 1, "versionNonce": 1022, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-d1", "type": "text", "x": 106, "y": 228, "width": 290, "height": 16,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "• Bánh Cuốn Nhân Thịt × 2 ............ 130k", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1023, "version": 1, "versionNonce": 1023, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-d2", "type": "text", "x": 106, "y": 246, "width": 290, "height": 16,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "• Chả Lụa × 1 ............................... 50k", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1024, "version": 1, "versionNonce": 1024, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-t1", "type": "text", "x": 106, "y": 264, "width": 290, "height": 16,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "+ Hành phi (topping) ...................... 5k", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1025, "version": 1, "versionNonce": 1025, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-div2", "type": "line", "x": 106, "y": 282, "width": 294, "height": 0,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "points": [[0, 0], [294, 0]],
+      "seed": 1026, "version": 1, "versionNonce": 1026, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-mbg", "type": "rectangle", "x": 106, "y": 288, "width": 32, "height": 28,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#f1f5f9",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1027, "version": 1, "versionNonce": 1027, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-m", "type": "text", "x": 114, "y": 294, "width": 16, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "−", "fontSize": 15, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1028, "version": 1, "versionNonce": 1028, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-q", "type": "text", "x": 148, "y": 294, "width": 24, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "1", "fontSize": 14, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1029, "version": 1, "versionNonce": 1029, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-pbg", "type": "rectangle", "x": 180, "y": 288, "width": 32, "height": 28,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1030, "version": 1, "versionNonce": 1030, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c1-p", "type": "text", "x": 188, "y": 294, "width": 16, "height": 18,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "+", "fontSize": 15, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1031, "version": 1, "versionNonce": 1031, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-bg", "type": "rectangle", "x": 8, "y": 326, "width": 404, "height": 176,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1032, "version": 1, "versionNonce": 1032, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-img", "type": "rectangle", "x": 16, "y": 334, "width": 80, "height": 64,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#e2e8f0",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 1, "opacity": 100,
+      "seed": 1033, "version": 1, "versionNonce": 1033, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-badge", "type": "text", "x": 16, "y": 334, "width": 50, "height": 16,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "#64748b",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "MÓN LẺ", "fontSize": 10, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1034, "version": 1, "versionNonce": 1034, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-name", "type": "text", "x": 106, "y": 336, "width": 240, "height": 20,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Bánh Cuốn Nhân Thịt", "fontSize": 14, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1035, "version": 1, "versionNonce": 1035, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-price", "type": "text", "x": 106, "y": 358, "width": 140, "height": 18,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "65,000₫/phần", "fontSize": 13, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1036, "version": 1, "versionNonce": 1036, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-hrt-bg", "type": "rectangle", "x": 364, "y": 330, "width": 36, "height": 36,
+      "angle": 0, "strokeColor": "#fca5a5", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1037, "version": 1, "versionNonce": 1037, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-hrt", "type": "text", "x": 372, "y": 338, "width": 20, "height": 20,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "♥", "fontSize": 16, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1038, "version": 1, "versionNonce": 1038, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-div1", "type": "line", "x": 8, "y": 404, "width": 404, "height": 0,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "points": [[0, 0], [404, 0]],
+      "seed": 1039, "version": 1, "versionNonce": 1039, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-t1", "type": "text", "x": 16, "y": 410, "width": 290, "height": 16,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "+ Hành phi ................................ 5,000₫", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1040, "version": 1, "versionNonce": 1040, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-t2", "type": "text", "x": 16, "y": 428, "width": 290, "height": 16,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "+ Trứng chiên ........................ 10,000₫", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1041, "version": 1, "versionNonce": 1041, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-sub", "type": "text", "x": 230, "y": 448, "width": 170, "height": 16,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "Tổng/phần: 80,000₫", "fontSize": 11, "fontFamily": 2, "textAlign": "right", "verticalAlign": "top",
+      "seed": 1042, "version": 1, "versionNonce": 1042, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-mbg", "type": "rectangle", "x": 16, "y": 468, "width": 32, "height": 28,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#f1f5f9",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1043, "version": 1, "versionNonce": 1043, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-m", "type": "text", "x": 24, "y": 474, "width": 16, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "−", "fontSize": 15, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1044, "version": 1, "versionNonce": 1044, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-q", "type": "text", "x": 58, "y": 474, "width": 24, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "2", "fontSize": 14, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1045, "version": 1, "versionNonce": 1045, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-pbg", "type": "rectangle", "x": 90, "y": 468, "width": 32, "height": 28,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1046, "version": 1, "versionNonce": 1046, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c2-p", "type": "text", "x": 98, "y": 474, "width": 16, "height": 18,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "+", "fontSize": 15, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1047, "version": 1, "versionNonce": 1047, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-bg", "type": "rectangle", "x": 8, "y": 510, "width": 404, "height": 108,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1048, "version": 1, "versionNonce": 1048, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-img", "type": "rectangle", "x": 16, "y": 518, "width": 80, "height": 60,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#e2e8f0",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 1, "opacity": 100,
+      "seed": 1049, "version": 1, "versionNonce": 1049, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-badge", "type": "text", "x": 16, "y": 518, "width": 50, "height": 16,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "#64748b",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "MÓN LẺ", "fontSize": 10, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1050, "version": 1, "versionNonce": 1050, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-name", "type": "text", "x": 106, "y": 520, "width": 240, "height": 20,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Chả Lụa", "fontSize": 14, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1051, "version": 1, "versionNonce": 1051, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-price", "type": "text", "x": 106, "y": 540, "width": 140, "height": 18,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "50,000₫/phần", "fontSize": 13, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1052, "version": 1, "versionNonce": 1052, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-hrt-bg", "type": "rectangle", "x": 364, "y": 514, "width": 36, "height": 36,
+      "angle": 0, "strokeColor": "#fca5a5", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1053, "version": 1, "versionNonce": 1053, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-hrt", "type": "text", "x": 372, "y": 522, "width": 20, "height": 20,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "♥", "fontSize": 16, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1054, "version": 1, "versionNonce": 1054, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-notop", "type": "text", "x": 106, "y": 558, "width": 240, "height": 16,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "(không có topping)", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1055, "version": 1, "versionNonce": 1055, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-mbg", "type": "rectangle", "x": 16, "y": 578, "width": 32, "height": 28,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#f1f5f9",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1056, "version": 1, "versionNonce": 1056, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-m", "type": "text", "x": 24, "y": 584, "width": 16, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "−", "fontSize": 15, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1057, "version": 1, "versionNonce": 1057, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-q", "type": "text", "x": 58, "y": 584, "width": 24, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "1", "fontSize": 14, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1058, "version": 1, "versionNonce": 1058, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-pbg", "type": "rectangle", "x": 90, "y": 578, "width": 32, "height": 28,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1059, "version": 1, "versionNonce": 1059, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-c3-p", "type": "text", "x": 98, "y": 584, "width": 16, "height": 18,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "+", "fontSize": 15, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1060, "version": 1, "versionNonce": 1060, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-zd-bg", "type": "rectangle", "x": 0, "y": 626, "width": 420, "height": 138,
+      "angle": 0, "strokeColor": "#fed7aa", "backgroundColor": "#fff7ed",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1061, "version": 1, "versionNonce": 1061, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-link-sets", "type": "text", "x": 12, "y": 634, "width": 220, "height": 20,
+      "angle": 0, "strokeColor": "#2563eb", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "📋 Xem các set đã lưu (2) →", "fontSize": 13, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 1062, "version": 1, "versionNonce": 1062, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-btn-save-bg", "type": "rectangle", "x": 8, "y": 660, "width": 404, "height": 40,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1063, "version": 1, "versionNonce": 1063, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-btn-save-txt", "type": "text", "x": 8, "y": 671, "width": 404, "height": 20,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "💾 Lưu thành set mới...", "fontSize": 14, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1064, "version": 1, "versionNonce": 1064, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-btn-cart-bg", "type": "rectangle", "x": 8, "y": 708, "width": 404, "height": 48,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 1065, "version": 1, "versionNonce": 1065, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s1-btn-cart-txt", "type": "text", "x": 8, "y": 723, "width": 404, "height": 20,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "🛒 Thêm tất cả vào giỏ hàng", "fontSize": 14, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 1066, "version": 1, "versionNonce": 1066, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "scr2-lbl", "type": "text", "x": 515, "y": -28, "width": 280, "height": 20,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "Screen 2 — 💾 Lưu thành set mới", "fontSize": 13, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "seed": 2001, "version": 1,
+      "versionNonce": 2001, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-nav-bg", "type": "rectangle", "x": 500, "y": 0, "width": 420, "height": 52,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 2002, "version": 1, "versionNonce": 2002, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-nav-back", "type": "text", "x": 512, "y": 14, "width": 24, "height": 24,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "←", "fontSize": 18, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2003, "version": 1, "versionNonce": 2003, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-nav-title", "type": "text", "x": 544, "y": 14, "width": 280, "height": 24,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "💾 Lưu thành set mới", "fontSize": 18, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2004, "version": 1, "versionNonce": 2004, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-meta", "type": "text", "x": 500, "y": 54, "width": 420, "height": 16,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "route: (shop)/menu/favourites/save | data: favouritesStore", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top",
+      "seed": 2005, "version": 1, "versionNonce": 2005, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-zb-bg", "type": "rectangle", "x": 500, "y": 72, "width": 420, "height": 120,
+      "angle": 0, "strokeColor": "#fed7aa", "backgroundColor": "#fff7ed",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 2006, "version": 1, "versionNonce": 2006, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-zb-title", "type": "text", "x": 512, "y": 80, "width": 280, "height": 22,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Đặt tên cho set này:", "fontSize": 15, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2007, "version": 1, "versionNonce": 2007, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-input-bg", "type": "rectangle", "x": 508, "y": 108, "width": 396, "height": 40,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 2008, "version": 1, "versionNonce": 2008, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-input-ph", "type": "text", "x": 516, "y": 119, "width": 280, "height": 18,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "vd: Set cuối tuần, Bữa sáng...", "fontSize": 13, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2009, "version": 1, "versionNonce": 2009, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-zc-bg", "type": "rectangle", "x": 500, "y": 200, "width": 420, "height": 298,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#f8fafc",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 2010, "version": 1, "versionNonce": 2010, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-sum-hdr", "type": "text", "x": 512, "y": 208, "width": 120, "height": 20,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Tóm tắt:", "fontSize": 13, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2011, "version": 1, "versionNonce": 2011, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-i1-name", "type": "text", "x": 512, "y": 232, "width": 380, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "▸ Combo Gia Đình × 1  (180,000₫ combo)", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2012, "version": 1, "versionNonce": 2012, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-i1-d1", "type": "text", "x": 524, "y": 252, "width": 360, "height": 16,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "• Bánh Cuốn Nhân Thịt × 2 ........... 130k", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2013, "version": 1, "versionNonce": 2013, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-i1-d2", "type": "text", "x": 524, "y": 270, "width": 360, "height": 16,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "• Chả Lụa × 1 .............................. 50k", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2014, "version": 1, "versionNonce": 2014, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-i1-t1", "type": "text", "x": 524, "y": 288, "width": 360, "height": 16,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "+ Hành phi (topping) ...................... 5k", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2015, "version": 1, "versionNonce": 2015, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-sep1", "type": "line", "x": 512, "y": 310, "width": 380, "height": 0,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 0, "opacity": 100,
+      "points": [[0, 0], [380, 0]],
+      "seed": 2016, "version": 1, "versionNonce": 2016, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-i2-name", "type": "text", "x": 512, "y": 318, "width": 380, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "▸ Bánh Cuốn Nhân Thịt × 2  (65k/phần)", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2017, "version": 1, "versionNonce": 2017, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-i2-t1", "type": "text", "x": 524, "y": 338, "width": 360, "height": 16,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "+ Hành phi × 2 .......................... 10k", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2018, "version": 1, "versionNonce": 2018, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-i2-t2", "type": "text", "x": 524, "y": 356, "width": 360, "height": 16,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "+ Trứng chiên × 2 ...................... 20k", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2019, "version": 1, "versionNonce": 2019, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-sep2", "type": "line", "x": 512, "y": 378, "width": 380, "height": 0,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 0, "opacity": 100,
+      "points": [[0, 0], [380, 0]],
+      "seed": 2020, "version": 1, "versionNonce": 2020, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-i3-line", "type": "text", "x": 512, "y": 386, "width": 380, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "▸ Chả Lụa × 1  (50k — không có topping)", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 2021, "version": 1, "versionNonce": 2021, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-div-total", "type": "line", "x": 512, "y": 416, "width": 380, "height": 0,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "points": [[0, 0], [380, 0]],
+      "seed": 2022, "version": 1, "versionNonce": 2022, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-total", "type": "text", "x": 512, "y": 424, "width": 380, "height": 20,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Tổng: 265,000₫", "fontSize": 14, "fontFamily": 2, "textAlign": "right", "verticalAlign": "top",
+      "seed": 2023, "version": 1, "versionNonce": 2023, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-zd-bg", "type": "rectangle", "x": 500, "y": 506, "width": 420, "height": 64,
+      "angle": 0, "strokeColor": "#fed7aa", "backgroundColor": "#fff7ed",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 2024, "version": 1, "versionNonce": 2024, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-cxl-bg", "type": "rectangle", "x": 508, "y": 518, "width": 120, "height": 40,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 2025, "version": 1, "versionNonce": 2025, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-cxl-txt", "type": "text", "x": 508, "y": 529, "width": 120, "height": 18,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Huỷ", "fontSize": 14, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 2026, "version": 1, "versionNonce": 2026, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-save-bg", "type": "rectangle", "x": 636, "y": 518, "width": 276, "height": 40,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 2027, "version": 1, "versionNonce": 2027, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s2-save-txt", "type": "text", "x": 636, "y": 529, "width": 276, "height": 18,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "💾 Lưu set này", "fontSize": 14, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 2028, "version": 1, "versionNonce": 2028, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "scr3-lbl", "type": "text", "x": 1015, "y": -28, "width": 260, "height": 20,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "Screen 3 — 📋 Các set của tôi", "fontSize": 13, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "seed": 3001, "version": 1,
+      "versionNonce": 3001, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-nav-bg", "type": "rectangle", "x": 1000, "y": 0, "width": 420, "height": 52,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3002, "version": 1, "versionNonce": 3002, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-nav-back", "type": "text", "x": 1012, "y": 14, "width": 24, "height": 24,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "←", "fontSize": 18, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3003, "version": 1, "versionNonce": 3003, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-nav-title", "type": "text", "x": 1044, "y": 14, "width": 240, "height": 24,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "📋 Các set của tôi", "fontSize": 18, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3004, "version": 1, "versionNonce": 3004, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-nav-cart", "type": "text", "x": 1384, "y": 14, "width": 28, "height": 24,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "🛒", "fontSize": 18, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3005, "version": 1, "versionNonce": 3005, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-meta", "type": "text", "x": 1000, "y": 54, "width": 420, "height": 16,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "route: (shop)/menu/favourites/sets | data: favouritesStore.sets[]", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top",
+      "seed": 3006, "version": 1, "versionNonce": 3006, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-zb-bg", "type": "rectangle", "x": 1000, "y": 72, "width": 420, "height": 436,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#f8fafc",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3007, "version": 1, "versionNonce": 3007, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-bg", "type": "rectangle", "x": 1008, "y": 80, "width": 404, "height": 216,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3008, "version": 1, "versionNonce": 3008, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-icon", "type": "text", "x": 1016, "y": 88, "width": 32, "height": 32,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "📋", "fontSize": 22, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3009, "version": 1, "versionNonce": 3009, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-name", "type": "text", "x": 1048, "y": 90, "width": 260, "height": 22,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Set cuối tuần", "fontSize": 15, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3010, "version": 1, "versionNonce": 3010, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-div", "type": "line", "x": 1008, "y": 118, "width": 404, "height": 0,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "points": [[0, 0], [404, 0]],
+      "seed": 3011, "version": 1, "versionNonce": 3011, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-i1", "type": "text", "x": 1016, "y": 124, "width": 380, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "▸ Combo Gia Đình × 1  (180k)", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3012, "version": 1, "versionNonce": 3012, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-i1d", "type": "text", "x": 1028, "y": 144, "width": 360, "height": 16,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "• Bánh Cuốn Nhân Thịt × 2  •  Chả Lụa × 1", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3013, "version": 1, "versionNonce": 3013, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-i1t", "type": "text", "x": 1028, "y": 162, "width": 360, "height": 16,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "+ Hành phi", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3014, "version": 1, "versionNonce": 3014, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-i2", "type": "text", "x": 1016, "y": 182, "width": 380, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "▸ Bánh Cuốn Nhân Thịt × 2  (65k/phần)", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3015, "version": 1, "versionNonce": 3015, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-i2t", "type": "text", "x": 1028, "y": 202, "width": 360, "height": 16,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "+ Hành phi × 2  •  + Trứng chiên × 2", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3016, "version": 1, "versionNonce": 3016, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-i3", "type": "text", "x": 1016, "y": 222, "width": 380, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "▸ Chả Lụa × 1  (50k — không topping)", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3017, "version": 1, "versionNonce": 3017, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-meta", "type": "text", "x": 1016, "y": 244, "width": 200, "height": 18,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "3 món · 265,000₫", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3018, "version": 1, "versionNonce": 3018, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-apply-bg", "type": "rectangle", "x": 1008, "y": 264, "width": 148, "height": 28,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "#16a34a",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3019, "version": 1, "versionNonce": 3019, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-apply-txt", "type": "text", "x": 1008, "y": 270, "width": 148, "height": 18,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "🛒 Áp dụng", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 3020, "version": 1, "versionNonce": 3020, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-ren-bg", "type": "rectangle", "x": 1164, "y": 264, "width": 60, "height": 28,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#f1f5f9",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3021, "version": 1, "versionNonce": 3021, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-ren-txt", "type": "text", "x": 1164, "y": 270, "width": 60, "height": 18,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "✏", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 3022, "version": 1, "versionNonce": 3022, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-del-bg", "type": "rectangle", "x": 1232, "y": 264, "width": 60, "height": 28,
+      "angle": 0, "strokeColor": "#fca5a5", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3023, "version": 1, "versionNonce": 3023, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s1-del-txt", "type": "text", "x": 1232, "y": 270, "width": 60, "height": 18,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "🗑", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 3024, "version": 1, "versionNonce": 3024, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-bg", "type": "rectangle", "x": 1008, "y": 304, "width": 404, "height": 196,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3025, "version": 1, "versionNonce": 3025, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-icon", "type": "text", "x": 1016, "y": 312, "width": 32, "height": 32,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "📋", "fontSize": 22, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3026, "version": 1, "versionNonce": 3026, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-name", "type": "text", "x": 1048, "y": 314, "width": 260, "height": 22,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Bữa sáng nhẹ", "fontSize": 15, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3027, "version": 1, "versionNonce": 3027, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-div", "type": "line", "x": 1008, "y": 342, "width": 404, "height": 0,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "points": [[0, 0], [404, 0]],
+      "seed": 3028, "version": 1, "versionNonce": 3028, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-i1", "type": "text", "x": 1016, "y": 348, "width": 380, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "▸ Bánh Cuốn Nhân Thịt × 1  (65k/phần)", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3029, "version": 1, "versionNonce": 3029, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-i1t", "type": "text", "x": 1028, "y": 368, "width": 360, "height": 16,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "+ Trứng chiên", "fontSize": 11, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3030, "version": 1, "versionNonce": 3030, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-i2", "type": "text", "x": 1016, "y": 388, "width": 380, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "▸ Nước Dùng × 1  (10k — không topping)", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3031, "version": 1, "versionNonce": 3031, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-meta", "type": "text", "x": 1016, "y": 412, "width": 200, "height": 18,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "2 món · 75,000₫", "fontSize": 12, "fontFamily": 2, "textAlign": "left", "verticalAlign": "top",
+      "seed": 3032, "version": 1, "versionNonce": 3032, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-apply-bg", "type": "rectangle", "x": 1008, "y": 436, "width": 148, "height": 28,
+      "angle": 0, "strokeColor": "#16a34a", "backgroundColor": "#16a34a",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3033, "version": 1, "versionNonce": 3033, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-apply-txt", "type": "text", "x": 1008, "y": 442, "width": 148, "height": 18,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "🛒 Áp dụng", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 3034, "version": 1, "versionNonce": 3034, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-ren-bg", "type": "rectangle", "x": 1164, "y": 436, "width": 60, "height": 28,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#f1f5f9",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3035, "version": 1, "versionNonce": 3035, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-ren-txt", "type": "text", "x": 1164, "y": 442, "width": 60, "height": 18,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "✏", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 3036, "version": 1, "versionNonce": 3036, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-del-bg", "type": "rectangle", "x": 1232, "y": 436, "width": 60, "height": 28,
+      "angle": 0, "strokeColor": "#fca5a5", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3037, "version": 1, "versionNonce": 3037, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-s2-del-txt", "type": "text", "x": 1232, "y": 442, "width": 60, "height": 18,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "🗑", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 3038, "version": 1, "versionNonce": 3038, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-empty-bg", "type": "rectangle", "x": 1000, "y": 516, "width": 420, "height": 148,
+      "angle": 0, "strokeColor": "#c7d2fe", "backgroundColor": "#eef2ff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3039, "version": 1, "versionNonce": 3039, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-empty-lbl", "type": "text", "x": 1000, "y": 520, "width": 420, "height": 16,
+      "angle": 0, "strokeColor": "#6366f1", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "── ZC: empty state (khi chưa có set nào) ──", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "center", "verticalAlign": "top",
+      "seed": 3040, "version": 1, "versionNonce": 3040, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-empty-icon", "type": "text", "x": 1000, "y": 540, "width": 420, "height": 40,
+      "angle": 0, "strokeColor": "#a5b4fc", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "♡", "fontSize": 30, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 3041, "version": 1, "versionNonce": 3041, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-empty-title", "type": "text", "x": 1000, "y": 584, "width": 420, "height": 20,
+      "angle": 0, "strokeColor": "#6366f1", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "Chưa có set nào", "fontSize": 14, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 3042, "version": 1, "versionNonce": 3042, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-empty-hint", "type": "text", "x": 1000, "y": 606, "width": 420, "height": 16,
+      "angle": 0, "strokeColor": "#818cf8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "text": "Về Yêu thích → điều chỉnh số lượng → lưu set", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "center", "verticalAlign": "top",
+      "seed": 3043, "version": 1, "versionNonce": 3043, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-empty-back-bg", "type": "rectangle", "x": 1110, "y": 628, "width": 200, "height": 32,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "seed": 3044, "version": 1, "versionNonce": 3044, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    },
+    {
+      "id": "s3-empty-back-txt", "type": "text", "x": 1110, "y": 636, "width": 200, "height": 18,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "text": "← Về Yêu thích", "fontSize": 13, "fontFamily": 2, "textAlign": "center", "verticalAlign": "top",
+      "seed": 3045, "version": 1, "versionNonce": 3045, "isDeleted": false, "boundElements": null, "updated": 1, "link": null, "locked": false
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#f1f5f9",
+    "gridSize": null
+  },
+  "files": {}
+}

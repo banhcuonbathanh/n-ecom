@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;background:#05070c;}
+  button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;padding:0;}
+  ::-webkit-scrollbar{width:0;height:0;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
+  @keyframes slidein{from{transform:translateY(-8px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+</style>
+</helmet>
+<div style="width:390px;height:844px;margin:0 auto;background:#0b0f17;color:#e5e7eb;font-family:Inter,system-ui,sans-serif;position:relative;overflow:hidden;">
+  <div style="height:844px;overflow-y:auto;padding-bottom:88px;">
+
+    <div style="position:sticky;top:0;z-index:30;background:rgba(11,15,23,.92);backdrop-filter:blur(10px);border-bottom:1px solid #2a3344;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;">
+        <div style="font-size:16px;font-weight:700;letter-spacing:-.2px;">Đơn hàng &amp; Theo dõi</div>
+        <button onClick="{{ toggleConn }}">
+          <sc-if value="{{ connected }}" hint-placeholder-val="{{ true }}">
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#fb923c;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.35);border-radius:9999px;padding:5px 11px;white-space:nowrap;">● Đang theo dõi</span>
+          </sc-if>
+          <sc-if value="{{ disconnected }}" hint-placeholder-val="{{ false }}">
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#8b95a7;background:#1b2230;border:1px solid #2a3344;border-radius:9999px;padding:5px 11px;">○ Mất kết nối</span>
+          </sc-if>
+        </button>
+      </div>
+      <sc-if value="{{ disconnected }}" hint-placeholder-val="{{ false }}">
+        <div style="background:rgba(239,68,68,.12);border-top:1px solid rgba(239,68,68,.25);color:#f87171;font-size:12px;font-weight:500;padding:8px 16px;animation:slidein .3s ease;">⚠ Mất kết nối — đang thử lại...</div>
+      </sc-if>
+    </div>
+
+    <div style="padding:14px 14px 4px;display:flex;flex-direction:column;gap:13px;">
+
+      <sc-if value="{{ showPersonal }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:13px;">
+
+          <div style="background:#1b2230;border:1px solid #2a3344;border-radius:14px;padding:14px;display:flex;gap:13px;align-items:center;">
+            <div style="flex-shrink:0;width:64px;height:64px;border-radius:12px;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#fb923c;">BÀN</div>
+              <div style="font-size:26px;font-weight:700;color:#f97316;line-height:1;margin-top:2px;">04</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:5px;font-size:13px;min-width:0;">
+              <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+                <span style="color:#8b95a7;">Trạng thái:</span>
+                <span style="display:inline-flex;align-items:center;padding:3px 9px;border-radius:9999px;font-size:11px;font-weight:600;background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3);">Chờ xác nhận</span>
+              </div>
+              <div style="color:#8b95a7;">Vị trí hàng chờ: <span style="color:#e5e7eb;font-weight:600;">{{ posLabel }}</span></div>
+            </div>
+          </div>
+
+          <div style="background:#1b2230;border:1px solid #2a3344;border-radius:14px;overflow:hidden;">
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px;gap:8px;">
+              <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+                <div style="font-size:14px;font-weight:700;white-space:nowrap;">Tóm tắt đơn hàng</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+                <button onClick="{{ toggleSummary }}" style="font-size:15px;color:#8b95a7;width:22px;height:22px;">{{ summaryChevron }}</button>
+              </div>
+            </div>
+
+            <sc-if value="{{ summaryOpen }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:0 14px 14px;display:flex;flex-direction:column;gap:12px;">
+
+                <div style="background:#161d29;border:1px solid #232c3b;border-radius:11px;padding:12px;">
+                <button onClick="{{ toggleBreakdown }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;"><span style="font-size:13px;font-weight:700;">Chi tiết theo combo</span><span style="font-size:12px;font-weight:600;color:#fb923c;">{{ breakdownLabel }}</span></button>
+                <sc-if value="{{ breakdownOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px;">
+
+                <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#8b95a7;margin:0 0 2px;">COMBO</div>
+
+                <div style="display:flex;gap:8px;padding:9px 0;border-top:1px solid #232c3b;">
+                  <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                      <span style="font-size:13px;font-weight:500;">Suất Đầy Đủ Trứng Chín</span>
+                      <span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×1</span>
+                    </div>
+                    <div style="font-size:11px;color:#fb923c;margin-top:2px;">Nhân thịt · Mộc nhĩ</div>
+                    <button onClick="{{ toggleComboA }}" style="font-size:11px;font-weight:600;color:#fb923c;margin-top:5px;">{{ comboALabel }}</button>
+                    <sc-if value="{{ comboA }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:7px;padding:9px 10px;background:#161d29;border:1px solid #232c3b;border-radius:9px;display:flex;flex-direction:column;gap:8px;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+                          <div><div style="font-size:12px;">Bánh Trứng Chín</div><div style="font-size:10px;color:#fb923c;">Nhân thịt · Mộc nhĩ</div></div>
+                          <span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×1</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+                          <div><div style="font-size:12px;">Bánh Cuốn</div><div style="font-size:10px;color:#fb923c;">Nhân thịt · Mộc nhĩ</div></div>
+                          <span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×3</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                          <div style="font-size:12px;">Giò</div>
+                          <span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×1</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                          <div style="font-size:12px;">Canh có rau</div>
+                          <span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×1</span>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
+                    <span style="font-size:13px;font-weight:700;color:#f97316;white-space:nowrap;">30.000 ₫</span>
+                    <button onClick="{{ openCancel }}" style="font-size:11px;color:#f87171;white-space:nowrap;">🗑 Huỷ</button>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:8px;padding:9px 0;border-top:1px solid #232c3b;">
+                  <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                      <span style="font-size:13px;font-weight:500;">Suất Giò</span>
+                      <span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×2</span>
+                    </div>
+                    <button onClick="{{ toggleComboB }}" style="font-size:11px;font-weight:600;color:#fb923c;margin-top:5px;">{{ comboBLabel }}</button>
+                    <sc-if value="{{ comboB }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:7px;padding:9px 10px;background:#161d29;border:1px solid #232c3b;border-radius:9px;display:flex;flex-direction:column;gap:8px;">
+                        <div style="font-size:10px;color:#8b95a7;">Mỗi suất gồm:</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                          <div style="font-size:12px;">Giò</div>
+                          <span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×1</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+                          <div><div style="font-size:12px;">Bánh Cuốn</div><div style="font-size:10px;color:#fb923c;">Nhân thịt · Mộc nhĩ</div></div>
+                          <span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×4</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                          <div style="font-size:12px;">Canh có rau</div>
+                          <span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×1</span>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
+                    <span style="font-size:13px;font-weight:700;color:#f97316;white-space:nowrap;">50.000 ₫</span>
+                    <button onClick="{{ openCancel }}" style="font-size:11px;color:#f87171;white-space:nowrap;">🗑 Huỷ</button>
+                  </div>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid #232c3b;font-size:12px;color:#8b95a7;"><span>Subtotal</span><span>80.000 ₫</span></div>
+
+                <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#8b95a7;margin:8px 0 2px;">MÓN LẺ</div>
+
+                <div style="display:flex;gap:8px;padding:9px 0;border-top:1px solid #232c3b;">
+                  <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="font-size:13px;font-weight:500;">Bánh Trứng Vàng</span><span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×2</span></div>
+                    <div style="font-size:11px;color:#fb923c;margin-top:2px;">Nhân thịt</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;"><span style="font-size:13px;font-weight:700;color:#f97316;white-space:nowrap;">18.000 ₫</span><button onClick="{{ openCancel }}" style="font-size:11px;color:#f87171;white-space:nowrap;">🗑 Huỷ</button></div>
+                </div>
+                <div style="display:flex;gap:8px;padding:9px 0;border-top:1px solid #232c3b;">
+                  <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="font-size:13px;font-weight:500;">Bánh Chay</span><span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×2</span></div></div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;"><span style="font-size:13px;font-weight:700;color:#f97316;white-space:nowrap;">5.000 ₫</span><button onClick="{{ openCancel }}" style="font-size:11px;color:#f87171;white-space:nowrap;">🗑 Huỷ</button></div>
+                </div>
+                <div style="display:flex;gap:8px;padding:9px 0;border-top:1px solid #232c3b;">
+                  <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="font-size:13px;font-weight:500;">Canh có rau</span><span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×4</span></div></div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;"><span style="font-size:13px;font-weight:700;color:#f97316;white-space:nowrap;">0 ₫</span></div>
+                </div>
+                <div style="display:flex;gap:8px;padding:9px 0;border-top:1px solid #232c3b;">
+                  <div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="font-size:13px;font-weight:500;">Canh không rau</span><span style="font-size:11px;color:#8b95a7;background:#222b3a;border:1px solid #2a3344;border-radius:6px;padding:0 6px;">×2</span></div></div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;"><span style="font-size:13px;font-weight:700;color:#f97316;white-space:nowrap;">0 ₫</span></div>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid #232c3b;font-size:12px;color:#8b95a7;"><span>Subtotal</span><span>23.000 ₫</span></div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0 4px;border-top:1px solid #2a3344;margin-top:4px;"><span style="font-weight:700;font-size:14px;">Tổng cộng:</span><span style="font-weight:700;color:#f97316;font-size:16px;">103.000 ₫</span></div>
+
+                <div style="margin-top:10px;padding-top:10px;border-top:1px solid #232c3b;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:10px;font-weight:700;letter-spacing:1px;color:#8b95a7;">GHI CHÚ</span><span style="font-size:11px;color:#4ade80;">✓ Đã lưu</span></div>
+                  <div style="font-size:13px;color:#e5e7eb;margin-top:4px;">Gia đình (mẹ + 2 người lớn + 2 trẻ)</div>
+                </div>
+                </div>
+                </sc-if>
+                </div>
+
+                <div style="background:#161d29;border:1px solid #232c3b;border-radius:11px;overflow:hidden;">
+                  <button onClick="{{ toggleRollup }}" style="display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px;">
+                    <span style="font-size:13px;font-weight:700;">Chi tiết tổng số món <span style="font-size:11px;font-weight:500;color:#8b95a7;">(7 loại)</span></span>
+                    <span style="font-size:12px;font-weight:600;color:#fb923c;">{{ rollupLabel }}</span>
+                  </button>
+                  <sc-if value="{{ rollupOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding:4px 11px 11px;">
+                      <table style="width:100%;border-collapse:collapse;font-size:10.5px;table-layout:fixed;">
+                        <thead><tr style="color:#8b95a7;text-align:left;">
+                          <th style="padding:6px 3px;font-weight:600;">MÓN</th>
+                          <th style="padding:6px 3px;font-weight:600;">NHÂN</th>
+                          <th style="padding:6px 3px;font-weight:600;text-align:center;width:26px;">SL</th>
+                          <th style="padding:6px 3px;font-weight:600;text-align:right;width:48px;">ĐƠN GIÁ</th>
+                          <th style="padding:6px 3px;font-weight:600;text-align:right;width:56px;">THÀNH TIỀN</th>
+                        </tr></thead>
+                        <tbody>
+                          <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 3px;">Bánh Trứng Chín</td><td style="padding:6px 3px;color:#fb923c;">Nhân thịt · Mộc nhĩ</td><td style="padding:6px 3px;text-align:center;">1</td><td style="padding:6px 3px;text-align:right;color:#8b95a7;">—</td><td style="padding:6px 3px;text-align:right;color:#8b95a7;">—</td></tr>
+                          <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 3px;">Bánh Cuốn</td><td style="padding:6px 3px;color:#fb923c;">Nhân thịt · Mộc nhĩ</td><td style="padding:6px 3px;text-align:center;">11</td><td style="padding:6px 3px;text-align:right;color:#8b95a7;">—</td><td style="padding:6px 3px;text-align:right;color:#8b95a7;">—</td></tr>
+                          <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 3px;">Giò</td><td style="padding:6px 3px;color:#8b95a7;">—</td><td style="padding:6px 3px;text-align:center;">3</td><td style="padding:6px 3px;text-align:right;color:#8b95a7;">—</td><td style="padding:6px 3px;text-align:right;color:#8b95a7;">—</td></tr>
+                          <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 3px;">Canh có rau</td><td style="padding:6px 3px;color:#8b95a7;">—</td><td style="padding:6px 3px;text-align:center;">7</td><td style="padding:6px 3px;text-align:right;">0 ₫</td><td style="padding:6px 3px;text-align:right;">0 ₫</td></tr>
+                          <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 3px;">Bánh Trứng Vàng</td><td style="padding:6px 3px;color:#fb923c;">Nhân thịt</td><td style="padding:6px 3px;text-align:center;">2</td><td style="padding:6px 3px;text-align:right;">9.000 ₫</td><td style="padding:6px 3px;text-align:right;">18.000 ₫</td></tr>
+                          <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 3px;">Bánh Chay</td><td style="padding:6px 3px;color:#8b95a7;">—</td><td style="padding:6px 3px;text-align:center;">2</td><td style="padding:6px 3px;text-align:right;">2.500 ₫</td><td style="padding:6px 3px;text-align:right;">5.000 ₫</td></tr>
+                          <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 3px;">Canh không rau</td><td style="padding:6px 3px;color:#8b95a7;">—</td><td style="padding:6px 3px;text-align:center;">2</td><td style="padding:6px 3px;text-align:right;">0 ₫</td><td style="padding:6px 3px;text-align:right;">0 ₫</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </sc-if>
+                </div>
+
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ detailOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 14px 14px;display:flex;flex-direction:column;gap:11px;">
+
+                <div style="background:#161d29;border:1px solid #232c3b;border-radius:11px;padding:12px;">
+                  <div style="font-size:13px;font-weight:700;margin-bottom:9px;">Chi tiết món</div>
+                  <div style="height:8px;border-radius:9999px;background:#2a3344;overflow:hidden;"><div style="height:100%;width:25%;background:#f97316;border-radius:9999px;"></div></div>
+
+                  <div style="padding:9px 0 0;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;">• Bánh Trứng Chín <span style="color:#8b95a7;">tổng ×1 · ra ×1 · còn ×0</span></span><span style="font-size:11px;color:#4ade80;">✓ xong</span></div>
+                    <div style="font-size:11px;color:#fb923c;margin-top:2px;">↳ Nhân thịt · Mộc nhĩ</div>
+                  </div>
+                  <div style="padding:9px 0 0;border-top:1px solid #232c3b;margin-top:9px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;">• Bánh Cuốn <span style="color:#8b95a7;">tổng ×11 · ra ×3 · còn ×8</span></span><button onClick="{{ openCancel }}" style="font-size:11px;color:#f87171;">Huỷ</button></div>
+                    <div style="font-size:11px;color:#fb923c;margin-top:2px;">↳ Nhân thịt · Mộc nhĩ · "ít hành"</div>
+                  </div>
+                  <div style="padding:9px 0 0;border-top:1px solid #232c3b;margin-top:9px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;">• Giò <span style="color:#8b95a7;">tổng ×3 · ra ×1 · còn ×2</span></span><button onClick="{{ openCancel }}" style="font-size:11px;color:#f87171;">Huỷ</button></div>
+                  </div>
+                  <div style="padding:9px 0 0;border-top:1px solid #232c3b;margin-top:9px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;">• Canh có rau <span style="color:#8b95a7;">tổng ×7 · ra ×2 · còn ×5</span></span><button onClick="{{ openCancel }}" style="font-size:11px;color:#f87171;">Huỷ</button></div>
+                  </div>
+                  <div style="padding:9px 0 0;border-top:1px solid #232c3b;margin-top:9px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12.5px;">• Bánh Trứng Vàng <span style="color:#8b95a7;">tổng ×2 · ra ×0 · còn ×2</span></span><button onClick="{{ openCancel }}" style="font-size:11px;color:#f87171;">Huỷ</button></div>
+                    <div style="font-size:11px;color:#fb923c;margin-top:2px;">↳ Nhân thịt</div>
+                  </div>
+
+                  <div style="font-size:12px;color:#8b95a7;margin-top:11px;font-weight:600;">7/28 phần đã ra</div>
+                </div>
+
+                <div style="background:#161d29;border:1px solid #232c3b;border-radius:11px;padding:12px;">
+                  <table style="width:100%;border-collapse:collapse;font-size:10.5px;table-layout:fixed;">
+                    <thead><tr style="color:#8b95a7;text-align:left;">
+                      <th style="padding:5px 2px;font-weight:600;">MÓN</th>
+                      <th style="padding:5px 2px;font-weight:600;text-align:center;width:20px;">SL</th>
+                      <th style="padding:5px 2px;font-weight:600;text-align:center;width:20px;">RA</th>
+                      <th style="padding:5px 2px;font-weight:600;text-align:center;width:26px;">CÒN</th>
+                      <th style="padding:5px 2px;font-weight:600;text-align:right;width:44px;">ĐƠN GIÁ</th>
+                      <th style="padding:5px 2px;font-weight:600;text-align:right;width:48px;">TỔNG</th>
+                      <th style="padding:5px 2px;width:26px;"></th>
+                    </tr></thead>
+                    <tbody>
+                      <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 2px;">Bánh Trứng Chín</td><td style="padding:6px 2px;text-align:center;">1</td><td style="padding:6px 2px;text-align:center;">1</td><td style="padding:6px 2px;text-align:center;color:#4ade80;">✓</td><td style="padding:6px 2px;text-align:right;">12.000</td><td style="padding:6px 2px;text-align:right;">12.000</td><td style="padding:6px 2px;"></td></tr>
+                      <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 2px;">Bánh Cuốn</td><td style="padding:6px 2px;text-align:center;">11</td><td style="padding:6px 2px;text-align:center;">3</td><td style="padding:6px 2px;text-align:center;">8</td><td style="padding:6px 2px;text-align:right;">5.000</td><td style="padding:6px 2px;text-align:right;">55.000</td><td style="padding:6px 2px;text-align:right;"><button onClick="{{ openCancel }}" style="font-size:10px;color:#f87171;">Huỷ</button></td></tr>
+                      <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 2px;">Giò</td><td style="padding:6px 2px;text-align:center;">3</td><td style="padding:6px 2px;text-align:center;">1</td><td style="padding:6px 2px;text-align:center;">2</td><td style="padding:6px 2px;text-align:right;">8.000</td><td style="padding:6px 2px;text-align:right;">24.000</td><td style="padding:6px 2px;text-align:right;"><button onClick="{{ openCancel }}" style="font-size:10px;color:#f87171;">Huỷ</button></td></tr>
+                      <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 2px;">Canh có rau</td><td style="padding:6px 2px;text-align:center;">7</td><td style="padding:6px 2px;text-align:center;">2</td><td style="padding:6px 2px;text-align:center;">5</td><td style="padding:6px 2px;text-align:right;">0 ₫</td><td style="padding:6px 2px;text-align:right;">0 ₫</td><td style="padding:6px 2px;text-align:right;"><button onClick="{{ openCancel }}" style="font-size:10px;color:#f87171;">Huỷ</button></td></tr>
+                      <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 2px;">Bánh Trứng Vàng</td><td style="padding:6px 2px;text-align:center;">2</td><td style="padding:6px 2px;text-align:center;">0</td><td style="padding:6px 2px;text-align:center;">2</td><td style="padding:6px 2px;text-align:right;">9.000</td><td style="padding:6px 2px;text-align:right;">18.000</td><td style="padding:6px 2px;text-align:right;"><button onClick="{{ openCancel }}" style="font-size:10px;color:#f87171;">Huỷ</button></td></tr>
+                      <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 2px;">Bánh Chay</td><td style="padding:6px 2px;text-align:center;">2</td><td style="padding:6px 2px;text-align:center;">0</td><td style="padding:6px 2px;text-align:center;">2</td><td style="padding:6px 2px;text-align:right;">2.500</td><td style="padding:6px 2px;text-align:right;">5.000</td><td style="padding:6px 2px;text-align:right;"><button onClick="{{ openCancel }}" style="font-size:10px;color:#f87171;">Huỷ</button></td></tr>
+                      <tr style="border-top:1px solid #232c3b;"><td style="padding:6px 2px;">Canh không rau</td><td style="padding:6px 2px;text-align:center;">2</td><td style="padding:6px 2px;text-align:center;">0</td><td style="padding:6px 2px;text-align:center;">2</td><td style="padding:6px 2px;text-align:right;">0 ₫</td><td style="padding:6px 2px;text-align:right;">0 ₫</td><td style="padding:6px 2px;text-align:right;"><button onClick="{{ openCancel }}" style="font-size:10px;color:#f87171;">Huỷ</button></td></tr>
+                    </tbody>
+                    <tfoot>
+                      <tr style="border-top:1px solid #2a3344;"><td colspan="5" style="padding:8px 2px;color:#8b95a7;">Tổng tiền còn lại</td><td colspan="2" style="padding:8px 2px;text-align:right;font-weight:700;color:#f97316;">79.000 ₫</td></tr>
+                      <tr><td colspan="5" style="padding:0 2px 4px;color:#8b95a7;">Tổng tất cả món</td><td colspan="2" style="padding:0 2px 4px;text-align:right;font-weight:700;">114.000 ₫</td></tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                <div style="background:#161d29;border:1px solid #232c3b;border-radius:11px;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:13px;">
+                  <div style="display:flex;justify-content:space-between;"><span style="color:#8b95a7;">Đã dùng (7 phần)</span><span style="font-weight:600;">35.000 ₫</span></div>
+                  <div style="display:flex;justify-content:space-between;"><span style="color:#8b95a7;">Còn lại (21 phần chưa ra)</span><span style="font-weight:600;">79.000 ₫</span></div>
+                  <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid #2a3344;"><span style="font-weight:700;">Tổng cộng</span><span style="font-weight:700;color:#f97316;font-size:15px;">114.000 ₫</span></div>
+                  <div style="font-size:10px;color:#8b95a7;line-height:1.4;">Giá lẻ từng món; combo đã được tính ưu đãi ở tóm tắt.</div>
+                </div>
+
+                <button onClick="{{ openCancel }}" style="width:100%;padding:12px;border-radius:11px;border:1px solid rgba(239,68,68,.5);color:#f87171;font-weight:600;font-size:13px;">Huỷ toàn bộ đơn hàng</button>
+                <button style="width:100%;padding:12px;border-radius:11px;background:#f97316;color:#0b0f17;font-weight:700;font-size:13px;">+ Thêm món</button>
+
+              </div>
+            </sc-if>
+
+            <!--DETAIL-->
+
+          </div>
+
+          <!--PERSONAL-->
+        </div>
+      </sc-if>
+
+      <div style="background:#1b2230;border:1px solid #2a3344;border-radius:14px;padding:13px;margin-top:4px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;">
+          <div style="font-size:14px;font-weight:700;">Hàng chờ phục vụ</div>
+          <span style="font-size:11px;font-weight:600;color:#fb923c;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.35);border-radius:9999px;padding:2px 9px;">3 bàn</span>
+          <span style="margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#8b95a7;"><span style="width:6px;height:6px;border-radius:9999px;background:#f97316;"></span>trực tiếp</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;padding:11px;border-radius:10px;background:#161d29;border:1px solid #232c3b;">
+          <span style="font-size:15px;font-weight:700;color:#8b95a7;width:18px;text-align:center;">①</span>
+          <span style="font-size:13px;font-weight:600;">Bàn 01</span>
+          <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:10.5px;font-weight:600;background:rgba(249,115,22,.15);color:#fb923c;border:1px solid rgba(249,115,22,.35);">Đang chuẩn bị</span>
+          <span style="margin-left:auto;font-size:12px;font-weight:600;color:#8b95a7;font-family:ui-monospace,Menlo,monospace;">#0039</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;padding:11px;border-radius:10px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.45);box-shadow:0 0 0 3px rgba(249,115,22,.08);margin-top:9px;">
+          <span style="font-size:15px;font-weight:700;color:#f97316;width:18px;text-align:center;">②</span>
+          <span style="font-size:13px;font-weight:600;">Bàn 04 <span style="font-size:11px;color:#fb923c;font-weight:600;">(bàn bạn)</span></span>
+          <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:10.5px;font-weight:600;background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3);">Chờ xác nhận</span>
+          <span style="margin-left:auto;font-size:12px;font-weight:600;color:#fb923c;font-family:ui-monospace,Menlo,monospace;">#0042</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;padding:11px;border-radius:10px;background:#161d29;border:1px solid #232c3b;margin-top:9px;">
+          <span style="font-size:15px;font-weight:700;color:#8b95a7;width:18px;text-align:center;">③</span>
+          <span style="font-size:13px;font-weight:600;">Bàn 05</span>
+          <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:10.5px;font-weight:600;background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3);">Sẵn sàng phục vụ</span>
+          <span style="margin-left:auto;font-size:12px;font-weight:600;color:#8b95a7;font-family:ui-monospace,Menlo,monospace;">#0041</span>
+        </div>
+      </div>
+
+      <!--SECTIONS-->
+
+    </div>
+  </div>
+
+  <nav style="position:absolute;left:0;right:0;bottom:0;height:72px;background:rgba(11,15,23,.96);backdrop-filter:blur(10px);border-top:1px solid #2a3344;display:flex;">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8b95a7;"><div style="font-size:19px;">🍴</div><div style="font-size:10px;">Menu</div></div>
+    <div style="flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#f97316;"><div style="position:absolute;top:0;width:30px;height:3px;border-radius:0 0 3px 3px;background:#f97316;"></div><div style="font-size:19px;">🧾</div><div style="font-size:10px;font-weight:600;">Đơn Hàng</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8b95a7;"><div style="font-size:19px;">❤️</div><div style="font-size:10px;">Yêu Thích</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#fb923c;"><div style="font-size:19px;">📍</div><div style="font-size:10px;">Theo Dõi</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8b95a7;"><div style="font-size:19px;">⚙️</div><div style="font-size:10px;">Cài Đặt</div></div>
+  </nav>
+
+  <sc-if value="{{ cancelModal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCancel }}" style="position:absolute;inset:0;z-index:50;background:rgba(3,5,9,.7);display:flex;align-items:center;justify-content:center;padding:28px;">
+      <div style="background:#161d29;border:1px solid #2a3344;border-radius:18px;padding:20px;width:100%;max-width:300px;">
+        <div style="font-size:16px;font-weight:700;">Xác nhận huỷ</div>
+        <div style="font-size:13px;color:#8b95a7;margin-top:8px;line-height:1.5;">Bạn có chắc muốn huỷ? Thao tác này không thể hoàn tác.</div>
+        <div style="display:flex;gap:10px;margin-top:18px;">
+          <button onClick="{{ closeCancel }}" style="flex:1;padding:11px;border-radius:10px;border:1px solid #2a3344;color:#e5e7eb;font-weight:600;font-size:13px;">Quay lại</button>
+          <button onClick="{{ confirmCancel }}" style="flex:1;padding:11px;border-radius:10px;background:#ef4444;color:#fff;font-weight:600;font-size:13px;">Huỷ đơn</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ notifyModal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNotify }}" style="position:absolute;inset:0;z-index:50;background:rgba(3,5,9,.7);display:flex;align-items:center;justify-content:center;padding:28px;">
+      <div style="background:#161d29;border:1px solid #2a3344;border-radius:18px;padding:22px;width:100%;max-width:290px;text-align:center;">
+        <div style="font-size:30px;">🔔</div>
+        <div style="font-size:15px;font-weight:600;margin-top:8px;">{{ notifyMsg }}</div>
+        <button onClick="{{ closeNotify }}" style="margin-top:18px;width:100%;padding:11px;border-radius:10px;background:#f97316;color:#0b0f17;font-weight:700;font-size:13px;">Đã hiểu</button>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  state = {
+    connected: true,
+    hidePersonal: false,
+    summaryOpen: true,
+    detailOpen: false,
+    comboA: false,
+    comboB: false,
+    rollupOpen: false,
+    breakdownOpen: false,
+    hist2Open: false,
+    cancelModal: false,
+    notifyModal: false,
+    notifyMsg: '',
+  };
+  toggleConn = () => {
+    clearTimeout(this._t);
+    if (this.state.connected) {
+      this.setState({ connected: false });
+      this._t = setTimeout(() => this.setState({ connected: true }), 2600);
+    } else {
+      this.setState({ connected: true });
+    }
+  };
+  flip = (k) => () => this.setState(s => ({ [k]: !s[k] }));
+  openCancel = () => this.setState({ cancelModal: true });
+  closeCancel = () => this.setState({ cancelModal: false });
+  confirmCancel = () => this.setState({ cancelModal: false, notifyModal: true, notifyMsg: 'Đơn đã bị huỷ' });
+  closeNotify = () => this.setState({ notifyModal: false });
+  componentWillUnmount() { clearTimeout(this._t); }
+  renderVals() {
+    const custIndex = 1, total = 3;
+    const pos = custIndex + 1;
+    const eta = custIndex * 3;
+    const s = this.state;
+    return {
+      connected: s.connected,
+      disconnected: !s.connected,
+      hidePersonal: s.hidePersonal,
+      showPersonal: !s.hidePersonal,
+      summaryOpen: s.summaryOpen,
+      detailOpen: s.detailOpen,
+      comboA: s.comboA,
+      comboB: s.comboB,
+      rollupOpen: s.rollupOpen,
+      breakdownOpen: s.breakdownOpen,
+      breakdownLabel: s.breakdownOpen ? 'Ẩn ⌃' : 'Chi tiết ⌄',
+      toggleBreakdown: this.flip('breakdownOpen'),
+      hist2Open: s.hist2Open,
+      cancelModal: s.cancelModal,
+      notifyModal: s.notifyModal,
+      notifyMsg: s.notifyMsg,
+      posLabel: '#' + pos + ' trong ' + total + ' đơn',
+      etaText: '~' + eta + ' phút',
+      etaWait: 'Chờ ~' + eta + ' phút',
+      hideLabel: s.hidePersonal ? '👁 Hiện bàn của bạn' : '👁 Ẩn bàn của bạn',
+      detailLabel: s.detailOpen ? 'Ẩn chi tiết ⌃' : 'Chi tiết ⌄',
+      summaryChevron: s.summaryOpen ? '⌃' : '⌄',
+      comboALabel: s.comboA ? '⌃ Ẩn chi tiết' : '⌄ Chi tiết',
+      comboBLabel: s.comboB ? '⌃ Ẩn chi tiết' : '⌄ Chi tiết',
+      rollupLabel: s.rollupOpen ? 'Ẩn ⌃' : 'Chi tiết ⌄',
+      hist2Label: s.hist2Open ? '▾' : '▸',
+      toggleConn: this.toggleConn,
+      toggleHide: this.flip('hidePersonal'),
+      toggleSummary: this.flip('summaryOpen'),
+      toggleDetail: this.flip('detailOpen'),
+      toggleComboA: this.flip('comboA'),
+      toggleComboB: this.flip('comboB'),
+      toggleRollup: this.flip('rollupOpen'),
+      toggleHist2: this.flip('hist2Open'),
+      openCancel: this.openCancel,
+      closeCancel: this.closeCancel,
+      confirmCancel: this.confirmCancel,
+      closeNotify: this.closeNotify,
+    };
+  }
+}
+</script>
+</body>
+</html>

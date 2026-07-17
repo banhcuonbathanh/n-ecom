@@ -1,0 +1,906 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "za-label", "type": "text", "x": 20, "y": 6, "width": 260, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1000, "version": 2,
+      "versionNonce": 1000, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a0", "link": null, "locked": false, "frameId": null,
+      "text": "── Zone A — AdminTopNav ──", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "── Zone A — AdminTopNav ──", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "nav-bg", "type": "rectangle", "x": 20, "y": 20, "width": 860, "height": 52,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "#1e293b",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1001, "version": 2,
+      "versionNonce": 1001, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a1", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "nav-title", "type": "text", "x": 36, "y": 34, "width": 220, "height": 20,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1002, "version": 2,
+      "versionNonce": 1002, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a2", "link": null, "locked": false, "frameId": null,
+      "text": "Quản trị hệ thống", "fontSize": 16, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Quản trị hệ thống", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "tab-bar", "type": "rectangle", "x": 20, "y": 72, "width": 860, "height": 40,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1003, "version": 2,
+      "versionNonce": 1003, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a3", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "tab-tq", "type": "text", "x": 30, "y": 84, "width": 65, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1004, "version": 2,
+      "versionNonce": 1004, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a4", "link": null, "locked": false, "frameId": null,
+      "text": "Tổng quan", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Tổng quan", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "tab-tk", "type": "text", "x": 103, "y": 84, "width": 60, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1005, "version": 2,
+      "versionNonce": 1005, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a5", "link": null, "locked": false, "frameId": null,
+      "text": "Tổng kết", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Tổng kết", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "tab-sp", "type": "text", "x": 170, "y": 84, "width": 65, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1006, "version": 2,
+      "versionNonce": 1006, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a6", "link": null, "locked": false, "frameId": null,
+      "text": "Sản phẩm", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Sản phẩm", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "tab-cb", "type": "text", "x": 242, "y": 84, "width": 44, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1007, "version": 2,
+      "versionNonce": 1007, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a7", "link": null, "locked": false, "frameId": null,
+      "text": "Combo", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Combo", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "tab-dm", "type": "text", "x": 294, "y": 84, "width": 65, "height": 14,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1008, "version": 2,
+      "versionNonce": 1008, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a8", "link": null, "locked": false, "frameId": null,
+      "text": "Danh mục", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Danh mục", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "tab-dm-line", "type": "rectangle", "x": 294, "y": 109, "width": 65, "height": 3,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1009, "version": 2,
+      "versionNonce": 1009, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "a9", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "tab-tp", "type": "text", "x": 367, "y": 84, "width": 55, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1010, "version": 2,
+      "versionNonce": 1010, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aA", "link": null, "locked": false, "frameId": null,
+      "text": "Topping", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Topping", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "tab-nv", "type": "text", "x": 430, "y": 84, "width": 65, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1011, "version": 2,
+      "versionNonce": 1011, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aB", "link": null, "locked": false, "frameId": null,
+      "text": "Nhân viên", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Nhân viên", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "tab-kng", "type": "text", "x": 503, "y": 84, "width": 110, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1012, "version": 2,
+      "versionNonce": 1012, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aC", "link": null, "locked": false, "frameId": null,
+      "text": "Kho nguyên liệu", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Kho nguyên liệu", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "tab-mk", "type": "text", "x": 621, "y": 84, "width": 70, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1013, "version": 2,
+      "versionNonce": 1013, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aD", "link": null, "locked": false, "frameId": null,
+      "text": "Marketing", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Marketing", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "zb-label", "type": "text", "x": 20, "y": 118, "width": 260, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1014, "version": 2,
+      "versionNonce": 1014, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aE", "link": null, "locked": false, "frameId": null,
+      "text": "── Zone B — PageHeader ──", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "── Zone B — PageHeader ──", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "page-header-bg", "type": "rectangle", "x": 20, "y": 130, "width": 860, "height": 64,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#f8fafc",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1015, "version": 2,
+      "versionNonce": 1015, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aF", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "page-title", "type": "text", "x": 36, "y": 150, "width": 180, "height": 22,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1016, "version": 2,
+      "versionNonce": 1016, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aG", "link": null, "locked": false, "frameId": null,
+      "text": "Danh mục (5)", "fontSize": 18, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Danh mục (5)", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "btn-add", "type": "rectangle", "x": 706, "y": 142, "width": 154, "height": 36,
+      "angle": 0, "strokeColor": "#ea580c", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1017, "version": 2,
+      "versionNonce": 1017, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aH", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "btn-add-txt", "type": "text", "x": 716, "y": 152, "width": 134, "height": 14,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1018, "version": 2,
+      "versionNonce": 1018, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aI", "link": null, "locked": false, "frameId": null,
+      "text": "+ Thêm danh mục", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "+ Thêm danh mục", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "zc-label", "type": "text", "x": 20, "y": 202, "width": 280, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1019, "version": 2,
+      "versionNonce": 1019, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aJ", "link": null, "locked": false, "frameId": null,
+      "text": "── Zone C — CategoryTable  [GET /api/v1/categories] ──", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "── Zone C — CategoryTable  [GET /api/v1/categories] ──", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "table-container", "type": "rectangle", "x": 20, "y": 214, "width": 860, "height": 264,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1020, "version": 2,
+      "versionNonce": 1020, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aK", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "table-header", "type": "rectangle", "x": 20, "y": 214, "width": 860, "height": 44,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#f1f5f9",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1021, "version": 2,
+      "versionNonce": 1021, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aL", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "th-name", "type": "text", "x": 36, "y": 230, "width": 110, "height": 14,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1022, "version": 2,
+      "versionNonce": 1022, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aM", "link": null, "locked": false, "frameId": null,
+      "text": "Tên danh mục", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Tên danh mục", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "th-order", "type": "text", "x": 380, "y": 230, "width": 55, "height": 14,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1023, "version": 2,
+      "versionNonce": 1023, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aN", "link": null, "locked": false, "frameId": null,
+      "text": "Thứ tự", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Thứ tự", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row1-bg", "type": "rectangle", "x": 20, "y": 258, "width": 860, "height": 44,
+      "angle": 0, "strokeColor": "#f1f5f9", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1024, "version": 2,
+      "versionNonce": 1024, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aO", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row1-name", "type": "text", "x": 36, "y": 274, "width": 80, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1025, "version": 2,
+      "versionNonce": 1025, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aP", "link": null, "locked": false, "frameId": null,
+      "text": "banh cuon", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "banh cuon", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row1-order", "type": "text", "x": 380, "y": 274, "width": 20, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1026, "version": 2,
+      "versionNonce": 1026, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aQ", "link": null, "locked": false, "frameId": null,
+      "text": "0", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "0", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row1-sua-r", "type": "rectangle", "x": 660, "y": 268, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1027, "version": 2,
+      "versionNonce": 1027, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aR", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row1-sua-t", "type": "text", "x": 673, "y": 276, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1028, "version": 2,
+      "versionNonce": 1028, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aS", "link": null, "locked": false, "frameId": null,
+      "text": "Sửa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Sửa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row1-xoa-r", "type": "rectangle", "x": 722, "y": 268, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1029, "version": 2,
+      "versionNonce": 1029, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aT", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row1-xoa-t", "type": "text", "x": 735, "y": 276, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1030, "version": 2,
+      "versionNonce": 1030, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aU", "link": null, "locked": false, "frameId": null,
+      "text": "Xóa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Xóa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row2-bg", "type": "rectangle", "x": 20, "y": 302, "width": 860, "height": 44,
+      "angle": 0, "strokeColor": "#f1f5f9", "backgroundColor": "#f8fafc",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1031, "version": 2,
+      "versionNonce": 1031, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aV", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row2-name", "type": "text", "x": 36, "y": 318, "width": 80, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1032, "version": 2,
+      "versionNonce": 1032, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aW", "link": null, "locked": false, "frameId": null,
+      "text": "Bánh Cuốn", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Bánh Cuốn", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row2-order", "type": "text", "x": 380, "y": 318, "width": 20, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1033, "version": 2,
+      "versionNonce": 1033, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aX", "link": null, "locked": false, "frameId": null,
+      "text": "1", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "1", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row2-sua-r", "type": "rectangle", "x": 660, "y": 312, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1034, "version": 2,
+      "versionNonce": 1034, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aY", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row2-sua-t", "type": "text", "x": 673, "y": 320, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1035, "version": 2,
+      "versionNonce": 1035, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aZ", "link": null, "locked": false, "frameId": null,
+      "text": "Sửa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Sửa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row2-xoa-r", "type": "rectangle", "x": 722, "y": 312, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1036, "version": 2,
+      "versionNonce": 1036, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aa", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row2-xoa-t", "type": "text", "x": 735, "y": 320, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1037, "version": 2,
+      "versionNonce": 1037, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ab", "link": null, "locked": false, "frameId": null,
+      "text": "Xóa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Xóa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row3-bg", "type": "rectangle", "x": 20, "y": 346, "width": 860, "height": 44,
+      "angle": 0, "strokeColor": "#f1f5f9", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1038, "version": 2,
+      "versionNonce": 1038, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ac", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row3-name", "type": "text", "x": 36, "y": 362, "width": 80, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1039, "version": 2,
+      "versionNonce": 1039, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ad", "link": null, "locked": false, "frameId": null,
+      "text": "Mắn Phảy", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Mắn Phảy", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row3-order", "type": "text", "x": 380, "y": 362, "width": 20, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1040, "version": 2,
+      "versionNonce": 1040, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ae", "link": null, "locked": false, "frameId": null,
+      "text": "2", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "2", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row3-sua-r", "type": "rectangle", "x": 660, "y": 356, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1041, "version": 2,
+      "versionNonce": 1041, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "af", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row3-sua-t", "type": "text", "x": 673, "y": 364, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1042, "version": 2,
+      "versionNonce": 1042, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ag", "link": null, "locked": false, "frameId": null,
+      "text": "Sửa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Sửa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row3-xoa-r", "type": "rectangle", "x": 722, "y": 356, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1043, "version": 2,
+      "versionNonce": 1043, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ah", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row3-xoa-t", "type": "text", "x": 735, "y": 364, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1044, "version": 2,
+      "versionNonce": 1044, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ai", "link": null, "locked": false, "frameId": null,
+      "text": "Xóa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Xóa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row4-bg", "type": "rectangle", "x": 20, "y": 390, "width": 860, "height": 44,
+      "angle": 0, "strokeColor": "#f1f5f9", "backgroundColor": "#f8fafc",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1045, "version": 2,
+      "versionNonce": 1045, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aj", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row4-name", "type": "text", "x": 36, "y": 406, "width": 80, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1046, "version": 2,
+      "versionNonce": 1046, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ak", "link": null, "locked": false, "frameId": null,
+      "text": "Đặc Uống", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Đặc Uống", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row4-order", "type": "text", "x": 380, "y": 406, "width": 20, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1047, "version": 2,
+      "versionNonce": 1047, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "al", "link": null, "locked": false, "frameId": null,
+      "text": "3", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "3", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row4-sua-r", "type": "rectangle", "x": 660, "y": 400, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1048, "version": 2,
+      "versionNonce": 1048, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "am", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row4-sua-t", "type": "text", "x": 673, "y": 408, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1049, "version": 2,
+      "versionNonce": 1049, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "an", "link": null, "locked": false, "frameId": null,
+      "text": "Sửa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Sửa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row4-xoa-r", "type": "rectangle", "x": 722, "y": 400, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1050, "version": 2,
+      "versionNonce": 1050, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ao", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row4-xoa-t", "type": "text", "x": 735, "y": 408, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1051, "version": 2,
+      "versionNonce": 1051, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ap", "link": null, "locked": false, "frameId": null,
+      "text": "Xóa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Xóa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row5-bg", "type": "rectangle", "x": 20, "y": 434, "width": 860, "height": 44,
+      "angle": 0, "strokeColor": "#f1f5f9", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1052, "version": 2,
+      "versionNonce": 1052, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aq", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row5-name", "type": "text", "x": 36, "y": 450, "width": 50, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1053, "version": 2,
+      "versionNonce": 1053, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ar", "link": null, "locked": false, "frameId": null,
+      "text": "Combo", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Combo", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row5-order", "type": "text", "x": 380, "y": 450, "width": 20, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1054, "version": 2,
+      "versionNonce": 1054, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "as", "link": null, "locked": false, "frameId": null,
+      "text": "4", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "4", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row5-sua-r", "type": "rectangle", "x": 660, "y": 444, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1055, "version": 2,
+      "versionNonce": 1055, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "at", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row5-sua-t", "type": "text", "x": 673, "y": 452, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1056, "version": 2,
+      "versionNonce": 1056, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "au", "link": null, "locked": false, "frameId": null,
+      "text": "Sửa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Sửa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "row5-xoa-r", "type": "rectangle", "x": 722, "y": 444, "width": 54, "height": 28,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "#fee2e2",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1057, "version": 2,
+      "versionNonce": 1057, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "av", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "row5-xoa-t", "type": "text", "x": 735, "y": 452, "width": 28, "height": 14,
+      "angle": 0, "strokeColor": "#dc2626", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1058, "version": 2,
+      "versionNonce": 1058, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "aw", "link": null, "locked": false, "frameId": null,
+      "text": "Xóa", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Xóa", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "zd-label", "type": "text", "x": 940, "y": 6, "width": 320, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1059, "version": 2,
+      "versionNonce": 1059, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ax", "link": null, "locked": false, "frameId": null,
+      "text": "── ZoneD — Modal: Thêm danh mục  [POST /api/v1/categories] ──", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "── ZoneD — Modal: Thêm danh mục  [POST /api/v1/categories] ──", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-d-dim", "type": "rectangle", "x": 940, "y": 20, "width": 380, "height": 480,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "#e2e8f0",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 1,
+      "opacity": 40, "groupIds": [], "roundness": null, "seed": 1060, "version": 2,
+      "versionNonce": 1060, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "ay", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-d-box", "type": "rectangle", "x": 970, "y": 160, "width": 320, "height": 300,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1061, "version": 2,
+      "versionNonce": 1061, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "az", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-d-title", "type": "text", "x": 986, "y": 176, "width": 160, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1062, "version": 2,
+      "versionNonce": 1062, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b0", "link": null, "locked": false, "frameId": null,
+      "text": "Thêm danh mục", "fontSize": 14, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Thêm danh mục", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-d-close", "type": "text", "x": 1264, "y": 170, "width": 16, "height": 20,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1063, "version": 2,
+      "versionNonce": 1063, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b1", "link": null, "locked": false, "frameId": null,
+      "text": "×", "fontSize": 16, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "×", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-d-div", "type": "rectangle", "x": 970, "y": 202, "width": 320, "height": 1,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#e2e8f0",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1064, "version": 2,
+      "versionNonce": 1064, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b2", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-d-lbl-name", "type": "text", "x": 986, "y": 216, "width": 120, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1065, "version": 2,
+      "versionNonce": 1065, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b3", "link": null, "locked": false, "frameId": null,
+      "text": "Tên danh mục *", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Tên danh mục *", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-d-inp-name", "type": "rectangle", "x": 986, "y": 232, "width": 288, "height": 34,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1066, "version": 2,
+      "versionNonce": 1066, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b4", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-d-ph-name", "type": "text", "x": 994, "y": 242, "width": 170, "height": 14,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1067, "version": 2,
+      "versionNonce": 1067, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b5", "link": null, "locked": false, "frameId": null,
+      "text": "Nhập tên danh mục...", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Nhập tên danh mục...", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-d-lbl-order", "type": "text", "x": 986, "y": 278, "width": 50, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1068, "version": 2,
+      "versionNonce": 1068, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b6", "link": null, "locked": false, "frameId": null,
+      "text": "Thứ tự", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Thứ tự", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-d-inp-order", "type": "rectangle", "x": 986, "y": 294, "width": 100, "height": 34,
+      "angle": 0, "strokeColor": "#cbd5e1", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1069, "version": 2,
+      "versionNonce": 1069, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b7", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-d-ph-order", "type": "text", "x": 994, "y": 304, "width": 20, "height": 14,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1070, "version": 2,
+      "versionNonce": 1070, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b8", "link": null, "locked": false, "frameId": null,
+      "text": "0", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "0", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-d-btn-luu", "type": "rectangle", "x": 1126, "y": 412, "width": 80, "height": 34,
+      "angle": 0, "strokeColor": "#ea580c", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1071, "version": 2,
+      "versionNonce": 1071, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "b9", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-d-btn-luu-t", "type": "text", "x": 1150, "y": 422, "width": 32, "height": 14,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1072, "version": 2,
+      "versionNonce": 1072, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bA", "link": null, "locked": false, "frameId": null,
+      "text": "Lưu", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Lưu", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-d-btn-huy", "type": "rectangle", "x": 1214, "y": 412, "width": 68, "height": 34,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1073, "version": 2,
+      "versionNonce": 1073, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bB", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-d-btn-huy-t", "type": "text", "x": 1230, "y": 422, "width": 36, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1074, "version": 2,
+      "versionNonce": 1074, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bC", "link": null, "locked": false, "frameId": null,
+      "text": "Hủy", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Hủy", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "ze-label", "type": "text", "x": 1380, "y": 6, "width": 320, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1075, "version": 2,
+      "versionNonce": 1075, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bD", "link": null, "locked": false, "frameId": null,
+      "text": "── ZoneE — Modal: Sửa danh mục  [PATCH /api/v1/categories/:id] ──", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "── ZoneE — Modal: Sửa danh mục  [PATCH /api/v1/categories/:id] ──", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-e-dim", "type": "rectangle", "x": 1380, "y": 20, "width": 380, "height": 480,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "#e2e8f0",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "dashed", "roughness": 1,
+      "opacity": 40, "groupIds": [], "roundness": null, "seed": 1076, "version": 2,
+      "versionNonce": 1076, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bE", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-e-box", "type": "rectangle", "x": 1410, "y": 160, "width": 320, "height": 300,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1077, "version": 2,
+      "versionNonce": 1077, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bF", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-e-title", "type": "text", "x": 1426, "y": 176, "width": 160, "height": 18,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1078, "version": 2,
+      "versionNonce": 1078, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bG", "link": null, "locked": false, "frameId": null,
+      "text": "Sửa danh mục", "fontSize": 14, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Sửa danh mục", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-e-close", "type": "text", "x": 1704, "y": 170, "width": 16, "height": 20,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1079, "version": 2,
+      "versionNonce": 1079, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bH", "link": null, "locked": false, "frameId": null,
+      "text": "×", "fontSize": 16, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "×", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-e-div", "type": "rectangle", "x": 1410, "y": 202, "width": 320, "height": 1,
+      "angle": 0, "strokeColor": "#e2e8f0", "backgroundColor": "#e2e8f0",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1080, "version": 2,
+      "versionNonce": 1080, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bI", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-e-lbl-name", "type": "text", "x": 1426, "y": 216, "width": 120, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1081, "version": 2,
+      "versionNonce": 1081, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bJ", "link": null, "locked": false, "frameId": null,
+      "text": "Tên danh mục *", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Tên danh mục *", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-e-inp-name", "type": "rectangle", "x": 1426, "y": 232, "width": 288, "height": 34,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#fff7ed",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1082, "version": 2,
+      "versionNonce": 1082, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bK", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-e-val-name", "type": "text", "x": 1434, "y": 242, "width": 80, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1083, "version": 2,
+      "versionNonce": 1083, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bL", "link": null, "locked": false, "frameId": null,
+      "text": "Bánh Cuốn", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Bánh Cuốn", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-e-lbl-order", "type": "text", "x": 1426, "y": 278, "width": 50, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1084, "version": 2,
+      "versionNonce": 1084, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bM", "link": null, "locked": false, "frameId": null,
+      "text": "Thứ tự", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Thứ tự", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-e-inp-order", "type": "rectangle", "x": 1426, "y": 294, "width": 100, "height": 34,
+      "angle": 0, "strokeColor": "#f97316", "backgroundColor": "#fff7ed",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1085, "version": 2,
+      "versionNonce": 1085, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bN", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-e-val-order", "type": "text", "x": 1434, "y": 304, "width": 20, "height": 14,
+      "angle": 0, "strokeColor": "#1e293b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1086, "version": 2,
+      "versionNonce": 1086, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bO", "link": null, "locked": false, "frameId": null,
+      "text": "1", "fontSize": 11, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "1", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-e-btn-luu", "type": "rectangle", "x": 1566, "y": 412, "width": 80, "height": 34,
+      "angle": 0, "strokeColor": "#ea580c", "backgroundColor": "#f97316",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1087, "version": 2,
+      "versionNonce": 1087, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bP", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-e-btn-luu-t", "type": "text", "x": 1590, "y": 422, "width": 32, "height": 14,
+      "angle": 0, "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1088, "version": 2,
+      "versionNonce": 1088, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bQ", "link": null, "locked": false, "frameId": null,
+      "text": "Lưu", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Lưu", "lineHeight": 1.35, "autoResize": true
+    },
+    {
+      "id": "modal-e-btn-huy", "type": "rectangle", "x": 1654, "y": 412, "width": 68, "height": 34,
+      "angle": 0, "strokeColor": "#94a3b8", "backgroundColor": "#ffffff",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": {"type": 3}, "seed": 1089, "version": 2,
+      "versionNonce": 1089, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bR", "link": null, "locked": false, "frameId": null
+    },
+    {
+      "id": "modal-e-btn-huy-t", "type": "text", "x": 1670, "y": 422, "width": 36, "height": 14,
+      "angle": 0, "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1,
+      "opacity": 100, "groupIds": [], "roundness": null, "seed": 1090, "version": 2,
+      "versionNonce": 1090, "isDeleted": false, "boundElements": [], "updated": 1746316800000,
+      "index": "bS", "link": null, "locked": false, "frameId": null,
+      "text": "Hủy", "fontSize": 12, "fontFamily": 2,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Hủy", "lineHeight": 1.35, "autoResize": true
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff",
+    "theme": "light"
+  },
+  "files": {}
+}

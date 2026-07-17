@@ -1,0 +1,637 @@
+<title>Yêu Thích — Quán Bánh Cuốn</title>
+<style>
+  :root{
+    --bg:#0b0f17; --card:#1b2230; --raised:#222b3a; --line:#2a3344;
+    --text:#e5e7eb; --muted:#8b95a7; --accent:#f97316; --accent-soft:rgba(249,115,22,.14);
+    --radius:14px; --shadow:0 8px 24px rgba(0,0,0,.35);
+    --serif:ui-serif,Georgia,"Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #131a26 0%, var(--bg) 60%);
+    min-height:100vh; color:var(--text); font-family:var(--sans);
+    display:flex; align-items:center; justify-content:center; padding:28px 16px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- phone shell ---- */
+  .phone{
+    width:390px; max-width:100%; height:800px; position:relative;
+    background:var(--bg); border:1px solid var(--line); border-radius:30px;
+    overflow:hidden; box-shadow:var(--shadow), 0 0 0 8px #05070c;
+    display:flex; flex-direction:column;
+  }
+
+  /* ---- top nav ---- */
+  .topnav{
+    position:sticky; top:0; z-index:20; flex:0 0 auto;
+    display:flex; align-items:center; gap:12px;
+    padding:16px 16px 12px; background:rgba(11,15,23,.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  }
+  .icon-btn{
+    width:36px; height:36px; border-radius:10px; border:1px solid var(--line);
+    background:var(--card); color:var(--text); font-size:18px; line-height:1;
+    display:grid; place-items:center; cursor:pointer;
+  }
+  .topnav h1{
+    flex:1; margin:0; text-align:center; font-family:var(--serif);
+    font-size:22px; font-weight:600; letter-spacing:.3px;
+    text-shadow:0 1px 12px rgba(249,115,22,.18);
+  }
+  .topnav h1 .hrt{color:var(--accent)}
+  .cart{position:relative}
+  .cart .badge{
+    position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 4px;
+    background:var(--accent); color:#1a1206; font-size:11px; font-weight:800;
+    border-radius:999px; display:grid; place-items:center; font-variant-numeric:tabular-nums;
+    border:2px solid var(--bg);
+  }
+
+  /* ---- segmented tabs ---- */
+  .seg{
+    position:sticky; top:65px; z-index:15; flex:0 0 auto;
+    display:flex; gap:2px; padding:8px 12px 0; background:var(--bg);
+    border-bottom:1px solid var(--line);
+  }
+  .seg button{
+    flex:1; background:none; border:none; cursor:pointer; padding:10px 4px 12px;
+    color:var(--muted); font-size:13.5px; font-weight:600; font-family:var(--sans);
+    position:relative; letter-spacing:.2px;
+  }
+  .seg button.active{color:var(--accent)}
+  .seg button.active::after{
+    content:""; position:absolute; left:14%; right:14%; bottom:-1px; height:2.5px;
+    background:var(--accent); border-radius:3px; box-shadow:0 0 10px rgba(249,115,22,.6);
+  }
+
+  /* ---- scroll body ---- */
+  .body{flex:1 1 auto; overflow-y:auto; overflow-x:hidden; position:relative}
+  .view{display:none; padding:14px 14px 150px}
+  #view-build{padding-bottom:200px}
+  .view.active{display:block}
+  .view::-webkit-scrollbar{display:none}
+
+  /* ---- chips ---- */
+  .chips{display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap}
+  .chip{
+    border:1px solid var(--line); background:var(--card); color:var(--muted);
+    padding:7px 13px; border-radius:999px; font-size:12.5px; font-weight:600; cursor:pointer;
+    font-variant-numeric:tabular-nums;
+  }
+  .chip.active{background:var(--accent); border-color:var(--accent); color:#1a1206}
+
+  /* ---- favourite card ---- */
+  .fcard{
+    display:grid; grid-template-columns:64px 1fr auto; gap:12px; align-items:center;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px; margin-bottom:11px; position:relative;
+  }
+  .thumb{
+    width:64px; height:64px; border-radius:11px; display:grid; place-items:center;
+    font-size:30px; background:linear-gradient(160deg,#2a3446,#1a2230); border:1px solid var(--line);
+  }
+  .fcard .meta{min-width:0}
+  .tag{
+    display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.4px;
+    text-transform:uppercase; color:var(--muted); background:var(--raised);
+    border:1px solid var(--line); padding:2px 7px; border-radius:6px; margin-bottom:5px;
+  }
+  .tag.combo{color:#fcd9b8; background:rgba(249,115,22,.12); border-color:rgba(249,115,22,.3)}
+  .fcard .name{font-weight:700; font-size:15px; line-height:1.2; margin:0 0 3px}
+  .fcard .sub{font-size:11.5px; color:var(--muted); line-height:1.3; margin:0}
+  .fcard .price{color:var(--accent); font-weight:800; font-size:14px; margin-top:4px; font-variant-numeric:tabular-nums}
+  .fcard .price span{color:var(--muted); font-weight:500; font-size:11px}
+  .fcard .right{display:flex; flex-direction:column; align-items:flex-end; gap:12px; justify-self:end}
+  .heart{
+    background:none; border:none; cursor:pointer; font-size:20px; line-height:1;
+    color:var(--accent); filter:drop-shadow(0 0 6px rgba(249,115,22,.5));
+  }
+  .heart.off{color:var(--muted); filter:none}
+
+  /* ---- stepper ---- */
+  .stepper{display:flex; align-items:center; gap:10px}
+  .stepper button{
+    width:28px; height:28px; border-radius:50%; cursor:pointer; font-size:16px; line-height:1;
+    display:grid; place-items:center; font-weight:700;
+  }
+  .stepper .minus{background:var(--card); border:1px solid var(--line); color:var(--text)}
+  .stepper .plus{background:var(--accent); border:1px solid var(--accent); color:#1a1206}
+  .stepper .qty{min-width:16px; text-align:center; font-weight:700; font-variant-numeric:tabular-nums}
+
+  /* ---- canh quick-add rows (favourites) ---- */
+  .canh-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--card); border:1px solid var(--line); border-radius:11px;
+    padding:11px 12px; margin-bottom:8px;
+  }
+  .canh-row .cl{display:flex; align-items:center; gap:9px; font-weight:600; font-size:14px}
+  .canh-row .cl .ce{font-size:21px; line-height:1}
+  .canh-row .cl .cp{color:var(--muted); font-weight:500; font-size:12px; font-variant-numeric:tabular-nums}
+  .add-btn{
+    background:var(--accent-soft); color:var(--accent); border:1px solid rgba(249,115,22,.4);
+    border-radius:9px; padding:8px 15px; font-weight:700; font-size:13px; cursor:pointer;
+    font-family:var(--sans); white-space:nowrap; transition:background .15s, color .15s;
+  }
+  .add-btn.done{background:var(--accent); color:#1a1206; border-color:var(--accent)}
+
+  /* ---- section header ---- */
+  .grp-h{font-size:11px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase;
+    color:var(--muted); margin:18px 2px 8px}
+  .grp-h:first-child{margin-top:2px}
+
+  /* ---- builder rows ---- */
+  .brow{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--card); border:1px solid var(--line); border-radius:11px;
+    padding:11px 12px; margin-bottom:8px;
+  }
+  .brow .bl .bn{font-weight:600; font-size:14px}
+  .brow .bl .bp{font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+
+  /* ---- nhan pills ---- */
+  .pills{display:flex; gap:8px; margin:4px 0 6px; flex-wrap:wrap}
+  .pill{
+    border:1px solid var(--line); background:var(--card); color:var(--muted);
+    padding:7px 12px; border-radius:999px; font-size:12px; font-weight:600; cursor:pointer;
+  }
+  .pill.on{background:var(--accent); border-color:var(--accent); color:#1a1206}
+  .pill.sm{padding:5px 10px; font-size:11.5px}
+  .hint{font-size:11px; color:var(--muted); margin:2px 2px 0; line-height:1.4}
+
+  /* ---- per-item options (trứng: nhân + vị trí) ---- */
+  .brow-wrap{margin-bottom:8px}
+  .brow-wrap .brow{margin-bottom:0}
+  .brow-wrap.open .brow{border-radius:11px 11px 0 0; border-bottom-color:transparent}
+  .opts{
+    display:none; flex-direction:column; gap:9px;
+    border:1px solid var(--line); border-top:none; border-radius:0 0 11px 11px;
+    background:rgba(15,20,30,.55); padding:10px 12px;
+  }
+  .brow-wrap.open .opts{display:flex}
+  .opt-line{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+  .opt-lab{font-size:10px; font-weight:800; letter-spacing:.5px; text-transform:uppercase;
+    color:var(--muted); width:46px; flex:0 0 auto}
+  .note-in{
+    flex:1; min-width:120px; background:var(--bg); border:1px solid var(--line);
+    border-radius:8px; color:var(--text); padding:7px 10px; font-size:12px; font-family:var(--sans);
+  }
+  .note-in::placeholder{color:#5f6b7e}
+  .note-in:focus{outline:2px solid var(--accent); outline-offset:0; border-color:transparent}
+
+  /* ---- set card ---- */
+  .setcard{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px; margin-bottom:12px;
+  }
+  .setcard .st-top{display:flex; align-items:center; justify-content:space-between; gap:8px}
+  .setcard h3{margin:0; font-size:15.5px; font-weight:700}
+  .pinbtn{background:none; border:1px solid var(--line); border-radius:8px; cursor:pointer;
+    color:var(--muted); font-size:12px; padding:5px 9px; font-weight:600; white-space:nowrap}
+  .pinbtn.on{color:var(--accent); border-color:rgba(249,115,22,.4); background:var(--accent-soft)}
+  .setcard ul{list-style:none; margin:9px 0 8px; padding:0}
+  .setcard li{font-size:12.5px; color:var(--muted); padding:2px 0}
+  .setcard li b{color:var(--text); font-weight:600}
+  .setcard .summ{font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums}
+  .setcard .summ b{color:var(--accent); font-weight:800}
+  .setcard .acts{display:flex; gap:8px; margin-top:12px}
+  .btn{border:none; border-radius:10px; cursor:pointer; font-weight:700; font-family:var(--sans); font-size:13.5px}
+  .btn-o{background:var(--accent); color:#1a1206; padding:9px 14px; flex:1}
+  .btn-ghost{background:var(--card); border:1px solid var(--line); color:var(--text); padding:9px 12px}
+
+  /* ---- toast ---- */
+  .toast{
+    display:flex; gap:9px; align-items:flex-start; background:var(--raised);
+    border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:10px; padding:11px 12px; margin-bottom:14px; font-size:12px; color:var(--muted); line-height:1.4;
+  }
+  .toast b{color:var(--text)}
+  .toast .x{margin-left:auto; cursor:pointer; color:var(--muted); font-size:16px; line-height:1}
+
+  /* ---- list footer (view A) ---- */
+  .listfoot{
+    position:absolute; left:0; right:0; bottom:64px; z-index:12;
+    background:linear-gradient(transparent, var(--bg) 26%); padding:18px 14px 12px;
+  }
+  .listfoot .fav-total{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:2px 4px 11px; font-size:13.5px; color:var(--muted); font-variant-numeric:tabular-nums;
+  }
+  .listfoot .fav-total b{color:var(--accent); font-weight:800; font-size:17px}
+  .listfoot .sec{display:flex; gap:8px; margin-bottom:9px}
+  .listfoot .sec button{
+    flex:1; background:var(--card); border:1px solid var(--line); color:var(--text);
+    border-radius:10px; padding:9px 8px; font-size:12px; font-weight:600; cursor:pointer; font-family:var(--sans);
+  }
+  .cta-full{width:100%; background:var(--accent); color:#1a1206; border:none; border-radius:12px;
+    padding:14px; font-size:15px; font-weight:800; cursor:pointer; font-family:var(--sans);
+    box-shadow:0 6px 18px rgba(249,115,22,.35)}
+
+  /* ---- builder summary bar (view C) ---- */
+  .sumbar{
+    position:absolute; left:0; right:0; bottom:64px; z-index:12;
+    display:flex; align-items:center; gap:12px;
+    background:rgba(20,26,38,.96); backdrop-filter:blur(8px);
+    border-top:1px solid var(--line); padding:12px 14px;
+  }
+  .sumbar .tot{flex:1}
+  .sumbar .tot .n{font-size:11.5px; color:var(--muted)}
+  .sumbar .tot .v{font-size:19px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums}
+  .sumbar .save{background:var(--accent); color:#1a1206; border:none; border-radius:11px;
+    padding:12px 18px; font-weight:800; font-size:14px; cursor:pointer; font-family:var(--sans)}
+  .sumbar .save:disabled{opacity:.4; cursor:not-allowed}
+
+  /* ---- bottom nav ---- */
+  .botnav{
+    position:absolute; left:0; right:0; bottom:0; z-index:18; height:64px;
+    display:flex; background:rgba(11,15,23,.96); backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+  }
+  .botnav a{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    color:var(--muted); font-size:10px; font-weight:600; text-decoration:none; position:relative;
+  }
+  .botnav a .ic{font-size:19px; line-height:1}
+  .botnav a.on{color:var(--accent)}
+  .botnav a.on::before{content:""; position:absolute; top:0; width:26px; height:2.5px;
+    background:var(--accent); border-radius:3px; box-shadow:0 0 8px rgba(249,115,22,.6)}
+
+  /* ---- empty state ---- */
+  .empty{text-align:center; padding:60px 24px; color:var(--muted)}
+  .empty .big{font-size:44px; opacity:.5}
+  .empty h4{color:var(--text); font-size:15px; margin:14px 0 4px}
+  .empty p{font-size:12.5px; margin:0 0 16px}
+
+  /* ---- modal ---- */
+  .overlay{
+    position:absolute; inset:0; z-index:40; background:rgba(4,6,11,.72);
+    display:none; align-items:center; justify-content:center; padding:22px;
+  }
+  .overlay.open{display:flex}
+  .modal{
+    width:100%; background:#161d29; border:1px solid var(--line); border-radius:18px;
+    padding:18px; box-shadow:var(--shadow);
+  }
+  .modal h2{margin:0 0 14px; font-size:17px; font-weight:700}
+  .modal label{display:block; font-size:12.5px; color:var(--muted); margin-bottom:6px}
+  .modal input[type=text]{
+    width:100%; background:var(--bg); border:1px solid var(--line); border-radius:10px;
+    color:var(--text); padding:11px 12px; font-size:14px; font-family:var(--sans); margin-bottom:14px;
+  }
+  .modal input[type=text]:focus{outline:2px solid var(--accent); outline-offset:0; border-color:transparent}
+  .msum{background:var(--bg); border:1px solid var(--line); border-radius:11px; padding:11px 12px; margin-bottom:12px}
+  .msum .lab{font-size:11.5px; color:var(--muted); margin-bottom:6px}
+  .msum li{list-style:none; font-size:12.5px; padding:2px 0}
+  .msum ul{margin:0; padding:0}
+  .msum .t{margin-top:7px; font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+  .msum .t b{color:var(--accent)}
+  .mpin{display:flex; align-items:center; gap:9px; font-size:12.5px; color:var(--text); margin-bottom:16px; cursor:pointer}
+  .mpin input{width:17px; height:17px; accent-color:var(--accent)}
+  .modal .mrow{display:flex; gap:10px}
+  .modal .mrow .btn{flex:1; padding:12px}
+
+  @media (max-width:430px){ body{padding:0} .phone{border-radius:0; height:100vh; box-shadow:none; border:none} }
+</style>
+
+<div class="phone">
+  <!-- TOP NAV -->
+  <header class="topnav">
+    <button class="icon-btn" aria-label="Quay lại">‹</button>
+    <h1><span class="hrt">❤</span> Yêu Thích</h1>
+    <button class="icon-btn cart" aria-label="Giỏ hàng">🛒<span class="badge">2</span></button>
+  </header>
+
+  <!-- SEGMENTED TABS -->
+  <nav class="seg" role="tablist">
+    <button class="active" data-view="fav" role="tab">Yêu thích</button>
+    <button data-view="sets" role="tab">Bộ đã lưu</button>
+    <button data-view="build" role="tab">Tự tạo suất</button>
+  </nav>
+
+  <div class="body">
+
+    <!-- ============ VIEW A — YÊU THÍCH ============ -->
+    <section class="view active" id="view-fav">
+      <div class="toast">
+        <span>ℹ️</span>
+        <div>Một số món không còn phục vụ đã được <b>xoá</b> khỏi danh sách yêu thích.</div>
+        <span class="x" onclick="this.closest('.toast').remove()">×</span>
+      </div>
+
+      <div class="chips">
+        <button class="chip active" data-filter="all">Tất cả (3)</button>
+        <button class="chip" data-filter="mon">Món lẻ (2)</button>
+        <button class="chip" data-filter="combo">Combo (1)</button>
+      </div>
+
+      <div class="fcard" data-type="mon">
+        <div class="thumb">🫓</div>
+        <div class="meta">
+          <span class="tag">Món lẻ</span>
+          <p class="name">Bánh Cuốn Thịt</p>
+          <p class="sub">Nhân thịt</p>
+          <div class="price">4.000 đ<span> /phần</span></div>
+        </div>
+        <div class="right">
+          <button class="heart" aria-label="Bỏ yêu thích" onclick="toggleHeart(this)">♥</button>
+          <div class="stepper"><button class="minus" onclick="step(this,-1)">–</button><span class="qty">2</span><button class="plus" onclick="step(this,1)">+</button></div>
+        </div>
+      </div>
+
+      <div class="fcard" data-type="mon">
+        <div class="thumb">🥚</div>
+        <div class="meta">
+          <span class="tag">Món lẻ</span>
+          <p class="name">Bánh Trứng Vàng</p>
+          <p class="sub">Nhân thịt mộc nhĩ</p>
+          <div class="price">9.000 đ<span> /phần</span></div>
+        </div>
+        <div class="right">
+          <button class="heart" aria-label="Bỏ yêu thích" onclick="toggleHeart(this)">♥</button>
+          <div class="stepper"><button class="minus" onclick="step(this,-1)">–</button><span class="qty">1</span><button class="plus" onclick="step(this,1)">+</button></div>
+        </div>
+      </div>
+
+      <div class="fcard" data-type="combo">
+        <div class="thumb">🍱</div>
+        <div class="meta">
+          <span class="tag combo">Combo</span>
+          <p class="name">Combo Đầy Đặn</p>
+          <p class="sub">1 trứng + 3 bánh cuốn + 1 giò + canh</p>
+          <div class="price">42.000 đ<span> /phần</span></div>
+        </div>
+        <div class="right">
+          <button class="heart" aria-label="Bỏ yêu thích" onclick="toggleHeart(this)">♥</button>
+          <div class="stepper"><button class="minus" onclick="step(this,-1)">–</button><span class="qty">1</span><button class="plus" onclick="step(this,1)">+</button></div>
+        </div>
+      </div>
+
+      <div class="grp-h">Canh — thêm nhanh</div>
+      <div class="canh-row">
+        <div class="cl"><span class="ce">🥣</span> Canh có rau <span class="cp">0 đ</span></div>
+        <button class="add-btn" onclick="quickAdd(this)">＋ Thêm</button>
+      </div>
+      <div class="canh-row">
+        <div class="cl"><span class="ce">🍲</span> Canh không rau <span class="cp">0 đ</span></div>
+        <button class="add-btn" onclick="quickAdd(this)">＋ Thêm</button>
+      </div>
+
+      <div class="listfoot">
+        <div class="fav-total">
+          <span id="fav-count">4 món</span>
+          <span>Tổng: <b id="fav-total-val">59.000 đ</b></span>
+        </div>
+        <button class="cta-full">🛒 Thêm tất cả vào giỏ</button>
+      </div>
+    </section>
+
+    <!-- ============ VIEW B — BỘ ĐÃ LƯU ============ -->
+    <section class="view" id="view-sets">
+      <div class="setcard">
+        <div class="st-top">
+          <h3>📋 Sáng thứ 7</h3>
+          <button class="pinbtn" onclick="togglePin(this)">📌 Ghim</button>
+        </div>
+        <ul>
+          <li>▸ <b>Bánh cuốn thịt</b> × 1</li>
+          <li>▸ <b>Bánh trứng vàng</b> × 1</li>
+          <li>▸ <b>Canh có rau</b> × 1</li>
+        </ul>
+        <div class="summ">3 món · <b>88.000 đ</b></div>
+        <div class="acts">
+          <button class="btn btn-o">🛒 Áp dụng</button>
+          <button class="btn btn-ghost" aria-label="Đổi tên">✏</button>
+          <button class="btn btn-ghost" aria-label="Xoá">🗑</button>
+        </div>
+      </div>
+
+      <div class="setcard">
+        <div class="st-top">
+          <h3>📋 Cả nhà</h3>
+          <button class="pinbtn on" onclick="togglePin(this)">📌 Đã ghim</button>
+        </div>
+        <ul>
+          <li>▸ <b>Combo Đầy Đặn</b> × 2</li>
+          <li>▸ <b>Bánh cuốn thịt</b> × 2</li>
+          <li>▸ <b>Canh có rau</b> × 4</li>
+          <li style="color:var(--muted)">+2 món nữa</li>
+        </ul>
+        <div class="summ">5 món · <b>152.000 đ</b></div>
+        <div class="acts">
+          <button class="btn btn-o">🛒 Áp dụng</button>
+          <button class="btn btn-ghost" aria-label="Đổi tên">✏</button>
+          <button class="btn btn-ghost" aria-label="Xoá">🗑</button>
+        </div>
+      </div>
+
+      <p class="hint" style="text-align:center;margin-top:16px">Ghim 📌 một set để chọn nhanh ngay trên trang Menu.</p>
+    </section>
+
+    <!-- ============ VIEW C — TỰ TẠO SUẤT ============ -->
+    <section class="view" id="view-build">
+      <p class="hint" style="margin-bottom:10px;font-size:12.5px">Tự chọn thành phần cho suất của riêng bạn — giá cập nhật theo lựa chọn.</p>
+
+      <div class="grp-h">Nhân mặc định (bánh cuốn)</div>
+      <div class="pills" style="margin-bottom:4px">
+        <button class="pill on" data-nhan onclick="toggleNhan(this)">Nhân thịt</button>
+        <button class="pill" data-nhan onclick="toggleNhan(this)">Nhân thịt mộc nhĩ</button>
+      </div>
+      <p class="hint" style="margin-bottom:6px">Riêng <b style="color:var(--text)">trứng</b> chọn nhân &amp; thêm ghi chú ở từng món bên dưới.</p>
+
+      <div class="grp-h">Bánh cuốn</div>
+      <div class="brow"><div class="bl"><div class="bn">Bánh Cuốn Thịt</div><div class="bp">4.000 đ</div></div>
+        <div class="stepper"><button class="minus" onclick="bstep(this,-1,4000)">–</button><span class="qty">3</span><button class="plus" onclick="bstep(this,1,4000)">+</button></div></div>
+      <div class="brow"><div class="bl"><div class="bn">Bánh Cuốn Mộc Nhĩ</div><div class="bp">4.000 đ</div></div>
+        <div class="stepper"><button class="minus" onclick="bstep(this,-1,4000)">–</button><span class="qty">0</span><button class="plus" onclick="bstep(this,1,4000)">+</button></div></div>
+      <div class="brow"><div class="bl"><div class="bn">Bánh Chay</div><div class="bp">2.500 đ · không nhân</div></div>
+        <div class="stepper"><button class="minus" onclick="bstep(this,-1,2500)">–</button><span class="qty">0</span><button class="plus" onclick="bstep(this,1,2500)">+</button></div></div>
+
+      <div class="grp-h">Trứng</div>
+      <div class="brow-wrap">
+        <div class="brow"><div class="bl"><div class="bn">Bánh Trứng Chín</div><div class="bp">9.000 đ</div></div>
+          <div class="stepper"><button class="minus" onclick="bstep(this,-1,9000)">–</button><span class="qty">1</span><button class="plus" onclick="bstep(this,1,9000)">+</button></div></div>
+        <div class="opts">
+          <div class="opt-line"><span class="opt-lab">Nhân</span>
+            <button class="pill sm on" onclick="selectPill(this)">Nhân thịt</button>
+            <button class="pill sm" onclick="selectPill(this)">Nhân mộc nhĩ</button></div>
+          <div class="opt-line"><span class="opt-lab">Ghi chú</span>
+            <input type="text" class="note-in" placeholder="vd: nhân để ngoài bánh, ít hành..."></div>
+        </div>
+      </div>
+      <div class="brow-wrap">
+        <div class="brow"><div class="bl"><div class="bn">Bánh Trứng Tái</div><div class="bp">9.000 đ</div></div>
+          <div class="stepper"><button class="minus" onclick="bstep(this,-1,9000)">–</button><span class="qty">0</span><button class="plus" onclick="bstep(this,1,9000)">+</button></div></div>
+        <div class="opts">
+          <div class="opt-line"><span class="opt-lab">Nhân</span>
+            <button class="pill sm on" onclick="selectPill(this)">Nhân thịt</button>
+            <button class="pill sm" onclick="selectPill(this)">Nhân mộc nhĩ</button></div>
+          <div class="opt-line"><span class="opt-lab">Ghi chú</span>
+            <input type="text" class="note-in" placeholder="vd: nhân để ngoài bánh, ít hành..."></div>
+        </div>
+      </div>
+
+      <div class="grp-h">Giò</div>
+      <div class="brow"><div class="bl"><div class="bn">Giò</div><div class="bp">9.000 đ · không nhân</div></div>
+        <div class="stepper"><button class="minus" onclick="bstep(this,-1,9000)">–</button><span class="qty">1</span><button class="plus" onclick="bstep(this,1,9000)">+</button></div></div>
+
+      <div class="grp-h">Canh</div>
+      <div class="brow"><div class="bl"><div class="bn">Bát canh có rau</div><div class="bp">0 đ</div></div>
+        <div class="stepper"><button class="minus" onclick="bstep(this,-1,0)">–</button><span class="qty">1</span><button class="plus" onclick="bstep(this,1,0)">+</button></div></div>
+      <div class="brow"><div class="bl"><div class="bn">Bát canh không rau</div><div class="bp">0 đ</div></div>
+        <div class="stepper"><button class="minus" onclick="bstep(this,-1,0)">–</button><span class="qty">0</span><button class="plus" onclick="bstep(this,1,0)">+</button></div></div>
+
+      <p class="hint" style="margin-top:12px">Suất tự tạo sẽ xuất hiện trong <b style="color:var(--text)">Yêu thích</b>; bật 📌 khi lưu để ghim lên Menu.</p>
+
+      <div class="sumbar">
+        <div class="tot"><div class="n" id="bcount">6 món</div><div class="v" id="btotal">33.000 đ</div></div>
+        <button class="save" onclick="openModal('Suất tự tạo')">Lưu suất này</button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="botnav">
+    <a href="#"><span class="ic">🍽️</span>Menu</a>
+    <a href="#"><span class="ic">🧾</span>Đơn Hàng</a>
+    <a href="#" class="on"><span class="ic">❤️</span>Yêu Thích</a>
+    <a href="#"><span class="ic">📍</span>Theo Dõi</a>
+    <a href="#"><span class="ic">⚙️</span>Cài Đặt</a>
+  </nav>
+
+  <!-- MODAL -->
+  <div class="overlay" id="overlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h2>💾 Lưu thành set mới</h2>
+      <label for="setname">Đặt tên cho set này:</label>
+      <input type="text" id="setname" placeholder="vd: Set cuối tuần...">
+      <div class="msum">
+        <div class="lab" id="msum-lab">Tóm tắt:</div>
+        <ul id="msum-list">
+          <li>▸ Bánh cuốn thịt × 3</li>
+          <li>▸ Bánh trứng chín × 1</li>
+          <li>▸ Giò × 1 · Canh có rau × 1</li>
+        </ul>
+        <div class="t">Tổng: <b id="msum-total">33.000 đ</b></div>
+      </div>
+      <label class="mpin"><input type="checkbox"> 📌 Ghim lên Menu để chọn nhanh</label>
+      <div class="mrow">
+        <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
+        <button class="btn btn-o" onclick="closeModal()">💾 Lưu set này</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchView(v){
+    document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('active', b.dataset.view===v));
+    const map={fav:'view-fav',sets:'view-sets',build:'view-build'};
+    document.querySelectorAll('.view').forEach(s=>s.classList.remove('active'));
+    document.getElementById(map[v]).classList.add('active');
+    document.querySelector('.body').scrollTop=0;
+  }
+  document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
+
+  // favourite filter
+  document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+    document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    const f=c.dataset.filter;
+    document.querySelectorAll('#view-fav .fcard').forEach(card=>{
+      card.style.display=(f==='all'||card.dataset.type===f)?'':'none';
+    });
+  }));
+
+  function favRecalc(){
+    let total=0, count=0;
+    document.querySelectorAll('#view-fav .fcard').forEach(c=>{
+      if(c.classList.contains('removed')) return;
+      const n=parseInt(c.querySelector('.qty').textContent,10)||0;
+      const p=parseInt(c.querySelector('.price').firstChild.textContent.replace(/[^\d]/g,''),10)||0;
+      total+=n*p; count+=n;
+    });
+    document.getElementById('fav-count').textContent=count+' món';
+    document.getElementById('fav-total-val').textContent=total.toLocaleString('vi-VN')+' đ';
+  }
+
+  function toggleHeart(btn){
+    const card=btn.closest('.fcard');
+    card.classList.add('removed');
+    card.style.transition='opacity .2s, transform .2s';
+    card.style.opacity='0'; card.style.transform='translateX(24px)';
+    favRecalc();
+    setTimeout(()=>card.style.display='none',200);
+  }
+
+  function step(btn,d){
+    const q=btn.parentElement.querySelector('.qty');
+    q.textContent=Math.max(1, parseInt(q.textContent,10)+d);
+    favRecalc();
+  }
+
+  function quickAdd(btn){
+    const badge=document.querySelector('.cart .badge');
+    badge.textContent=parseInt(badge.textContent,10)+1;
+    btn.classList.add('done'); btn.textContent='✓ Đã thêm';
+    clearTimeout(btn._t);
+    btn._t=setTimeout(()=>{btn.classList.remove('done'); btn.textContent='＋ Thêm';},1100);
+  }
+
+  // builder
+  function fmt(n){return n.toLocaleString('vi-VN')+' đ';}
+  function bstep(btn,d,price){
+    const q=btn.parentElement.querySelector('.qty');
+    q.textContent=Math.max(0, parseInt(q.textContent,10)+d);
+    const wrap=btn.closest('.brow-wrap');
+    if(wrap) wrap.classList.toggle('open', parseInt(q.textContent,10)>0);
+    recalc();
+  }
+  function selectPill(btn){
+    btn.closest('.opt-line').querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+    btn.classList.add('on');
+  }
+  function recalc(){
+    let total=0, count=0;
+    document.querySelectorAll('#view-build .brow').forEach(r=>{
+      const n=parseInt(r.querySelector('.qty').textContent,10);
+      const priceText=r.querySelector('.bp').textContent;
+      const p=parseInt(priceText.replace(/[^\d]/g,''),10)||0;
+      // price string like "4.000 đ" -> strip dots
+      const price=parseInt(priceText.split('đ')[0].replace(/\./g,'').replace(/[^\d]/g,''),10)||0;
+      total+=n*price; count+=n;
+    });
+    document.getElementById('btotal').textContent=fmt(total);
+    document.getElementById('bcount').textContent=count+' món';
+    document.querySelector('.sumbar .save').disabled=count===0;
+    document.getElementById('msum-total').textContent=fmt(total);
+  }
+
+  function toggleNhan(btn){
+    const on=document.querySelectorAll('#view-build [data-nhan].on');
+    if(btn.classList.contains('on') && on.length===1) return; // keep at least one
+    btn.classList.toggle('on');
+  }
+  function togglePin(btn){
+    btn.classList.toggle('on');
+    btn.textContent = btn.classList.contains('on') ? '📌 Đã ghim' : '📌 Ghim';
+  }
+
+  function openModal(source){
+    document.getElementById('msum-lab').textContent = source==='Suất tự tạo' ? 'Suất tự tạo — tóm tắt:' : 'Tóm tắt:';
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeModal(){document.getElementById('overlay').classList.remove('open');}
+  document.getElementById('overlay').addEventListener('click',e=>{if(e.target.id==='overlay')closeModal();});
+
+  // reveal per-item options for any trứng row seeded with qty > 0
+  document.querySelectorAll('#view-build .brow-wrap').forEach(w=>{
+    w.classList.toggle('open', parseInt(w.querySelector('.qty').textContent,10)>0);
+  });
+
+  favRecalc();
+  recalc();
+</script>

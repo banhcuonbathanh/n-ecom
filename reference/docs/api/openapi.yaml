@@ -1,0 +1,830 @@
+openapi: "3.0.3"
+info:
+  title: Bánh Cuốn Restaurant API
+  version: "1.2"
+  description: |
+    REST API for Bánh Cuốn Restaurant Management System.
+
+    **How to authenticate:**
+    1. Call `POST /api/v1/auth/login` with admin credentials
+    2. Copy the `access_token` from the response
+    3. Click **Authorize** (top right), paste the token → **Authorize**
+    4. All protected endpoints now work
+
+servers:
+  - url: http://localhost:8080
+    description: Local Docker stack
+
+tags:
+  - name: Auth
+  - name: Categories
+  - name: Products
+  - name: Toppings
+  - name: Staff
+  - name: Orders
+  - name: Payments
+  - name: Tables
+  - name: Chat
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:   { type: string, example: INVALID_INPUT }
+        message: { type: string, example: Dữ liệu đầu vào không hợp lệ }
+
+    Category:
+      type: object
+      properties:
+        id:          { type: string, format: uuid }
+        name:        { type: string, example: Bánh Cuốn }
+        sort_order:  { type: integer, example: 1 }
+        created_at:  { type: string, format: date-time }
+
+    Product:
+      type: object
+      properties:
+        id:           { type: string, format: uuid }
+        name:         { type: string, example: Bánh cuốn thịt }
+        description:  { type: string }
+        price:        { type: integer, example: 35000 }
+        image_url:    { type: string }
+        is_available: { type: boolean }
+        sort_order:   { type: integer }
+        category_id:  { type: string, format: uuid }
+        toppings:     { type: array, items: { $ref: "#/components/schemas/Topping" } }
+        created_at:   { type: string, format: date-time }
+
+    Topping:
+      type: object
+      properties:
+        id:           { type: string, format: uuid }
+        name:         { type: string, example: Chả lụa }
+        price:        { type: integer, example: 10000 }
+        is_available: { type: boolean }
+
+    Staff:
+      type: object
+      properties:
+        id:         { type: string, format: uuid }
+        username:   { type: string, example: staff01 }
+        full_name:  { type: string, example: Nguyễn Văn A }
+        role:       { type: string, enum: [admin, manager, cashier, chef, staff] }
+        phone:      { type: string }
+        email:      { type: string, format: email }
+        is_active:  { type: boolean }
+        created_at: { type: string, format: date-time }
+
+    StaffDetail:
+      allOf:
+        - $ref: "#/components/schemas/Staff"
+        - type: object
+          properties:
+            updated_at: { type: string, format: date-time }
+
+    Pagination:
+      type: object
+      properties:
+        page:  { type: integer }
+        limit: { type: integer }
+        total: { type: integer }
+
+# ─────────────────────────────────────────────────────────────────────────────
+paths:
+
+  # ── Auth ──────────────────────────────────────────────────────────────────
+  /api/v1/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login (get access token)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string, example: admin }
+                password: { type: string, example: Admin123!, format: password }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      access_token: { type: string }
+                      user:
+                        type: object
+                        properties:
+                          id:        { type: string }
+                          username:  { type: string }
+                          full_name: { type: string }
+                          role:      { type: string }
+                          email:     { type: string }
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
+  /api/v1/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout (revoke refresh token)
+      security: [{ BearerAuth: [] }]
+      responses:
+        "204": { description: Logged out }
+
+  /api/v1/auth/me:
+    get:
+      tags: [Auth]
+      summary: Get current staff profile
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/StaffDetail" }
+
+  # ── Categories ────────────────────────────────────────────────────────────
+  /api/v1/categories:
+    get:
+      tags: [Categories]
+      summary: List all categories (public, sorted by sort_order)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Category" }
+
+    post:
+      tags: [Categories]
+      summary: Create category (Manager+)
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:        { type: string, example: Bánh Cuốn, maxLength: 100 }
+                description: { type: string }
+                sort_order:  { type: integer, default: 0 }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id: { type: string, format: uuid }
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "403":
+          description: Insufficient role
+
+  /api/v1/categories/{id}:
+    put:
+      tags: [Categories]
+      summary: Update category (Manager+)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:        { type: string, example: Chả, maxLength: 100 }
+                description: { type: string }
+                sort_order:  { type: integer }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+        "404": { description: Not found }
+
+    delete:
+      tags: [Categories]
+      summary: Delete category (Admin only — fails if has products)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204": { description: Deleted }
+        "409":
+          description: Category still has products
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
+  # ── Products ──────────────────────────────────────────────────────────────
+  /api/v1/products:
+    get:
+      tags: [Products]
+      summary: List available products (public)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Product" }
+
+    post:
+      tags: [Products]
+      summary: Create product (Manager+)
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, price, category_id]
+              properties:
+                name:         { type: string, example: Bánh cuốn thịt }
+                price:        { type: integer, example: 35000, description: Price in VND (integer) }
+                category_id:  { type: string, format: uuid }
+                description:  { type: string }
+                image_path:   { type: string }
+                topping_ids:  { type: array, items: { type: string, format: uuid } }
+                is_available: { type: boolean, default: true }
+                sort_order:   { type: integer, default: 0 }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id: { type: string, format: uuid }
+
+  /api/v1/products/all:
+    get:
+      tags: [Products]
+      summary: List ALL products including unavailable (Manager+)
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Product" }
+
+  /api/v1/products/{id}:
+    get:
+      tags: [Products]
+      summary: Get single product (public)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/Product" }
+        "404": { description: Not found }
+
+    put:
+      tags: [Products]
+      summary: Update product (Manager+) — also use to toggle is_available
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:         { type: string }
+                price:        { type: integer }
+                category_id:  { type: string, format: uuid }
+                description:  { type: string }
+                image_path:   { type: string }
+                topping_ids:  { type: array, items: { type: string, format: uuid } }
+                is_available: { type: boolean, description: "Toggle true/false to enable or disable product" }
+                sort_order:   { type: integer }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/Product" }
+
+    delete:
+      tags: [Products]
+      summary: Delete product (Admin only)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204": { description: Deleted }
+
+  # ── Toppings ──────────────────────────────────────────────────────────────
+  /api/v1/toppings:
+    get:
+      tags: [Toppings]
+      summary: List all toppings (public)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Topping" }
+
+    post:
+      tags: [Toppings]
+      summary: Create topping (Manager+)
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, price]
+              properties:
+                name:  { type: string, example: Chả lụa, maxLength: 100 }
+                price: { type: integer, example: 10000, description: Price in VND }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id: { type: string, format: uuid }
+
+  /api/v1/toppings/{id}:
+    put:
+      tags: [Toppings]
+      summary: Update topping (Manager+)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, price]
+              properties:
+                name:  { type: string, example: Chả chiên }
+                price: { type: integer, example: 15000 }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+
+    delete:
+      tags: [Toppings]
+      summary: Delete topping (Admin only)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204": { description: Deleted }
+
+  # ── Staff ─────────────────────────────────────────────────────────────────
+  /api/v1/staff:
+    get:
+      tags: [Staff]
+      summary: List staff (Manager+)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: role
+          in: query
+          schema: { type: string, enum: [admin, manager, cashier, chef, staff] }
+        - name: is_active
+          in: query
+          schema: { type: boolean }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Staff" }
+                  meta: { $ref: "#/components/schemas/Pagination" }
+
+    post:
+      tags: [Staff]
+      summary: Create staff account (Manager+)
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password, full_name, role]
+              properties:
+                username:  { type: string, example: staff01, minLength: 3, maxLength: 50 }
+                password:  { type: string, example: "Pass1234!", minLength: 8, format: password }
+                full_name: { type: string, example: Nguyễn Văn A, minLength: 2, maxLength: 100 }
+                role:
+                  type: string
+                  enum: [chef, cashier, staff, manager]
+                  description: Manager can only create chef/cashier/staff. Admin can create manager.
+                phone:  { type: string, maxLength: 11 }
+                email:  { type: string, format: email }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/Staff" }
+        "409":
+          description: Username already taken
+
+  /api/v1/staff/{id}:
+    get:
+      tags: [Staff]
+      summary: Get staff by ID (Manager+ or own profile)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/StaffDetail" }
+        "404": { description: Not found }
+
+    patch:
+      tags: [Staff]
+      summary: Update staff profile (Manager+ or own profile)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name: { type: string }
+                role:      { type: string, enum: [chef, cashier, staff, manager], description: Manager+ only }
+                phone:     { type: string }
+                email:     { type: string, format: email }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/StaffDetail" }
+
+    delete:
+      tags: [Staff]
+      summary: Delete staff account (Admin only — cannot delete self)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+        "409":
+          description: Cannot delete self or last admin
+
+  /api/v1/staff/{id}/status:
+    patch:
+      tags: [Staff]
+      summary: Activate or deactivate staff (Manager+)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [is_active]
+              properties:
+                is_active: { type: boolean, example: false }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:         { type: string }
+                      is_active:  { type: boolean }
+                      updated_at: { type: string, format: date-time }
+
+  # ── Tables ────────────────────────────────────────────────────────────────
+  /api/v1/tables:
+    get:
+      tags: [Tables]
+      summary: List all tables (Cashier+)
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:       { type: string }
+                        name:     { type: string }
+                        capacity: { type: integer }
+                        status:   { type: string, enum: [available, occupied, reserved] }
+                        qr_token: { type: string }
+
+    post:
+      tags: [Tables]
+      summary: Create table (Manager+)
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, capacity]
+              properties:
+                name:     { type: string, example: "Bàn 01" }
+                capacity: { type: integer, example: 4 }
+      responses:
+        "201":
+          description: Created
+
+  /api/v1/tables/{id}:
+    patch:
+      tags: [Tables]
+      summary: Update table (Manager+)
+      security: [{ BearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:     { type: string }
+                capacity: { type: integer }
+                status:   { type: string, enum: [available, occupied, reserved] }
+      responses:
+        "200": { description: Updated }
+
+  # ── Chat (AI assistant) ───────────────────────────────────────────────────
+  /api/v1/chat:
+    post:
+      tags: [Chat]
+      summary: Chat with the AI assistant — SSE stream
+      description: |
+        One conversation turn. Responds with a Server-Sent Events stream
+        (`text/event-stream`), events: `text` · `proposal` · `done` · `error`,
+        each with a JSON `data:` payload.
+
+        Write actions (create_order, cancel_order) are NEVER executed directly —
+        they arrive as a `proposal` event and must be approved via
+        `POST /api/v1/chat/confirm`. Errors after the stream opens travel as an
+        `error` event (`CHAT_001` AI not configured · `CHAT_003` model failed/refused),
+        not as an HTTP status.
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                session_id: { type: string, description: Omit to start a new session }
+                message:    { type: string, example: "Cho tôi 2 bánh cuốn thịt" }
+                table_id:   { type: string, format: uuid }
+                order_id:   { type: string, format: uuid }
+      responses:
+        "200":
+          description: SSE stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                example: |
+                  event: text
+                  data: {"text":"..."}
+
+                  event: proposal
+                  data: {"action_id":"...","tool":"create_order","summary":"...","input":{}}
+
+                  event: done
+                  data: {"session_id":"..."}
+
+                  event: error
+                  data: {"code":"CHAT_001","message":"..."}
+        "400":
+          description: Invalid body
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "401":
+          description: Missing/invalid token
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
+  /api/v1/chat/confirm:
+    post:
+      tags: [Chat]
+      summary: Approve or reject the pending AI-proposed action
+      description: |
+        Human approval gate. Executes the pending write action deterministically
+        (no second model round-trip) when `approve=true`; clears it when `approve=false`.
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [session_id, action_id, approve]
+              properties:
+                session_id: { type: string }
+                action_id:  { type: string }
+                approve:    { type: boolean }
+      responses:
+        "200":
+          description: Executed or rejected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:       { type: string, enum: [executed, rejected] }
+                  message:      { type: string }
+                  order_id:     { type: string }
+                  order_number: { type: string }
+                  data_updated: { type: boolean }
+        "400":
+          description: Invalid body (INVALID_INPUT) or unsupported/corrupt pending action (CHAT_002)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "403":
+          description: Pending action does not belong to this session/caller (CHAT_002)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: No pending action awaiting confirmation (CHAT_002)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
