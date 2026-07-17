@@ -1,0 +1,382 @@
+<title>BE State & Data Design — ecom-core</title>
+<style>
+  :root {
+    --bg: #f7f9f9;
+    --surface: #ffffff;
+    --surface-2: #eef2f2;
+    --ink: #1c2626;
+    --ink-2: #55696b;
+    --line: #d9e1e1;
+    --accent: #0f766e;
+    --accent-ink: #0f766e;
+    --accent-soft: #e2f1ef;
+    --warn: #b45309;
+    --warn-soft: #fdf0e0;
+    --bad: #b91c1c;  --bad-soft: #fde8e8;
+    --k1: #0f766e; --k1-soft: #e2f1ef;   /* business / mysql */
+    --k2: #1d4ed8; --k2-soft: #e4ebfc;   /* cache / redis */
+    --k3: #7c3aed; --k3-soft: #efe8fc;   /* request / context */
+    --k4: #b45309; --k4-soft: #fdf0e0;   /* config */
+    --k5: #be185d; --k5-soft: #fbe7f0;   /* banned in-process */
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #101717; --surface: #182020; --surface-2: #1f2a2a;
+      --ink: #e4ecec; --ink-2: #94a8a8; --line: #2b3838;
+      --accent: #2dd4bf; --accent-ink: #5eead4; --accent-soft: #12302c;
+      --warn: #f5a952; --warn-soft: #33260f;
+      --bad: #f28b8b; --bad-soft: #3a1515;
+      --k1: #2dd4bf; --k1-soft: #12302c;
+      --k2: #7ca6f7; --k2-soft: #15223f;
+      --k3: #b795f8; --k3-soft: #261b3d;
+      --k4: #f5a952; --k4-soft: #33260f;
+      --k5: #f27bab; --k5-soft: #3a1526;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101717; --surface: #182020; --surface-2: #1f2a2a;
+    --ink: #e4ecec; --ink-2: #94a8a8; --line: #2b3838;
+    --accent: #2dd4bf; --accent-ink: #5eead4; --accent-soft: #12302c;
+    --warn: #f5a952; --warn-soft: #33260f;
+    --bad: #f28b8b; --bad-soft: #3a1515;
+    --k1: #2dd4bf; --k1-soft: #12302c;
+    --k2: #7ca6f7; --k2-soft: #15223f;
+    --k3: #b795f8; --k3-soft: #261b3d;
+    --k4: #f5a952; --k4-soft: #33260f;
+    --k5: #f27bab; --k5-soft: #3a1526;
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f9f9; --surface: #ffffff; --surface-2: #eef2f2;
+    --ink: #1c2626; --ink-2: #55696b; --line: #d9e1e1;
+    --accent: #0f766e; --accent-ink: #0f766e; --accent-soft: #e2f1ef;
+    --warn: #b45309; --warn-soft: #fdf0e0;
+    --bad: #b91c1c; --bad-soft: #fde8e8;
+    --k1: #0f766e; --k1-soft: #e2f1ef;
+    --k2: #1d4ed8; --k2-soft: #e4ebfc;
+    --k3: #7c3aed; --k3-soft: #efe8fc;
+    --k4: #b45309; --k4-soft: #fdf0e0;
+    --k5: #be185d; --k5-soft: #fbe7f0;
+  }
+
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0; padding: 40px 20px 80px;
+  }
+  .page { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 44px; }
+
+  header .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent-ink); margin-bottom: 10px;
+  }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 10px; text-wrap: balance; letter-spacing: -.01em; }
+  header p.lede { color: var(--ink-2); max-width: 62ch; margin: 0; }
+  header p.lede code { font-family: var(--mono); font-size: 13px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+
+  section > h2 {
+    font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-2); margin: 0 0 4px; font-family: var(--mono); font-weight: 600;
+  }
+  section > h2 .num { color: var(--accent-ink); margin-right: 8px; }
+  section > p.note { margin: 0 0 16px; color: var(--ink-2); max-width: 70ch; font-size: 14px; }
+
+  .kinds { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .kind {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px;
+    border-top: 3px solid var(--kc, var(--accent));
+  }
+  .kind .chip {
+    align-self: flex-start; font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--kc); background: var(--ks); padding: 2px 8px; border-radius: 99px;
+  }
+  .kind h3 { margin: 2px 0 0; font-size: 15px; }
+  .kind .owner { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+  .kind .ex { font-size: 13px; color: var(--ink-2); }
+  .kind .never { font-size: 12px; color: var(--warn); }
+  .kind .never::before { content: "✕ never: "; font-weight: 600; }
+  .k1 { --kc: var(--k1); --ks: var(--k1-soft); }
+  .k2 { --kc: var(--k2); --ks: var(--k2-soft); }
+  .k3 { --kc: var(--k3); --ks: var(--k3-soft); }
+  .k4 { --kc: var(--k4); --ks: var(--k4-soft); }
+  .k5 { --kc: var(--k5); --ks: var(--k5-soft); }
+  .kind.banned { border-style: dashed; }
+  .kind.banned h3 { color: var(--k5); }
+
+  .decide { display: flex; flex-direction: column; gap: 0; margin-top: 16px; }
+  .decide .q {
+    display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; align-items: center;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px;
+  }
+  .decide .arrow { text-align: center; color: var(--ink-2); font-size: 12px; padding: 2px 0; font-family: var(--mono); }
+  .decide .q .ans {
+    font-family: var(--mono); font-size: 12px; font-weight: 600; white-space: nowrap;
+    color: var(--kc, var(--ink)); background: var(--ks, var(--surface-2)); padding: 3px 10px; border-radius: 99px;
+  }
+  .decide .q span.qq { font-size: 14px; }
+
+  .flow { display: flex; flex-direction: column; align-items: stretch; gap: 0; max-width: 620px; margin: 16px auto 0; }
+  .flow .box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 16px; text-align: center;
+  }
+  .flow .box b { display: block; font-family: var(--mono); font-size: 13px; }
+  .flow .box small { color: var(--ink-2); font-size: 12px; }
+  .flow .box.hot { border-color: var(--accent); background: var(--accent-soft); }
+  .flow .down { text-align: center; color: var(--ink-2); font-size: 14px; line-height: 1.6; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; background: var(--surface); }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  th { text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+       color: var(--ink-2); font-weight: 600; padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code, li code, p code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+  td .yes { color: var(--accent-ink); font-weight: 700; }
+  td .no { color: var(--ink-2); font-weight: 700; }
+  td .http { font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 12.5px; }
+
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .tier { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+  .tier h3 { margin: 0 0 4px; font-size: 15px; }
+  .tier .tag { font-family: var(--mono); font-size: 11px; color: var(--accent-ink); }
+  .tier p { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-2); }
+  .tier ul { margin: 8px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); }
+  .tier li { margin: 3px 0; }
+  .tier li b { color: var(--ink); font-weight: 600; }
+
+  .callout {
+    border: 1px solid var(--line); border-left: 3px solid var(--warn); background: var(--warn-soft);
+    border-radius: 8px; padding: 12px 16px; font-size: 13.5px; margin-top: 12px;
+  }
+  .callout b { color: var(--warn); }
+  .callout.bad { border-left-color: var(--bad); background: var(--bad-soft); }
+  .callout.bad b { color: var(--bad); }
+
+  pre.tree {
+    font-family: var(--mono); font-size: 12.5px; line-height: 1.6; margin: 0;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 16px 20px; overflow-x: auto; color: var(--ink);
+  }
+  pre.tree .c { color: var(--ink-2); }
+  pre.tree .hot { color: var(--accent-ink); font-weight: 600; }
+
+  ol.rules { margin: 12px 0 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+  ol.rules li::marker { font-family: var(--mono); color: var(--accent-ink); font-weight: 600; }
+
+  footer { color: var(--ink-2); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 16px; }
+  footer code { font-family: var(--mono); background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+  a { color: var(--accent-ink); }
+</style>
+
+<div class="page">
+
+<header>
+  <div class="eyebrow">ecom-core · harness/diagrams · F-8 · 2026-07-17</div>
+  <h1>Backend State &amp; Data Design</h1>
+  <p class="lede">How every piece of backend data gets exactly one owner, how a request flows
+  handler → service → repository → MySQL, where transactions begin, and how failures become
+  the one error envelope. Source of truth: <code>harness/BE_STATE.md</code> — this page is the
+  visual companion. Stack: Go · Gin · sqlc · MySQL · Redis.</p>
+</header>
+
+<section>
+  <h2><span class="num">01</span>Four kinds of state, four owners — and one banned</h2>
+  <p class="note">The BE twin of the FE's five-kinds rule. Data living in two places (stock in a
+  struct <em>and</em> in MySQL) is how overselling happens — banned by rule.</p>
+  <div class="kinds">
+    <div class="kind k1">
+      <span class="chip">BUSINESS</span>
+      <h3>Business state</h3>
+      <span class="owner">MySQL via repository</span>
+      <span class="ex">products · carts · orders · users · stock</span>
+      <span class="never">touch from a handler; keep in Redis</span>
+    </div>
+    <div class="kind k2">
+      <span class="chip">CACHE</span>
+      <h3>Cache state</h3>
+      <span class="owner">Redis via platform/cache</span>
+      <span class="ex">catalog cache · rate counters (A-1)</span>
+      <span class="never">store what MySQL can't rebuild</span>
+    </div>
+    <div class="kind k3">
+      <span class="chip">REQUEST</span>
+      <h3>Request state</h3>
+      <span class="owner">context.Context</span>
+      <span class="ex">request id · auth claims · deadline</span>
+      <span class="never">stash in a global / outlive the request</span>
+    </div>
+    <div class="kind k4">
+      <span class="chip">CONFIG</span>
+      <h3>Config state</h3>
+      <span class="owner">platform/config at boot</span>
+      <span class="ex">DSNs · JWT secret · ports · TTLs</span>
+      <span class="never">os.Getenv elsewhere; mutate after boot</span>
+    </div>
+    <div class="kind k5 banned">
+      <span class="chip">BANNED</span>
+      <h3>In-process mutable</h3>
+      <span class="owner">— no owner, no home</span>
+      <span class="ex">package vars holding carts / stock / sessions</span>
+      <span class="never">the API is stateless — kill -9 loses nothing</span>
+    </div>
+  </div>
+
+  <div class="decide">
+    <div class="q k1"><span class="qq">Would losing it lose a business fact?</span><span class="ans">→ MySQL via repository</span></div>
+    <div class="arrow">no ↓</div>
+    <div class="q k2"><span class="qq">Rebuildable, and only there to make reads fast?</span><span class="ans">→ Redis via platform/cache</span></div>
+    <div class="arrow">no ↓</div>
+    <div class="q k3"><span class="qq">Scoped to one request (who / trace / deadline)?</span><span class="ans">→ context.Context</span></div>
+    <div class="arrow">no ↓</div>
+    <div class="q k4"><span class="qq">Known at boot, never changes?</span><span class="ans">→ platform/config</span></div>
+    <div class="arrow">no ↓</div>
+    <div class="q"><span class="qq">Otherwise it's local</span><span class="ans">→ a local variable</span></div>
+  </div>
+  <div class="callout"><b>Allowed in-process state is immutable wiring only</b> — router, parsed
+  config, injected deps. A package <code>var</code> that changes after boot and would be missed by a
+  customer belongs in MySQL or Redis.</div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>Request flow — one straight line</h2>
+  <p class="note">A handler calls exactly ONE service method; orchestration of several repos is a
+  service's job (checkout is the worked example). sqlc row types never leak past the service.</p>
+  <div class="flow">
+    <div class="box"><b>Caddy /api/*</b><small>single public entry</small></div>
+    <div class="down">↓</div>
+    <div class="box"><b>Gin router + middleware</b><small>recover → request-log → auth (JWT verify → claims into context)</small></div>
+    <div class="down">↓</div>
+    <div class="box"><b>handler/&lt;domain&gt;</b><small>bind DTO · shape-check · ONE service call · write DTO — errors exit ONLY via <b>platform/errs</b></small></div>
+    <div class="down">↓</div>
+    <div class="box hot"><b>service/&lt;domain&gt;</b><small>business rules · transaction boundaries (§03) · Cache interface — the only layer that thinks</small></div>
+    <div class="down">↓</div>
+    <div class="box"><b>repository/&lt;domain&gt;</b><small>sqlc-generated + hand-written MySQL access · accepts a querier (WithTx)</small></div>
+    <div class="down">↓</div>
+    <div class="box"><b>MySQL</b><small>the only source of truth</small></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Transactions &amp; consistency</h2>
+  <p class="note">Services own Begin/Commit; repositories never do. One tx per request, never nested.
+  Stock is only ever mutated inside a locked transaction.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Operation</th><th>Tx</th><th>Inside the transaction</th></tr></thead>
+    <tbody>
+      <tr><td>place order (CC-4)</td><td><span class="yes">✅</span></td><td>lock lines <code>SELECT … FOR UPDATE</code> → check stock → decrement → insert order + lines w/ price snapshot → clear cart · any line short ⇒ rollback, <code>INSUFFICIENT_STOCK</code></td></tr>
+      <tr><td>cancel order (O-2)</td><td><span class="yes">✅</span></td><td>re-check status ∈ {placed, confirmed} → set <code>cancelled</code> → restore stock · moved on ⇒ rollback, <code>CANCEL_WINDOW_CLOSED</code></td></tr>
+      <tr><td>cart merge on login (A-3)</td><td><span class="yes">✅</span></td><td>sum quantities per product, cap at stock → delete guest cart (rule 5)</td></tr>
+      <tr><td>cart add / update qty (CC-2)</td><td><span class="yes">✅</span></td><td>read stock → upsert line capped at stock — check + write atomically</td></tr>
+      <tr><td>all reads (lists, details)</td><td><span class="no">—</span></td><td>single statements; never open a tx to read</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>Error codes — the envelope's producing side</h2>
+  <p class="note">Services return typed domain errors → <code>platform/errs</code> writes
+  <code>{"error":{code,message,details}}</code>. The FE branches on exactly these codes
+  (FE_STATE.md §4) — this table is the other half of that contract. Codes live in
+  <code>domain/constants.go</code>, the ONE constants file.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>code</th><th>HTTP</th><th>Raised by</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td><code>VALIDATION_FAILED</code></td><td><span class="http">400 / 422</span></td><td>handler · service</td><td>400 unparseable · 422 field rules; <code>details[]</code> = <code>{field, issue}</code></td></tr>
+      <tr><td><code>UNAUTHORIZED</code></td><td><span class="http">401</span></td><td>auth middleware</td><td>missing / invalid / expired JWT</td></tr>
+      <tr><td><code>FORBIDDEN</code></td><td><span class="http">403</span></td><td>service</td><td>authenticated but not the owner</td></tr>
+      <tr><td><code>NOT_FOUND</code></td><td><span class="http">404</span></td><td>service</td><td>from <code>sql.ErrNoRows</code> — entity doesn't exist</td></tr>
+      <tr><td><code>CONFLICT</code></td><td><span class="http">409</span></td><td>service</td><td>duplicate email; generic state conflict</td></tr>
+      <tr><td><code>INSUFFICIENT_STOCK</code></td><td><span class="http">409</span></td><td>service</td><td>stock cap / atomic decrement failure (rule 3)</td></tr>
+      <tr><td><code>CANCEL_WINDOW_CLOSED</code></td><td><span class="http">409</span></td><td>service</td><td>cancel after <code>shipped</code> (rule 2)</td></tr>
+      <tr><td><code>RATE_LIMITED</code></td><td><span class="http">429</span></td><td>middleware (A-1)</td><td>login/register burst — arrives with A-1</td></tr>
+      <tr><td><code>INTERNAL</code></td><td><span class="http">500</span></td><td>errs fallback</td><td>anything unmapped — never leaks Go error text</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout bad"><b>Never in the envelope:</b> SQL strings, stack traces, Go error text.
+  Internals go to the request log with the request id. 5xx log at error level with stack; 4xx at
+  info — expected traffic, not incidents.</div>
+</section>
+
+<section>
+  <h2><span class="num">05</span>Validation &amp; identity — who checks what</h2>
+  <div class="tiers">
+    <div class="tier">
+      <span class="tag">TIER 1 · HANDLER</span>
+      <h3>Shape validation</h3>
+      <ul>
+        <li>Gin binding + validator tags: types, required, <b>min/max</b>, enum membership</li>
+        <li>fails fast: <code>VALIDATION_FAILED</code> + <code>details[]</code> before any service call</li>
+        <li>same limits as FE Zod (min qty 1 ⇔ <code>min=1</code>)</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <span class="tag">TIER 2 · SERVICE</span>
+      <h3>Business validation</h3>
+      <ul>
+        <li>anything needing state or rules: stock caps, cancel window, duplicate email</li>
+        <li>never in handlers, never in SQL triggers</li>
+        <li><b>BE is the authority</b> — FE validation is UX, BE validation is law</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <span class="tag">IDENTITY</span>
+      <h3>Who is asking</h3>
+      <ul>
+        <li>JWT (httpOnly cookie) verified by middleware → claims into context — the only writer</li>
+        <li>handlers read via <code>auth.UserID(ctx)</code>, pass userID to services as an <b>explicit parameter</b></li>
+        <li>guest cart token cookie: same pattern — handler reads, service receives a parameter</li>
+        <li>bcrypt in the accounts service; plaintext never logged</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout"><b>Cache-aside lives in the service</b> (policy: ARCHITECTURE.md §4):
+  Get → miss ⇒ repository → Set w/ TTL. Writes <code>Del</code> their keys in the same method.
+  Redis down ⇒ log + fall through to MySQL — never a 5xx.</div>
+</section>
+
+<section>
+  <h2><span class="num">06</span>Folder layout</h2>
+  <pre class="tree">be/
+  cmd/api/main.go            <span class="c"># wiring only: config → deps → router → listen</span>
+  internal/
+    handler/{catalog,cart,checkout,orders,accounts}/    <span class="c"># DTOs + Gin handlers</span>
+    service/{catalog,cart,checkout,orders,accounts}/    <span class="c"># rules, tx boundaries, cache use</span>
+    repository/{catalog,cart,checkout,orders,accounts}/ <span class="c"># sqlc-generated + hand-written</span>
+    domain/<span class="hot">constants.go</span>       <span class="c"># status enums, error codes, cookie names — THE one file</span>
+    platform/
+      <span class="hot">errs/</span>                  <span class="c"># envelope type + writer — every handler error exits here</span>
+      middleware/            <span class="c"># recover, request-log, auth (JWT), rate-limit (A-1)</span>
+      <span class="hot">cache/</span>                 <span class="c"># THE only redis import; small Cache interface</span>
+      <span class="hot">config/</span>                <span class="c"># THE only os.Getenv reader</span>
+  db/
+    migrations/              <span class="c"># numbered up/down pairs (F-3 picks the tool)</span>
+    queries/*.sql            <span class="c"># sqlc sources</span></pre>
+</section>
+
+<section>
+  <h2><span class="num">07</span>Hard BE rules — violations are bugs</h2>
+  <ol class="rules">
+    <li>Layering is strict: <code>handler → service → repository → db</code> — no skips, no reverse imports.</li>
+    <li>Business facts live in MySQL only; no package-level mutable business state — <code>FLUSHALL</code> and <code>kill -9</code> must never lose a fact.</li>
+    <li>Every handler error exits via <code>platform/errs</code>; codes from <code>domain/constants.go</code>; internals never leak into the envelope.</li>
+    <li>Transactions begin/commit in services only; stock mutations always inside a locked tx.</li>
+    <li>Handlers validate shape, services validate business — never the other way.</li>
+    <li><code>os.Getenv</code> only in <code>platform/config</code>; the redis client only in <code>platform/cache</code>.</li>
+    <li>Identity (userID, cart token) reaches services as explicit parameters — never dug out of context.</li>
+    <li>A response-DTO change updates <code>fe/src/lib/api/types.ts</code> in the same scope contract; a new error code updates the §04 table too.</li>
+  </ol>
+</section>
+
+<footer>
+  Snapshot, not a source of truth — on any conflict <code>harness/BE_STATE.md</code>,
+  <code>ARCHITECTURE.md</code> and <code>PLAN.md</code> win. Layer/domain inventory: ARCHITECTURE.md §2 ·
+  Redis policy: ARCHITECTURE.md §4 · the FE half of the contract: FE_STATE.md.
+</footer>
+
+</div>

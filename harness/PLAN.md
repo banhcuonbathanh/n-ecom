@@ -22,6 +22,8 @@
 ## Architecture rules (fixed once decided — violations are bugs)
 
 - BE layering (strict): `handler → service → repository → db`. No layer skipping.
+  Full design (state ownership, transaction policy, error codes, validation tiers):
+  `harness/BE_STATE.md`.
 - FE state (strict): server state → query library · client state → store ·
   forms → schema-validated · all API calls through one client module.
   Full design (state ownership, cache map, loading/error tiers): `harness/FE_STATE.md`.
@@ -104,3 +106,7 @@ one file per flow (e.g. `checkout-flow.md` with a Mermaid diagram). Link them he
   (state ownership, data flow, cache map, loading/error tiers). Live copy:
   https://claude.ai/code/artifact/2343defd-c86f-4e79-a785-5b4138508c15
   Snapshot — `FE_STATE.md` wins on any conflict.
+- `harness/diagrams/be-state-data.html` — F-8 visual companion to `harness/BE_STATE.md`
+  (BE state ownership, request flow, transaction map, error-code table, folder layout).
+  Live copy: https://claude.ai/code/artifact/57b53522-8b43-4db6-b6a4-f6e88b59f341
+  Snapshot — `BE_STATE.md` wins on any conflict.

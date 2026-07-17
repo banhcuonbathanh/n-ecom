@@ -18,7 +18,7 @@
 | F-5 | FE state & loading architecture doc (`harness/FE_STATE.md` + diagram) | F-1 | Doc covers 4 state kinds, loading/error policy, cache map, folder layout; HTML diagram renders | ✅ | VERIFICATION.md 2026-07-17 |
 | F-6 | Component & alignment architecture doc (`harness/ARCHITECTURE.md` + `harness/diagrams/architecture.html`) | F-1 | Doc covers component inventory + responsibilities, layer contracts, FE↔BE and Redis interaction, alignment-enforcement gates; HTML diagram renders | ✅ | VERIFICATION.md 2026-07-17 |
 | F-7 | Design system reference page (`harness/diagrams/design-system.html`) — tokens + button deep-dive + all component specimens | F-1, F-5 | Page covers tokens (color/type/spacing/radius/shadow), button anatomy/6 variants/3 sizes/5-state matrix, forms, feedback, overlays, nav, commerce patterns; HTML renders both themes | ✅ | VERIFICATION.md 2026-07-17 |
-| F-8 | BE state & data architecture doc (`harness/BE_STATE.md` + diagram) — FE_STATE.md's backend counterpart | F-1, F-6 | Doc covers BE state kinds w/ owners, request data flow, transaction policy, error-code enum + mapping, validation tiers, folder layout, hard BE rules; HTML diagram renders | ⬜ | |
+| F-8 | BE state & data architecture doc (`harness/BE_STATE.md` + diagram) — FE_STATE.md's backend counterpart | F-1, F-6 | Doc covers BE state kinds w/ owners, request data flow, transaction policy, error-code enum + mapping, validation tiers, folder layout, hard BE rules; HTML diagram renders | ✅ | VERIFICATION.md 2026-07-17 |
 
 ## Phase 1 — Catalog
 

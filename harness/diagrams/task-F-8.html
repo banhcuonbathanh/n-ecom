@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-8 — BE state &amp; data architecture doc · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code { border: none; background: transparent; padding: 0; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · task plan · 2026-07-17</div>
+  <h1>F-8 — Backend state &amp; data architecture doc</h1>
+  <p class="lede">The backend counterpart of F-5: <code>harness/BE_STATE.md</code> gives every piece of
+  backend data exactly one owner and fixes how a request flows, where transactions begin,
+  and how errors become the envelope — before any Go code exists to get it wrong.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip done">delivered</span></span></div>
+    <div class="fact"><span class="k">deps</span><span class="v">F-1 ✅ · F-6 ✅</span></div>
+    <div class="fact"><span class="k">type</span><span class="v">documentation</span></div>
+    <div class="fact"><span class="k">branch</span><span class="v">main (doc task, Hard Rule 3)</span></div>
+  </div>
+  <div class="golden">
+    <p><b>AC (TASKS.md):</b> doc covers BE state kinds with owners, request data flow, transaction
+    policy, error-code enum + mapping, validation tiers, folder layout, hard BE rules; HTML diagram renders.</p>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>Why this task, why now</h2></div>
+  <p>F-5 fixed how the frontend holds state; F-6 fixed the component map and layer contracts.
+  What is still undecided is the backend's <em>dynamics</em>: who owns which kind of data at runtime,
+  where a transaction begins and ends, which layer validates what, and how a service failure turns
+  into the Session-0 error envelope. Every BE task (C-2 → A-3) needs those answers; writing them once
+  now is cheaper than re-deciding them five times.</p>
+  <p>One-fact-one-home: this doc does <b>not</b> repeat the layer table or Redis policy — those stay in
+  <code>ARCHITECTURE.md</code> §2/§4 and are linked. <code>BE_STATE.md</code> owns only what no other file owns.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Scope contract — exactly these files</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>File</th><th>Change</th></tr>
+    <tr><td><code>harness/BE_STATE.md</code></td><td><b>new</b> — the doc: 5 BE state kinds w/ owners, request flow, transaction map, error-code enum, validation tiers, auth identity flow, folder layout, hard BE rules</td></tr>
+    <tr><td><code>harness/diagrams/be-state-data.html</code></td><td><b>new</b> — visual companion, same design language as <code>fe-state-loading.html</code></td></tr>
+    <tr><td><code>harness/diagrams/task-F-8.html</code></td><td><b>new</b> — this plan page (owner rule 2026-07-17)</td></tr>
+    <tr><td><code>harness/PLAN.md</code></td><td>pointer under §Architecture rules (BE) + §Diagrams row</td></tr>
+    <tr><td><code>harness/CONTEXT_MAP.md</code></td><td>doc-inventory rows + "New BE endpoint" routing row now reads <code>BE_STATE.md</code></td></tr>
+    <tr><td><code>harness/TASKS.md</code> · <code>STATE.md</code> · <code>VERIFICATION.md</code> · <code>diagrams/build-plan.html</code></td><td>register row → ✅ · checkpoint · receipt · §R report entry</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>What the doc decides</h2></div>
+  <ul class="plain">
+    <li><b>Five kinds of backend state, five owners</b> — business facts → MySQL · cache → Redis via <code>platform/cache</code> · request scope → <code>context.Context</code> · config → <code>platform/config</code> at boot · in-process mutable business state → <b>banned</b> (the API stays stateless).</li>
+    <li><b>Request flow, one straight line</b> — Caddy → Gin router → middleware (recover → log → auth) → handler (bind + shape-check, ONE service call) → service (rules, tx, cache) → repository (sqlc) → MySQL; errors exit only through <code>platform/errs</code>.</li>
+    <li><b>Transaction policy</b> — services own Begin/Commit; repositories accept a querier; the three atomic flows (place order, cancel, cart merge) mapped explicitly; reads never open transactions.</li>
+    <li><b>Error-code enum</b> — the stable <code>SCREAMING_SNAKE</code> codes with their HTTP statuses and which layer raises them; FE branches on these codes (FE_STATE.md §4), so this table is the contract's other half.</li>
+    <li><b>Validation tiers</b> — handler = shape only (binding tags) · service = business rules; mirrors the FE's Zod-vs-server split.</li>
+    <li><b>Hard BE rules</b> — 8 numbered rules with the same weight as PLAN.md rules.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Steps</h2></div>
+  <ol class="steps">
+    <li>Register F-8 in TASKS.md → checkpoint commit (done: <code>d483d02</code>).</li>
+    <li>Publish this plan page + build-plan.html §R entry.</li>
+    <li>Write <code>harness/BE_STATE.md</code>.</li>
+    <li>Write <code>harness/diagrams/be-state-data.html</code>.</li>
+    <li>Wire pointers: PLAN.md §Architecture rules + §Diagrams, CONTEXT_MAP.md.</li>
+    <li>Verify (tag-balance walk + section/line counts + published live copy) → receipt in VERIFICATION.md.</li>
+    <li>Checkpoint: STATE.md, TASKS.md ✅, commit to <code>main</code>, push.</li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Risks &amp; receipt</h2></div>
+  <ul class="plain">
+    <li>⚠️ Overlap risk with ARCHITECTURE.md §2/§4 — handled by linking, never repeating (CONTEXT_MAP rule 3).</li>
+    <li>⚠️ Doc written before code (F-2 pending) — same situation F-5 was in; Hard Rule 5 (code wins, doc fixed same task) covers any later drift.</li>
+    <li><b>Receipt:</b> HTML parser tag-balance check clean · section count + <code>&lt;title&gt;</code> grep · line counts · live artifact link — logged in VERIFICATION.md, same shape as the F-5/F-6/F-7 receipts.</li>
+  </ul>
+</section>
+
+<footer>
+  F-8 plan · ecom-core · sources of truth: <code>harness/BE_STATE.md</code> · <code>harness/TASKS.md</code> —
+  this page is a snapshot; on any conflict the markdown wins.
+</footer>
+
+</div>
+</body>
+</html>

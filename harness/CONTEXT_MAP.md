@@ -9,7 +9,7 @@
 
 | Task type | Read | Skip |
 |---|---|---|
-| New BE endpoint | `PLAN.md §Stack §Architecture` + domain section + `TOOLS.md` if AI-related | FE docs |
+| New BE endpoint | `BE_STATE.md` + `PLAN.md §Stack §Architecture` + domain section + `TOOLS.md` if AI-related | FE docs |
 | New FE page/component | `FE_STATE.md` + `PLAN.md §Architecture (FE)` + domain section | BE internals (use API contract only) |
 | DB migration | `PLAN.md §File map (db)` + migration skill in `SKILLS.md` | everything else |
 | Bug fix | `STATE.md` (recent decisions) + the failing area's PLAN section | unrelated domains |
@@ -49,3 +49,9 @@
 | `harness/diagrams/build-plan.html` | Visual A→Z overview (architecture, BE/FE roles, wireframes, design system) | nothing — orientation snapshot from Session 0; on any conflict PLAN.md/TASKS.md win |
 | `harness/FE_STATE.md` | FE state & loading design (F-5) | state ownership, cache/invalidation map, loading/error tiers, FE folder layout |
 | `harness/diagrams/fe-state-loading.html` | Visual companion to FE_STATE.md | nothing — snapshot; FE_STATE.md wins |
+| `harness/BE_STATE.md` | BE state & data design (F-8) | BE state ownership, transaction policy, error-code enum, validation tiers, BE folder layout |
+| `harness/diagrams/be-state-data.html` | Visual companion to BE_STATE.md | nothing — snapshot; BE_STATE.md wins |
+| `harness/diagrams/design-system.html` | Design system reference (F-7): tokens, button deep-dive, component specimens | design tokens + component visual specs until code exists (C-4 onward, code wins) |
+| `harness/diagrams/task-F-2.html` | Per-task visual plan page for F-2 | nothing — plan snapshot; TASKS.md/PLAN.md win |
+| `harness/diagrams/task-F-8.html` | Per-task visual plan page for F-8 | nothing — plan snapshot; TASKS.md/PLAN.md win |
+| `harness/README.md` | Folder index: summary + link per harness file | nothing — navigation only; on any conflict the linked file wins |

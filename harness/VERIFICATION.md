@@ -32,6 +32,24 @@
 
 -->
 
+### F-8 — BE state & data architecture doc · 2026-07-17
+**AC:** Doc covers BE state kinds w/ owners, request data flow, transaction policy, error-code enum + mapping, validation tiers, folder layout, hard BE rules; HTML diagram renders
+**Receipt:**
+```
+$ python3 tagcheck.py be-state-data.html task-F-8.html   # HTMLParser walk, void-aware
+harness/diagrams/be-state-data.html   errors: none · unclosed: none
+harness/diagrams/task-F-8.html        errors: none · unclosed: none
+$ grep -c '^## ' harness/BE_STATE.md && grep -n '<title>' harness/diagrams/be-state-data.html \
+    && wc -l harness/BE_STATE.md harness/diagrams/be-state-data.html
+9                                   # sections: 4+1 state kinds, request flow, transactions,
+1:<title>BE State & Data Design — ecom-core</title>   # error codes, validation tiers, auth,
+     182 harness/BE_STATE.md                          # cache pattern, folder layout, hard rules
+     382 harness/diagrams/be-state-data.html
+```
+HTML renders (light + dark via token swap) — published live copy (private):
+https://claude.ai/code/artifact/57b53522-8b43-4db6-b6a4-f6e88b59f341
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-7 — Design system reference page · 2026-07-17
 **AC:** Page covers tokens (color/type/spacing/radius/shadow), button anatomy/6 variants/3 sizes/5-state matrix, forms, feedback, overlays, nav, commerce patterns; HTML renders both themes
 **Receipt:**

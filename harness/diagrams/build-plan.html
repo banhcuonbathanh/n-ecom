@@ -310,6 +310,21 @@
     <details class="report">
       <summary>
         <span class="r-date">2026-07-17</span>
+        <span class="r-title">F-8 — Backend state &amp; data architecture · delivered</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> the backend counterpart of F-5's FE_STATE.md. Delivered in full: <code style="font-family:var(--mono);font-size:0.85em">harness/BE_STATE.md</code> (source of truth) · <a href="be-state-data.html">be-state-data.html</a> (visual) · plan page <a href="task-F-8.html">task-F-8.html</a>.</p>
+        <p><b>TL;DR:</b> every piece of backend data gets one owner — business facts in MySQL, cache in Redis via <code style="font-family:var(--mono);font-size:0.85em">platform/cache</code>, request scope in context, config at boot, and in-process mutable business state is <b>banned</b> (the API stays stateless). Services own transaction boundaries (place-order / cancel / cart-merge are the three atomic flows, stock only mutates inside a locked tx); the error-code enum (9 codes, VALIDATION_FAILED → INTERNAL) is now written down as the other half of the FE's <code style="font-family:var(--mono);font-size:0.85em">ApiError.code</code> contract; handlers validate shape, services validate business.</p>
+        <h4>Nothing blocks on you</h4>
+        <p style="font-size:0.92rem">No 🚨/🔴 flags, no new proposals — everything derives from decided rules (Session-0 envelope, business rules 1–5, F-6 layer contracts). F-2 (below) stays the next build task; C-2 through A-3 now have their BE design ready. Receipt in VERIFICATION.md.</p>
+      </div>
+    </details>
+
+    <details class="report">
+      <summary>
+        <span class="r-date">2026-07-17</span>
         <span class="r-title">F-6 — Components &amp; alignment blueprint · delivered</span>
         <span class="chip done">done</span>
         <span class="r-hint">detail</span>

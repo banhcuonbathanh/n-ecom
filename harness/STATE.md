@@ -8,18 +8,32 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-7 done — design system reference page (diagrams/design-system.html):
-  tokens, button deep-dive, full component inventory.
+- **Status:** ✅ F-8 done — BE state & data architecture doc (`harness/BE_STATE.md` +
+  diagrams/be-state-data.html): FE_STATE.md's backend counterpart.
 - **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`.
 - **Open decisions:** Redis policy is a 💡 proposal (ARCHITECTURE.md §4) — silence =
   accepted, locks in when C-2 starts. Brand-primary hue is a 💡 proposal
-  (design-system.html §8) — owner may swap before C-4. ⚠ FLAG: uncommitted owner edit
-  in architecture.html (`--muted` → #0066ff) left in the working tree — confirm or revert.
-  Deferred (not open): payment gateway, Admin, AI.
+  (design-system.html §8) — owner may swap before C-4. ⚠ FLAG: untracked `reference/docs/`
+  (owner reference material, predates the harness) left out of git — say if it should be
+  committed or gitignored. Deferred (not open): payment gateway, Admin, AI.
 
 ---
 
 ## Checkpoint log
+
+### 2026-07-17 — Session 4 (F-8): BE state & data architecture doc
+- Done: F-8 ✅ — `harness/BE_STATE.md` (4+1 BE state kinds w/ owners — in-process mutable
+  state banned, request flow, tx policy: services own boundaries + 4 atomic flows,
+  9-code error enum as the FE contract's other half, validation tiers, auth identity as
+  explicit params, cache-aside pattern, folder layout, 8 hard BE rules) +
+  `harness/diagrams/be-state-data.html` + plan page task-F-8.html (receipt in VERIFICATION.md).
+- Decisions: error-code enum fixed (VALIDATION_FAILED…INTERNAL, §4 table) · stock mutates
+  only inside a locked tx · handlers = shape, services = business · userID/cart-token
+  reach services as parameters, never via context digging.
+- Drift fixed / found: committed F-7-session leftovers found dangling in the working
+  tree (harness/README.md index + CONTEXT_MAP inventory rows); ⚠ untracked
+  `reference/docs/` flagged to owner (not committed — not project harness material).
+- Next: unchanged — F-2 (dev stack skeleton), per task-F-2.html.
 
 ### 2026-07-17 — Stack versions bumped to verified-latest (pre-F-2)
 - Done: PLAN.md §Stack updated after live version check — Go 1.25→1.26,
