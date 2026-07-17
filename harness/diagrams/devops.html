@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevOps operations — ecom-core (F-13)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --danger: #B3362C;
+    --danger-soft: #F8E7E4;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --danger: #E58579; --danger-soft: #3B1B17;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --danger: #E58579; --danger-soft: #3B1B17;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --danger: #B3362C; --danger-soft: #F8E7E4;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 940px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  p { margin: 0 0 14px; max-width: 72ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 72ch; }
+  .golden p { margin: 0; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code { border: none; background: transparent; padding: 0; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.p0 { color: var(--danger); background: var(--danger-soft); }
+  .chip.p1 { color: var(--amber); background: var(--amber-soft); }
+  .chip.p2 { color: var(--muted); background: var(--surface); border: 1px solid var(--line); }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+  .card h3 { margin: 0 0 8px; font-size: 1rem; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · devops operations · F-13 · 2026-07-18</div>
+  <h1>How we ship — images, pipeline, rollback, go-live</h1>
+  <p class="lede">Visual companion to <code>harness/DEVOPS.md</code> (the markdown wins on any conflict).
+  Commands, ports and env vars live in <code>ENVIRONMENT.md</code>; strategy in <code>OVERALL_PLAN.md §5</code>.</p>
+  <div class="golden">
+    <p><b>The whole doc in one sentence:</b> Caddy is the only door, images are immutable and tagged,
+    the pipeline is the only road to production, and every deploy carries its own way back.</p>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>Runtime topology — dev now, prod later, same shape</h2></div>
+  <pre class="diagram">
+                     internet / LAN phone / your browser
+                                   │
+                          ┌────────▼────────┐   the ONLY public service
+                          │  caddy  :80/:443│   Stage B: auto-TLS (Let's Encrypt)
+                          └────┬───────┬────┘
+              /api/* /uploads/*│       │ everything else
+                     /health   │       │
+                      ┌────────▼──┐ ┌──▼────────┐
+                      │ be  :8080 │ │ fe  :3000 │
+                      │ Go 1.26   │ │ Next 16   │
+                      │ distroless│ │ standalone│
+                      └──┬─────┬──┘ └───────────┘
+             healthy?    │     │    healthy?
+              ┌──────────▼┐   ┌▼──────────┐
+              │mysql :3306│   │redis :6379│   Stage B: NO host ports (rule D5)
+              │ 9.7 LTS   │   │ 8 · cache │   redis = wipeable by policy
+              │ mysql_data│   │ no volume │
+              └───────────┘   └───────────┘
+   start order: mysql ─▶ redis ─▶ be (migrate→serve) ─▶ fe ─▶ caddy
+   OPS phase adds: prometheus · grafana · loki · promtail · swagger (firewalled, SSH tunnel)</pre>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Pipeline — push to main, verified deploy, automatic way back</h2></div>
+  <pre class="diagram">
+ push / PR                                   merge to main
+ ┌─────────────────────────┐                 ┌──────────────────────────────────────────┐
+ │ ci.yml (F-4)            │                 │ deploy.yml (OPS)                         │
+ │  go vet + go test       │ both lanes      │ build be+fe ─▶ push GHCR ─▶ ssh VPS      │
+ │  npm lint + npm build   │ from day 1      │  tags: sha-&lt;short&gt; + latest              │
+ └─────────────────────────┘                 │        │                                 │
+                                             │        ▼                                 │
+   ghcr.io/banhcuonbathanh/n-ecom-be         │  compose pull && up -d                   │
+   ghcr.io/banhcuonbathanh/n-ecom-fe         │        │                                 │
+   (keep previous TWO tags — rule D7)        │        ▼                                 │
+                                             │  curl /health via caddy                  │
+                                             │   ├─ 200 → record tag in .env.deployed   │
+                                             │   └─ fail → AUTO-ROLLBACK to prev tag    │
+                                             └──────────────────────────────────────────┘</pre>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Rollback decision tree</h2></div>
+  <pre class="diagram">
+                         incident detected
+                                │
+                 deploy in the last 4 hours?
+                   │ no                │ yes
+                   ▼                   ▼
+          not a deploy issue    did that deploy run a migration?
+          → severity table §04    │ no                │ yes
+          → investigate           ▼                   ▼
+                            6A CODE-ONLY        6B WITH MIGRATION
+                            pin prev tag        ⚠️ orders written since?
+                            pull + up -d          → owner first, data rescue
+                            &lt; 5 min             goose down ×1 → then 6A
+                                │                 10–20 min
+                                └────────┬────────┘
+                                         ▼
+                          post-rollback checklist (all must pass):
+                          /health 200 · ps all running · no panic/fatal
+                          mysql ping · redis ping · FE renders · 1 order round-trip</pre>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Severity — sized for a one-owner shop</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>Sev</th><th>Means</th><th>Acknowledge</th><th>Resolve</th><th>First move</th></tr>
+    <tr><td><span class="chip p0">P0</span></td><td>orders cannot be placed</td><td>ASAP + owner ping in 15 min</td><td>4 h</td><td>rollback first, diagnose after</td></tr>
+    <tr><td><span class="chip p1">P1</span></td><td>major feature degraded</td><td>same day</td><td>24 h</td><td>assess: rollback vs fix-forward</td></tr>
+    <tr><td><span class="chip p2">P2</span></td><td>cosmetic / minor</td><td>logged</td><td>72 h</td><td>task row in TASKS.md</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Two-stage go-live</h2></div>
+  <div class="cols">
+    <div class="card">
+      <h3>Stage A — owner's Mac, shop LAN</h3>
+      <ul class="plain">
+        <li>Real stack, real phones, <code>http://&lt;mac-ip&gt;</code> through Caddy</li>
+        <li>DHCP reservation for the Mac; firewall must allow Docker</li>
+        <li>Proves: full order loop, seeds, smoke tests</li>
+        <li>Skips: public TLS, CI deploy path (webhooks are P-phase anyway)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Stage B — VPS + domain + HTTPS</h3>
+      <ul class="plain">
+        <li>2 vCPU / 2 GB, Singapore region · DNS A record before first start</li>
+        <li>Fresh secrets on the VPS — never reuse Stage A values</li>
+        <li>Pipeline-only deploys (rule D8) · nightly backups + restore drill</li>
+        <li><b>Prove rollback once</b> with a deliberately broken commit before announcing</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>The 8 hard rules (D-rules)</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>ID</th><th>Rule (short form — full text in DEVOPS.md §10)</th></tr>
+    <tr><td><b>D1</b></td><td><code>NEXT_PUBLIC_API_BASE_URL</code> is baked at FE build time and points <b>through Caddy</b>, never <code>:8080</code>. Changing it = rebuild fe.</td></tr>
+    <tr><td><b>D2</b></td><td><code>ACME_EMAIL</code> never empty — empty crash-loops Caddy.</td></tr>
+    <tr><td><b>D3</b></td><td>MySQL creds freeze into <code>mysql_data</code> at first init — change = backup, wipe, re-migrate, re-seed.</td></tr>
+    <tr><td><b>D4</b></td><td>No <code>down -v</code> / volume delete in prod without a same-day verified backup.</td></tr>
+    <tr><td><b>D5</b></td><td>DB/Redis ports never public on the VPS — only Caddy 80/443.</td></tr>
+    <tr><td><b>D6</b></td><td>Env vars have one canonical list (ENVIRONMENT.md); <code>.env</code> never in git; no secrets in images or logs.</td></tr>
+    <tr><td><b>D7</b></td><td>No deploy without a live rollback path: previous tag in GHCR + <code>.env.deployed</code> current.</td></tr>
+    <tr><td><b>D8</b></td><td>Production only ships via the pipeline — no hand-built images on the VPS (except executing a rollback).</td></tr>
+  </table></div>
+</section>
+
+<footer>F-13 · visual companion to harness/DEVOPS.md — the markdown wins on any conflict · adapted from reference/docs/devops (4 files) onto the PLAN.md stack.</footer>
+</div>
+</body>
+</html>
