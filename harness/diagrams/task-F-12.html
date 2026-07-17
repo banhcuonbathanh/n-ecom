@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-12 — FE code-convention rules from reference/docs/fe · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  ul.checks { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  ul.checks li { padding-left: 28px; position: relative; }
+  ul.checks li::before { content: "☐"; position: absolute; left: 4px; color: var(--accent); font-weight: 700; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · task plan · 2026-07-18</div>
+  <h1>F-12 — FE code-convention rules from <code>reference/docs/fe</code></h1>
+  <p class="lede">The reference FE guide carries a convention layer the old team learned the hard way —
+  token discipline, one money formatter, FE types that mirror the BE byte-for-byte, HTTP-method parity.
+  Its behavioral lessons already live in <code>OVERALL_PLAN.md §6</code>; this task adopts the
+  <em>code-level</em> rules that still have no home, as hard rules in <code>FE_STATE.md §9</code>.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip amber">in progress</span></span></div>
+    <div class="fact"><span class="k">deps</span><span class="v">F-5 ✅ · F-9 ✅</span></div>
+    <div class="fact"><span class="k">type</span><span class="v">documentation</span></div>
+    <div class="fact"><span class="k">branch</span><span class="v">main (doc task, Hard Rule 3)</span></div>
+  </div>
+  <div class="golden">
+    <p><b>AC (TASKS.md):</b> FE_STATE.md hard-rule list covers the 7 convention gaps with no duplication
+    of OVERALL_PLAN §6 lessons; cart-pivot drift flagged in place; ENVIRONMENT.md carries the
+    Tailwind-JIT rebuild note; docs render.</p>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>Why this task, why now</h2></div>
+  <p>The owner asked: look at <code>reference/docs/fe</code> and consider making rules for this project.
+  Gap analysis against the harness came back clean on architecture — state ownership (F-5), realtime
+  and validation lessons (F-9 §6), tokens as a reference page (F-7) are covered. What has no home is
+  the reference's <b>convention layer</b>: seven small "wrong vs right" rules that each killed hours in
+  the old system. They are one-liners, so they extend <code>FE_STATE.md §9</code> — the list every FE
+  task already reads via CONTEXT_MAP — rather than becoming a new doc every session must also load.</p>
+  <p>One-fact-one-home: token <em>values</em> stay in <code>design-system.html</code> (F-7); behavioral
+  defect lessons stay in <code>OVERALL_PLAN.md §6</code>; this task adds only the code-level rules
+  neither file owns, and links instead of copying.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>The 7 rules being adopted</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Rule (short form)</th><th>Old-system pain it prevents</th></tr>
+    <tr><td>8</td><td>Design tokens only — no raw hex, no raw palette classes (<code>bg-orange-500</code>) in any className</td><td>drifting shades of the same orange across pages; restyling required grep-and-pray</td></tr>
+    <tr><td>9</td><td>Money renders through one <code>formatVND()</code> helper — never inline <code>toLocaleString()</code> or manual "₫" concat</td><td>three price formats on one screen</td></tr>
+    <tr><td>10</td><td>FE types mirror the BE response exactly: field names from the DTO/curl receipt, never invented; IDs are <code>string</code></td><td>FE invented <code>base_price</code>/<code>slug</code>/<code>id:number</code> — fields the API never sent; silent <code>undefined</code>s</td></tr>
+    <tr><td>11</td><td>Derived display state is computed in a helper, never stored (e.g. item progress from served/total)</td><td>stored copies of derivable values drifting from truth</td></tr>
+    <tr><td>12</td><td>HTTP-method parity: FE call method must match the BE route registration; PATCH for partial updates</td><td>FE PATCH vs BE PUT → mystery 404s on a route that "exists"</td></tr>
+    <tr><td>13</td><td>Staff/admin screens call their role-scoped (see-all) endpoints, never the public filtered ones</td><td>admin CRUD built on the public list → out-of-stock items invisible, unmanageable</td></tr>
+    <tr><td>14</td><td>Asset paths from the API are relative; FE builds the full URL from env config</td><td>absolute URLs frozen into data, broken on every host change</td></tr>
+  </table></div>
+  <p style="margin-top:14px">Plus one environment fact (wrong home in FE rules, right home in
+  <code>ENVIRONMENT.md</code>): Tailwind's JIT scans source at <b>image build time</b> — classes added
+  after the Docker build are purged and render invisible. The fix is one line in the §Commands block:
+  rebuild the FE image after adding new pages/classes.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Drift found on the way (fixed in the same task, Hard Rule 5)</h2></div>
+  <div class="flag">
+    <p><b>⚠️ FLAG — FE_STATE.md predates the F-9 cart pivot.</b> §1 still says the cart is server
+    state behind a <code>['cart']</code> query (the old PLAN rule 5 design); F-9 superseded that —
+    the cart is client-side (CC-1/CC-2 superseded, cart store lands in the T phase).</p>
+    <p>Surgical fix here: a dated supersession note at the affected spots (§1 note, §7 store list),
+    pointing at <code>OVERALL_PLAN.md §8</code>. The full rework of the cache/invalidation rows is
+    <em>not</em> done now — it belongs to the T-phase cart task, when the real store exists to
+    document. Rewriting it twice before any code exists would be guessing.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Scope contract — exactly these files</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>File</th><th>Change</th></tr>
+    <tr><td><code>harness/FE_STATE.md</code></td><td>§9 hard rules extended 7 → 14 (one line each, provenance note) · dated cart-pivot supersession notes in §1/§7</td></tr>
+    <tr><td><code>harness/ENVIRONMENT.md</code></td><td>one Tailwind-JIT rebuild note in §Commands</td></tr>
+    <tr><td><code>harness/CONTEXT_MAP.md</code></td><td>FE_STATE.md purpose row gains "FE code conventions" · row for this page (Hard Rule 6)</td></tr>
+    <tr><td><code>harness/README.md</code></td><td>row for this page (Hard Rule 6)</td></tr>
+    <tr><td><code>harness/diagrams/task-F-12.html</code></td><td><b>new</b> — this plan page (owner rule 2026-07-17)</td></tr>
+    <tr><td><code>harness/TASKS.md</code> · <code>STATE.md</code> · <code>VERIFICATION.md</code> · <code>diagrams/build-plan.html</code></td><td>register row → ✅ · checkpoint · receipt · §R report entry</td></tr>
+  </table></div>
+  <p style="margin-top:14px;font-size:0.9rem;color:var(--muted)">Deliberately <b>not</b> created:
+  a new <code>FE_CONVENTIONS.md</code>. Seven one-line rules don't justify a doc every FE session
+  must additionally load — they belong in the rule list FE tasks already read.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Steps</h2></div>
+  <ol class="steps">
+    <li>Register F-12 in TASKS.md + checkpoint commit. <span class="chip done">done</span></li>
+    <li>Publish this plan page + build-plan.html §R report. <span class="chip done">done</span></li>
+    <li>FE_STATE.md: add rules 8–14 with provenance line; cart-pivot supersession notes in §1/§7.</li>
+    <li>ENVIRONMENT.md: Tailwind-JIT rebuild line in §Commands.</li>
+    <li>Hard Rule 6: CONTEXT_MAP.md + README.md rows.</li>
+    <li>Verify (HTML tag-check + rule-count/section grep) → receipt in VERIFICATION.md.</li>
+    <li>Checkpoint: STATE.md entry, TASKS.md row → ✅, commit to <code>main</code>, push.</li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Risks &amp; parallel-session note</h2></div>
+  <ul class="plain">
+    <li><b>⚠️ Parallel sessions in the same working tree.</b> F-10 (BE playbook) and F-13 (DevOps doc)
+    are 🔄 in other sessions. An F-10/F-10/F-10 id collision already happened and was resolved
+    (this task took F-12; DevOps renumbered itself F-13). Shared-file contention remains on
+    <code>ENVIRONMENT.md</code> (F-13 links to it), <code>build-plan.html</code>, <code>TASKS.md</code>,
+    <code>STATE.md</code> — mitigations: surgical single-line edits, commit promptly, re-read before edit.</li>
+    <li><b>No content risk:</b> rules are adaptations of reference conventions already proven in the
+    old system; none contradicts a decided harness rule (checked against FE_STATE, ARCHITECTURE gates,
+    OVERALL_PLAN §6).</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Receipt checklist (VERIFY)</h2></div>
+  <ul class="checks">
+    <li>FE_STATE.md §9 lists rules 1–14; grep shows the 7 new rule keywords present exactly once each.</li>
+    <li>Cart-pivot supersession note present in FE_STATE.md §1 and §7, dated, pointing at OVERALL_PLAN §8.</li>
+    <li>ENVIRONMENT.md contains the JIT rebuild note in §Commands.</li>
+    <li>task-F-12.html passes the tag-check walk (errors: none, unclosed: none), both themes styled.</li>
+    <li>CONTEXT_MAP.md + README.md rows updated (Hard Rule 6).</li>
+    <li>Receipt logged in VERIFICATION.md → TASKS.md row flipped ✅.</li>
+  </ul>
+</section>
+
+<footer>
+  ecom-core · F-12 task plan · 2026-07-18 · source of truth: TASKS.md / FE_STATE.md — on any conflict, they win.
+</footer>
+
+</div>
+</body>
+</html>
