@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-11 — BE engineering playbook from reference/docs/be · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · task plan · 2026-07-18</div>
+  <h1>F-11 — BE engineering playbook from <code>reference/docs/be</code></h1>
+  <p class="lede">The owner pointed at <code>reference/docs/be</code> — the old system's backend manual
+  (system guide, sqlc guide, build-from-zero checklist, caching strategy, code summaries) — and asked
+  for rules/guidelines for our project. F-9 already absorbed the <em>product</em> side of the reference;
+  this task absorbs the <em>engineering workmanship</em>: how the data layer is generated, which code
+  patterns cost the old team real bugs, and the doc discipline that kept 87 routes navigable.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip done">delivered</span></span></div>
+    <div class="fact"><span class="k">deps</span><span class="v">F-1 ✅ · F-8 ✅</span></div>
+    <div class="fact"><span class="k">type</span><span class="v">documentation / rules</span></div>
+    <div class="fact"><span class="k">branch</span><span class="v">main (doc task, Hard Rule 3)</span></div>
+    <div class="fact"><span class="k">deliverable</span><span class="v">harness/BE_PLAYBOOK.md</span></div>
+  </div>
+  <div class="golden">
+    <p><b>AC (TASKS.md):</b> playbook covers the goose+sqlc data-layer workflow, migration-file standard,
+    Go/Gin gotcha rules, caching-discipline adds, BE build order, seed/smoke tooling rule, and the
+    code-summary doc rule — with <b>zero duplication</b> of BE_STATE.md / ARCHITECTURE.md /
+    OVERALL_PLAN.md (links instead); this page renders in both themes.</p>
+  </div>
+  <div class="flag">
+    <p><b>⚠️ FLAG — task id renumbered F-10 → F-11.</b> Two other sessions were working this repo in
+    parallel (DevOps doc registered as F-10, FE conventions as F-12) and one swept this task's first
+    checkpoint into its own commit — a shared working tree means parallel harness sessions share one
+    git index. The id collision is fixed (this task is F-11); consider running one session at a time,
+    or accepting occasional commit interleaving.</p>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>The gap — what the harness had vs. what the reference adds</h2></div>
+  <p>Most of <code>reference/docs/be</code> is already covered: layering, transactions, error envelope and
+  validation live in <code>BE_STATE.md</code> (F-8); the Redis policy in <code>ARCHITECTURE.md §4</code>; the
+  old system's defect list in <code>OVERALL_PLAN.md §6</code> (F-9). What was <b>not</b> yet anywhere:</p>
+  <pre class="diagram">
+ reference/docs/be                        already ours?           lands in
+ ─────────────────────────────────────────────────────────────────────────────
+ BE_SYSTEM_GUIDE  §layers/§rules/§errors  ✅ BE_STATE.md          — (link only)
+                  §8 code gotchas         ❌                      PLAYBOOK §3
+ BE_SQLC_GUIDE    generation pipeline,    ❌                      PLAYBOOK §1
+                  sqlc.yaml decisions
+ BE_BUILD_FROM_ZERO  build order, DDL     ❌ (order only)         PLAYBOOK §2, §5
+                  anatomy, seed+smoke                             PLAYBOOK §6
+ BE_CACHING_STRATEGY  cache-aside         ✅ BE_STATE §7 / ARCH §4 — (link only)
+                  Del-not-update, key     ❌                      PLAYBOOK §4
+                  helper, fail-open map
+ be_code_summary/  summaries-over-source  half (CONTEXT_MAP r.1)  PLAYBOOK §7
+                  as a maintained system                          (BE_SUMMARY.md at C-2)
+ restaurant specifics (menus, KDS, QR)    n/a — product facts     stays in reference/
+  </pre>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>What was adopted — the seven rule groups</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>§</th><th>Rule group</th><th>First task it bites</th><th>Old-system bug it prevents</th></tr>
+    <tr><td>1</td><td>goose+sqlc pipeline: DDL first → query → <code>sqlc generate</code> → <code>go build</code>, generated <code>db/</code> never edited; sqlc.yaml settings locked (emit_interface, empty slices, parameter-limit fixed once)</td><td>F-3</td><td>“#1 mistake”: column added, generate skipped, build breaks a task later</td></tr>
+    <tr><td>2</td><td>Migration checklist: UUID CHAR(36) PKs, integer DECIMAL money, index FK/status/created_at, CHECK invariants, derived facts get no column</td><td>F-3 / C-1</td><td>float money, unindexed status scans, stored-status drift</td></tr>
+    <tr><td>3</td><td>9 Go/Gin gotchas: <code>required</code>-rejects-zero, DI'd middleware, no enumeration + timing defense, HMAC-method check, no sentinel FKs, pool in code, recover in stream goroutines, webhook verify order, marshal-is-the-contract</td><td>C-2 → A-1 → P</td><td>each rule is a documented old-system incident</td></tr>
+    <tr><td>4</td><td>Caching adds: invalidate by Del only, one key-builder per family, one TTL constant, fail-open decided per touchpoint in writing</td><td>C-2</td><td>the stale <code>is_active</code> key-spelling bug</td></tr>
+    <tr><td>5</td><td>Build order spine: migrations → sqlc → platform → vertical domain slices → wiring → seed/smoke; MySQL-wait before goose</td><td>F-2</td><td>BE racing MySQL on compose up</td></tr>
+    <tr><td>6</td><td>Seed + smoke: idempotent seed and a happy-path smoke binary stay green per phase</td><td>F-2 / C-1</td><td>fresh-clone environments nobody could boot</td></tr>
+    <tr><td>7</td><td>Code-summary discipline: <code>BE_SUMMARY.md</code> (routes · DTOs · schema keys) from C-2, updated in the same scope contract as any change</td><td>C-2</td><td>doc drift → sessions grepping 53k lines</td></tr>
+  </table></div>
+  <h3>Deliberately NOT adopted</h3>
+  <ul class="plain">
+    <li>Restaurant product facts (menu/QR/KDS field names, RBAC role table, 87-route map) — product truth for us is <code>OVERALL_PLAN.md</code>.</li>
+    <li>WS <code>?token=</code> query-param auth — superseded by our cookie-auth decision (OVERALL_PLAN §3.4, lessons #13).</li>
+    <li>Bloom-filter helpers — dead code in the reference itself (its own audit says so).</li>
+    <li>The reference's error-code registry — ours is the 9-code enum in <code>BE_STATE.md §4</code>.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Scope contract — files touched and why</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>File</th><th>Change</th></tr>
+    <tr><td><code>harness/BE_PLAYBOOK.md</code></td><td><b>NEW</b> — the deliverable: 7 sections of adopted rules, link-only references to BE_STATE / ARCHITECTURE / OVERALL_PLAN</td></tr>
+    <tr><td><code>harness/diagrams/task-F-11.html</code></td><td><b>NEW</b> — this plan page (owner rule 2026-07-17)</td></tr>
+    <tr><td><code>harness/TASKS.md</code></td><td>register F-11 row (renumbered from F-10 after collision) → flip ✅</td></tr>
+    <tr><td><code>harness/CONTEXT_MAP.md</code></td><td>routing: BE-endpoint + DB-migration task types now read BE_PLAYBOOK.md; doc-inventory rows for both new files (Hard Rule 6)</td></tr>
+    <tr><td><code>harness/README.md</code></td><td>index rows for both new files (Hard Rule 6)</td></tr>
+    <tr><td><code>harness/diagrams/build-plan.html</code></td><td>§R report entry for F-11</td></tr>
+    <tr><td><code>harness/VERIFICATION.md</code> · <code>harness/STATE.md</code></td><td>receipt · session checkpoint</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Steps + receipt checklist</h2></div>
+  <ol class="steps">
+    <li>Read all 12 reference BE docs; diff against BE_STATE.md / ARCHITECTURE.md / OVERALL_PLAN.md to isolate the un-absorbed rules (gap table above).</li>
+    <li>Register the task row; checkpoint commit (collided → renumbered F-11, committed the fix).</li>
+    <li>Write <code>BE_PLAYBOOK.md</code> — every rule either new or a link, nothing restated.</li>
+    <li>Publish this plan page + build-plan §R report.</li>
+    <li>Update CONTEXT_MAP routing + inventory, README index (Hard Rule 6).</li>
+    <li>VERIFY: HTML tag-check both themes present; grep the playbook's section list; receipt → VERIFICATION.md; STATE.md checkpoint; flip ✅; push main.</li>
+  </ol>
+  <h3>Receipt checklist</h3>
+  <ul class="plain">
+    <li>[ ] <code>tagcheck</code> on task-F-11.html — no unclosed/mismatched tags; both theme selectors present</li>
+    <li>[ ] <code>grep "^## " BE_PLAYBOOK.md</code> → the 7 AC sections all present</li>
+    <li>[ ] No-duplication spot-check: playbook never restates the 9-code enum, tx table, or Redis policy — links only</li>
+    <li>[ ] CONTEXT_MAP inventory + README rows exist for both new files</li>
+  </ul>
+</section>
+
+<footer>ecom-core · F-11 task plan · 2026-07-18 · markdown wins on any conflict (BE_PLAYBOOK.md, TASKS.md)</footer>
+</div>
+</body>
+</html>

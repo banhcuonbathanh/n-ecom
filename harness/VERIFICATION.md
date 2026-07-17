@@ -32,6 +32,46 @@
 
 -->
 
+### F-13 — DevOps operations doc from reference/docs/devops · 2026-07-18
+**AC:** Doc covers DevOps file ownership, compose/Dockerfile/Caddy patterns (our stack versions), CI/CD + image tagging, rollback procedures + severity/SLA, Stage A/B go-live runbook, backups, pre-deploy checklist, hard rules; zero facts duplicated from ENVIRONMENT.md (links instead); HTML renders
+**Receipt:**
+```
+$ python3 htmlparser-walk (void-aware) devops.html task-F-13.html
+harness/diagrams/devops.html     OK — no mismatches, no unclosed tags · themes: media-query + data-theme dark/light all present
+harness/diagrams/task-F-13.html  OK — same
+$ grep -c "3306\|6379" harness/DEVOPS.md
+0        # no dev-port table duplicated; ENVIRONMENT.md linked in §Truth boundaries
+$ grep -n "^## " harness/DEVOPS.md
+→ §1 file ownership · §2 compose/startup · §3 image patterns (Go 1.26 distroless,
+  Next 16 standalone/node22, MySQL 9.7, Redis 8) · §4 Caddy · §5 CI/CD + tagging
+  (GHCR n-ecom-be/-fe, keep 2 tags) · §6 rollback (6A/6B + checklist) · §7 Stage A/B
+  runbook · §8 backups · §9 severity/SLA · §10 pre-deploy checklist + D1–D8 rules
+```
+Every AC bullet maps to a section (1:1, listed above). Duplication check: commands/
+ports/env-var lists stay in ENVIRONMENT.md (§Truth boundaries links them); strategy
+facts (10-service target, 2-stage rationale) cited to OVERALL_PLAN §5, not restated.
+Hard Rule 6 done: CONTEXT_MAP inventory rows (DEVOPS.md, devops.html, task-F-13.html)
++ Infra/DevOps routing row now reads `DEVOPS.md` first; README index rows added.
+**Verdict:** AC met — marked ✅ in TASKS.md. (Task renumbered F-10 → F-13 mid-register
+after the three-session id collision; see F-12 receipt note.)
+
+### F-11 — BE engineering playbook from reference/docs/be · 2026-07-18
+**AC:** Playbook covers goose+sqlc data-layer workflow, migration-file standard, Go/Gin gotcha rules, caching discipline adds, BE build order, seed/smoke tooling rule, code-summary doc rule; zero duplication with BE_STATE/ARCHITECTURE (links instead); task page renders both themes
+**Receipt:**
+```
+$ python3 tagcheck.py task-F-11.html build-plan.html   # HTMLParser walk, void-aware
+harness/diagrams/task-F-11.html  -> errors: none | unclosed: none
+harness/diagrams/build-plan.html -> errors: none | unclosed: none
+$ grep -c 'prefers-color-scheme\|data-theme="dark"\|data-theme="light"' task-F-11.html
+3   # media query + both explicit theme overrides present
+$ grep -n "^## " harness/BE_PLAYBOOK.md
+1 data-layer workflow (goose+sqlc) · 2 migration-file standard · 3 Go/Gin gotcha rules ·
+4 caching discipline adds · 5 BE build order · 6 seed+smoke tooling · 7 code-summary docs
+$ grep -i "VALIDATION_FAILED\|INSUFFICIENT_STOCK\|cache-aside\|write-through" BE_PLAYBOOK.md
+(no hits — error enum, tx policy and cache policy are linked, not restated)
+```
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-12 — FE code-convention rules from reference/docs/fe · 2026-07-18
 **AC:** FE_STATE.md hard-rule list covers the 7 convention gaps with no duplication of OVERALL_PLAN §6 lessons; cart-pivot drift flagged in place; ENVIRONMENT.md carries the JIT rebuild note; docs render
 **Receipt:**

@@ -8,10 +8,9 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-12 done — FE code-convention rules from `reference/docs/fe`
-  (FE_STATE.md §9 rules 8–14 + ENVIRONMENT.md JIT gotcha + task-F-12.html).
-  Siblings this day: F-11 (BE playbook) + F-13 (DevOps doc) in parallel sessions —
-  see their own checkpoint entries for status.
+- **Status:** ✅ F-11 (BE playbook → BE_PLAYBOOK.md) · ✅ F-12 (FE conventions →
+  FE_STATE.md §9 rules 8–14) · ✅ F-13 (DevOps operations → DEVOPS.md + diagrams/
+  devops.html) — all three reference-adoption docs done in same-day parallel sessions.
 - **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`; unchanged by F-9
   (skeleton is identical for the restaurant scope).
 - **Open decisions:** ⚠ **Scope pivot** (OVERALL_PLAN.md §9.1): reference = restaurant
@@ -25,6 +24,40 @@
 ---
 
 ## Checkpoint log
+
+### 2026-07-18 — Session 8 (F-13): DevOps operations doc from reference/docs/devops
+- Done: F-13 ✅ — `harness/DEVOPS.md` (reference's 4 DevOps files → 1 ops doc on our
+  stack: DevOps file ownership, compose/startup chain, Go-1.26-distroless + Next-16-
+  standalone image patterns, CI/CD + GHCR sha-tagging w/ keep-2-tags, rollback 6A/6B
+  + post-rollback checklist, Stage A/B go-live runbook, backups 03:00/14-day,
+  P0–P2 SLA, pre-deploy checklist, hard rules D1–D8) + diagrams/devops.html +
+  task-F-13.html. Receipt in VERIFICATION.md.
+- Decisions: one doc not four (agent-operated harness) · ops facts written design-
+  ahead like FE/BE_STATE · registry = ghcr.io/banhcuonbathanh/n-ecom-be/-fe ·
+  reference gotchas promoted to numbered D-rules · CONTEXT_MAP Infra/DevOps route
+  now reads DEVOPS.md + ENVIRONMENT.md.
+- Drift fixed / found: shared-index task-id collision (renumbered F-10 → F-13);
+  kept all shared-file edits additive around the two sibling sessions.
+- Next: unchanged — F-2 (dev stack skeleton), per task-F-2.html; F-2/F-4/OPS now
+  build against DEVOPS.md §2–§5.
+
+### 2026-07-18 — Session 7 (F-11): BE engineering playbook from reference/docs/be
+- Done: F-11 ✅ — `harness/BE_PLAYBOOK.md` (7 rule groups: goose+sqlc pipeline with the
+  generate-after-every-schema-change golden rule, migration-file checklist, 9 Go/Gin
+  gotcha rules each traced to an old-system bug, caching-discipline adds, BE build-order
+  spine, seed+smoke rule, BE_SUMMARY.md discipline from C-2) + task-F-11.html (gap
+  analysis). Receipt in VERIFICATION.md.
+- Decisions: playbook = workmanship layer under BE_STATE.md's design layer — links,
+  never restates · sqlc.yaml settings pre-decided for F-3 (emit_interface, empty
+  slices, parameter-limit fixed once) · BE_SUMMARY.md born at C-2, updated in the same
+  scope contract as any route/DTO/schema change · NOT adopted: WS `?token=` auth,
+  bloom helpers, reference error registry, restaurant product facts.
+- Drift fixed / found: 3-way task-id collision ("F-10" × 3 sessions) — this task
+  renamed to F-11; a sibling commit swept this session's staged TASKS.md row (shared
+  git index — parallel sessions share one working tree). ⚠ reference/docs/ still
+  untracked (open owner flag).
+- Next: unchanged — F-2 (dev stack skeleton), per task-F-2.html; F-3 now reads
+  BE_PLAYBOOK.md §1–2 first (CONTEXT_MAP routing updated).
 
 ### 2026-07-18 — Session 6 (F-12): FE code-convention rules from reference/docs/fe
 - Done: F-12 ✅ — FE_STATE.md §9 extended 7→14 hard rules (tokens-only, one
