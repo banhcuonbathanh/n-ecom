@@ -32,6 +32,24 @@
 
 -->
 
+### F-12 — FE code-convention rules from reference/docs/fe · 2026-07-18
+**AC:** FE_STATE.md hard-rule list covers the 7 convention gaps with no duplication of OVERALL_PLAN §6 lessons; cart-pivot drift flagged in place; ENVIRONMENT.md carries the JIT rebuild note; docs render
+**Receipt:**
+```
+$ python3 tagcheck.py task-F-12.html build-plan.html   # HTMLParser walk, void-aware
+harness/diagrams/task-F-12.html  -> errors: none | unclosed: none
+harness/diagrams/build-plan.html -> errors: none | unclosed: none
+$ grep -n "^[0-9]" harness/FE_STATE.md §9 → rule numbers 1..14 all present (8–14 new)
+$ grep -n "Superseded 2026-07-18" harness/FE_STATE.md → §1 supersession note (F-9 cart pivot)
+$ grep -n "Tailwind JIT scans source" harness/ENVIRONMENT.md → §Commands rebuild gotcha
+```
+Duplication check: rules 8–14 are code-level conventions absent from OVERALL_PLAN §6
+(behavioral lessons), FE_STATE §1–8, ARCHITECTURE gates (gate 8 is shape-sync; rule 10
+adds naming), design-system.html (owns token *values*, rule 8 owns the ban). Hard Rule 6
+done: CONTEXT_MAP + README rows updated (FE_STATE purpose + task-F-12.html).
+**Verdict:** AC met — marked ✅ in TASKS.md. ⚠️ F-10/F-10/F-10 id collision with two
+parallel sessions resolved as F-11 (BE playbook) / F-12 (this) / F-13 (DevOps).
+
 ### F-9 — Overall build plan from reference/08_pages · 2026-07-17
 **AC:** Plan covers all 4 role surfaces (public/customer/staff/admin), BE service/endpoint map, FE page/phase map, DevOps pipeline, phased task breakdown reconciled with existing TASKS.md phases; MD complete + HTML renders
 **Receipt:**

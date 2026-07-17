@@ -9,11 +9,11 @@
 
 | Task type | Read | Skip |
 |---|---|---|
-| New BE endpoint | `BE_STATE.md` + `PLAN.md §Stack §Architecture` + domain section + `TOOLS.md` if AI-related | FE docs |
+| New BE endpoint | `BE_STATE.md` + `BE_PLAYBOOK.md` + `PLAN.md §Stack §Architecture` + domain section + `TOOLS.md` if AI-related | FE docs |
 | New FE page/component | `FE_STATE.md` + `PLAN.md §Architecture (FE)` + domain section | BE internals (use API contract only) |
-| DB migration | `PLAN.md §File map (db)` + migration skill in `SKILLS.md` | everything else |
+| DB migration | `PLAN.md §File map (db)` + `BE_PLAYBOOK.md §1–2` (sqlc workflow + migration checklist) + migration skill in `SKILLS.md` | everything else |
 | Bug fix | `STATE.md` (recent decisions) + the failing area's PLAN section | unrelated domains |
-| Infra / DevOps | `ENVIRONMENT.md` | domain specs |
+| Infra / DevOps | `DEVOPS.md` + `ENVIRONMENT.md` | domain specs |
 | Docs / planning | `TASKS.md` + `STATE.md` | code |
 
 ## Rules
@@ -47,9 +47,11 @@
 | `harness/SUBAGENTS.md` | Delegation | when to spawn |
 | `harness/SKILLS.md` | Playbooks | recurring procedures |
 | `harness/diagrams/build-plan.html` | Visual A→Z overview (architecture, BE/FE roles, wireframes, design system) | nothing — orientation snapshot from Session 0; on any conflict PLAN.md/TASKS.md win |
-| `harness/FE_STATE.md` | FE state & loading design (F-5) | state ownership, cache/invalidation map, loading/error tiers, FE folder layout |
+| `harness/FE_STATE.md` | FE state & loading design (F-5) + FE code-convention rules (F-12, from `reference/docs/fe`) | state ownership, cache/invalidation map, loading/error tiers, FE folder layout, FE code conventions (§9 rules 8–14) |
 | `harness/diagrams/fe-state-loading.html` | Visual companion to FE_STATE.md | nothing — snapshot; FE_STATE.md wins |
 | `harness/BE_STATE.md` | BE state & data design (F-8) | BE state ownership, transaction policy, error-code enum, validation tiers, BE folder layout |
+| `harness/BE_PLAYBOOK.md` | BE engineering playbook (F-11, from `reference/docs/be`) | goose+sqlc workflow, migration-file standard, Go/Gin gotcha rules, caching-discipline adds, BE build order, seed/smoke rule, code-summary (BE_SUMMARY.md) discipline |
+| `harness/diagrams/task-F-11.html` | Per-task visual plan page for F-11 (incl. reference gap analysis) | nothing — plan snapshot; TASKS.md/BE_PLAYBOOK.md win |
 | `harness/diagrams/be-state-data.html` | Visual companion to BE_STATE.md | nothing — snapshot; BE_STATE.md wins |
 | `harness/diagrams/design-system.html` | Design system reference (F-7): tokens, button deep-dive, component specimens | design tokens + component visual specs until code exists (C-4 onward, code wins) |
 | `harness/diagrams/task-F-2.html` | Per-task visual plan page for F-2 | nothing — plan snapshot; TASKS.md/PLAN.md win |
@@ -57,4 +59,8 @@
 | `harness/OVERALL_PLAN.md` | Master build plan (F-9): restaurant-platform scope from `reference/08_pages`, BE/FE/DevOps plans, phased roadmap | product scope, phase roadmap, lessons register (⚠ pivot pending owner; PLAN.md §Stack + TASKS.md statuses still win in their lanes) |
 | `harness/diagrams/overall-plan.html` | Visual companion to OVERALL_PLAN.md | nothing — snapshot; OVERALL_PLAN.md wins |
 | `harness/diagrams/task-F-9.html` | Per-task visual plan page for F-9 | nothing — plan snapshot; TASKS.md/PLAN.md win |
+| `harness/diagrams/task-F-12.html` | Per-task visual plan page for F-12 | nothing — plan snapshot; TASKS.md/FE_STATE.md win |
+| `harness/DEVOPS.md` | DevOps operations (F-13): image patterns, CI/CD + tagging, rollback + SLA, Stage A/B go-live runbook, backups, pre-deploy gates, D-rules | deploy/rollback/backup procedures + DevOps hard rules (commands/ports/env vars stay in ENVIRONMENT.md; strategy in OVERALL_PLAN §5) |
+| `harness/diagrams/devops.html` | Visual companion to DEVOPS.md | nothing — snapshot; DEVOPS.md wins |
+| `harness/diagrams/task-F-13.html` | Per-task visual plan page for F-13 | nothing — plan snapshot; TASKS.md/DEVOPS.md win |
 | `harness/README.md` | Folder index: summary + link per harness file | nothing — navigation only; on any conflict the linked file wins |

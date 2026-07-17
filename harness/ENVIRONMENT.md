@@ -25,6 +25,9 @@ plan; F-2 makes them real (fix this table if F-2 changes anything — rule 5).
 docker compose up -d                 # full stack
 docker compose up -d --build be      # rebuild backend after code changes
 docker compose up -d --build fe      # rebuild frontend
+# ⚠ Tailwind JIT scans source at image BUILD time — classes added after the build
+# are purged from the CSS (styles silently invisible). After adding pages/components
+# with new Tailwind classes, rebuild the fe image. (Dev hot-reload is unaffected.)
 docker compose logs -f be            # tail backend logs
 
 # Backend (run inside be/ or via the be container)

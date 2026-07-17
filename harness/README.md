@@ -26,9 +26,11 @@
 | File | Summary |
 |---|---|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | F-6 blueprint: 5 runtime containers, BE 4-layer contracts (handler→service→repository→db), FE↔BE interaction, Redis disposable-cache policy, alignment-enforcement gates. |
-| [FE_STATE.md](FE_STATE.md) | F-5 design: the 5 kinds of FE state and their single owners (TanStack Query / searchParams / RHF+Zod / Zustand / cookie session), cache & invalidation map, loading/error tiers, FE folder layout. |
+| [FE_STATE.md](FE_STATE.md) | F-5 design: the 5 kinds of FE state and their single owners (TanStack Query / searchParams / RHF+Zod / Zustand / cookie session), cache & invalidation map, loading/error tiers, FE folder layout. Plus F-12: code-convention hard rules 8–14 (tokens, formatVND, DTO naming, derived state, method parity, role-scoped endpoints, asset URLs). |
 | [BE_STATE.md](BE_STATE.md) | F-8 design: the 4 kinds of BE state and their single owners (MySQL / Redis / context / config — in-process mutable banned), request flow, transaction policy, error-code enum, validation tiers, BE folder layout. |
+| [BE_PLAYBOOK.md](BE_PLAYBOOK.md) | F-11 playbook (from `reference/docs/be`): goose+sqlc data-layer workflow, migration-file checklist, 9 Go/Gin gotcha rules, caching-discipline adds, BE build order, seed/smoke rule, BE_SUMMARY.md code-summary discipline. |
 | [OVERALL_PLAN.md](OVERALL_PLAN.md) | F-9 master build plan: restaurant-platform product scope (4 surfaces, ~30 pages), BE domain/API/realtime plan, FE shells + page map, DevOps two-stage go-live, lessons register, phased roadmap reconciled with TASKS.md. |
+| [DEVOPS.md](DEVOPS.md) | F-13 operations doc: DevOps file ownership, prod image patterns (Go distroless · Next standalone), CI/CD pipeline + image tagging, rollback procedures + severity/SLA, Stage A/B go-live runbook, backups, pre-deploy checklist, 8 D-rules. |
 
 ## diagrams/ — visual companions (markdown wins on any conflict)
 
@@ -43,3 +45,7 @@
 | [task-F-8.html](diagrams/task-F-8.html) | TASKS.md row F-8 | Per-task visual plan page for F-8 (owner rule 2026-07-17). |
 | [overall-plan.html](diagrams/overall-plan.html) | OVERALL_PLAN.md | Visual master plan: core loop, architecture, domain table, realtime design, DevOps pipeline, phase roadmap, open decisions. |
 | [task-F-9.html](diagrams/task-F-9.html) | TASKS.md row F-9 | Per-task visual plan page for F-9 (owner rule 2026-07-17). |
+| [task-F-11.html](diagrams/task-F-11.html) | TASKS.md row F-11 | Per-task visual plan page for F-11, incl. the reference/docs/be gap analysis (owner rule 2026-07-17). |
+| [task-F-12.html](diagrams/task-F-12.html) | TASKS.md row F-12 | Per-task visual plan page for F-12 (owner rule 2026-07-17). |
+| [devops.html](diagrams/devops.html) | DEVOPS.md | Visual DevOps ops: runtime topology, pipeline + tagging flow, rollback decision tree, severity table, Stage A/B cards, D-rules. |
+| [task-F-13.html](diagrams/task-F-13.html) | TASKS.md row F-13 | Per-task visual plan page for F-13 (owner rule 2026-07-17). |

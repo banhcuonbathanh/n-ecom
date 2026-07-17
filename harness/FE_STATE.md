@@ -31,9 +31,14 @@ Otherwise                             → useState in the component
 ```
 
 Zustand is the LAST resort, not the default. Expected v1 store surface is tiny:
-`ui` slice (drawer/nav/toasts) — that's it. The cart itself is server state
-(BE cart keyed by cookie token, PLAN.md rule 5), so the cart badge count comes
-from the `['cart']` query, never from a store.
+`ui` slice (drawer/nav/toasts) plus — since the F-9 pivot — a `cart` slice.
+
+> ⚠ **Superseded 2026-07-18 (F-12, per the F-9 pivot):** this file originally made
+> the cart server state (BE cart keyed by cookie token, old PLAN rule 5) read via a
+> `['cart']` query. F-9 superseded that — the cart is **client-side** (CC-1/CC-2
+> superseded; see `OVERALL_PLAN.md §8`, T phase). The `['cart']` rows in §3–§4 below
+> describe the pre-pivot design and get reworked in the T-phase cart task, when the
+> real store exists to document.
 
 ## 2. Data flow — one straight line
 
@@ -174,7 +179,8 @@ fe/src/
     keys.ts                  # query-key factory (single source)
     {catalog,cart,orders,auth}.ts   # useX hooks + invalidation maps
   stores/
-    ui.store.ts              # drawer, nav, toasts — the ONLY expected v1 store
+    ui.store.ts              # drawer, nav, toasts
+    cart.store.ts            # client-side cart (F-9 pivot) — built in the T-phase cart task
   components/
     ui/                      # Skeleton, Spinner, Toast, EmptyState, Button
     {catalog,cart,checkout,orders}/ # domain components (client leaves)
@@ -191,4 +197,25 @@ fe/src/
 4. Optimistic updates: cart mutations only; checkout/orders always pessimistic.
 5. Branch on `ApiError.code`, never on message text.
 6. Query keys come from `queries/keys.ts` only.
-7. New Zustand slice requires a note in this file first (expected v1: `ui` only).
+7. New Zustand slice requires a note in this file first (expected v1: `ui`, plus
+   `cart` per the F-9 pivot — built in the T-phase cart task).
+
+Rules 8–14 adopted 2026-07-18 (F-12): the reference FE guide's code-convention layer
+(`reference/docs/fe`, old system v1.1) adapted to our stack. Behavioral defect
+lessons from the same corpus live in `OVERALL_PLAN.md §6`, not here.
+
+8. Design tokens only — no raw hex and no raw palette classes (`bg-orange-500`) in
+   any className; semantic tokens per `diagrams/design-system.html` (F-7).
+9. Money renders through ONE `formatVND()` helper (`lib/format.ts`) — never inline
+   `toLocaleString()` or manual "₫" concatenation.
+10. FE types mirror the BE response exactly — field names come from the BE DTO /
+    curl receipt, never invented; IDs are always `string`. (The naming half of
+    ARCHITECTURE.md gate 8's DTO-mirror rule.)
+11. Derived display state is computed in a helper, never stored — a stored copy of
+    a derivable value (e.g. line progress from served/total) is drift by construction.
+12. HTTP-method parity — an FE call's method must match the BE route registration
+    (PATCH for partial updates, per contract); checked at SELF-REVIEW next to gate 8.
+13. Staff/admin screens call their role-scoped (see-all) endpoints, never the public
+    filtered ones — public lists hide unavailable items by design.
+14. Asset paths from the API are relative — the FE builds the full URL from env
+    config; absolute URLs are never stored in DB or state.

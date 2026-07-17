@@ -8,8 +8,10 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-9 done — master build plan from `reference/docs/system/08_pages`
-  (`harness/OVERALL_PLAN.md` + diagrams/overall-plan.html + task-F-9.html).
+- **Status:** ✅ F-12 done — FE code-convention rules from `reference/docs/fe`
+  (FE_STATE.md §9 rules 8–14 + ENVIRONMENT.md JIT gotcha + task-F-12.html).
+  Siblings this day: F-11 (BE playbook) + F-13 (DevOps doc) in parallel sessions —
+  see their own checkpoint entries for status.
 - **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`; unchanged by F-9
   (skeleton is identical for the restaurant scope).
 - **Open decisions:** ⚠ **Scope pivot** (OVERALL_PLAN.md §9.1): reference = restaurant
@@ -23,6 +25,19 @@
 ---
 
 ## Checkpoint log
+
+### 2026-07-18 — Session 6 (F-12): FE code-convention rules from reference/docs/fe
+- Done: F-12 ✅ — FE_STATE.md §9 extended 7→14 hard rules (tokens-only, one
+  `formatVND()`, DTO-exact naming + string IDs, derived-not-stored, HTTP-method
+  parity, role-scoped endpoints, relative asset URLs) + ENVIRONMENT.md Tailwind-JIT
+  rebuild gotcha + task-F-12.html. Receipt in VERIFICATION.md.
+- Decisions: no new doc — conventions live in the rule list FE tasks already read
+  (CONTEXT_MAP routes there); behavioral lessons stay in OVERALL_PLAN §6, zero
+  duplication · full `['cart']` cache-map rework deferred to the T-phase cart task.
+- Drift fixed / found: FE_STATE.md predated the F-9 cart pivot (server-cart wording)
+  → dated supersession notes in §1/§8 · ⚠ 3-way task-id collision (three parallel
+  sessions all registered "F-10") resolved: F-11 BE playbook / F-12 this / F-13 DevOps.
+- Next: unchanged — F-2 (dev stack skeleton), per task-F-2.html.
 
 ### 2026-07-17 — Session 5 (F-9): overall build plan from reference/08_pages
 - Done: F-9 ✅ — `harness/OVERALL_PLAN.md` (restaurant-platform scope: 4 surfaces/~30
