@@ -8,18 +8,36 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-8 done — BE state & data architecture doc (`harness/BE_STATE.md` +
-  diagrams/be-state-data.html): FE_STATE.md's backend counterpart.
-- **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`.
-- **Open decisions:** Redis policy is a 💡 proposal (ARCHITECTURE.md §4) — silence =
-  accepted, locks in when C-2 starts. Brand-primary hue is a 💡 proposal
-  (design-system.html §8) — owner may swap before C-4. ⚠ FLAG: untracked `reference/docs/`
-  (owner reference material, predates the harness) left out of git — say if it should be
-  committed or gitignored. Deferred (not open): payment gateway, Admin, AI.
+- **Status:** ✅ F-9 done — master build plan from `reference/docs/system/08_pages`
+  (`harness/OVERALL_PLAN.md` + diagrams/overall-plan.html + task-F-9.html).
+- **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`; unchanged by F-9
+  (skeleton is identical for the restaurant scope).
+- **Open decisions:** ⚠ **Scope pivot** (OVERALL_PLAN.md §9.1): reference = restaurant
+  platform, adopted as north star — silence = accepted. ❓ Cancel rule + ❓ one-order-
+  per-table (OVERALL_PLAN.md §3.7) — defaults chosen, lock in when O phase opens.
+  💡 Redis policy (ARCHITECTURE.md §4) locks in at C-2 · 💡 brand hue before C-4 ·
+  💡 VN-first copy + 💡 no public staff register (OVERALL_PLAN.md §9). ⚠ untracked
+  `reference/docs/` still out of git (owner to say: commit or gitignore).
+  Deferred: payment gateways (→ P phase), AI.
 
 ---
 
 ## Checkpoint log
+
+### 2026-07-17 — Session 5 (F-9): overall build plan from reference/08_pages
+- Done: F-9 ✅ — `harness/OVERALL_PLAN.md` (restaurant-platform scope: 4 surfaces/~30
+  pages, 10 BE domains, ~85 routes, realtime design w/ 4 old-defect fixes, DevOps
+  2-stage go-live, 14-row lessons register, phase roadmap F→C→T→O→R→S→AD→P→OPS→ON) +
+  diagrams/overall-plan.html + task-F-9.html. 4 parallel Explore agents digested
+  ~53k-line reference corpus. Receipt in VERIFICATION.md.
+- Decisions: reference adopted as north star (⚠ pivot flag, silence = accepted) ·
+  Session-0 error envelope + F-5 cookie-JWT + F-6/F-8 architecture all kept (cookie
+  auth also fixes old WS `?token=` leak) · existing task rows re-homed not renumbered
+  (CC-1/2 superseded — cart is client-side; A-3 → ON phase) · old system's bugs =
+  lessons register, not requirements; dev shell-exec route never rebuilt.
+- Drift fixed / found: committed dangling CLAUDE.md Hard Rule 6 text (F-8-session
+  leftover, rule already in force). `reference/docs/` still untracked (open flag).
+- Next: unchanged — F-2 (dev stack skeleton), per task-F-2.html.
 
 ### 2026-07-17 — Session 4 (F-8): BE state & data architecture doc
 - Done: F-8 ✅ — `harness/BE_STATE.md` (4+1 BE state kinds w/ owners — in-process mutable

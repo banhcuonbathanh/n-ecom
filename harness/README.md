@@ -28,6 +28,7 @@
 | [ARCHITECTURE.md](ARCHITECTURE.md) | F-6 blueprint: 5 runtime containers, BE 4-layer contracts (handler→service→repository→db), FE↔BE interaction, Redis disposable-cache policy, alignment-enforcement gates. |
 | [FE_STATE.md](FE_STATE.md) | F-5 design: the 5 kinds of FE state and their single owners (TanStack Query / searchParams / RHF+Zod / Zustand / cookie session), cache & invalidation map, loading/error tiers, FE folder layout. |
 | [BE_STATE.md](BE_STATE.md) | F-8 design: the 4 kinds of BE state and their single owners (MySQL / Redis / context / config — in-process mutable banned), request flow, transaction policy, error-code enum, validation tiers, BE folder layout. |
+| [OVERALL_PLAN.md](OVERALL_PLAN.md) | F-9 master build plan: restaurant-platform product scope (4 surfaces, ~30 pages), BE domain/API/realtime plan, FE shells + page map, DevOps two-stage go-live, lessons register, phased roadmap reconciled with TASKS.md. |
 
 ## diagrams/ — visual companions (markdown wins on any conflict)
 
@@ -40,3 +41,5 @@
 | [task-F-2.html](diagrams/task-F-2.html) | TASKS.md row F-2 | Per-task visual plan page for F-2 (owner rule 2026-07-17). |
 | [be-state-data.html](diagrams/be-state-data.html) | BE_STATE.md | Visual BE state-ownership, request-flow, transaction and error-code diagrams. |
 | [task-F-8.html](diagrams/task-F-8.html) | TASKS.md row F-8 | Per-task visual plan page for F-8 (owner rule 2026-07-17). |
+| [overall-plan.html](diagrams/overall-plan.html) | OVERALL_PLAN.md | Visual master plan: core loop, architecture, domain table, realtime design, DevOps pipeline, phase roadmap, open decisions. |
+| [task-F-9.html](diagrams/task-F-9.html) | TASKS.md row F-9 | Per-task visual plan page for F-9 (owner rule 2026-07-17). |

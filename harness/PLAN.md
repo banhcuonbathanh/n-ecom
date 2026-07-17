@@ -106,6 +106,11 @@ one file per flow (e.g. `checkout-flow.md` with a Mermaid diagram). Link them he
   (state ownership, data flow, cache map, loading/error tiers). Live copy:
   https://claude.ai/code/artifact/2343defd-c86f-4e79-a785-5b4138508c15
   Snapshot — `FE_STATE.md` wins on any conflict.
+- `harness/OVERALL_PLAN.md` + `harness/diagrams/overall-plan.html` — F-9 master build
+  plan (2026-07-17): restaurant-platform scope from `reference/docs/system/08_pages`,
+  BE/FE/DevOps plans, phased roadmap reconciled with TASKS.md. ⚠ Carries the scope-pivot
+  flag — §Domains above stays authoritative for *decided* scope until the owner accepts
+  the pivot (silence = accepted; OVERALL_PLAN.md §9).
 - `harness/diagrams/be-state-data.html` — F-8 visual companion to `harness/BE_STATE.md`
   (BE state ownership, request flow, transaction map, error-code table, folder layout).
   Live copy: https://claude.ai/code/artifact/57b53522-8b43-4db6-b6a4-f6e88b59f341

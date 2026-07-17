@@ -54,4 +54,7 @@
 | `harness/diagrams/design-system.html` | Design system reference (F-7): tokens, button deep-dive, component specimens | design tokens + component visual specs until code exists (C-4 onward, code wins) |
 | `harness/diagrams/task-F-2.html` | Per-task visual plan page for F-2 | nothing — plan snapshot; TASKS.md/PLAN.md win |
 | `harness/diagrams/task-F-8.html` | Per-task visual plan page for F-8 | nothing — plan snapshot; TASKS.md/PLAN.md win |
+| `harness/OVERALL_PLAN.md` | Master build plan (F-9): restaurant-platform scope from `reference/08_pages`, BE/FE/DevOps plans, phased roadmap | product scope, phase roadmap, lessons register (⚠ pivot pending owner; PLAN.md §Stack + TASKS.md statuses still win in their lanes) |
+| `harness/diagrams/overall-plan.html` | Visual companion to OVERALL_PLAN.md | nothing — snapshot; OVERALL_PLAN.md wins |
+| `harness/diagrams/task-F-9.html` | Per-task visual plan page for F-9 | nothing — plan snapshot; TASKS.md/PLAN.md win |
 | `harness/README.md` | Folder index: summary + link per harness file | nothing — navigation only; on any conflict the linked file wins |

@@ -32,6 +32,25 @@
 
 -->
 
+### F-9 — Overall build plan from reference/08_pages · 2026-07-17
+**AC:** Plan covers all 4 role surfaces (public/customer/staff/admin), BE service/endpoint map, FE page/phase map, DevOps pipeline, phased task breakdown reconciled with existing TASKS.md phases; MD complete + HTML renders
+**Receipt:**
+```
+$ python3 tagcheck.py overall-plan.html task-F-9.html   # HTMLParser walk, void-aware
+harness/diagrams/overall-plan.html -> errors: none | unclosed: none
+harness/diagrams/task-F-9.html     -> errors: none | unclosed: none
+$ grep -n "^## " harness/OVERALL_PLAN.md
+1 Product definition (4 surfaces) · 2 Scope delta · 3 Backend plan (domains/schema/
+API/auth/realtime/Redis/rules) · 4 Frontend plan · 5 DevOps plan · 6 Lessons register ·
+7 Deferred · 8 Phased roadmap + TASKS.md reconciliation · 9 Open decisions
+```
+Reconciliation check: every ⬜/⛔ TASKS.md row re-homed in §8 (F-2/3/4 unchanged ·
+C-1…C-5 kept · CC-1/2 superseded, CC-3/4/5 → O phase · O-1…3 kept · A-1/2 → S phase,
+A-3 → ON phase · ⛔ Admin → AD · ⛔ Payment → P). Inputs: 4 parallel Explore-agent
+digests of `reference/docs/system/` (~53k lines). Both themes render (prefers-color-scheme
++ data-theme overrides present in both files).
+**Verdict:** AC met — marked ✅ in TASKS.md. ⚠️ scope-pivot flag open for owner (OVERALL_PLAN.md §9).
+
 ### F-8 — BE state & data architecture doc · 2026-07-17
 **AC:** Doc covers BE state kinds w/ owners, request data flow, transaction policy, error-code enum + mapping, validation tiers, folder layout, hard BE rules; HTML diagram renders
 **Receipt:**

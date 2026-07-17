@@ -109,3 +109,7 @@ note the new row in the next report, then start. Size every task to finish in on
    from files, not from memory.
 5. Docs drift = a bug. If code and a harness file disagree, code wins — fix the doc
    in the same task and note it in `STATE.md`.
+6. Any add/remove/repurpose of a file under `harness/` (incl. `diagrams/`) must, in
+   the same change, update its row in `harness/CONTEXT_MAP.md §Doc inventory` and
+   `harness/README.md` (owner rule 2026-07-17). Content-only edits don't require it
+   unless the file's one-line purpose changed.

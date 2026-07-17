@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overall Build Plan — restaurant platform · BE · FE · DevOps</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3382E;
+    --red-soft: #F9E6E4;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E38279; --red-soft: #3B1D1A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E38279; --red-soft: #3B1D1A;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382E; --red-soft: #F9E6E4;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2.05rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 72ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.accent { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 72ch; }
+  .golden p { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 72ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, pre code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.76rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 16px 0; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .card h4 { margin: 0 0 6px; font-family: var(--sans); font-size: 0.95rem; }
+  .card p { font-size: 0.85rem; color: var(--muted); margin: 0; }
+  .card .tag { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+  .phase { display: flex; gap: 14px; margin-bottom: 14px; }
+  .phase .badge { flex: 0 0 auto; font-family: var(--mono); font-weight: 700; font-size: 0.8rem; color: var(--accent); background: var(--accent-soft); border-radius: 8px; padding: 6px 10px; height: fit-content; min-width: 34px; text-align: center; }
+  .phase .body { border-left: 2px solid var(--line); padding-left: 14px; padding-bottom: 6px; }
+  .phase .body b { font-family: var(--sans); }
+  .phase .body p { font-size: 0.88rem; color: var(--muted); margin: 2px 0 0; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · overall build plan (F-9) · 2026-07-17</div>
+  <h1>The whole build, on one page — BE · FE · DevOps</h1>
+  <p class="lede">Visual companion to <code>harness/OVERALL_PLAN.md</code> (which wins on any conflict).
+  Target: the restaurant table-ordering platform from <code>reference/docs/system/08_pages</code> —
+  rebuilt clean on the decided Go 1.26 + Next 16 stack and the F-5/F-6/F-8 architecture.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">surfaces</span><span class="v">public · customer · staff · admin</span></div>
+    <div class="fact"><span class="k">pages</span><span class="v">~30 (5 marked 🔮)</span></div>
+    <div class="fact"><span class="k">api routes</span><span class="v">~85 under /api/v1</span></div>
+    <div class="fact"><span class="k">db tables</span><span class="v">~22 · MySQL 9.7</span></div>
+    <div class="fact"><span class="k">realtime</span><span class="v">Redis pub/sub → SSE + WS</span></div>
+  </div>
+  <div class="flag">
+    <p><b>⚠️ Scope pivot, made explicit.</b> The harness previously planned a generic e-commerce v1
+    (admin/staff deferred). The reference is the restaurant platform — QR ordering, KDS, POS, a 13-page
+    admin. This plan adopts it as the north star and re-homes every existing task row (§07).
+    Silence = accepted.</p>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>The core loop — everything serves this</h2></div>
+  <pre class="diagram">
+  CUSTOMER (phone)          KITCHEN (chef)            CASHIER                  ADMIN (manager)
+  ┌──────────────┐          ┌──────────────┐          ┌──────────────┐         ┌──────────────┐
+  │ scan table QR │          │  KDS board   │          │ POS + payment │         │ live floor    │
+  │ /table/:token │          │    /kds      │          │ /pos /cashier │         │ /admin/overview│
+  └──────┬───────┘          └──────▲───────┘          └──────▲───────┘         └──────▲───────┘
+         │ guest JWT (2h)          │ WS orders:kds           │ WS ready→pay           │ SSE popup + WS
+         ▼                        │                          │                        │
+  ┌──────────────┐   POST /orders │                          │                        │
+  │ /menu → cart ─┼───────────────┴──────────────────────────┴────────────────────────┘
+  │ (client-only) │        pending → confirmed → preparing → ready → delivered (+cancelled)
+  └──────┬───────┘        item progress = qty_served / quantity (derived, no status column)
+         │ SSE order:{id}
+         ▼
+  ┌──────────────┐
+  │ live tracking │
+  │ /order/:id    │
+  └──────────────┘
+  </pre>
+  <div class="cards">
+    <div class="card"><span class="tag">public</span><h4>Landing · welcome · legal</h4><p>Marketing entry, QR shortcuts. Static-first, SEO.</p></div>
+    <div class="card"><span class="tag">customer</span><h4>9 pages, mobile-first</h4><p>QR airlock, menu, product/combo detail, favourites, checkout, orders (live), tracking, settings.</p></div>
+    <div class="card"><span class="tag">staff</span><h4>Login · KDS · POS · Cashier</h4><p>Desktop, one shared WebSocket per session, role-routed after login.</p></div>
+    <div class="card"><span class="tag">admin</span><h4>13 pages, manager+</h4><p>Live floor, reports, catalog CRUD ×4, staff, tasks, inventory, training, marketing.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Architecture — 5 containers, unchanged rules</h2></div>
+  <pre class="diagram">
+                       browser (all four surfaces)
+                              │  https — ONLY public entry
+                              ▼
+                        ┌───────────┐      /api/* /uploads/* /health → be:8080
+                        │   Caddy   │──────────────────────────┐
+                        └─────┬─────┘                          │
+                   /* (pages) │                                ▼
+                        ┌─────▼─────┐                   ┌────────────┐   handler → service → repo → sqlc
+                        │  Next 16  │                   │  Go 1.26   │   10 domain modules (§03)
+                        │ App Router│                   │  Gin API   │   stateless — scale horizontally
+                        └───────────┘                   └──┬─────┬───┘
+                                                           │     │ pub/sub + cache-aside
+                                                     MySQL ▼     ▼ Redis 8
+                                              source of truth    wipeable: catalog cache 5min ·
+                                              22 tables, UUID    auth flags · rate limits ·
+                                              soft-delete        order-seq · 5 event channels
+  </pre>
+  <p>Everything already decided stays decided: 4-layer BE (<code>BE_STATE.md</code>), FE state ownership
+  (<code>FE_STATE.md</code>), alignment gates (<code>ARCHITECTURE.md</code>), design tokens (design-system.html),
+  Session-0 error envelope <code>{"error":{code,message,details}}</code>. The reference's flat envelope is
+  <b>not</b> adopted; its error-code catalog extends our enum per phase.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Backend plan — 10 domains, phased</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>Domain</th><th>Owns</th><th>Phase</th></tr>
+    <tr><td><code>catalog</code></td><td>categories · products · toppings · combos (+ join tables), cache-aside + invalidation map</td><td>C</td></tr>
+    <tr><td><code>tables</code></td><td>tables, 64-char <code>qr_token</code>, table status</td><td>T</td></tr>
+    <tr><td><code>auth</code></td><td>guest JWT mint (QR + online) · staff login/refresh/logout · RBAC middleware · rate limits</td><td>T · S</td></tr>
+    <tr><td><code>orders</code></td><td>state machine, price snapshot, combo expansion, item progress, order numbers</td><td>O</td></tr>
+    <tr><td><code>realtime</code></td><td>SSE + WS endpoints, pub/sub hub, ONE event contract</td><td>R</td></tr>
+    <tr><td><code>payments</code></td><td>cash completion now; VNPay/MoMo/ZaloPay webhooks later (HMAC-first, idempotent)</td><td>S · P</td></tr>
+    <tr><td><code>staff</code></td><td>staff CRUD, roles, activation (Redis-cached is_active)</td><td>AD</td></tr>
+    <tr><td><code>analytics</code></td><td>summary · top dishes · staff performance (read-only raw SQL)</td><td>AD</td></tr>
+    <tr><td><code>inventory</code></td><td>ingredients · recipes · append-only stock movements (transactional!)</td><td>AD</td></tr>
+    <tr><td><code>workforce</code></td><td>staff tasks (with edit/delete this time) · training guides + progress</td><td>AD</td></tr>
+  </table></div>
+  <h3>Realtime, built right this time</h3>
+  <pre class="diagram">
+   service writes MySQL ──▶ publish Redis ──▶ fan-out to every subscribed BE instance
+                                                    │
+        channels: order:{id} · orders:kds · orders:admin · queue/tables:broadcast
+                                                    │
+             ┌──────────────────────────────────────┼──────────────────────┐
+             ▼ SSE (customers, admin popup)         ▼ WS (staff boards)    ▼
+      snapshot-on-connect FIRST, then deltas · ownership + role gates on every stream
+      one event-contract file (Go + TS mirror) · exhaustive consumer switches
+      separate Redis clients for cache vs pub/sub · SSE retry: directive
+  </pre>
+  <p style="font-size:0.9rem;color:var(--muted)">The four lines above each kill a documented defect of the
+  old system: lost events on reconnect, ignored event types, ungated streams, pool exhaustion.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Frontend plan — 3 shells on decided rules</h2></div>
+  <div class="cards">
+    <div class="card"><span class="tag">shell</span><h4>Customer</h4><p>Mobile-first, fixed bottom tab bar (Menu · Orders · Favourites · Tracking · Settings).</p></div>
+    <div class="card"><span class="tag">shell</span><h4>Dashboard</h4><p>Wraps /kds /pos /cashier /admin — owns the ONE WebSocket provider per browser session.</p></div>
+    <div class="card"><span class="tag">shell</span><h4>Admin</h4><p>Tab nav + AuthGuard/RoleGuard (manager+), theme toggle; nested in dashboard shell.</p></div>
+  </div>
+  <ul class="plain">
+    <li><b>Cart is client-only</b> (Zustand, persisted) — first server write is <code>POST /orders</code>; no BE cart endpoints exist.</li>
+    <li><b>Sessions in httpOnly cookies</b> (F-5 decision stands) — beats the reference's memory-token: SSE/WS auth rides the cookie, no <code>?token=</code> in logs, no "F5 wipes the session, re-scan the QR" bug.</li>
+    <li><b>FE renders only what BE provides:</b> writes return full DTOs; FE role-gates every button it shows; error branches exist only for codes BE actually emits.</li>
+    <li>Favourites = device-local store (account sync waits for the online phase). POS cart = component state, deliberately separate.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>DevOps plan — two-stage go-live, one pipeline</h2></div>
+  <pre class="diagram">
+  push to main ──▶ CI: lint + go test + FE build/test ──▶ images tagged :sha ──▶ GHCR
+                                                                                 │
+  STAGE A (LAN, first)                          STAGE B (VPS, later)             ▼
+  compose up on owner's Mac                     same images + prod compose ◀── SSH deploy
+  phones on shop Wi-Fi → http://mac-ip          domain + Caddy auto-TLS         │
+  QR = http://mac-ip/table/&lt;qr_token&gt;           deploy → /health check ──fail──▶ auto-rollback
+  everything real except TLS + webhooks         keep 2 previous prod tags       (proved once
+                                                                                 before go-live)
+  observability (OPS phase): Prometheus + 2 alert rules + Alertmanager→real channel
+                             Grafana (provisioned) · Loki/promtail · nightly mysqldump ×14d
+  </pre>
+  <ul class="plain">
+    <li>Fixes over the old setup: <b>FE tests in CI</b> (was BE-only), <b>Alertmanager</b> (alerts nobody saw), <b>one canonical env-var list</b> in ENVIRONMENT.md (was two conflicting sets), browser routed <b>through Caddy</b> (old FE bypassed the proxy straight to :8080).</li>
+    <li>Inherited hard-won rules: <code>NEXT_PUBLIC_API_URL</code> bakes at build time → must point at Caddy; <code>ACME_EMAIL</code> never empty; MySQL creds freeze into the volume at first init; DB/Redis ports never public in Stage B.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Lessons register — designed against, not rediscovered</h2></div>
+  <p>Compressed from ~40 per-page bug docs in the reference; each row becomes an alignment gate or a task AC.
+  Full table: <code>OVERALL_PLAN.md §6</code>. Never rebuilt: the old unauthenticated dev shell-exec route 🔴.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Old defect</th><th>Our rule</th></tr>
+    <tr><td>Events published but never consumed; event-name drift</td><td>one generated event contract, exhaustive switches</td></tr>
+    <tr><td>Streams lose state across reconnects</td><td>snapshot-on-connect everywhere</td></tr>
+    <tr><td>Any JWT could watch the whole floor</td><td>ownership + role gates on every channel</td></tr>
+    <tr><td>Documented 409 never returned → dead FE branches ×3</td><td>rules decided before code; FE handles only emitted codes</td></tr>
+    <tr><td>Topping edit → stale product cache</td><td>invalidation map is part of the catalog AC</td></tr>
+    <tr><td>FE-only validation (phone, password length)</td><td>BE validates everything; Zod mirrors, never replaces</td></tr>
+    <tr><td>Thin write DTOs ("Đơn #undefined")</td><td>writes return the full object the UI renders</td></tr>
+    <tr><td>Non-transactional multi-writes (stock, combo items)</td><td>service-owned tx boundaries cover every multi-write</td></tr>
+    <tr><td>Live UI over missing endpoints (profile, task edit, KDS serve)</td><td>a page ships only when its endpoints exist</td></tr>
+    <tr><td>Public register mints active staff accounts</td><td>admin creates staff; no public register</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Roadmap — phases in order, old rows re-homed</h2></div>
+  <div class="phase"><span class="badge">F</span><div class="body"><b>Foundation (now)</b> — F-2 compose skeleton · F-3 migrations · F-4 error contract + API client + CI. <p>Unchanged. F-2 is still the next build task.</p></div></div>
+  <div class="phase"><span class="badge">C</span><div class="body"><b>Menu catalog</b> — schema + seed (products/categories/toppings/combos), BE reads + cache-aside, FE menu + detail pages. <p>C-1…C-5 kept, restaurant-skinned; schema grows toppings/combos.</p></div></div>
+  <div class="phase"><span class="badge">T</span><div class="body"><b>Tables &amp; guest auth</b> — tables + QR tokens, <code>POST /auth/guest</code> (+ online variant, rate-limited), airlock page, cart store. <p>Supersedes CC-1/CC-2 — cart is client-side, guest identity = JWT.</p></div></div>
+  <div class="phase"><span class="badge">O</span><div class="body"><b>Ordering core</b> — orders schema + state machine, <code>POST /orders</code> (snapshot · combo expansion · tx), read/cancel/edit, FE checkout + order pages. <p>Absorbs CC-3/CC-4/CC-5 and O-1…O-3 with the new lifecycle.</p></div></div>
+  <div class="phase"><span class="badge">R</span><div class="body"><b>Realtime</b> — pub/sub platform pkg + event contract, SSE endpoints (snapshot-on-connect), live tracking + live order detail. <p>New — the old plan had no realtime at all.</p></div></div>
+  <div class="phase"><span class="badge">S</span><div class="body"><b>Staff core</b> — staff schema + auth + RBAC, login, KDS, POS, cashier payment (cash). <p>A-1/A-2 become staff auth + login; A-3 waits for the online phase.</p></div></div>
+  <div class="phase"><span class="badge">AD</span><div class="body"><b>Admin suite</b> — live floor overview, reports, catalog CRUD ×4, staff CRUD, tasks, inventory, training, marketing. <p>Un-defers the Session-0 ⛔ Admin row.</p></div></div>
+  <div class="phase"><span class="badge">P</span><div class="body"><b>Payments</b> — VNPay/MoMo/ZaloPay clients + HMAC-first idempotent webhooks, QR payment UX. <p>Un-defers the ⛔ Payment row.</p></div></div>
+  <div class="phase"><span class="badge">OPS</span><div class="body"><b>Go-live</b> — observability + Alertmanager, Stage A runbook, deploy + rollback proof, Stage B VPS + TLS, backups.</div></div>
+  <div class="phase"><span class="badge">ON</span><div class="body"><b>Online ordering 🔮</b> — customer accounts, profile BE, pickup/delivery, cart merge. <p>A-3 lands here. AI assistant stays deferred.</p></div></div>
+  <p style="font-size:0.9rem;color:var(--muted)">Task rows register into <code>TASKS.md</code> when each phase opens
+  (sizing rule unchanged: one task = one session). Receipts: curl transcripts for BE, screenshots for FE,
+  two-client event transcripts for realtime.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Open decisions — defaults chosen, say so to change</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Decision</th><th>Default taken</th></tr>
+    <tr><td>⚠️ 1</td><td>The pivot itself</td><td>restaurant platform is the product (silence = accepted)</td></tr>
+    <tr><td>❓ 2</td><td>Cancel rule (old code: &lt;30% served; owner target: anytime pre-payment)</td><td>owner target — cancellable any time before payment</td></tr>
+    <tr><td>❓ 3</td><td>One active order per table (old code silently allowed parallel orders)</td><td>hard 409 block + "join existing order" UX</td></tr>
+    <tr><td>💡 4</td><td>UI language</td><td>Vietnamese-first strings in one constants file, i18n-ready</td></tr>
+    <tr><td>💡 5</td><td>Public staff register page (old security hole)</td><td>not built — admin creates staff accounts</td></tr>
+  </table></div>
+</section>
+
+<footer>
+  F-9 · overall build plan · ecom-core harness · 2026-07-17 · source of truth: <code>harness/OVERALL_PLAN.md</code> ·
+  task status: <code>harness/TASKS.md</code> · plan page: <a href="task-F-9.html">task-F-9.html</a>
+</footer>
+
+</div>
+</body>
+</html>

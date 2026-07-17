@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-9 — Overall build plan from reference/08_pages · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · task plan · 2026-07-17</div>
+  <h1>F-9 — Overall build plan from <code>reference/08_pages</code></h1>
+  <p class="lede">The owner pointed at <code>reference/docs/system/08_pages</code> — the full page-by-page
+  spec of the restaurant ordering platform (public · customer · staff · admin) — and asked for the
+  overall plan: how we build the backend, the frontend, and the DevOps around them, in one document.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip done">delivered</span></span></div>
+    <div class="fact"><span class="k">deps</span><span class="v">F-1 ✅</span></div>
+    <div class="fact"><span class="k">type</span><span class="v">documentation / planning</span></div>
+    <div class="fact"><span class="k">branch</span><span class="v">main (doc task, Hard Rule 3)</span></div>
+    <div class="fact"><span class="k">subagents</span><span class="v">4 × Explore (parallel digest)</span></div>
+  </div>
+  <div class="golden">
+    <p><b>AC (TASKS.md):</b> plan covers all 4 role surfaces, BE service/endpoint map, FE page/phase map,
+    DevOps pipeline, and a phased task breakdown reconciled with the existing TASKS.md phases;
+    <code>OVERALL_PLAN.md</code> complete + <code>overall-plan.html</code> renders.</p>
+  </div>
+  <div class="flag">
+    <p><b>⚠️ FLAG — scope pivot made explicit.</b> The reference describes a <em>restaurant table-ordering
+    platform</em> (QR → guest JWT, realtime SSE/WS, POS, KDS, cashier, 13-page admin), while the current
+    harness plans a generic e-commerce v1 with admin/staff deferred. Pointing at it as "what I want to
+    build in general" repivots the product. The plan treats <code>08_pages</code> as the north star and maps
+    the existing F/C/CC/O/A phases onto it — nothing already built is thrown away, but the roadmap after
+    Phase A grows staff + admin + realtime phases. Say so if you meant it only as inspiration.</p>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>How the work runs — one session, fan-out then synthesis</h2></div>
+  <pre class="diagram">
+ reference/docs/system (~53k lines)                     one session (F-9)
+ ┌──────────────────────────────┐
+ │ 08_pages/customer + public   │──▶ Explore agent A ─┐
+ │ 08_pages/staff + admin       │──▶ Explore agent B ─┤    synthesis (this agent)
+ │ 00_overview · 01_flow ·      │──▶ Explore agent C ─┼──▶ harness/OVERALL_PLAN.md   (source of truth)
+ │   02_spec (+ object models)  │                     │    harness/diagrams/overall-plan.html (visual)
+ │ 03_be · 09_devops · 05_guide │──▶ Explore agent D ─┘
+ └──────────────────────────────┘
+        each agent returns a compressed digest — pages, endpoints, schema,
+        state machine, realtime channels, devops gaps — not raw re-documentation
+  </pre>
+  <p>Four read-only Explore agents digest ~25&nbsp;MB of reference docs in parallel; the main session
+  reconciles their digests with the decided stack (<code>PLAN.md §Stack</code>), the architecture docs
+  (F-5/F-6/F-8) and the existing task phases, then writes the two deliverables.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Scope contract — exactly these files</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>File</th><th>Change</th></tr>
+    <tr><td><code>harness/OVERALL_PLAN.md</code></td><td><b>new</b> — the master build plan: product definition, BE plan (domains, endpoints, schema, realtime), FE plan (surfaces, pages, phases), DevOps plan (compose → CI → go-live → monitoring), phased roadmap + task breakdown</td></tr>
+    <tr><td><code>harness/diagrams/overall-plan.html</code></td><td><b>new</b> — visual companion, same design language as the other harness diagram pages</td></tr>
+    <tr><td><code>harness/diagrams/task-F-9.html</code></td><td><b>new</b> — this plan page (owner rule 2026-07-17)</td></tr>
+    <tr><td><code>harness/PLAN.md</code></td><td>§Diagrams row pointing at the new pair</td></tr>
+    <tr><td><code>harness/CONTEXT_MAP.md</code> · <code>harness/README.md</code></td><td>doc-inventory rows for the two new files (Hard Rule 6)</td></tr>
+    <tr><td><code>harness/TASKS.md</code> · <code>STATE.md</code> · <code>VERIFICATION.md</code> · <code>diagrams/build-plan.html</code></td><td>register row → ✅ · checkpoint · receipt · §R report entry</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Build steps, in order</h2></div>
+  <ol class="steps">
+    <li>Checkpoint commit; register the F-9 row in <code>TASKS.md</code> (done first, per the loop).</li>
+    <li>Read the index docs (<code>PAGES_INDEX.md</code>, <code>PAGE_FOLDER_GUIDE.md</code>) in-session to frame the fan-out.</li>
+    <li>Spawn 4 parallel Explore agents (diagram above) over customer/public pages · staff/admin pages · spec+flows · BE+devops docs.</li>
+    <li>Synthesize <code>harness/OVERALL_PLAN.md</code> — reconcile the reference scope with the decided Go 1.26 / Next 16 stack and the existing F/C/CC/O/A phases.</li>
+    <li>Build <code>harness/diagrams/overall-plan.html</code> — the same plan drawn out for the owner.</li>
+    <li>Verify (receipt): MD covers every AC bullet; HTML renders in both themes; log in <code>VERIFICATION.md</code>.</li>
+    <li>Checkpoint: STATE.md, TASKS.md ✅, CONTEXT_MAP/README inventory rows, build-plan.html §R report; commit + push <code>main</code>.</li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Decisions taken (defaults — say so if you want different)</h2></div>
+  <ul class="plain">
+    <li><b>The reference is the product spec, not the implementation spec.</b> The old codebase's bugs and drift (documented per-page in <code>*_BUGS.md</code> / COMPARISON files) are treated as lessons, not requirements — the plan rebuilds on the clean F-5/F-6/F-8 architecture.</li>
+    <li><b>Existing phases are kept, not renumbered.</b> C/CC/O/A rows stay; the plan adds new phases after them (staff, realtime, admin, ops) so no receipt or dependency link breaks.</li>
+    <li><b>🔮 PLANNED reference pages stay planned.</b> Pages the old system never built (introduction, storage, online-ordering entry) land in the latest phases.</li>
+    <li><b>Payment stays deferred</b> per Session-0: cash/COD-style confirmation first; the cashier payment screen's gateway integration is a late phase.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Receipt checklist</h2></div>
+  <ul class="plain">
+    <li>☑ <code>OVERALL_PLAN.md</code> — all 4 surfaces, BE map, FE map, DevOps pipeline, phased roadmap present</li>
+    <li>☑ <code>overall-plan.html</code> — renders, both themes, no horizontal page scroll</li>
+    <li>☑ Roadmap reconciles every existing ⬜ TASKS.md row (none orphaned)</li>
+    <li>☑ Receipt row in <code>VERIFICATION.md</code>; STATE/TASKS/CONTEXT_MAP/README updated; pushed to <code>main</code></li>
+  </ul>
+</section>
+
+<footer>
+  F-9 task plan · ecom-core harness · generated 2026-07-17 · source of truth: <code>harness/OVERALL_PLAN.md</code> + <code>harness/TASKS.md</code>
+</footer>
+
+</div>
+</body>
+</html>

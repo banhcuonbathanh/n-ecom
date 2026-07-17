@@ -307,6 +307,21 @@
     <div class="sec-head"><span class="sec-num">R</span><h2>Reports to the boss — next task in detail</h2></div>
     <p>Working model since 2026-07-17: the agent runs the project, you read reports. Before every task a dated report lands here with the full plan — skim the summary line, or open it when you want the detail. <b>Since 2026-07-17 every next task also gets its own visual plan page</b> — <code style="font-family:var(--mono);font-size:0.85em">harness/diagrams/task-&lt;id&gt;.html</code>, linked from its report — with the architecture, files, steps and receipt checklist drawn out in full. Old reports stay as the record. Objections go in the chat or the notes box (section 7); a <b>🚨 risk / 🔴 stop</b> line in a report means the agent is waiting for you before building.</p>
 
+    <details class="report" open>
+      <summary>
+        <span class="r-date">2026-07-17</span>
+        <span class="r-title">F-9 — Overall build plan from reference/08_pages · delivered</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> "refer to <code style="font-family:var(--mono);font-size:0.85em">reference/docs/system/08_pages</code> — make the overall plan for BE, FE, DevOps." Delivered: <code style="font-family:var(--mono);font-size:0.85em">harness/OVERALL_PLAN.md</code> (source of truth) · <a href="overall-plan.html">overall-plan.html</a> (visual) · plan page <a href="task-F-9.html">task-F-9.html</a>. Four parallel Explore subagents digested the ~53k-line reference corpus (customer/public pages · staff/admin pages · spec+flows · BE+devops docs) in one session.</p>
+        <p><b>TL;DR:</b> the reference is the full restaurant table-ordering platform — public landing, QR→guest-JWT customer ordering with live SSE tracking, staff POS/KDS/cashier over WebSocket, and a 13-page admin suite. The plan keeps the decided Go 1.26 + Next 16 stack and the F-5/F-6/F-8 architecture, keeps existing phases C/CC/O/A as-is, and extends the roadmap with staff, realtime, admin and ops phases mapped page-by-page to the reference.</p>
+        <h4>One flag needs your eye ⚠️</h4>
+        <p><b>Scope pivot made explicit:</b> the current harness planned a generic e-commerce v1 with admin/staff deferred; the reference is the restaurant platform. The plan treats it as the north star. If you meant it only as inspiration for the generic shop, say so — the roadmap's post-A phases are what would change.</p>
+      </div>
+    </details>
+
     <details class="report">
       <summary>
         <span class="r-date">2026-07-17</span>
