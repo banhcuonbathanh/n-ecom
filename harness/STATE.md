@@ -8,22 +8,37 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-11 (BE playbook → BE_PLAYBOOK.md) · ✅ F-12 (FE conventions →
-  FE_STATE.md §9 rules 8–14) · ✅ F-13 (DevOps operations → DEVOPS.md + diagrams/
-  devops.html) — all three reference-adoption docs done in same-day parallel sessions.
+- **Status:** ✅ F-14 (docs alignment sweep — no folder moves; indexes reconciled with
+  the repo after owner commit `00f77d0` tracked the reference corpus).
 - **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`; unchanged by F-9
   (skeleton is identical for the restaurant scope).
 - **Open decisions:** ⚠ **Scope pivot** (OVERALL_PLAN.md §9.1): reference = restaurant
   platform, adopted as north star — silence = accepted. ❓ Cancel rule + ❓ one-order-
   per-table (OVERALL_PLAN.md §3.7) — defaults chosen, lock in when O phase opens.
   💡 Redis policy (ARCHITECTURE.md §4) locks in at C-2 · 💡 brand hue before C-4 ·
-  💡 VN-first copy + 💡 no public staff register (OVERALL_PLAN.md §9). ⚠ untracked
-  `reference/docs/` still out of git (owner to say: commit or gitignore).
+  💡 VN-first copy + 💡 no public staff register (OVERALL_PLAN.md §9). ⚠ `personal/
+  command.md` tracked in git despite the Session-0b personal-stays-out decision
+  (owner committed it in `dda8ccc` — say "untrack it" to fix).
   Deferred: payment gateways (→ P phase), AI.
 
 ---
 
 ## Checkpoint log
+
+### 2026-07-18 — Session 9 (F-14): docs alignment sweep
+- Done: F-14 ✅ — owner asked "rearrange our folder and ensure all docs align"; audit
+  found structure sound, indexes drifted. Fixed: CONTEXT_MAP §Doc inventory now covers
+  every doc area (added rows: itself, PROMPTS.md, root README, templates/, reference/,
+  personal/, task-F-14.html) · harness/README task summary un-frozen · root README
+  layout gains reference/ + personal/ · TASKS.md Phase-F rows reordered F-11→12→13 ·
+  stale "reference untracked" flag cleared (owner tracked the 867-file corpus in
+  `00f77d0` "dfg", 2026-07-18). Receipt in VERIFICATION.md; plan page task-F-14.html.
+- Decisions: **no folder moves** — reference/docs paths are load-bearing citations
+  (5 harness docs + 4 task pages), diagram links welded into receipts; reference/ =
+  read-only corpus, never edited by tasks.
+- Drift fixed / found: the above, plus new ⚠ flag: `personal/command.md` tracked
+  (`dda8ccc` "sdfg") against the Session-0b decision — left tracked, owner to confirm.
+- Next: unchanged — F-2 (dev stack skeleton), per task-F-2.html.
 
 ### 2026-07-18 — Session 8 (F-13): DevOps operations doc from reference/docs/devops
 - Done: F-13 ✅ — `harness/DEVOPS.md` (reference's 4 DevOps files → 1 ops doc on our

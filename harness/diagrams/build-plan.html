@@ -310,6 +310,21 @@
     <details class="report" open>
       <summary>
         <span class="r-date">2026-07-18</span>
+        <span class="r-title">F-14 — Docs alignment sweep · delivered (folders stay put)</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> "consider rearranging our folder and ensure all docs align." Audit result: the folder structure is sound — the drift is in the <b>indexes</b>, mostly from your commit <code style="font-family:var(--mono);font-size:0.85em">00f77d0</code> ("dfg") that brought the 867-file reference corpus into git while three docs still called it untracked. Full plan: <a href="task-F-14.html">task-F-14.html</a>.</p>
+        <p><b>TL;DR:</b> <b>no folders moved</b> — <code style="font-family:var(--mono);font-size:0.85em">reference/docs/…</code> paths are cited across five harness docs and four task pages, and diagram links are welded into receipts; moving anything breaks dozens of citations for zero gain. What got fixed instead: CONTEXT_MAP's doc inventory now covers every doc area (it was missing PROMPTS.md, itself, root README, templates/, reference/, personal/), STATE.md no longer claims reference/ is untracked, harness/README's task summary is un-frozen from "F-1/5/6/7 ✅", the root README layout block shows reference/ and personal/, and the Phase-F task rows are back in id order.</p>
+        <h4>One flag for your eye ⚠️</h4>
+        <p><b><code style="font-family:var(--mono);font-size:0.85em">personal/command.md</code> is tracked in git</b> — Session 0b decided personal/ material stays out of the repo, but commit <code style="font-family:var(--mono);font-size:0.85em">dda8ccc</code> ("sdfg") swept it in. It stays until you say "untrack it". Also noted, no action: the reference corpus carries 52 .docx + a .zip in git history — deliberate on your side, just the lever if repo size ever matters. Receipt in VERIFICATION.md.</p>
+      </div>
+    </details>
+
+    <details class="report" open>
+      <summary>
+        <span class="r-date">2026-07-18</span>
         <span class="r-title">F-11 — BE engineering playbook from reference/docs/be · delivered</span>
         <span class="chip done">done</span>
         <span class="r-hint">detail</span>

@@ -15,7 +15,7 @@
 | [TOOLS.md](TOOLS.md) | 4 · Tool Interface | Dev-time tool rules (file tools, Bash, MCP) and the runtime-tool pattern for future AI features: typed schema, whitelist, confirm-gated writes, service-layer-only. |
 | [ENVIRONMENT.md](ENVIRONMENT.md) | 5 · Execution Environment | Dev stack layout (compose services + ports: caddy 80, BE 8080, FE 3000, MySQL 3306, Redis 6379) and the single source for all commands. |
 | [STATE.md](STATE.md) | 6 · Durable State | Checkpoint log, newest on top. Current resume point, open decisions, and per-session done/decided/next entries. Every session resumes from this file. |
-| [TASKS.md](TASKS.md) | 7 · Orchestration | Master task list by phase (F Foundation → Catalog → Cart/Checkout → Orders) with deps, acceptance criteria, status, receipt links. F-1/5/6/7 ✅; next: F-2. |
+| [TASKS.md](TASKS.md) | 7 · Orchestration | Master task list by phase (F Foundation → Catalog → Cart/Checkout → Orders) with deps, acceptance criteria, status, receipt links. F-1/5/6/7/8/9/11/12/13/14 ✅; next: F-2. |
 | [PROMPTS.md](PROMPTS.md) | 7 · Orchestration | Copy-paste kickoff prompts for the owner — one standing prompt plus a queued prompt per remaining task (F-2, F-3, F-4). |
 | [SUBAGENTS.md](SUBAGENTS.md) | 8 · Sub-agents | When to delegate (search, review, doc generation, research) vs. never ("session is long" is not a reason), standing auto-delegation rules, narrow-brief rules. |
 | [SKILLS.md](SKILLS.md) | 9 · Skills & Procedures | Installed slash commands (`/start-task`, `/finish-task`, `/handoff`) and inline playbooks: add-an-endpoint, add-a-migration, add-a-runtime-tool, fix-a-bug. |
@@ -49,3 +49,4 @@
 | [task-F-12.html](diagrams/task-F-12.html) | TASKS.md row F-12 | Per-task visual plan page for F-12 (owner rule 2026-07-17). |
 | [devops.html](diagrams/devops.html) | DEVOPS.md | Visual DevOps ops: runtime topology, pipeline + tagging flow, rollback decision tree, severity table, Stage A/B cards, D-rules. |
 | [task-F-13.html](diagrams/task-F-13.html) | TASKS.md row F-13 | Per-task visual plan page for F-13 (owner rule 2026-07-17). |
+| [task-F-14.html](diagrams/task-F-14.html) | TASKS.md row F-14 | Per-task plan page for F-14: docs alignment sweep + the no-folder-moves decision (owner rule 2026-07-17). |

@@ -32,6 +32,24 @@
 
 -->
 
+### F-14 — Docs alignment sweep · 2026-07-18
+**AC:** CONTEXT_MAP §Doc inventory has a row for every doc area in the repo (PROMPTS.md, CONTEXT_MAP itself, root README, templates/, reference/, personal/); stale "reference untracked" flag cleared from STATE.md; harness/README task summary + root README folder layout match reality; TASKS.md Phase-F rows in id order; docs render
+**Receipt:**
+```
+$ python3 f14-alignment-check   # coverage walk + tag-balance + order + stale-flag
+harness files with no inventory row: none          # all 17 md + 14 html covered
+inventory covers CLAUDE.md / root README / templates/ / reference/docs/ /
+  personal/ / PROMPTS.md / CONTEXT_MAP.md (self): True ×7
+task-F-14.html   errors: none | unclosed: none     # both themes styled
+build-plan.html  errors: none | unclosed: none     # §R report entry added
+Phase-F id order: [1..9, 11, 12, 13, 14] ascending: True
+stale 'untracked reference' in resume point: False
+```
+Decision recorded (task-F-14.html §1): **no folder moves** — reference/docs paths are
+load-bearing citations; reference/ is a read-only corpus. ⚠ flag left open for owner:
+`personal/command.md` tracked against the Session-0b decision.
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-13 — DevOps operations doc from reference/docs/devops · 2026-07-18
 **AC:** Doc covers DevOps file ownership, compose/Dockerfile/Caddy patterns (our stack versions), CI/CD + image tagging, rollback procedures + severity/SLA, Stage A/B go-live runbook, backups, pre-deploy checklist, hard rules; zero facts duplicated from ENVIRONMENT.md (links instead); HTML renders
 **Receipt:**

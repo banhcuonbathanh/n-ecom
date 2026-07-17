@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-14 — Docs alignment sweep · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, pre code { border: none; background: transparent; padding: 0; }
+  pre.tree { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; overflow-x: auto; font-family: var(--mono); font-size: 0.82rem; line-height: 1.7; margin: 0; }
+  pre.tree .c { color: var(--muted); }
+  pre.tree .ok { color: var(--done); font-weight: 700; }
+  pre.tree .warn { color: var(--amber); font-weight: 700; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  ul.checks { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  ul.checks li { padding-left: 28px; position: relative; }
+  ul.checks li::before { content: "☐"; position: absolute; left: 4px; color: var(--accent); font-weight: 700; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · task plan · 2026-07-18</div>
+  <h1>F-14 — Docs alignment sweep (and why the folders stay put)</h1>
+  <p class="lede">You asked: "consider rearranging our folder and ensure all docs align."
+  The audit found the folder <em>structure</em> sound and the doc <em>indexes</em> drifted —
+  mostly around your commit <code>00f77d0</code> that brought the 867-file reference corpus
+  into git while three docs still describe it as untracked. This task fixes the drift and
+  records the decision <b>not</b> to move folders.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip done">delivered</span></span></div>
+    <div class="fact"><span class="k">deps</span><span class="v">F-9 · F-11 · F-12 · F-13 (all ✅)</span></div>
+    <div class="fact"><span class="k">type</span><span class="v">documentation</span></div>
+    <div class="fact"><span class="k">branch</span><span class="v">main (doc task, Hard Rule 3)</span></div>
+  </div>
+  <div class="golden">
+    <p><b>AC (TASKS.md):</b> CONTEXT_MAP §Doc inventory has a row for every doc area in the repo;
+    stale "reference untracked" flag cleared from STATE.md; harness/README task summary + root README
+    folder layout match reality; TASKS.md Phase-F rows in id order; docs render.</p>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>The decision: no folder moves</h2></div>
+  <p>Every plausible rearrangement was weighed and rejected — the current five top-level areas
+  each already have one clear job, and the paths are <b>load-bearing</b>:</p>
+  <ul class="plain">
+    <li><code>reference/docs/…</code> paths are cited across OVERALL_PLAN.md, BE_PLAYBOOK.md, DEVOPS.md,
+    FE_STATE.md, four task pages and TASKS.md ACs — moving the corpus breaks dozens of citations
+    for zero gain. It is a frozen north-star reference, not working material.</li>
+    <li><code>harness/diagrams/</code> pages link each other relatively (build-plan ↔ task pages) and are
+    linked from VERIFICATION.md receipts — grouping task pages into a subfolder breaks the record.</li>
+    <li>Grouping the harness .md files into subfolders (e.g. <code>design/</code>) would break the
+    CONTEXT_MAP routing table, README index, and every cross-link, to organize 17 files a human
+    never lists — the agent navigates by CONTEXT_MAP, not by <code>ls</code>.</li>
+  </ul>
+  <p style="margin-top:10px">What actually drifted is the <b>alignment layer</b>: the indexes that
+  promise to describe the repo no longer do. That is what this task repairs.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>The repo as it actually is (post-<code>00f77d0</code>)</h2></div>
+  <pre class="tree"><code>ecom-core/
+├── CLAUDE.md            <span class="c">identity layer — reads first, every session</span>
+├── README.md            <span class="warn">⚠ layout block omitted reference/ + personal/ → fixed</span>
+├── harness/             <span class="c">17 md + 14 diagram pages — the working surface</span>
+│   ├── CONTEXT_MAP.md   <span class="warn">⚠ inventory missing 6 doc areas → fixed</span>
+│   ├── STATE.md         <span class="warn">⚠ still flagged reference/ as untracked → fixed</span>
+│   ├── README.md        <span class="warn">⚠ task summary frozen at "F-1/5/6/7 ✅" → fixed</span>
+│   └── TASKS.md         <span class="warn">⚠ Phase-F rows ordered 12→13→11 → fixed</span>
+├── templates/           <span class="c">TASK_TEMPLATE.md · SCENARIO_TEMPLATE.md</span>
+├── reference/docs/      <span class="ok">✔ 867 files, tracked by owner commit "dfg" 2026-07-18</span>
+│                        <span class="c">read-only corpus · own index: DOC_MAP.md · never edited by tasks</span>
+├── personal/            <span class="c">owner's scratch — personal.md ignored; command.md tracked (see flag)</span>
+└── .claude/             <span class="c">hooks + start-task / finish-task / handoff skills</span></code></pre>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Scope contract — exactly these files</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>File</th><th>Change</th></tr>
+    <tr><td><code>harness/CONTEXT_MAP.md</code></td><td>§Doc inventory gains rows for: itself, PROMPTS.md, root README.md, templates/, reference/docs/ (corpus, one row), personal/, and this page (Hard Rule 6)</td></tr>
+    <tr><td><code>harness/STATE.md</code></td><td>resume point: "reference untracked" flag → resolved (owner committed); new checkpoint entry</td></tr>
+    <tr><td><code>harness/TASKS.md</code></td><td>F-14 registered · Phase-F rows reordered F-11 → F-12 → F-13</td></tr>
+    <tr><td><code>harness/README.md</code></td><td>TASKS.md summary line updated (9 ✅, next F-2) · row for this page (Hard Rule 6)</td></tr>
+    <tr><td>root <code>README.md</code></td><td>folder-layout block gains <code>reference/</code> + <code>personal/</code> lines</td></tr>
+    <tr><td><code>harness/diagrams/build-plan.html</code></td><td>§R report entry for F-14</td></tr>
+    <tr><td><code>harness/diagrams/task-F-14.html</code></td><td><b>new</b> — this plan page (owner rule 2026-07-17)</td></tr>
+    <tr><td><code>harness/VERIFICATION.md</code></td><td>receipt: inventory-coverage check + tag-balance check</td></tr>
+  </table></div>
+  <p style="margin-top:14px;font-size:0.9rem;color:var(--muted)">Deliberately <b>not</b> done:
+  moving any folder or file · editing anything under <code>reference/</code> (read-only corpus) ·
+  untracking <code>personal/command.md</code> (owner's call — see flag below).</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Flags for the owner</h2></div>
+  <div class="flag">
+    <p><b>⚠️ FLAG — <code>personal/command.md</code> is tracked in git.</b> Session 0b's decision was
+    that <code>personal/</code> material stays out of the repo (<code>personal.md</code> is gitignored), but
+    commit <code>dda8ccc</code> ("sdfg") tracked <code>command.md</code> (a 1-line browser-open command).
+    Recommendation: gitignore <code>personal/</code> entirely and untrack the file — but you committed it,
+    so it stays until you say so. One word ("untrack it") and it's done.</p>
+    <p><b>ℹ️ Noted, no action:</b> the reference corpus includes 52 .docx and a .zip (~binary weight
+    in git history). You committed it deliberately; if repo size ever matters, that's the lever.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Steps</h2></div>
+  <ol class="steps">
+    <li>Audit: full file walk, git-tracking diff, index-vs-reality comparison. <span class="chip done">done</span></li>
+    <li>Register F-14 in TASKS.md + reorder Phase-F rows. <span class="chip done">done</span></li>
+    <li>Publish this plan page + build-plan.html §R report. <span class="chip done">done</span></li>
+    <li>CONTEXT_MAP §Doc inventory: add the 6 missing doc-area rows + this page. <span class="chip done">done</span></li>
+    <li>harness/README summary line + root README layout block. <span class="chip done">done</span></li>
+    <li>STATE.md: clear stale flag, add checkpoint. <span class="chip done">done</span></li>
+    <li>Verify (coverage grep + tag-balance walk) → receipt in VERIFICATION.md → F-14 ✅ → commit to <code>main</code>. <span class="chip done">done</span> Push denied in-session (same as F-12) — pending at handoff.</li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Receipt checklist (VERIFY)</h2></div>
+  <ul class="checks">
+    <li>Every file in <code>harness/</code> (md + diagrams) has a CONTEXT_MAP inventory row — script diff shows zero orphans.</li>
+    <li>Inventory also covers PROMPTS.md, CONTEXT_MAP itself, root README, templates/, reference/, personal/.</li>
+    <li><code>grep "untracked" harness/STATE.md</code> resume point → no stale reference/ flag.</li>
+    <li>TASKS.md Phase-F ids appear in ascending order.</li>
+    <li>task-F-14.html passes the tag-balance walk; both themes styled.</li>
+    <li>Receipt logged in VERIFICATION.md → TASKS.md row flipped ✅.</li>
+  </ul>
+</section>
+
+<footer>
+  ecom-core · F-14 task plan · 2026-07-18 · source of truth: TASKS.md / CONTEXT_MAP.md — on any conflict, they win.
+</footer>
+
+</div>
+</body>
+</html>

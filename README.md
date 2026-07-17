@@ -45,7 +45,9 @@ ecom-core/
 │   ├── settings.json      ← hook wiring
 │   ├── hooks/rule-reminder.sh
 │   └── skills/            ← start-task · finish-task · handoff
-└── templates/             ← copy-paste templates for tasks & scenarios
+├── templates/             ← copy-paste templates for tasks & scenarios
+├── reference/docs/        ← read-only north-star corpus (restaurant platform) — cited, never edited
+└── personal/              ← owner's scratch space, not project material
 ```
 
 ## The one rule that outranks all others

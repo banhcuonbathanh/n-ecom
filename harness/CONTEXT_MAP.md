@@ -36,6 +36,9 @@
 | Doc | Purpose | Owner of truth for |
 |---|---|---|
 | `CLAUDE.md` | Agent identity + workflow | rules of engagement |
+| `README.md` (root) | Repo intro: the 10-primitive model + bootstrap guide + folder layout | nothing — orientation; on any conflict CLAUDE.md and harness files win |
+| `harness/CONTEXT_MAP.md` | This file | doc routing + the doc inventory itself |
+| `harness/PROMPTS.md` | Owner kickoff prompts | copy-paste prompts for the next sessions |
 | `harness/PLAN.md` | Architecture | stack, domains, business rules, file map |
 | `harness/ARCHITECTURE.md` | Components & alignment (F-6) | component inventory, layer contracts, FE↔BE contract, Redis policy, alignment gates |
 | `harness/diagrams/architecture.html` | Visual mirror of ARCHITECTURE.md | nothing — on any conflict the markdown wins |
@@ -63,4 +66,8 @@
 | `harness/DEVOPS.md` | DevOps operations (F-13): image patterns, CI/CD + tagging, rollback + SLA, Stage A/B go-live runbook, backups, pre-deploy gates, D-rules | deploy/rollback/backup procedures + DevOps hard rules (commands/ports/env vars stay in ENVIRONMENT.md; strategy in OVERALL_PLAN §5) |
 | `harness/diagrams/devops.html` | Visual companion to DEVOPS.md | nothing — snapshot; DEVOPS.md wins |
 | `harness/diagrams/task-F-13.html` | Per-task visual plan page for F-13 | nothing — plan snapshot; TASKS.md/DEVOPS.md win |
+| `harness/diagrams/task-F-14.html` | Per-task visual plan page for F-14 (docs alignment sweep; records the no-folder-moves decision) | nothing — plan snapshot; TASKS.md/CONTEXT_MAP.md win |
 | `harness/README.md` | Folder index: summary + link per harness file | nothing — navigation only; on any conflict the linked file wins |
+| `templates/` | Copy-paste templates: `TASK_TEMPLATE.md` (task rows) + `SCENARIO_TEMPLATE.md` | row/AC formats for TASKS.md registration |
+| `reference/docs/` | **Read-only north-star corpus** (867 files, restaurant platform; owner-committed 2026-07-18 `00f77d0`) — own index: `reference/docs/DOC_MAP.md`. Tasks cite into it, never edit it; adopted facts move to a harness doc (F-9/F-11/F-12/F-13 pattern) | nothing for this project — on any conflict the harness doc that adopted the fact wins |
+| `personal/` | Owner's scratch space — not project material (Session 0b). `personal.md` gitignored; `command.md` tracked (⚠ flagged F-14, owner to confirm) | nothing — never read by tasks |
