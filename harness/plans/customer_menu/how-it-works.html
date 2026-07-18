@@ -86,6 +86,33 @@
   .actor.db     { color: var(--done); background: var(--done-soft); }       /* MySQL */
   .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; align-items: center; font-size: 0.8rem; color: var(--muted); }
 
+  /* ---- SVG diagrams (hand-drawn, theme-aware via CSS vars) ---- */
+  .svgwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 12px 10px 6px; margin: 14px 0; }
+  .svgwrap svg { display: block; min-width: 860px; width: 100%; height: auto; }
+  .cap { font-size: 0.8rem; color: var(--muted); margin: -6px 0 18px 4px; }
+  svg text { font-family: var(--mono); }
+  svg .t1 { font-size: 11px; fill: var(--ink); }
+  svg .t2 { font-size: 10.5px; fill: var(--muted); }
+  svg .tb { font-size: 12px; font-weight: 700; }
+  svg .tred { fill: var(--red); }  svg .tgreen { fill: var(--done); }
+  svg .tamber { fill: var(--amber); }  svg .taccent { fill: var(--accent); }  svg .tviolet { fill: var(--violet); }
+  svg .lifeline { stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 5; }
+  svg .call { stroke: var(--ink); stroke-width: 1.6; fill: none; }
+  svg .resp { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 6 4; fill: none; }
+  svg .err  { stroke: var(--red); stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+  svg .flowa { stroke: var(--accent); stroke-width: 2; fill: none; }
+  svg .flowo { stroke: var(--amber); stroke-width: 2; fill: none; }
+  svg .flowg { stroke: var(--done); stroke-width: 2; fill: none; }
+  svg .abox { fill: var(--surface); stroke: var(--line); stroke-width: 1.4; }
+  svg .abox.client { stroke: var(--accent); }
+  svg .abox.rsc { stroke: var(--violet); }
+  svg .abox.api { stroke: var(--amber); }
+  svg .abox.redis { stroke: var(--red); }
+  svg .abox.db { stroke: var(--done); }
+  svg .region { fill: var(--amber-soft); stroke: var(--amber); stroke-width: 1; stroke-dasharray: 5 4; opacity: 0.55; }
+  svg .txbox { fill: var(--done-soft); stroke: var(--done); stroke-width: 1.2; stroke-dasharray: 6 4; opacity: 0.5; }
+  svg .delbox { fill: var(--red-soft); stroke: var(--red); stroke-width: 1.3; }
+
   /* ---- numbered sequence steps ---- */
   .seq { list-style: none; margin: 14px 0; padding: 0; display: flex; flex-direction: column; }
   .seq li { position: relative; display: flex; gap: 12px; padding: 0 0 18px 0; }
@@ -112,6 +139,13 @@
   .bx.db { border-top: 3px solid var(--done); }
   .down { text-align: center; font-family: var(--mono); color: var(--muted); font-size: 0.85rem; margin: -2px 0; }
 
+  /* ---- flow rows (entry paths, combo pipeline) ---- */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
   /* ---- three-lane summary cards ---- */
   .lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
   .lane { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 0.86rem; }
@@ -134,24 +168,71 @@
   .hub li code { font-size: 0.76rem; }
   .hub .hnote { margin-top: 10px; font-size: 0.78rem; color: var(--muted); }
 
+  /* ---- decision flowchart (CSS) ---- */
+  .dflow { margin: 16px 0; }
+  .drow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .dq { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: 0.84rem; }
+  .dyes { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+  .dres { font-family: var(--mono); font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; white-space: nowrap; }
+  .dres.q { color: var(--accent); background: var(--accent-soft); }
+  .dres.u { color: var(--violet); background: var(--violet-soft); }
+  .dres.z { color: var(--amber); background: var(--amber-soft); }
+  .dres.g { color: var(--done); background: var(--done-soft); }
+  .dres.r { color: var(--red); background: var(--red-soft); }
+  .dno { margin: 3px 0 3px 26px; font-family: var(--mono); color: var(--muted); font-size: 0.7rem; }
+
+  /* ---- line-id anatomy ---- */
+  .lid { display: flex; align-items: center; flex-wrap: wrap; font-family: var(--mono); font-size: 0.8rem; margin: 10px 0 4px; }
+  .lid .seg { padding: 5px 12px; border: 1px solid var(--line); border-left-width: 0; }
+  .lid .seg:first-child { border-left-width: 1px; border-radius: 8px 0 0 8px; }
+  .lid .seg:last-child { border-radius: 0 8px 8px 0; }
+  .lid .seg.kind { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .lid .seg.pid { background: var(--surface); }
+  .lid .seg.vart { background: var(--amber-soft); color: var(--amber); font-weight: 700; }
+  .lid .eq { padding: 0 10px; color: var(--muted); }
+  .lidnote { font-size: 0.78rem; color: var(--muted); margin: 0 0 10px 4px; }
+
+  /* ---- cache clock bars ---- */
+  .clock { margin: 16px 0; }
+  .cbar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .cbar-label { flex: none; width: 190px; font-family: var(--mono); font-size: 0.72rem; text-align: right; color: var(--muted); }
+  .cbar { flex: 1; display: flex; height: 30px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); font-family: var(--mono); font-size: 0.7rem; font-weight: 700; }
+  .cbar span { display: flex; align-items: center; justify-content: center; }
+  .cbar .fresh { flex: 5; background: var(--done-soft); color: var(--done); }
+  .cbar .stale { flex: 3; background: var(--amber-soft); color: var(--amber); }
+  .cbar .gone { flex: 3; background: var(--red-soft); color: var(--red); }
+  .cscale { display: flex; margin-left: 200px; font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+  .cscale span { flex: 1; } .cscale .s5 { flex: 5; } .cscale .s3 { flex: 3; }
+
   .warn { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 18px 0; max-width: 76ch; font-size: 0.9rem; }
   .warn b { color: var(--red); }
   ul.plain { margin: 0 0 14px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
 </style>
 </head>
 <body>
+
+<!-- shared SVG arrowheads for every diagram below -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="mi" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--ink)"/></marker>
+  <marker id="mm" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--muted)"/></marker>
+  <marker id="mr" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--red)"/></marker>
+  <marker id="ma" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--accent)"/></marker>
+  <marker id="mo" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--amber)"/></marker>
+  <marker id="mg" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--done)"/></marker>
+</defs></svg>
+
 <div class="page">
 
 <header>
   <a class="back" href="plan.html">← plan.html (the build plan)</a>
   <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-18</div>
   <h1>Customer menu — how it actually works</h1>
-  <p class="lede">One page that traces the <code>/menu</code> machinery end to end: what happens on
-  first load (the 3-tier loading strategy), what happens when a guest adds a product (nothing leaves
-  the browser), how state crosses components and pages (exactly two hubs), and what
-  <code>POST /orders</code> does all the way down through Gin, Redis, and MySQL.</p>
+  <p class="lede">One page that traces the <code>/menu</code> machinery end to end — every flow drawn
+  as a diagram: what happens on first load (the 3-tier loading strategy), what happens when a guest
+  adds a product (nothing leaves the browser), how state crosses components and pages (exactly two
+  hubs), and what <code>POST /orders</code> does all the way down through Gin, Redis, and MySQL.</p>
   <div class="legend">
-    <span>Every step on this page is tagged with the system doing the work:</span>
+    <span>Every step and every diagram uses one color per system:</span>
     <span class="actor client">browser</span>
     <span class="actor rsc">next server (RSC)</span>
     <span class="actor api">gin api</span>
@@ -172,6 +253,22 @@
 <!-- ================================================================ -->
 <section id="map">
   <div class="sec-head"><span class="sec-num">01</span><h2>Big picture — the whole machine on one screen</h2></div>
+
+  <h3>Two ways a guest arrives</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">qr path</span><b>scan QR at the table</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">airlock</span><b>/table/:id</b><br><span style="color:var(--muted);font-size:.74rem">sets httpOnly guest JWT with <code>table_id</code></span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--accent)"><span class="fk">lands on</span><b>/menu</b></div>
+  </div>
+  <div class="flow">
+    <div class="fnode"><span class="fk">online path</span><b>types the URL / follows a link</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">silent</span><b>POST /auth/guest/online</b><br><span style="color:var(--muted);font-size:.74rem">table-less JWT cookie, 2 h, rate-limited</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--accent)"><span class="fk">lands on</span><b>/menu</b></div>
+  </div>
 
   <div class="map">
     <div class="zone">
@@ -196,7 +293,44 @@
     </div>
   </div>
 
-  <p>Three kinds of traffic ever touch this page — and they behave completely differently:</p>
+  <h3>The three kinds of traffic — drawn</h3>
+  <div class="svgwrap"><svg viewBox="0 0 920 250" role="img" aria-label="Three traffic lanes across the systems">
+    <!-- column headers -->
+    <text x="110" y="24" class="tb taccent" text-anchor="middle">BROWSER</text>
+    <text x="290" y="24" class="tb tviolet" text-anchor="middle">NEXT (RSC)</text>
+    <text x="470" y="24" class="tb tamber" text-anchor="middle">GIN API</text>
+    <text x="650" y="24" class="tb tred" text-anchor="middle">REDIS</text>
+    <text x="830" y="24" class="tb tgreen" text-anchor="middle">MYSQL</text>
+    <line x1="110" y1="34" x2="110" y2="240" class="lifeline"/>
+    <line x1="290" y1="34" x2="290" y2="240" class="lifeline"/>
+    <line x1="470" y1="34" x2="470" y2="240" class="lifeline"/>
+    <line x1="650" y1="34" x2="650" y2="240" class="lifeline"/>
+    <line x1="830" y1="34" x2="830" y2="240" class="lifeline"/>
+    <!-- lane 1: catalog reads -->
+    <text x="20" y="62" class="t1 taccent" style="font-weight:700">① catalog reads</text>
+    <line x1="116" y1="80" x2="282" y2="80" class="flowa" marker-end="url(#ma)"/>
+    <text x="199" y="72" class="t2" text-anchor="middle">first load</text>
+    <line x1="296" y1="80" x2="462" y2="80" class="flowa" marker-end="url(#ma)"/>
+    <text x="379" y="72" class="t2" text-anchor="middle">prefetch ×3</text>
+    <line x1="476" y1="80" x2="642" y2="80" class="flowa" marker-end="url(#ma)"/>
+    <text x="559" y="72" class="t2" text-anchor="middle">cache-aside</text>
+    <line x1="656" y1="80" x2="822" y2="80" class="flowa" stroke-dasharray="6 4" marker-end="url(#ma)"/>
+    <text x="739" y="72" class="t2" text-anchor="middle">miss only</text>
+    <path d="M116,104 C240,128 350,128 462,106" class="flowa" stroke-dasharray="6 4" marker-end="url(#ma)"/>
+    <text x="290" y="140" class="t2" text-anchor="middle">later refetches go straight to Gin (background, ≥5 min stale or tab focus)</text>
+    <!-- lane 2: cart -->
+    <text x="20" y="172" class="t1 tamber" style="font-weight:700">② the cart</text>
+    <path d="M116,186 h56 v18 h-56" class="flowo" marker-end="url(#mo)"/>
+    <text x="182" y="200" class="t2">add / remove / nhân / canh / note — Zustand only</text>
+    <text x="650" y="196" class="t2 tred" text-anchor="middle">✕ no traffic — the server first hears of the cart at confirm</text>
+    <!-- lane 3: order write -->
+    <text x="20" y="228" class="t1 tgreen" style="font-weight:700">③ order write</text>
+    <line x1="116" y1="238" x2="462" y2="238" class="flowg" marker-end="url(#mg)"/>
+    <text x="290" y="231" class="t2" text-anchor="middle">POST /orders · cookie JWT</text>
+    <line x1="476" y1="238" x2="822" y2="238" class="flowg" marker-end="url(#mg)"/>
+    <text x="649" y="231" class="t2" text-anchor="middle">one TX — Redis skipped ✕ (orders never cached)</text>
+  </svg></div>
+  <p class="cap">The page's entire network life in three lanes: reads are double-cached, the cart is silent, the single write bypasses Redis.</p>
 
   <div class="lanes">
     <div class="lane read">
@@ -227,18 +361,65 @@
 <section id="load">
   <div class="sec-head"><span class="sec-num">02</span><h2>First load — the 3-tier loading strategy, step by step</h2></div>
 
-  <p>Guest opens <code>/menu</code> (QR path or direct). This is <b>Tier 1 — route</b> (PLAN.md §4.3):</p>
+  <p>Guest opens <code>/menu</code> (QR path or direct). This is <b>Tier 1 — route</b> (PLAN.md §4.3),
+  drawn first, then narrated:</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 515" role="img" aria-label="First-load sequence diagram across browser, Next server, Gin, Redis, MySQL">
+    <!-- actors -->
+    <rect x="25" y="12" width="110" height="26" rx="7" class="abox client"/><text x="80" y="29" class="tb taccent" text-anchor="middle">browser</text>
+    <rect x="225" y="12" width="110" height="26" rx="7" class="abox rsc"/><text x="280" y="29" class="tb tviolet" text-anchor="middle">next (RSC)</text>
+    <rect x="445" y="12" width="110" height="26" rx="7" class="abox api"/><text x="500" y="29" class="tb tamber" text-anchor="middle">gin api</text>
+    <rect x="625" y="12" width="110" height="26" rx="7" class="abox redis"/><text x="680" y="29" class="tb tred" text-anchor="middle">redis</text>
+    <rect x="795" y="12" width="110" height="26" rx="7" class="abox db"/><text x="850" y="29" class="tb tgreen" text-anchor="middle">mysql</text>
+    <line x1="80" y1="38" x2="80" y2="500" class="lifeline"/>
+    <line x1="280" y1="38" x2="280" y2="500" class="lifeline"/>
+    <line x1="500" y1="38" x2="500" y2="500" class="lifeline"/>
+    <line x1="680" y1="38" x2="680" y2="500" class="lifeline"/>
+    <line x1="850" y1="38" x2="850" y2="500" class="lifeline"/>
+    <!-- cold region (drawn before arrows so lines sit on top) -->
+    <rect x="440" y="240" width="465" height="140" rx="8" class="region"/>
+    <text x="452" y="256" class="t2 tamber" style="font-weight:700">COLD PATH ONLY — first read or TTL expired</text>
+    <!-- messages -->
+    <line x1="80" y1="78" x2="272" y2="78" class="call" marker-end="url(#mi)"/>
+    <text x="176" y="70" class="t1" text-anchor="middle">1 · GET /menu (guest-JWT cookie)</text>
+    <line x1="280" y1="112" x2="88" y2="112" class="resp" marker-end="url(#mm)"/>
+    <text x="180" y="104" class="t2" text-anchor="middle">2 · loading.tsx skeleton streams immediately</text>
+    <line x1="280" y1="146" x2="492" y2="146" class="call" marker-end="url(#mi)"/>
+    <text x="390" y="138" class="t1" text-anchor="middle">3 · prefetch ×3 in parallel: /products /categories /combos</text>
+    <line x1="500" y1="180" x2="672" y2="180" class="call" marker-end="url(#mi)"/>
+    <text x="586" y="172" class="t1" text-anchor="middle">4 · GET products:list</text>
+    <line x1="680" y1="214" x2="508" y2="214" class="resp" marker-end="url(#mm)"/>
+    <text x="590" y="206" class="t2 tgreen" text-anchor="middle">5 · WARM (normal): JSON hit ✓ — mysql idle</text>
+    <line x1="680" y1="278" x2="508" y2="278" class="err" marker-end="url(#mr)"/>
+    <text x="592" y="272" class="t2 tred" text-anchor="middle">(nil) — miss</text>
+    <line x1="500" y1="310" x2="842" y2="310" class="call" marker-end="url(#mi)"/>
+    <text x="672" y="302" class="t1" text-anchor="middle">SELECT catalog (is_available=1, toppings joined)</text>
+    <line x1="850" y1="340" x2="508" y2="340" class="resp" marker-end="url(#mm)"/>
+    <text x="676" y="333" class="t2" text-anchor="middle">rows</text>
+    <line x1="500" y1="368" x2="672" y2="368" class="call" marker-end="url(#mi)"/>
+    <text x="588" y="361" class="t1" text-anchor="middle">SET products:list EX 300</text>
+    <line x1="500" y1="408" x2="288" y2="408" class="resp" marker-end="url(#mm)"/>
+    <text x="394" y="400" class="t2" text-anchor="middle">6 · JSON ×3</text>
+    <line x1="280" y1="442" x2="88" y2="442" class="call" marker-end="url(#mi)"/>
+    <text x="184" y="434" class="t1" text-anchor="middle">7 · ONE response: HTML + dehydrated Query cache</text>
+    <path d="M80,472 h70 v16 h-70" class="call" marker-end="url(#mi)"/>
+    <text x="160" y="470" class="t1">8 · hydrate: hooks find the cache already full → zero-spinner paint</text>
+    <text x="160" y="486" class="t2">combos (ids only) join names/prices from the cached products query</text>
+    <!-- fail-open note -->
+    <text x="680" y="470" class="t2 tred" text-anchor="middle">redis down? fail-open:</text>
+    <text x="680" y="484" class="t2 tred" text-anchor="middle">skip to mysql, log, never 500</text>
+  </svg></div>
+  <p class="cap">Tier 1. The skeleton (step 2) mirrors the real layout — banner + nav + rail + card grid, never a centered spinner. Data rides inside the HTML (step 7) — no second round-trip.</p>
 
   <ol class="seq">
     <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> requests <code>/menu</code>.
       <span class="note">QR path: the guest JWT cookie (with <code>table_id</code>) is already set from <code>/table/:id</code>. Online path: a table-less JWT gets minted silently.</span></div></li>
     <li><span class="n">2</span><div class="body"><span class="actor rsc who">next server</span> starts rendering <code>page.tsx</code> (a React Server Component) and immediately <b>streams <code>loading.tsx</code></b> to the browser.
-      <span class="note">The skeleton mirrors the real layout — banner + nav strip + rail + card grid. Never a centered spinner (deliberate upgrade over the reference).</span></div></li>
+      <span class="note">The skeleton mirrors the real layout — a deliberate upgrade over the reference's centered spinner.</span></div></li>
     <li><span class="n">3</span><div class="body"><span class="actor rsc who">next server</span> prefetches <b>all three catalog queries in parallel</b>: <code>GET /products</code>, <code>GET /categories</code>, <code>GET /combos</code>.</div></li>
     <li><span class="n">4</span><div class="body"><span class="actor api who">gin api</span> handles each read: service asks <span class="actor redis">redis</span> for <code>products:list</code> / <code>categories:list</code> / <code>combos:list</code>.
       <span class="note"><b>Warm (normal case):</b> Redis hit → JSON straight back, MySQL untouched. <b>Cold:</b> miss → <span class="actor db">mysql</span> SELECT → Redis SET with 5-min TTL → JSON back. Redis down? <b>Fail-open</b>: serve from MySQL anyway (§06).</span></div></li>
-    <li><span class="n">5</span><div class="body"><span class="actor rsc who">next server</span> renders the page HTML and serializes the three query results into a <code>HydrationBoundary</code>.
-      <span class="note">The data rides inside the HTML response — no second round-trip.</span></div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor rsc who">next server</span> renders the page HTML and serializes the three query results into a <code>HydrationBoundary</code>.</div></li>
     <li><span class="n">6</span><div class="body"><span class="actor client who">browser</span> hydrates: client components mount and their <code>useProducts()</code> / <code>useCategories()</code> / <code>useCombos()</code> hooks find the cache <b>already full</b>.
       <span class="note"><b>Zero-spinner first paint.</b> Identical query keys (from <code>keys.ts</code>) are what make the RSC prefetch and the client hooks hit the same cache entries.</span></div></li>
     <li><span class="n">7</span><div class="body"><span class="actor client who">browser</span> — <code>ComboSection</code> joins combo <code>combo_items</code> (ids only) against the cached products query to get names/prices.
@@ -247,8 +428,19 @@
       <span class="note">Cart <em>items</em> are session-only by design — a refresh keeps your table identity but empties the tray.</span></div></li>
   </ol>
 
-  <h3>Tier 2 — component: what each section shows after that</h3>
-  <p>Every catalog-driven section renders exactly one of five named branches — all built, none accidental:</p>
+  <h3>Tier 2 — which of the five branches does a section render?</h3>
+  <div class="dflow">
+    <div class="drow"><div class="dq"><code>?q=</code> has ≥ 2 chars?</div><span class="dyes">yes →</span><span class="dres u">SEARCHING — page reshaped: one flat filtered list (client-side) or "no match"</span></div>
+    <div class="dno">no ↓ (sectioned page — each section then asks:)</div>
+    <div class="drow"><div class="dq">any of the 3 catalog queries failed?</div><span class="dyes">yes →</span><span class="dres r">ERROR — one inline slot "⚠ Kết nối mạng yếu" + Thử lại (never per-section silence)</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq"><code>isPending</code> and no cached data? (cold URL only)</div><span class="dyes">yes →</span><span class="dres z">LOADING — in-place section skeletons, no layout shift</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">query ok but the category has no items?</div><span class="dyes">yes →</span><span class="dres q">EMPTY — a real empty state, not a spinner, not an error</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">otherwise</div><span class="dyes">→</span><span class="dres g">DATA — the sectioned menu</span></div>
+  </div>
+
   <div class="table-wrap"><table>
     <tr><th>Branch</th><th>Trigger</th><th>What the guest sees</th></tr>
     <tr><td><b>loading</b></td><td><code>isPending</code>, no cached data (cold URL only)</td><td>in-place section skeletons — no layout shift</td></tr>
@@ -258,7 +450,16 @@
     <tr><td><b>data</b></td><td>default</td><td>the sectioned menu</td></tr>
   </table></div>
 
-  <h3>Why staleTime 5 min = Redis TTL 5 min</h3>
+  <h3>The two caches tick on the same clock</h3>
+  <div class="clock">
+    <div class="cbar-row"><div class="cbar-label">browser · Query staleTime</div>
+      <div class="cbar"><span class="fresh">FRESH — no refetch at all</span><span class="stale">STALE — background refetch, old data stays visible</span><span class="stale" style="opacity:.65">…</span></div></div>
+    <div class="cbar-row"><div class="cbar-label">server · Redis TTL (EX 300)</div>
+      <div class="cbar"><span class="fresh">CACHED — mysql idle</span><span class="gone">EXPIRED — next read repopulates from mysql</span><span class="gone" style="opacity:.65">…</span></div></div>
+    <div class="cscale"><span class="s5">0 min</span><span class="s3">5 min</span><span class="s3">10 min</span></div>
+  </div>
+  <p class="cap">Same 5-minute number on purpose: "how old can what I see be?" has one answer, not two.</p>
+
   <pre class="diagram">
 t=0     guest loads menu ─ data enters Query cache (fresh)
 t&lt;5min  guest scrolls, navigates to detail + back ─ cache is FRESH → no refetch at all
@@ -267,6 +468,7 @@ t&gt;5min  data marked stale ─ next mount/focus triggers a BACKGROUND refetch:
         → no flash, no skeleton re-entry, ever
 focus   refetch-on-focus stays ON → a menu left open on a table tablet
         self-heals ≤ 5 min after an admin 86's a dish ("Hết" overlay appears)</pre>
+
   <p>Detail pages get the same treatment early: hovering/touching a card fires
   <code>prefetchQuery</code> for <code>/menu/product/[id]</code>, so tapping through lands on cached
   data. Each detail segment has its own layout-shaped <code>loading.tsx</code> for the cold-URL case.
@@ -281,17 +483,59 @@ focus   refetch-on-focus stays ON → a menu left open on a table tablet
 <section id="add">
   <div class="sec-head"><span class="sec-num">03</span><h2>Add a product — what actually happens (zero network)</h2></div>
 
-  <p>Guest taps "Bánh cuốn trứng", picks nhân "Mộc nhĩ", taps add. Every step below happens inside
+  <p>Guest taps "Bánh cuốn trứng", picks nhân "Mộc nhĩ", taps add. Everything happens inside
   the browser — <b>no API call, no Redis, no MySQL</b>:</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 320" role="img" aria-label="Add-to-cart fan-out: card writes the store, three surfaces re-render, no network">
+    <rect x="30" y="118" width="185" height="74" rx="9" class="abox client"/>
+    <text x="122" y="142" class="tb taccent" text-anchor="middle">ProductCard</text>
+    <text x="122" y="160" class="t2" text-anchor="middle">nhân picked (useState)</text>
+    <text x="122" y="176" class="t2" text-anchor="middle">tap add</text>
+    <line x1="215" y1="155" x2="382" y2="155" class="call" marker-end="url(#mi)"/>
+    <text x="298" y="132" class="t1" text-anchor="middle">addItem(</text>
+    <text x="298" y="147" class="t1" text-anchor="middle">product_p12…_t2 )</text>
+    <rect x="390" y="112" width="205" height="86" rx="9" class="abox api" style="stroke:var(--amber)"/>
+    <text x="492" y="138" class="tb tamber" text-anchor="middle">cart store (Zustand)</text>
+    <text x="492" y="158" class="t2" text-anchor="middle">same line id → qty +1</text>
+    <text x="492" y="174" class="t2" text-anchor="middle">new id → new row</text>
+    <!-- fan-out -->
+    <line x1="595" y1="136" x2="702" y2="62" class="flowo" marker-end="url(#mo)"/>
+    <line x1="595" y1="155" x2="702" y2="160" class="flowo" marker-end="url(#mo)"/>
+    <line x1="595" y1="176" x2="702" y2="258" class="flowo" marker-end="url(#mo)"/>
+    <text x="648" y="118" class="t2 tamber" text-anchor="middle" transform="rotate(-30 648 118)">selectors</text>
+    <rect x="706" y="34" width="196" height="52" rx="9" class="abox client"/>
+    <text x="804" y="55" class="tb taccent" text-anchor="middle">CartBottomBar</text>
+    <text x="804" y="72" class="t2" text-anchor="middle">badge 13 = itemCount()</text>
+    <rect x="706" y="134" width="196" height="52" rx="9" class="abox client"/>
+    <text x="804" y="155" class="tb taccent" text-anchor="middle">OrderSummary</text>
+    <text x="804" y="172" class="t2" text-anchor="middle">row + 103.000 đ = total()</text>
+    <rect x="706" y="232" width="196" height="52" rx="9" class="abox client"/>
+    <text x="804" y="253" class="tb taccent" text-anchor="middle">the card itself</text>
+    <text x="804" y="270" class="t2" text-anchor="middle">qty stepper appears</text>
+    <!-- no network -->
+    <line x1="492" y1="198" x2="492" y2="240" class="err" marker-end="url(#mr)"/>
+    <text x="505" y="224" class="tb tred">✕</text>
+    <rect x="390" y="244" width="205" height="52" rx="9" class="delbox" opacity="0.85"/>
+    <text x="492" y="266" class="tb tred" text-anchor="middle">API · Redis · MySQL</text>
+    <text x="492" y="283" class="t2 tred" text-anchor="middle">never contacted</text>
+    <!-- animation note -->
+    <text x="122" y="230" class="t2" text-anchor="middle">fly-to-cart animation —</text>
+    <text x="122" y="246" class="t2" text-anchor="middle">the only feedback needed</text>
+  </svg></div>
+  <p class="cap">One writer, three readers, zero requests. Derived numbers are selectors — they can't go stale.</p>
+
+  <h3>Anatomy of a cart line id — the variant IS the id</h3>
+  <div class="lid"><span class="seg kind">product</span><span class="seg pid">_p12…36</span><span class="seg vart">_t2</span><span class="eq">=</span><span style="font-size:.82rem">Bánh cuốn trứng + Mộc nhĩ (single-select nhân)</span></div>
+  <div class="lid"><span class="seg kind">combo</span><span class="seg pid">_cb1…36</span><span class="seg vart">_t1t2</span><span class="eq">=</span><span style="font-size:.82rem">Suất đầy đủ + Nhân thịt + Mộc nhĩ (multi-select, ids sorted)</span></div>
+  <div class="lid"><span class="seg kind">canh</span><span class="seg pid">_p_canh…</span><span class="seg vart">_rau</span><span class="eq">=</span><span style="font-size:.82rem">canh có rau — from the OrderSummary stepper, never a card</span></div>
+  <p class="lidnote">kind · product/combo id · variant. Add Trứng+Mộc nhĩ twice → same id → <b>one row, qty 2</b>.
+  Add Trứng+Nhân thịt → different id → <b>its own row</b>. Dedup falls out of the scheme — no comparison logic in the store.</p>
 
   <ol class="seq">
     <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> — the card's nhân pill selection is plain <code>useState</code> <em>inside ProductCard</em>.
       <span class="note">Product cards: single-select, first option pre-selected. Combo cards: multi-select, "Nhân thịt" default, last one can't be deselected. Local state — nobody else needs it yet.</span></div></li>
-    <li><span class="n">2</span><div class="body"><span class="actor client who">browser</span> — on add, the card computes the <b>line id</b>, which encodes the variant:
-      <span class="note"><code>product_&lt;id&gt;_&lt;nhânId|plain&gt;</code> · <code>combo_&lt;id&gt;_&lt;sortedNhânIds|plain&gt;</code> · <code>canh_&lt;productId&gt;_&lt;rau|plain&gt;</code><br>
-      Trứng+Mộc nhĩ and Trứng+Nhân thịt are <em>different rows</em>; adding Trứng+Mộc nhĩ twice is <em>one row, qty 2</em>.</span></div></li>
-    <li><span class="n">3</span><div class="body"><span class="actor client who">browser</span> — <code>cart.addItem(line)</code> hits the Zustand store: same line id exists → quantity +1; new id → new row.
-      <span class="note">Dedup falls out of the id scheme naturally — no comparison logic in the store.</span></div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor client who">browser</span> — on add, the card computes the <b>line id</b> (anatomy above), which encodes the variant.</div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor client who">browser</span> — <code>cart.addItem(line)</code> hits the Zustand store: same line id exists → quantity +1; new id → new row.</div></li>
     <li><span class="n">4</span><div class="body"><span class="actor client who">browser</span> — every subscribed component re-renders <b>from the store, via selectors</b>:
       <span class="note"><code>CartBottomBar</code> badge → <code>itemCount()</code> (13) · <code>OrderSummary</code> gains/updates the row + <code>total()</code> (103.000 đ) · the card shows its qty stepper. <code>total()</code>/<code>itemCount()</code> are <b>selectors, never stored numbers</b> (FE rule 11) — they cannot go stale.</span></div></li>
     <li><span class="n">5</span><div class="body"><span class="actor client who">browser</span> — the fly-to-cart animation plays. That's the entire feedback loop.
@@ -343,7 +587,57 @@ focus   refetch-on-focus stays ON → a menu left open on a table tablet
   reload); the guest session is an <b>httpOnly cookie</b> the client JS can't even read — there is
   no auth store.</p>
 
-  <h3>Crossing pages</h3>
+  <h3>Crossing pages — the whole route neighborhood, drawn</h3>
+  <div class="svgwrap"><svg viewBox="0 0 920 400" role="img" aria-label="Page transition map around /menu">
+    <!-- nodes -->
+    <rect x="30" y="40" width="155" height="54" rx="9" class="abox"/>
+    <text x="107" y="62" class="tb" text-anchor="middle" fill="var(--ink)">/table/:id</text>
+    <text x="107" y="80" class="t2" text-anchor="middle">QR airlock (T)</text>
+    <rect x="30" y="150" width="155" height="54" rx="9" class="abox"/>
+    <text x="107" y="172" class="tb" text-anchor="middle" fill="var(--ink)">/</text>
+    <text x="107" y="190" class="t2" text-anchor="middle">landing</text>
+    <rect x="330" y="80" width="185" height="76" rx="10" class="abox client" style="stroke-width:2"/>
+    <text x="422" y="112" class="tb taccent" text-anchor="middle">/menu</text>
+    <text x="422" y="132" class="t2" text-anchor="middle">THE page · cart lives here</text>
+    <rect x="660" y="24" width="230" height="50" rx="9" class="abox"/>
+    <text x="775" y="45" class="tb" text-anchor="middle" fill="var(--ink)">/menu/product/[id]</text>
+    <text x="775" y="62" class="t2" text-anchor="middle">detail (C-5)</text>
+    <rect x="660" y="96" width="230" height="50" rx="9" class="abox"/>
+    <text x="775" y="117" class="tb" text-anchor="middle" fill="var(--ink)">/menu/combo/[id]</text>
+    <text x="775" y="134" class="t2" text-anchor="middle">combo detail (modal is dead)</text>
+    <rect x="660" y="186" width="230" height="50" rx="9" class="abox"/>
+    <text x="775" y="207" class="tb" text-anchor="middle" fill="var(--ink)">/checkout</text>
+    <text x="775" y="224" class="t2" text-anchor="middle">online path: name/phone</text>
+    <rect x="330" y="290" width="185" height="60" rx="10" class="abox db"/>
+    <text x="422" y="315" class="tb tgreen" text-anchor="middle">/order/:id</text>
+    <text x="422" y="334" class="t2" text-anchor="middle">live tracking</text>
+    <!-- edges -->
+    <line x1="185" y1="80" x2="322" y2="104" class="call" marker-end="url(#mi)"/>
+    <text x="248" y="76" class="t2" text-anchor="middle">cookie carries table_id</text>
+    <line x1="185" y1="168" x2="322" y2="138" class="call" marker-end="url(#mi)"/>
+    <text x="250" y="172" class="t2" text-anchor="middle">silent guest mint</text>
+    <line x1="515" y1="98" x2="652" y2="58" class="flowa" marker-end="url(#ma)"/>
+    <text x="588" y="60" class="t2" text-anchor="middle">route param only —</text>
+    <text x="588" y="74" class="t2" text-anchor="middle">same Query cache (hover-prefetched)</text>
+    <line x1="515" y1="122" x2="652" y2="122" class="flowa" marker-end="url(#ma)"/>
+    <line x1="515" y1="146" x2="652" y2="200" class="call" marker-end="url(#mi)"/>
+    <text x="600" y="182" class="t2" text-anchor="middle">no table bound</text>
+    <line x1="400" y1="156" x2="400" y2="284" class="flowg" marker-end="url(#mg)"/>
+    <text x="392" y="210" class="t2 tgreen" text-anchor="end">POST /orders 201 →</text>
+    <text x="392" y="225" class="t2 tgreen" text-anchor="end">replace('/order/&lt;id&gt;')</text>
+    <text x="392" y="240" class="t2" text-anchor="end">order pre-cached · cart cleared</text>
+    <text x="392" y="255" class="t2" text-anchor="end">(identity fields kept)</text>
+    <line x1="460" y1="284" x2="460" y2="162" class="call" marker-end="url(#mi)"/>
+    <text x="470" y="210" class="t2">"Gọi thêm" — append mode</text>
+    <text x="470" y="225" class="t2">?add_to_order=&lt;id&gt;</text>
+    <text x="470" y="240" class="t2">→ POST /orders/:id/items</text>
+    <line x1="660" y1="228" x2="518" y2="300" class="flowg" marker-end="url(#mg)"/>
+    <text x="600" y="278" class="t2 tgreen" text-anchor="middle">POST source:'online'</text>
+    <!-- footer note -->
+    <text x="460" y="384" class="t2" text-anchor="middle">the Query cache and the Zustand stores are process-global — they travel with every navigation for free; nothing is passed as props</text>
+  </svg></div>
+  <p class="cap">Blue arrows = nothing travels but a route param (shared cache does the rest). Green = the order handoff. Black = plain navigation.</p>
+
   <div class="table-wrap"><table>
     <tr><th>Navigation</th><th>What travels</th><th>How</th></tr>
     <tr><td>menu → <code>/menu/product/[id]</code></td><td><b>nothing is passed</b></td><td>detail reads the id from the route param and hits the <em>same Query cache</em> (already warm from hover-prefetch); the cart store is global, so the cart survives navigation for free</td></tr>
@@ -352,10 +646,18 @@ focus   refetch-on-focus stays ON → a menu left open on a table tablet
     <tr><td><code>/order/:id</code> → menu (append)</td><td>the active order id</td><td><code>?add_to_order=&lt;id&gt;</code> in the URL → confirm posts to <code>POST /orders/:id/items</code> instead</td></tr>
   </table></div>
 
-  <p>Need new state while building C-4/C-5? Run <code>FE_STATE.md §1</code>'s decision flow:
-  from an API → Query · must survive reload/share → URL · form → RHF · read by &gt;1 distant
-  component → Zustand (last resort) · otherwise → <code>useState</code>. This page needs exactly
-  the two stores above; that's the ceiling.</p>
+  <h3>Need new state in C-4/C-5? Run the FE_STATE §1 flow</h3>
+  <div class="dflow">
+    <div class="drow"><div class="dq">does it come from an API?</div><span class="dyes">yes →</span><span class="dres q">TanStack Query — and never copied anywhere else</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">must it survive reload / be shareable?</div><span class="dyes">yes →</span><span class="dres u">URL (like <code>?q=</code>, <code>?add_to_order=</code>)</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">is it a form?</div><span class="dyes">yes →</span><span class="dres g">React Hook Form</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">read by &gt;1 distant component?</div><span class="dyes">yes →</span><span class="dres z">Zustand — the last resort; this page's ceiling is the 2 stores above</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">otherwise</div><span class="dyes">→</span><span class="dres r"><code>useState</code> in the owning component</span></div>
+  </div>
 </section>
 
 <!-- ================================================================ -->
@@ -366,29 +668,79 @@ focus   refetch-on-focus stays ON → a menu left open on a table tablet
   This is the page's first and only server write — <b>pessimistic</b> (FE rule 4): nothing on
   screen pretends success before the 201.</p>
 
+  <div class="svgwrap"><svg viewBox="0 0 920 560" role="img" aria-label="POST /orders sequence diagram with the single MySQL transaction">
+    <!-- actors -->
+    <rect x="50" y="12" width="120" height="26" rx="7" class="abox client"/><text x="110" y="29" class="tb taccent" text-anchor="middle">browser</text>
+    <rect x="410" y="12" width="120" height="26" rx="7" class="abox api"/><text x="470" y="29" class="tb tamber" text-anchor="middle">gin api</text>
+    <rect x="750" y="12" width="120" height="26" rx="7" class="abox db"/><text x="810" y="29" class="tb tgreen" text-anchor="middle">mysql</text>
+    <line x1="110" y1="38" x2="110" y2="545" class="lifeline"/>
+    <line x1="470" y1="38" x2="470" y2="545" class="lifeline"/>
+    <line x1="810" y1="38" x2="810" y2="545" class="lifeline"/>
+    <!-- tx region -->
+    <rect x="400" y="180" width="505" height="228" rx="10" class="txbox"/>
+    <text x="415" y="199" class="t2 tgreen" style="font-weight:700">ONE TRANSACTION — all or nothing</text>
+    <!-- steps -->
+    <path d="M110,72 h64 v16 h-64" class="call" marker-end="url(#mi)"/>
+    <text x="184" y="72" class="t1">1 · modal reads the cart store: lines · tableId · orderNote (never its own useState)</text>
+    <line x1="110" y1="122" x2="462" y2="122" class="call" marker-end="url(#mi)"/>
+    <text x="286" y="100" class="t1" text-anchor="middle">2 · POST /orders {source:"qr", table_id, note, items[]} + cookie JWT</text>
+    <text x="286" y="115" class="t2" text-anchor="middle">payload by buildOrderItemsPayload() — no prices, no names, canh stripped from combos</text>
+    <path d="M470,142 h60 v14 h-60" class="call" marker-end="url(#mi)"/>
+    <text x="540" y="152" class="t1">3 · verify JWT cookie · bind + validate body</text>
+    <line x1="470" y1="222" x2="802" y2="222" class="call" marker-end="url(#mi)"/>
+    <text x="636" y="215" class="t1" text-anchor="middle">4 · SELECT current prices + names (server truth)</text>
+    <line x1="810" y1="250" x2="478" y2="250" class="resp" marker-end="url(#mm)"/>
+    <text x="640" y="243" class="t2" text-anchor="middle">rows</text>
+    <path d="M470,272 h56 v14 h-56" class="call" marker-end="url(#mi)"/>
+    <text x="536" y="278" class="t1">5 · freeze toppings_snapshot ·</text>
+    <text x="536" y="293" class="t1">expand combos → header row (unit_price=0) + rows via combo_ref_id</text>
+    <line x1="470" y1="322" x2="802" y2="322" class="call" marker-end="url(#mi)"/>
+    <text x="636" y="315" class="t1" text-anchor="middle">6 · INSERT orders + order_items</text>
+    <line x1="470" y1="352" x2="802" y2="352" class="call" marker-end="url(#mi)"/>
+    <text x="636" y="345" class="t1" text-anchor="middle">7 · RecalculateTotalAmount</text>
+    <path d="M470,378 h56 v14 h-56" class="call" marker-end="url(#mi)"/>
+    <text x="536" y="390" class="t1">8 · COMMIT — or roll back everything</text>
+    <line x1="470" y1="438" x2="118" y2="438" class="resp" marker-end="url(#mm)"/>
+    <text x="290" y="430" class="t1" text-anchor="middle">9 · 201 full order object — items expanded, prices frozen (never a thin {id})</text>
+    <path d="M110,462 h64 v16 h-64" class="call" marker-end="url(#mi)"/>
+    <text x="184" y="464" class="t1">10 · cache order → clearCart (keep identity) → setActiveOrderId</text>
+    <text x="184" y="480" class="t1">→ router.replace('/order/&lt;id&gt;') — order page paints instantly</text>
+    <line x1="470" y1="522" x2="118" y2="522" class="err" marker-end="url(#mr)"/>
+    <text x="292" y="514" class="t2 tred" text-anchor="middle">✕ any failure: {error:{code,message,details}} → ApiError → modal stays open · button re-enables · cart untouched</text>
+    <!-- redis note -->
+    <text x="810" y="470" class="t2 tred" text-anchor="middle">redis: not involved —</text>
+    <text x="810" y="485" class="t2 tred" text-anchor="middle">orders are never cached</text>
+  </svg></div>
+  <p class="cap">While this runs, the confirm button is disabled with an inline "Đang gửi…" — never a full-page overlay (Tier 3, pessimistic).</p>
+
+  <h3>What a combo becomes at each hop</h3>
+  <div class="flow">
+    <div class="fnode" style="border-top:3px solid var(--accent)"><span class="fk">1 · fe cart line</span><b>combo_cb1…_t1t2 ×1</b><br><span style="color:var(--muted);font-size:.74rem">"Suất đầy đủ" · nhân thịt + mộc nhĩ · shown as one row with a "Chi tiết" expander</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-top:3px solid var(--amber)"><span class="fk">2 · wire item</span><b>{combo_id, quantity: 1,<br>topping_ids: [t1, t2]}</b><br><span style="color:var(--muted);font-size:.74rem">no price, no name, canh lines stripped by the builder</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-top:3px solid var(--done)"><span class="fk">3 · db rows (in the tx)</span><b>oi2 · header · unit_price=0</b><br><b>oi3 · component · combo_ref_id=oi2</b><br><span style="color:var(--muted);font-size:.74rem">names + prices + toppings_snapshot frozen per row</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-top:3px solid var(--accent)"><span class="fk">4 · 201 back to fe</span><b>expanded items[]</b><br><span style="color:var(--muted);font-size:.74rem">order page shows the combo re-grouped via combo_ref_id; progress derives from qty_served</span></div>
+  </div>
+  <p class="cap">One combo, four shapes — and the price is attached only where the server controls it (rows 3–4).</p>
+
+  <h3>The same flow as prose</h3>
   <ol class="seq">
     <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> — the modal reads <b>everything from the cart store</b>: lines, <code>tableId</code>, and <code>orderNote</code> (the note OrderSummary wrote — the reference's silent-loss bug, designed out).</div></li>
     <li><span class="n">2</span><div class="body"><span class="actor client who">browser</span> — <code>buildOrderItemsPayload()</code> (the <b>one</b> builder, 3 callers) shapes the wire payload: <code>{product_id|combo_id, quantity, topping_ids}</code> per line.
       <span class="note"><b>No prices, no names on the wire</b> — the server snapshots both. Canh lines are stripped from combo overrides so the BE never double-expands.</span></div></li>
-    <li><span class="n">3</span><div class="body"><span class="actor client who">browser</span> — <code>client.ts</code> fires <code>POST /api/v1/orders</code> with <code>{source:"qr", table_id, note, items}</code>. The httpOnly guest-JWT cookie rides along automatically.
-      <span class="note">Confirm button → disabled + inline "Đang gửi…". Never a full-page overlay. Online path posts <code>source:"online"</code> + name/phone from <code>/checkout</code> instead.</span></div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor client who">browser</span> — <code>client.ts</code> fires <code>POST /api/v1/orders</code>; the httpOnly guest-JWT cookie rides along automatically.
+      <span class="note">Online path posts <code>source:"online"</code> + name/phone from <code>/checkout</code> instead.</span></div></li>
     <li><span class="n">4</span><div class="body"><span class="actor api who">gin api</span> — middleware verifies the JWT cookie (guest, unexpired, table binding); handler binds + validates the body.
-      <span class="note">Bad quantity? → 422 envelope <code>{"error":{"code":"VALIDATION_FAILED", …, "details":[{"field":"items[0].quantity","issue":"min=1"}]}}</code> and nothing is written.</span></div></li>
-    <li><span class="n">5</span><div class="body"><span class="actor api who">gin api</span> — the order service opens <b>one MySQL transaction</b> and does all the real work inside it:
-      <span class="note">① fetch current prices/names from <span class="actor db">mysql</span> (never trusts the client) ② freeze <code>toppings_snapshot</code> JSON per item ③ expand combos — header row <code>unit_price=0</code> + component rows linked via <code>combo_ref_id</code> ④ <code>RecalculateTotalAmount</code> from the rows it just wrote ⑤ commit — or roll back everything.</span></div></li>
-    <li><span class="n">6</span><div class="body"><span class="actor db who">mysql</span> — <code>orders</code> + <code>order_items</code> rows land atomically. <span class="actor redis">redis</span> is <b>not touched</b> — orders are never cached.
+      <span class="note">Bad quantity? → 422 envelope with <code>details:[{"field":"items[0].quantity","issue":"min=1"}]</code> and nothing is written.</span></div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor api who">gin api</span> — the order service opens <b>one MySQL transaction</b>: fetch current prices/names (never trusts the client) → freeze <code>toppings_snapshot</code> → expand combos → <code>RecalculateTotalAmount</code> → commit, or roll back everything.</div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor db who">mysql</span> — <code>orders</code> + <code>order_items</code> land atomically. <span class="actor redis">redis</span> is <b>not touched</b> — orders are never cached.
       <span class="note">Item progress later derives from <code>qty_served</code> — there is no item <code>status</code> column to drift.</span></div></li>
-    <li><span class="n">7</span><div class="body"><span class="actor api who">gin api</span> → 201 with the <b>full order object</b> — items expanded, names/prices frozen, <code>total_amount: 103000</code>.
+    <li><span class="n">7</span><div class="body"><span class="actor api who">gin api</span> → 201 with the <b>full order object</b> — <code>total_amount: 103000</code>.
       <span class="note">Lesson 7: thin <code>{id}</code> DTOs caused "Đơn #undefined" in the reference. Never again.</span></div></li>
-    <li><span class="n">8</span><div class="body"><span class="actor client who">browser</span> — the handoff, in order: cache the order into the Query cache → <code>clearCart()</code> <b>keeping identity fields</b> → <code>setActiveOrderId(id)</code> → <code>router.replace('/order/&lt;id&gt;')</code>.
-      <span class="note">The order page paints instantly from the pre-cached object; "Gọi thêm" later re-enters the menu in append mode and posts to <code>POST /orders/:id/items</code>.</span></div></li>
-  </ol>
-
-  <h3>When it fails (the error rail)</h3>
-  <ol class="seq alt">
-    <li><span class="n">✕</span><div class="body"><span class="actor api who">gin api</span> — every failure, every endpoint, rides the <b>one error envelope</b>: <code>{"error":{"code","message","details"}}</code>.</div></li>
-    <li><span class="n">✕</span><div class="body"><span class="actor client who">browser</span> — <code>client.ts</code> converts it to a thrown <code>ApiError{status, code, message, details}</code> — no component ever sees a raw <code>Response</code>.</div></li>
-    <li><span class="n">✕</span><div class="body"><span class="actor client who">browser</span> — the modal <b>stays open</b> with the envelope message, the button re-enables, and the cart is untouched — the guest just taps confirm again.</div></li>
+    <li><span class="n">8</span><div class="body"><span class="actor client who">browser</span> — the handoff: cache the order → <code>clearCart()</code> <b>keeping identity fields</b> → <code>setActiveOrderId(id)</code> → <code>router.replace('/order/&lt;id&gt;')</code>.
+      <span class="note">"Gọi thêm" later re-enters the menu in append mode and posts to <code>POST /orders/:id/items</code>.</span></div></li>
   </ol>
 </section>
 
@@ -412,9 +764,40 @@ FAIL-OPEN (redis down)
   gin ──GET──▶ redis ✕ error → log it, go straight to mysql ──▶ browser
   the menu never breaks because the cache broke</pre>
 
-  <h3>Invalidation — who deletes what (the old system's blind spot)</h3>
-  <p>Admin writes (from the manager surfaces, not this page) must delete every key that could now
-  lie. The map is the C-2/C-3 acceptance criterion:</p>
+  <h3>Invalidation — the fan-out, drawn (the old system's blind spot)</h3>
+  <div class="svgwrap"><svg viewBox="0 0 920 330" role="img" aria-label="Cache invalidation fan-out from an admin topping write">
+    <rect x="30" y="118" width="195" height="66" rx="9" class="abox api"/>
+    <text x="127" y="142" class="tb tamber" text-anchor="middle">admin surface</text>
+    <text x="127" y="160" class="t2" text-anchor="middle">topping write</text>
+    <text x="127" y="174" class="t2" text-anchor="middle">(the worst-case fan-out)</text>
+    <!-- DEL boxes -->
+    <line x1="225" y1="138" x2="312" y2="56" class="err" marker-end="url(#mr)"/>
+    <line x1="225" y1="151" x2="312" y2="121" class="err" marker-end="url(#mr)"/>
+    <line x1="225" y1="164" x2="312" y2="188" class="err" marker-end="url(#mr)"/>
+    <rect x="318" y="32" width="215" height="44" rx="8" class="delbox"/>
+    <text x="425" y="52" class="t1 tred" text-anchor="middle" style="font-weight:700">DEL toppings:list</text>
+    <text x="425" y="67" class="t2 tred" text-anchor="middle">the obvious one</text>
+    <rect x="318" y="99" width="215" height="44" rx="8" class="delbox"/>
+    <text x="425" y="119" class="t1 tred" text-anchor="middle" style="font-weight:700">DEL products:list</text>
+    <text x="425" y="134" class="t2 tred" text-anchor="middle">toppings ride inside products</text>
+    <rect x="318" y="166" width="215" height="52" rx="8" class="delbox"/>
+    <text x="425" y="186" class="t1 tred" text-anchor="middle" style="font-weight:700">DEL product:&lt;id&gt; × N</text>
+    <text x="425" y="202" class="t2 tred" text-anchor="middle">every product joined to it — the DEL</text>
+    <text x="425" y="215" class="t2 tred" text-anchor="middle">the old system forgot (stale bug)</text>
+    <!-- refresh chain -->
+    <line x1="533" y1="121" x2="600" y2="121" class="call" marker-end="url(#mi)"/>
+    <rect x="604" y="99" width="140" height="44" rx="8" class="abox"/>
+    <text x="674" y="119" class="t1" text-anchor="middle" fill="var(--ink)">next GET /products</text>
+    <text x="674" y="134" class="t2" text-anchor="middle">= MISS</text>
+    <line x1="744" y1="121" x2="770" y2="121" class="call" marker-end="url(#mi)"/>
+    <rect x="774" y="99" width="130" height="44" rx="8" class="abox db"/>
+    <text x="839" y="119" class="t1 tgreen" text-anchor="middle">mysql → fresh rows</text>
+    <text x="839" y="134" class="t2" text-anchor="middle">re-cached EX 300</text>
+    <!-- guest note -->
+    <text x="460" y="272" class="t2" text-anchor="middle">…and every guest screen self-heals within one staleTime window: background refetch (≤5 min) or tab focus</text>
+    <text x="460" y="290" class="t2" text-anchor="middle">→ the "Hết" overlay appears on the 86'd card, old data never flashes away</text>
+  </svg></div>
+
   <div class="table-wrap"><table>
     <tr><th>Admin write</th><th>DEL keys</th></tr>
     <tr><td>product create/update/delete/86</td><td><code>products:list</code>, <code>product:&lt;id&gt;</code></td></tr>
@@ -436,7 +819,7 @@ worst case ≈ one staleTime window — bounded, self-healing, no reload needed<
   <ul class="plain">
     <li><b>TTL 5 min</b> on every catalog key — even a missed DEL heals itself within one TTL.</li>
     <li><b>Orders are never cached</b> — correctness over speed for money-bearing data.</li>
-    <li>The FE's <code>staleTime</code> matches the TTL on purpose: both caches expire on the same clock, so "how old can what I see be?" has one answer, not two.</li>
+    <li>The FE's <code>staleTime</code> matches the TTL on purpose: both caches expire on the same clock, so "how old can what I see be?" has one answer, not two (§02's clock bars).</li>
   </ul>
 </section>
 
