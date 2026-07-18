@@ -8,11 +8,12 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-15 (customer-menu FE+BE build plan — `harness/plans/customer_menu/`
-  PLAN.md + plan.html; first entry in the new per-page plans area).
+- **Status:** ✅ F-16 (canonical DB schema — `harness/DB_SCHEMA.md`, adopted from
+  `reference/docs/system/02_spec/object` per owner instruction).
 - **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`; unchanged by F-9
   (skeleton is identical for the restaurant scope). C-4/C-5 now read
-  `plans/customer_menu/PLAN.md` first (CONTEXT_MAP routing updated).
+  `plans/customer_menu/PLAN.md` first; **F-3/C-1 and every migration task read
+  `DB_SCHEMA.md` first** (CONTEXT_MAP routing updated).
   New ⚠ for owner: customer-shell theme = reference dark/orange (default) vs F-7
   blue — decide before C-4 (PLAN.md §7).
 - **Open decisions:** ⚠ **Scope pivot** (OVERALL_PLAN.md §9.1): reference = restaurant
@@ -27,6 +28,33 @@
 ---
 
 ## Checkpoint log
+
+### 2026-07-18 — Session 13 (F-15 amendment): runtime-walkthrough visual
+- Done: owner asked for one combined visual of how the menu page actually works →
+  new `harness/plans/customer_menu/how-it-works.html`: numbered end-to-end sequences
+  for first load (3-tier loading incl. Redis hit/miss), add-to-cart (zero network),
+  the two state hubs + cross-page handoffs, POST /orders through Gin→tx→MySQL with
+  the error rail, and Redis cache-aside/invalidation/fail-open. Re-draws PLAN.md
+  facts only — owns nothing. Rule 6 rows added (CONTEXT_MAP §Doc inventory + README);
+  PLAN.md TL;DR links it. Committed straight to `main`.
+
+### 2026-07-18 — Session 12 (F-16): canonical DB schema from reference object models
+- Done: F-16 ✅ — owner pointed at `reference/docs/system/02_spec/object` ("above is
+  what i want for data base please update project") → `harness/DB_SCHEMA.md`:
+  conventions + field-name law MOVED here from OVERALL_PLAN §3.2 (pointer left),
+  13 spec-traced tables column-complete (catalog 6 · tables/order_sequences ·
+  orders/order_items w/ snapshot + combo row-type CHECK · staff · inventory 3),
+  7 phase-later stubs (refresh_tokens, payments, workforce 4, file_attachments),
+  ER overview, 14 mismatch-flag rulings (§6). task-F-16.html + §R report +
+  Hard-Rule-6 rows (CONTEXT_MAP: DB-migration route now reads DB_SCHEMA.md first;
+  README). customer_menu PLAN §3.2 re-pointed. Receipt in VERIFICATION.md.
+- Decisions: real-`null` wire serialization for nullable columns (kills ref `""`
+  mismatch, aligns gate 8) · staff.role enum = 5 values (`customer` dropped) ·
+  phantom fields dropped (`flagged`, hardcoded `performance_score`) · ingredient
+  wire uses DB names (rule 10) · ⚠ stock over-draw default = reject w/
+  VALIDATION_FAILED (ref silently clamps) — owner may flip until AD opens.
+- Drift fixed / found: none new (`personal/command.md` flag stands).
+- Next: unchanged — F-2 (dev stack skeleton); migrations build against DB_SCHEMA.md.
 
 ### 2026-07-18 — Session 11 (F-15 amendment): state-management flow spelled out
 - Done: owner asked how state moves among components/pages, then "update plan for

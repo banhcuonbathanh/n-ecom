@@ -4,7 +4,8 @@
 > highest-traffic surface of the restaurant platform. FE and BE sides are planned
 > together here because the page is a contract: catalog reads (public, cached),
 > a client-side cart (Zustand), and the order-creation handoff (guest JWT).
-> Visual companion: [`plan.html`](plan.html) (same folder).
+> Visual companions: [`plan.html`](plan.html) (the plan) and
+> [`how-it-works.html`](how-it-works.html) (runtime walkthrough — end-to-end sequences).
 > Source: `reference/docs/system/08_pages/customer/customer_menu/` (16 docs, digested
 > 2026-07-18 by 2 Explore agents) reconciled with `OVERALL_PLAN.md` phases C/T/O and
 > the F-5/F-8/F-11/F-12 rule sets. **One fact one home:** this file owns the menu
@@ -62,8 +63,8 @@ Errors ride the Session-0 envelope; codes from `BE_STATE.md §4` (extended per p
 
 ### 3.2 Schema this page depends on (C-1 migration scope)
 
-Catalog 6 tables per `OVERALL_PLAN.md §3.2` conventions (CHAR(36) PKs, soft delete,
-`DECIMAL(10,0)` VND, snake_case, FK+status indexes):
+Catalog 6 tables — full column specs now canonical in `harness/DB_SCHEMA.md §4.1`
+(F-16; conventions in its §1, field-name law in its §2):
 
 - `categories` — `name, description, sort_order, is_active`
 - `products` — `name, description, price, image_path, category_id, is_available`
@@ -78,8 +79,8 @@ Catalog 6 tables per `OVERALL_PLAN.md §3.2` conventions (CHAR(36) PKs, soft del
 
 Order-side tables (`orders`, `order_items` with `qty_served`, `combo_ref_id`,
 `toppings_snapshot`, CHECK-constrained row shapes, **no item `status` column** —
-derived state, FE rule 11's BE twin) belong to the O-phase task, spec in
-`OVERALL_PLAN.md §3.2/§3.7`.
+derived state, FE rule 11's BE twin) belong to the O-phase task, columns in
+`harness/DB_SCHEMA.md §4.3`, state machine in `OVERALL_PLAN.md §3.7`.
 
 ### 3.3 Cache map (the C-2/C-3 AC — covers the old blind spot)
 

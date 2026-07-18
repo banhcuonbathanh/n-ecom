@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer menu — how it actually works (runtime walkthrough)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3372B;
+    --red-soft: #F9E7E4;
+    --violet: #6D3BC7;
+    --violet-soft: #EFE8FB;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E8887C; --red-soft: #3A1B17; --violet: #B49AF0; --violet-soft: #2A1E44;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E8887C; --red-soft: #3A1B17; --violet: #B49AF0; --violet-soft: #2A1E44;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3372B; --red-soft: #F9E7E4; --violet: #6D3BC7; --violet-soft: #EFE8FB;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 980px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 76ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 68ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  section { margin-top: 60px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code { border: none; background: transparent; padding: 0; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 76ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* ---- actor chips: one color per system, used everywhere on this page ---- */
+  .actor { display: inline-block; font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 5px; padding: 2px 8px; white-space: nowrap; }
+  .actor.client { color: var(--accent); background: var(--accent-soft); }   /* browser: components, Query cache, Zustand */
+  .actor.rsc    { color: var(--violet); background: var(--violet-soft); }   /* Next.js server (RSC) */
+  .actor.api    { color: var(--amber); background: var(--amber-soft); }     /* Gin handlers + services */
+  .actor.redis  { color: var(--red); background: var(--red-soft); }         /* Redis */
+  .actor.db     { color: var(--done); background: var(--done-soft); }       /* MySQL */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; align-items: center; font-size: 0.8rem; color: var(--muted); }
+
+  /* ---- numbered sequence steps ---- */
+  .seq { list-style: none; margin: 14px 0; padding: 0; display: flex; flex-direction: column; }
+  .seq li { position: relative; display: flex; gap: 12px; padding: 0 0 18px 0; }
+  .seq li::before { content: ""; position: absolute; left: 12px; top: 26px; bottom: 0; width: 2px; background: var(--line); }
+  .seq li:last-child::before { display: none; }
+  .seq .n { flex: none; width: 25px; height: 25px; margin-top: 1px; border-radius: 50%; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 0.74rem; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .seq .body { font-size: 0.9rem; max-width: 78ch; }
+  .seq .body .who { margin-right: 6px; }
+  .seq .body .note { display: block; color: var(--muted); font-size: 0.83rem; margin-top: 2px; }
+  .seq.alt .n { background: var(--red); color: #fff; }
+
+  /* ---- big-picture map ---- */
+  .map { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 16px 0; }
+  .zone { border: 1px dashed var(--line); border-radius: 12px; padding: 12px 14px; background: transparent; }
+  .zone > .zt { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .boxes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bx { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 11px; font-size: 0.8rem; min-width: 110px; }
+  .bx b { font-family: var(--mono); font-size: 0.76rem; display: block; }
+  .bx .d { color: var(--muted); font-size: 0.72rem; }
+  .bx.client { border-top: 3px solid var(--accent); }
+  .bx.rsc { border-top: 3px solid var(--violet); }
+  .bx.api { border-top: 3px solid var(--amber); }
+  .bx.redis { border-top: 3px solid var(--red); }
+  .bx.db { border-top: 3px solid var(--done); }
+  .down { text-align: center; font-family: var(--mono); color: var(--muted); font-size: 0.85rem; margin: -2px 0; }
+
+  /* ---- three-lane summary cards ---- */
+  .lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
+  .lane { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 0.86rem; }
+  .lane .lt { font-family: var(--sans); font-weight: 600; margin-bottom: 4px; }
+  .lane .lp { font-family: var(--mono); font-size: 0.74rem; line-height: 1.7; }
+  .lane p { margin: 6px 0 0; font-size: 0.82rem; color: var(--muted); max-width: none; }
+  .lane.read { border-top: 3px solid var(--accent); }
+  .lane.cart { border-top: 3px solid var(--amber); }
+  .lane.write { border-top: 3px solid var(--done); }
+
+  /* ---- state hub diagram ---- */
+  .hubwrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 16px 0; }
+  .hub { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .hub .hcore { border-radius: 8px; padding: 8px 12px; font-family: var(--mono); font-size: 0.8rem; font-weight: 700; text-align: center; margin-bottom: 10px; }
+  .hub.q .hcore { background: var(--accent-soft); color: var(--accent); }
+  .hub.z .hcore { background: var(--amber-soft); color: var(--amber); }
+  .hub ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
+  .hub li { display: flex; gap: 8px; align-items: baseline; }
+  .hub li .arr { font-family: var(--mono); color: var(--muted); flex: none; }
+  .hub li code { font-size: 0.76rem; }
+  .hub .hnote { margin-top: 10px; font-size: 0.78rem; color: var(--muted); }
+
+  .warn { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 18px 0; max-width: 76ch; font-size: 0.9rem; }
+  .warn b { color: var(--red); }
+  ul.plain { margin: 0 0 14px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="plan.html">← plan.html (the build plan)</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-18</div>
+  <h1>Customer menu — how it actually works</h1>
+  <p class="lede">One page that traces the <code>/menu</code> machinery end to end: what happens on
+  first load (the 3-tier loading strategy), what happens when a guest adds a product (nothing leaves
+  the browser), how state crosses components and pages (exactly two hubs), and what
+  <code>POST /orders</code> does all the way down through Gin, Redis, and MySQL.</p>
+  <div class="legend">
+    <span>Every step on this page is tagged with the system doing the work:</span>
+    <span class="actor client">browser</span>
+    <span class="actor rsc">next server (RSC)</span>
+    <span class="actor api">gin api</span>
+    <span class="actor redis">redis</span>
+    <span class="actor db">mysql</span>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#map">01 big picture</a>
+  <a href="#load">02 first load + loading strategy</a>
+  <a href="#add">03 add to cart</a>
+  <a href="#state">04 state across components/pages</a>
+  <a href="#order">05 POST /orders → BE → DB</a>
+  <a href="#redis">06 redis life</a>
+</nav>
+
+<!-- ================================================================ -->
+<section id="map">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Big picture — the whole machine on one screen</h2></div>
+
+  <div class="map">
+    <div class="zone">
+      <div class="zt">guest's phone — browser</div>
+      <div class="boxes">
+        <div class="bx client"><b>components</b><span class="d">cards · nav · OrderSummary · CartBottomBar · TableConfirmModal</span></div>
+        <div class="bx client"><b>TanStack Query cache</b><span class="d">products / categories / combos · staleTime 5 min</span></div>
+        <div class="bx client"><b>Zustand stores</b><span class="d">cart + favourites · client-only</span></div>
+        <div class="bx client"><b>httpOnly cookie</b><span class="d">guest JWT (2 h) — JS can't read it</span></div>
+      </div>
+    </div>
+    <div class="down">↑ hydration on first paint · ↓ fetch /api/v1/* (cookie rides along automatically)</div>
+    <div class="zone">
+      <div class="zt">our servers</div>
+      <div class="boxes">
+        <div class="bx rsc"><b>Next.js server</b><span class="d">page.tsx RSC: prefetch ×3 → HydrationBoundary</span></div>
+        <div class="bx api"><b>Caddy → Gin</b><span class="d">/api/v1 · JWT middleware · error envelope</span></div>
+        <div class="bx api"><b>services</b><span class="d">cache-aside · order tx logic</span></div>
+        <div class="bx redis"><b>Redis</b><span class="d">*:list keys · 5-min TTL · fail-open</span></div>
+        <div class="bx db"><b>MySQL</b><span class="d">catalog 6 tables · orders + order_items</span></div>
+      </div>
+    </div>
+  </div>
+
+  <p>Three kinds of traffic ever touch this page — and they behave completely differently:</p>
+
+  <div class="lanes">
+    <div class="lane read">
+      <div class="lt">Catalog reads — public, cached twice</div>
+      <div class="lp">browser → GET /products·/categories·/combos<br>→ Gin → Redis (hit? done) → MySQL → Redis SET</div>
+      <p>Cached in Redis (5-min TTL) <em>and</em> in the browser's Query cache (staleTime 5 min — deliberately the same number). Most guests never trigger a MySQL read.</p>
+    </div>
+    <div class="lane cart">
+      <div class="lt">The cart — never leaves the browser</div>
+      <div class="lp">tap → Zustand cart store → subscribers re-render<br>network: NONE</div>
+      <p>Add, remove, nhân pills, canh stepper, note — all pure client state. The server first hears about the cart at confirm time.</p>
+    </div>
+    <div class="lane write">
+      <div class="lt">Order write — never cached</div>
+      <div class="lp">confirm → POST /orders (cookie JWT)<br>→ Gin → service TX → MySQL → 201 full order</div>
+      <p>One pessimistic write. Redis is not involved — orders are never cached. Prices/names are snapshotted server-side inside one transaction.</p>
+    </div>
+  </div>
+
+  <div class="golden">
+    <p><b>The one-sentence version:</b> the menu is a <em>read-mostly page with a client-side cart</em> —
+    catalog data flows down through two caches (Redis, Query), the cart lives entirely in Zustand,
+    and exactly one write (<code>POST /orders</code>) crosses back, carrying ids + quantities only.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section id="load">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — the 3-tier loading strategy, step by step</h2></div>
+
+  <p>Guest opens <code>/menu</code> (QR path or direct). This is <b>Tier 1 — route</b> (PLAN.md §4.3):</p>
+
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> requests <code>/menu</code>.
+      <span class="note">QR path: the guest JWT cookie (with <code>table_id</code>) is already set from <code>/table/:id</code>. Online path: a table-less JWT gets minted silently.</span></div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor rsc who">next server</span> starts rendering <code>page.tsx</code> (a React Server Component) and immediately <b>streams <code>loading.tsx</code></b> to the browser.
+      <span class="note">The skeleton mirrors the real layout — banner + nav strip + rail + card grid. Never a centered spinner (deliberate upgrade over the reference).</span></div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor rsc who">next server</span> prefetches <b>all three catalog queries in parallel</b>: <code>GET /products</code>, <code>GET /categories</code>, <code>GET /combos</code>.</div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor api who">gin api</span> handles each read: service asks <span class="actor redis">redis</span> for <code>products:list</code> / <code>categories:list</code> / <code>combos:list</code>.
+      <span class="note"><b>Warm (normal case):</b> Redis hit → JSON straight back, MySQL untouched. <b>Cold:</b> miss → <span class="actor db">mysql</span> SELECT → Redis SET with 5-min TTL → JSON back. Redis down? <b>Fail-open</b>: serve from MySQL anyway (§06).</span></div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor rsc who">next server</span> renders the page HTML and serializes the three query results into a <code>HydrationBoundary</code>.
+      <span class="note">The data rides inside the HTML response — no second round-trip.</span></div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor client who">browser</span> hydrates: client components mount and their <code>useProducts()</code> / <code>useCategories()</code> / <code>useCombos()</code> hooks find the cache <b>already full</b>.
+      <span class="note"><b>Zero-spinner first paint.</b> Identical query keys (from <code>keys.ts</code>) are what make the RSC prefetch and the client hooks hit the same cache entries.</span></div></li>
+    <li><span class="n">7</span><div class="body"><span class="actor client who">browser</span> — <code>ComboSection</code> joins combo <code>combo_items</code> (ids only) against the cached products query to get names/prices.
+      <span class="note">One source of truth: product data exists once, in the products cache — never duplicated in the combo payload.</span></div></li>
+    <li><span class="n">8</span><div class="body"><span class="actor client who">browser</span> — Zustand rehydrates the persisted cart slice from localStorage: <code>{orderNote, activeOrderId, tableId, tableName}</code>.
+      <span class="note">Cart <em>items</em> are session-only by design — a refresh keeps your table identity but empties the tray.</span></div></li>
+  </ol>
+
+  <h3>Tier 2 — component: what each section shows after that</h3>
+  <p>Every catalog-driven section renders exactly one of five named branches — all built, none accidental:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Branch</th><th>Trigger</th><th>What the guest sees</th></tr>
+    <tr><td><b>loading</b></td><td><code>isPending</code>, no cached data (cold URL only)</td><td>in-place section skeletons — no layout shift</td></tr>
+    <tr><td><b>error</b></td><td>any of the three queries failed</td><td><b>one</b> inline slot: "⚠ Kết nối mạng yếu" + Thử lại — never per-section silence</td></tr>
+    <tr><td><b>empty</b></td><td>query ok, category has no items</td><td>a real empty state — not a spinner, not an error</td></tr>
+    <tr><td><b>searching</b></td><td><code>?q=</code> ≥ 2 chars</td><td>flat filtered list (client-side) or "no match"</td></tr>
+    <tr><td><b>data</b></td><td>default</td><td>the sectioned menu</td></tr>
+  </table></div>
+
+  <h3>Why staleTime 5 min = Redis TTL 5 min</h3>
+  <pre class="diagram">
+t=0     guest loads menu ─ data enters Query cache (fresh)
+t&lt;5min  guest scrolls, navigates to detail + back ─ cache is FRESH → no refetch at all
+t&gt;5min  data marked stale ─ next mount/focus triggers a BACKGROUND refetch:
+        old data stays on screen (isFetching), new data swaps in silently
+        → no flash, no skeleton re-entry, ever
+focus   refetch-on-focus stays ON → a menu left open on a table tablet
+        self-heals ≤ 5 min after an admin 86's a dish ("Hết" overlay appears)</pre>
+  <p>Detail pages get the same treatment early: hovering/touching a card fires
+  <code>prefetchQuery</code> for <code>/menu/product/[id]</code>, so tapping through lands on cached
+  data. Each detail segment has its own layout-shaped <code>loading.tsx</code> for the cold-URL case.
+  Card images: <code>buildImageURL(image_path)</code> + native <code>loading="lazy"</code> below the
+  fold + fixed aspect-ratio boxes so cards never reflow.</p>
+
+  <p><b>Tier 3 — mutation</b> doesn't exist for the cart (next section) and shows up exactly once on
+  this page: the pessimistic <code>POST /orders</code> in §05.</p>
+</section>
+
+<!-- ================================================================ -->
+<section id="add">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Add a product — what actually happens (zero network)</h2></div>
+
+  <p>Guest taps "Bánh cuốn trứng", picks nhân "Mộc nhĩ", taps add. Every step below happens inside
+  the browser — <b>no API call, no Redis, no MySQL</b>:</p>
+
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> — the card's nhân pill selection is plain <code>useState</code> <em>inside ProductCard</em>.
+      <span class="note">Product cards: single-select, first option pre-selected. Combo cards: multi-select, "Nhân thịt" default, last one can't be deselected. Local state — nobody else needs it yet.</span></div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor client who">browser</span> — on add, the card computes the <b>line id</b>, which encodes the variant:
+      <span class="note"><code>product_&lt;id&gt;_&lt;nhânId|plain&gt;</code> · <code>combo_&lt;id&gt;_&lt;sortedNhânIds|plain&gt;</code> · <code>canh_&lt;productId&gt;_&lt;rau|plain&gt;</code><br>
+      Trứng+Mộc nhĩ and Trứng+Nhân thịt are <em>different rows</em>; adding Trứng+Mộc nhĩ twice is <em>one row, qty 2</em>.</span></div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor client who">browser</span> — <code>cart.addItem(line)</code> hits the Zustand store: same line id exists → quantity +1; new id → new row.
+      <span class="note">Dedup falls out of the id scheme naturally — no comparison logic in the store.</span></div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor client who">browser</span> — every subscribed component re-renders <b>from the store, via selectors</b>:
+      <span class="note"><code>CartBottomBar</code> badge → <code>itemCount()</code> (13) · <code>OrderSummary</code> gains/updates the row + <code>total()</code> (103.000 đ) · the card shows its qty stepper. <code>total()</code>/<code>itemCount()</code> are <b>selectors, never stored numbers</b> (FE rule 11) — they cannot go stale.</span></div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor client who">browser</span> — the fly-to-cart animation plays. That's the entire feedback loop.
+      <span class="note">No optimistic-update machinery, no rollback, no spinner — there is nothing to wait for. This is why Tier 3 is "none" for the cart.</span></div></li>
+  </ol>
+
+  <div class="warn"><b>What does NOT happen:</b> no component keeps its own copy of a cart line
+  (<code>useState</code> mirrors are banned — that exact pattern caused the reference's 🔴 lost-note
+  bug), nothing is written to the server, and only <code>{orderNote, activeOrderId, tableId,
+  tableName}</code> touch localStorage — the items themselves die with the tab (owner-accepted:
+  table sessions are short).</div>
+
+  <p>The same store handles every other cart interaction: the canh stepper in OrderSummary writes
+  <code>canh_*</code> rows bound to the two real soup products; the note field writes
+  <code>cart.orderNote</code>; the qty steppers and row deletes edit lines in place. One store,
+  many surfaces.</p>
+</section>
+
+<!-- ================================================================ -->
+<section id="state">
+  <div class="sec-head"><span class="sec-num">04</span><h2>State across components and pages — two hubs, nothing else</h2></div>
+
+  <p>Distant components never talk to each other directly — no prop drilling, no context providers,
+  no event buses. Everything shared flows through exactly two hubs:</p>
+
+  <div class="hubwrap">
+    <div class="hub q">
+      <div class="hcore">HUB 1 · TanStack Query cache — server data</div>
+      <ul>
+        <li><span class="arr">→</span><span><code>MenuCategoryNav</code>, <code>ProductList</code>, <code>ComboSection</code>, <code>FavouritesRail</code> all call the same hooks from <code>queries/catalog.ts</code></span></li>
+        <li><span class="arr">→</span><span>identical keys dedupe to <b>one fetch</b>, one cache entry</span></li>
+        <li><span class="arr">→</span><span>the combo join happens here: ids-only combos + cached products</span></li>
+      </ul>
+      <div class="hnote">Rule 1's "never": Query data is never copied into a store or useState.</div>
+    </div>
+    <div class="hub z">
+      <div class="hcore">HUB 2 · Zustand stores — cart + favourites</div>
+      <ul>
+        <li><span class="arr">→</span><span>a card deep in a section, <code>CartBottomBar</code>, <code>OrderSummary</code>, <code>TableConfirmModal</code> — all read/write the store only</span></li>
+        <li><span class="arr">→</span><span>derived values are selectors (<code>total()</code>, <code>itemCount()</code>) — can't go stale</span></li>
+        <li><span class="arr">→</span><span>the reference's 🔴 bug was exactly a hub bypass: the modal kept <code>orderNote</code> in its own useState and dropped what OrderSummary wrote</span></li>
+      </ul>
+      <div class="hnote">favourites store: <code>{items[], sets[], suats[]}</code> — device-local, never synced.</div>
+    </div>
+  </div>
+
+  <p>Everything else deliberately stays small: modal/expander open = <code>useState</code> in its
+  owning component; search text lives in the <b>URL</b> (<code>?q=</code> — shareable, survives
+  reload); the guest session is an <b>httpOnly cookie</b> the client JS can't even read — there is
+  no auth store.</p>
+
+  <h3>Crossing pages</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Navigation</th><th>What travels</th><th>How</th></tr>
+    <tr><td>menu → <code>/menu/product/[id]</code></td><td><b>nothing is passed</b></td><td>detail reads the id from the route param and hits the <em>same Query cache</em> (already warm from hover-prefetch); the cart store is global, so the cart survives navigation for free</td></tr>
+    <tr><td>menu → <code>/order/&lt;id&gt;</code> (after confirm)</td><td>order id + table identity</td><td>order id travels in the <b>URL</b> (<code>router.replace</code>); table identity travels in the <b>persisted store slice</b>; the 201 order object is pre-cached so the order page paints instantly</td></tr>
+    <tr><td>server → client (every load)</td><td>the three catalog queries</td><td>RSC prefetch → <code>HydrationBoundary</code> → client hydrates the same cache (§02 steps 5–6)</td></tr>
+    <tr><td><code>/order/:id</code> → menu (append)</td><td>the active order id</td><td><code>?add_to_order=&lt;id&gt;</code> in the URL → confirm posts to <code>POST /orders/:id/items</code> instead</td></tr>
+  </table></div>
+
+  <p>Need new state while building C-4/C-5? Run <code>FE_STATE.md §1</code>'s decision flow:
+  from an API → Query · must survive reload/share → URL · form → RHF · read by &gt;1 distant
+  component → Zustand (last resort) · otherwise → <code>useState</code>. This page needs exactly
+  the two stores above; that's the ceiling.</p>
+</section>
+
+<!-- ================================================================ -->
+<section id="order">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Confirm — <code>POST /orders</code> through every layer</h2></div>
+
+  <p>Guest taps "Thanh toán" (canh gate passed), then confirms in <code>TableConfirmModal</code>.
+  This is the page's first and only server write — <b>pessimistic</b> (FE rule 4): nothing on
+  screen pretends success before the 201.</p>
+
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> — the modal reads <b>everything from the cart store</b>: lines, <code>tableId</code>, and <code>orderNote</code> (the note OrderSummary wrote — the reference's silent-loss bug, designed out).</div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor client who">browser</span> — <code>buildOrderItemsPayload()</code> (the <b>one</b> builder, 3 callers) shapes the wire payload: <code>{product_id|combo_id, quantity, topping_ids}</code> per line.
+      <span class="note"><b>No prices, no names on the wire</b> — the server snapshots both. Canh lines are stripped from combo overrides so the BE never double-expands.</span></div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor client who">browser</span> — <code>client.ts</code> fires <code>POST /api/v1/orders</code> with <code>{source:"qr", table_id, note, items}</code>. The httpOnly guest-JWT cookie rides along automatically.
+      <span class="note">Confirm button → disabled + inline "Đang gửi…". Never a full-page overlay. Online path posts <code>source:"online"</code> + name/phone from <code>/checkout</code> instead.</span></div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor api who">gin api</span> — middleware verifies the JWT cookie (guest, unexpired, table binding); handler binds + validates the body.
+      <span class="note">Bad quantity? → 422 envelope <code>{"error":{"code":"VALIDATION_FAILED", …, "details":[{"field":"items[0].quantity","issue":"min=1"}]}}</code> and nothing is written.</span></div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor api who">gin api</span> — the order service opens <b>one MySQL transaction</b> and does all the real work inside it:
+      <span class="note">① fetch current prices/names from <span class="actor db">mysql</span> (never trusts the client) ② freeze <code>toppings_snapshot</code> JSON per item ③ expand combos — header row <code>unit_price=0</code> + component rows linked via <code>combo_ref_id</code> ④ <code>RecalculateTotalAmount</code> from the rows it just wrote ⑤ commit — or roll back everything.</span></div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor db who">mysql</span> — <code>orders</code> + <code>order_items</code> rows land atomically. <span class="actor redis">redis</span> is <b>not touched</b> — orders are never cached.
+      <span class="note">Item progress later derives from <code>qty_served</code> — there is no item <code>status</code> column to drift.</span></div></li>
+    <li><span class="n">7</span><div class="body"><span class="actor api who">gin api</span> → 201 with the <b>full order object</b> — items expanded, names/prices frozen, <code>total_amount: 103000</code>.
+      <span class="note">Lesson 7: thin <code>{id}</code> DTOs caused "Đơn #undefined" in the reference. Never again.</span></div></li>
+    <li><span class="n">8</span><div class="body"><span class="actor client who">browser</span> — the handoff, in order: cache the order into the Query cache → <code>clearCart()</code> <b>keeping identity fields</b> → <code>setActiveOrderId(id)</code> → <code>router.replace('/order/&lt;id&gt;')</code>.
+      <span class="note">The order page paints instantly from the pre-cached object; "Gọi thêm" later re-enters the menu in append mode and posts to <code>POST /orders/:id/items</code>.</span></div></li>
+  </ol>
+
+  <h3>When it fails (the error rail)</h3>
+  <ol class="seq alt">
+    <li><span class="n">✕</span><div class="body"><span class="actor api who">gin api</span> — every failure, every endpoint, rides the <b>one error envelope</b>: <code>{"error":{"code","message","details"}}</code>.</div></li>
+    <li><span class="n">✕</span><div class="body"><span class="actor client who">browser</span> — <code>client.ts</code> converts it to a thrown <code>ApiError{status, code, message, details}</code> — no component ever sees a raw <code>Response</code>.</div></li>
+    <li><span class="n">✕</span><div class="body"><span class="actor client who">browser</span> — the modal <b>stays open</b> with the envelope message, the button re-enables, and the cart is untouched — the guest just taps confirm again.</div></li>
+  </ol>
+</section>
+
+<!-- ================================================================ -->
+<section id="redis">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Redis life — cache-aside, invalidation, fail-open</h2></div>
+
+  <p>Redis touches this page in exactly one pattern — <b>cache-aside, inside services only</b>
+  (handlers and repositories never see it). Three scenarios cover everything:</p>
+
+  <pre class="diagram">
+HIT  (the common case, &lt;5 min after any read)
+  gin ──GET products:list──▶ redis ──JSON──▶ gin ──▶ browser        mysql: idle
+
+MISS (first read, or TTL expired)
+  gin ──GET products:list──▶ redis ─(nil)─▶ gin
+  gin ──SELECT … is_available=1, toppings joined──▶ mysql ──rows──▶ gin
+  gin ──SET products:list  EX 300──▶ redis          then JSON ──▶ browser
+
+FAIL-OPEN (redis down)
+  gin ──GET──▶ redis ✕ error → log it, go straight to mysql ──▶ browser
+  the menu never breaks because the cache broke</pre>
+
+  <h3>Invalidation — who deletes what (the old system's blind spot)</h3>
+  <p>Admin writes (from the manager surfaces, not this page) must delete every key that could now
+  lie. The map is the C-2/C-3 acceptance criterion:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Admin write</th><th>DEL keys</th></tr>
+    <tr><td>product create/update/delete/86</td><td><code>products:list</code>, <code>product:&lt;id&gt;</code></td></tr>
+    <tr><td>topping write</td><td><code>toppings:list</code>, <code>products:list</code>, <b>every <code>product:&lt;id&gt;</code> joined to it</b> — the missing DEL that served stale products in the old system</td></tr>
+    <tr><td>combo write</td><td><code>combos:list</code></td></tr>
+    <tr><td>category write</td><td><code>categories:list</code>, <code>products:list</code></td></tr>
+  </table></div>
+
+  <h3>How stale can a guest's screen get?</h3>
+  <pre class="diagram">
+admin 86's "Bánh cuốn trứng"
+  └─▶ DEL products:list                    (server truth: immediate)
+      └─▶ next GET /products = MISS → fresh from mysql → re-cached
+guest already on /menu
+  └─▶ Query staleTime (≤5 min) or a tab re-focus triggers a background refetch
+      └─▶ "Hết" overlay appears on the card, old data never flashes away
+worst case ≈ one staleTime window — bounded, self-healing, no reload needed</pre>
+
+  <ul class="plain">
+    <li><b>TTL 5 min</b> on every catalog key — even a missed DEL heals itself within one TTL.</li>
+    <li><b>Orders are never cached</b> — correctness over speed for money-bearing data.</li>
+    <li>The FE's <code>staleTime</code> matches the TTL on purpose: both caches expire on the same clock, so "how old can what I see be?" has one answer, not two.</li>
+  </ul>
+</section>
+
+<footer>
+  Runtime companion to <a href="PLAN.md">PLAN.md</a> / <a href="plan.html">plan.html</a> (F-15, this
+  folder) — this page re-draws their facts as end-to-end sequences and owns nothing itself; where
+  they disagree, PLAN.md wins. Worked example throughout: Bàn 04 · 103.000 đ · badge 13.
+</footer>
+
+</div>
+</body>
+</html>

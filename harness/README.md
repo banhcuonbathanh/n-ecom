@@ -31,6 +31,7 @@
 | [BE_PLAYBOOK.md](BE_PLAYBOOK.md) | F-11 playbook (from `reference/docs/be`): goose+sqlc data-layer workflow, migration-file checklist, 9 Go/Gin gotcha rules, caching-discipline adds, BE build order, seed/smoke rule, BE_SUMMARY.md code-summary discipline. |
 | [OVERALL_PLAN.md](OVERALL_PLAN.md) | F-9 master build plan: restaurant-platform product scope (4 surfaces, ~30 pages), BE domain/API/realtime plan, FE shells + page map, DevOps two-stage go-live, lessons register, phased roadmap reconciled with TASKS.md. |
 | [DEVOPS.md](DEVOPS.md) | F-13 operations doc: DevOps file ownership, prod image patterns (Go distroless · Next standalone), CI/CD pipeline + image tagging, rollback procedures + severity/SLA, Stage A/B go-live runbook, backups, pre-deploy checklist, 8 D-rules. |
+| [DB_SCHEMA.md](DB_SCHEMA.md) | F-16 canonical DB design (adopted from `reference/docs/system/02_spec/object`): schema conventions, field-name law, per-table column specs (13 traced + phase-later stubs), ER overview, rulings on all 14 reference mismatch flags. |
 
 ## diagrams/ — visual companions (markdown wins on any conflict)
 
@@ -51,6 +52,7 @@
 | [task-F-13.html](diagrams/task-F-13.html) | TASKS.md row F-13 | Per-task visual plan page for F-13 (owner rule 2026-07-17). |
 | [task-F-14.html](diagrams/task-F-14.html) | TASKS.md row F-14 | Per-task plan page for F-14: docs alignment sweep + the no-folder-moves decision (owner rule 2026-07-17). |
 | [task-F-15.html](diagrams/task-F-15.html) | TASKS.md row F-15 | Per-task plan page for F-15: customer-menu build plan (owner rule 2026-07-17). |
+| [task-F-16.html](diagrams/task-F-16.html) | TASKS.md row F-16 | Per-task plan page for F-16: DB schema adopted from the reference object models (owner rule 2026-07-17). |
 
 ## plans/ — per-page consolidated build plans (FE + BE in one folder)
 
@@ -58,3 +60,4 @@
 |---|---|---|
 | [plans/customer_menu/PLAN.md](plans/customer_menu/PLAN.md) | — (F-15 deliverable) | Customer menu page plan: BE contract (endpoints, schema slice, cache map), FE plan (file map, state ownership, 12 behaviors), defects designed out, TASKS.md row mapping, decisions/flags. |
 | [plans/customer_menu/plan.html](plans/customer_menu/plan.html) | the folder's PLAN.md | Visual: phone-frame page anatomy (reference dark/orange), component tree, BE contract + dataflow, behavior grid, task mapping. |
+| [plans/customer_menu/how-it-works.html](plans/customer_menu/how-it-works.html) | the folder's PLAN.md | Runtime walkthrough: numbered end-to-end sequences — first load (3-tier loading), add-to-cart (zero network), the two state hubs, POST /orders through every layer, Redis cache-aside/invalidation. |
