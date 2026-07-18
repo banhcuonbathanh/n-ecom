@@ -159,6 +159,39 @@ Cart store contract (adopted from the reference, adapted):
 - After `POST /orders` 201: cache order → `clearCart()` **keeps identity fields** +
   `setActiveOrderId(id)` → `router.replace('/order/<id>')` (reference GAP-2 decision).
 
+**How state crosses components (same page) — two mechanisms, only two:**
+
+1. **Server data → the Query cache.** `MenuCategoryNav`, `ComboSection`,
+   `ProductList` all call the same hooks from `queries/catalog.ts`; identical keys
+   dedupe to one fetch. This is also the combo join: the combo payload is ids-only,
+   so `ComboSection` joins names/prices from the already-cached products query —
+   never a second copy, never props threaded down.
+2. **Cart/favourites → the Zustand stores.** Distant components (a card deep in a
+   section, `CartBottomBar`, `TableConfirmModal`) communicate only through the
+   store — no prop drilling, no context providers, no component-owned copies. The
+   reference's 🔴 bug (§6) was exactly a violation of this: the modal kept
+   `orderNote` in its own `useState` and dropped what OrderSummary wrote.
+   Derived values (`total()`, `itemCount()`) are selectors, so they can't go stale.
+
+Everything else (modal open, expander open) stays `useState` in its owning
+component — deliberately **not** shared.
+
+**How state crosses pages:**
+
+- **Menu → product/combo detail:** nothing is passed. The detail page reads the id
+  from the route param and hits the same Query cache (prefetched on card hover).
+  The cart store is global, so the cart survives navigation for free.
+- **Menu → order page:** the handoff after `POST /orders` 201 (above) — the order
+  id travels in the **URL**, table identity travels in the **persisted store slice**.
+- **RSC → client:** `page.tsx` prefetches the three catalog queries and hands them
+  over via `HydrationBoundary`; client components hydrate the same cache (zero
+  spinners on first paint, §4.3).
+
+**New state during C-4/C-5?** Run `FE_STATE.md §1`'s decision flow — API → Query;
+survives reload/share → URL; form → RHF; >1 distant component → Zustand; otherwise
+`useState`. Zustand is the last resort: this page needs exactly the two stores
+above, and Query data is never copied into a store (FE rule 1's "never").
+
 ### 4.3 Loading / error (instance of `FE_STATE.md §4–5`)
 
 - RSC prefetch + `HydrationBoundary` → zero-spinner first paint; `loading.tsx`

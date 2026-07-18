@@ -448,6 +448,44 @@ canh_&lt;productId&gt;_&lt;rau|plain&gt;         canh rows bound to the two real
       fields</b> + <code>setActiveOrderId(id)</code> → <code>router.replace('/order/&lt;id&gt;')</code>
       (reference GAP-2 decision).</li>
   </ul>
+
+  <h3>How state crosses components — two mechanisms, only two</h3>
+  <pre class="diagram">
+1. server data → Query cache
+   MenuCategoryNav ─┐
+   ComboSection    ─┼─→ same hooks (queries/catalog.ts) → same keys → ONE fetch
+   ProductList     ─┘    combos are ids-only: ComboSection joins names/prices
+                         from the cached products query — never a second copy
+
+2. cart/favourites → Zustand stores
+   ProductCard.add ──┐
+   OrderSummary edit ┼─→ cart store ←── CartBottomBar badge (selectors only)
+   TableConfirmModal ┘        └─ modal READS cart.orderNote at POST time
+                                 (the reference's own-useState 🔴 bug, designed out)
+
+everything else (modal open, expander open) = useState in its owner — NOT shared</pre>
+
+  <h3>How state crosses pages</h3>
+  <ul class="plain">
+    <li><b>Menu → product/combo detail:</b> nothing is passed — the detail page reads the
+      route param and hits the same Query cache (prefetched on card hover); the cart store
+      is global, so the cart survives navigation for free.</li>
+    <li><b>Menu → order page:</b> the post-201 handoff above — order id travels in the
+      <b>URL</b>, table identity in the <b>persisted store slice</b>.</li>
+    <li><b>RSC → client:</b> <code>page.tsx</code> prefetches the three catalog queries →
+      <code>HydrationBoundary</code> hydrates the same cache — zero spinners on first paint.</li>
+  </ul>
+
+  <h3>New state during C-4/C-5? Run the FE_STATE §1 flow</h3>
+  <pre class="diagram">
+from the API?                 → TanStack Query
+survives reload / shareable?  → URL (searchParams)
+a form being filled in?       → RHF + Zod
+needed by &gt;1 distant comp?    → Zustand slice
+otherwise                     → useState
+
+Zustand is the LAST resort — this page needs exactly two stores,
+and Query data is never copied into a store (FE rule 1's "never").</pre>
 </section>
 
 <section id="be">

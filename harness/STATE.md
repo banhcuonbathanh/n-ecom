@@ -28,6 +28,15 @@
 
 ## Checkpoint log
 
+### 2026-07-18 — Session 11 (F-15 amendment): state-management flow spelled out
+- Done: owner asked how state moves among components/pages, then "update plan for
+  state manage" → PLAN.md §4.2 + plan.html §03 extended with the cross-component
+  (Query cache · Zustand stores, only two mechanisms) and cross-page (route param +
+  same cache · post-201 URL/persisted-slice handoff · RSC HydrationBoundary) flows,
+  plus the FE_STATE §1 decision flow for new state in C-4/C-5. Content-only edit —
+  no CONTEXT_MAP/README rows touched (rule 6 n/a). Committed straight to `main`.
+- Next: unchanged — F-2 (dev stack skeleton); C-4/C-5 read plans/customer_menu first.
+
 ### 2026-07-18 — Session 10 (F-15): customer-menu FE+BE build plan
 - Done: F-15 ✅ — owner pointed at `reference/…/customer/customer_menu` ("build above
   page, plan FE+BE, one folder + HTML"). Delivered `harness/plans/customer_menu/`:
