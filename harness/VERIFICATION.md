@@ -32,6 +32,25 @@
 
 -->
 
+### F-16 — Canonical DB schema from reference object models · 2026-07-18
+**AC:** DB_SCHEMA.md specs all 13 spec-traced tables in column detail + stubs the phase-later tables; every reference mismatch flag has an explicit adopt/fix/drop ruling linked to the owning decision doc; OVERALL_PLAN §3.2 + customer_menu plan re-pointed (no duplicated schema facts); indexes updated per Hard Rule 6
+**Receipt:**
+```
+$ grep -o "\*\*\`[a-z_]*\`\*\*" harness/DB_SCHEMA.md | sort -u | wc -l
+15                                   # 13 spec-traced full + order_sequences + refresh_tokens stub
+$ grep -c "^| [0-9]" harness/DB_SCHEMA.md
+14                                   # one ruling per reference §3 mismatch flag (§6)
+$ grep -c "base_price\|not image_url" harness/OVERALL_PLAN.md
+0                                    # field-name law MOVED, not copied — §3.2 is a pointer now
+$ grep -l "DB_SCHEMA" harness/OVERALL_PLAN.md harness/plans/customer_menu/PLAN.md \
+    harness/CONTEXT_MAP.md harness/README.md
+(all four)                           # pointers + Hard-Rule-6 rows in place; DB-migration
+                                     # routing reads DB_SCHEMA.md first
+$ python3 tag-balance check task-F-16.html → section/table/div/ul/ol/pre all OK
+  build-plan.html <details> 10 == </details> 10   # §R report added, page intact
+```
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-15 — Customer-menu page build plan (FE + BE, one folder) · 2026-07-18
 **AC:** Folder holds one MD plan (FE + BE + API contract + task breakdown mapped to TASKS.md rows) and one HTML plan page rendering both themes covering FE and BE; zero rule duplication (links to owning docs); indexes updated per Hard Rule 6
 **Receipt:**

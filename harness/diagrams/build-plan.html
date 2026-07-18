@@ -310,6 +310,21 @@
     <details class="report" open>
       <summary>
         <span class="r-date">2026-07-18</span>
+        <span class="r-title">F-16 — Database design adopted from the reference object models · delivered</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> "<code style="font-family:var(--mono);font-size:0.85em">reference/docs/system/02_spec/object</code> — above is what I want for database, please update project." Delivered: <b><code style="font-family:var(--mono);font-size:0.85em">harness/DB_SCHEMA.md</code></b> — the canonical database design, promoted from the nine object-model home files (each traced FE ⇄ wire ⇄ DB from the old system's code). Task page: <a href="task-F-16.html">task-F-16.html</a>.</p>
+        <p><b>TL;DR:</b> 13 tables now column-complete (catalog 6, tables + order_sequences, orders + order_items with the price-snapshot and combo header/sub-item CHECK design, staff, inventory 3), 7 phase-later tables stubbed with their owning phase. Schema conventions and the field-name law <b>moved</b> out of OVERALL_PLAN §3.2 into the new home (pointers left behind); the customer-menu plan and the DB-migration routing in CONTEXT_MAP now read DB_SCHEMA.md first. The reference's own 14 flagged mismatches each got a ruling — real-<code style="font-family:var(--mono);font-size:0.85em">null</code> wire convention, phantom fields dropped (<code style="font-family:var(--mono);font-size:0.85em">flagged</code>, fake <code style="font-family:var(--mono);font-size:0.85em">performance_score</code>), DTO-exact ingredient names, <code style="font-family:var(--mono);font-size:0.85em">customer</code> dropped from the staff role enum, <code style="font-family:var(--mono);font-size:0.85em">filling</code> never created — so we inherit the design without inheriting its bugs.</p>
+        <h4>One flag for your eye ⚠️</h4>
+        <p><b>Stock ledger over-draw:</b> the reference silently clamps stock at zero when an 'out' movement exceeds what's left; our default <b>rejects it with an error</b> instead (silent clamps hide miscounts). Costs nothing to flip until the AD inventory phase — say "keep the clamp" if you prefer the old behavior. Receipt in VERIFICATION.md.</p>
+      </div>
+    </details>
+
+    <details class="report" open>
+      <summary>
+        <span class="r-date">2026-07-18</span>
         <span class="r-title">F-15 — Customer-menu page build plan (FE + BE, one folder) · delivered</span>
         <span class="chip done">done</span>
         <span class="r-hint">detail</span>

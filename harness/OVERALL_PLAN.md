@@ -78,18 +78,14 @@ only `platform/cache` touches the Redis client.
 
 ### 3.2 Schema (MySQL 9.7, goose-style numbered migrations — tool picked in F-3)
 
-Conventions (from the reference, kept): `CHAR(36)` UUID PKs, `created_at/updated_at`
-everywhere, soft delete via `deleted_at` (+ every query filters it), money as
-`DECIMAL(10,0)` VND, snake_case plural tables, index every FK + status columns.
-~22 tables, introduced by phase — catalog 6 (C), tables + order_sequences (T),
-orders + order_items (O), staff + refresh_tokens (S), payments (S),
-ingredients/stock 3 (AD), tasks + training 4 (AD), file_attachments (AD).
-
-Field-name law (drift in the old system caused real bugs — these are canonical):
-`price` (not base_price), `image_path` relative (not image_url), `created_by`
-(not staff_id), `gateway_data` (not webhook_payload), payment status `completed`
-(not success), **no `order_items.status` column** — item status is *derived* from
-`qty_served` vs `quantity`.
+Canonical table/column design now lives in **`harness/DB_SCHEMA.md`** (F-16 —
+owner adopted the reference `02_spec/object` object-model home files as the
+database design): conventions, the field-name law, per-table column specs,
+phase-later stubs, and the ruling on every reference mismatch flag all live
+there, nowhere else. ~22 tables, introduced by phase — catalog 6 (C), tables +
+order_sequences (T), orders + order_items (O), staff + refresh_tokens (S),
+payments (S), ingredients/stock 3 (AD), tasks + training 4 (AD),
+file_attachments (AD) — inventory detail: `DB_SCHEMA.md §3`.
 
 ### 3.3 API surface (~85 routes under `/api/v1`, grouped by auth tier)
 
