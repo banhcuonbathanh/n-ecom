@@ -8,10 +8,13 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-14 (docs alignment sweep — no folder moves; indexes reconciled with
-  the repo after owner commit `00f77d0` tracked the reference corpus).
+- **Status:** ✅ F-15 (customer-menu FE+BE build plan — `harness/plans/customer_menu/`
+  PLAN.md + plan.html; first entry in the new per-page plans area).
 - **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`; unchanged by F-9
-  (skeleton is identical for the restaurant scope).
+  (skeleton is identical for the restaurant scope). C-4/C-5 now read
+  `plans/customer_menu/PLAN.md` first (CONTEXT_MAP routing updated).
+  New ⚠ for owner: customer-shell theme = reference dark/orange (default) vs F-7
+  blue — decide before C-4 (PLAN.md §7).
 - **Open decisions:** ⚠ **Scope pivot** (OVERALL_PLAN.md §9.1): reference = restaurant
   platform, adopted as north star — silence = accepted. ❓ Cancel rule + ❓ one-order-
   per-table (OVERALL_PLAN.md §3.7) — defaults chosen, lock in when O phase opens.
@@ -24,6 +27,22 @@
 ---
 
 ## Checkpoint log
+
+### 2026-07-18 — Session 10 (F-15): customer-menu FE+BE build plan
+- Done: F-15 ✅ — owner pointed at `reference/…/customer/customer_menu` ("build above
+  page, plan FE+BE, one folder + HTML"). Delivered `harness/plans/customer_menu/`:
+  PLAN.md (BE: 6 endpoints, catalog schema slice, cache/invalidation map · FE: file
+  map, state ownership, 12-behavior spec · defects-designed-out table · TASKS-row
+  mapping C-1…C-5/T/O) + plan.html (phone-frame anatomy in reference dark/orange,
+  component tree, contract, dataflow) + task-F-15.html + §R report. 2 Explore agents
+  digested the 16-doc corpus; 1 builder agent wrote plan.html. Receipt in VERIFICATION.md.
+- Decisions: new `harness/plans/` area = per-page consolidated plans (CONTEXT_MAP
+  routing sends FE/BE tasks there when a page plan exists) · client-side filter/search
+  v1, no ghost params · dead reference components never ported · cookie JWT stands ·
+  ref 🔴 note-loss bug designed out · ⚠ customer-shell theme dark/orange (default)
+  vs F-7 blue — owner decides before C-4.
+- Drift fixed / found: none new (`personal/command.md` flag stands).
+- Next: unchanged — F-2 (dev stack skeleton); C-4/C-5 read plans/customer_menu first.
 
 ### 2026-07-18 — Session 9 (F-14): docs alignment sweep
 - Done: F-14 ✅ — owner asked "rearrange our folder and ensure all docs align"; audit

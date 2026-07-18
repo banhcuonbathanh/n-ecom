@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer menu page — FE + BE build plan (F-15)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* sticky top nav */
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* task tags in the component tree / tables */
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.c { color: var(--accent); background: var(--accent-soft); }
+  .t.tt { color: var(--amber); background: var(--amber-soft); }
+  .t.o { color: var(--done); background: var(--done-soft); }
+  .dead { color: var(--muted); text-decoration: line-through; }
+
+  /* flow diagram */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  /* phase strip */
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); margin: 14px 0; }
+  .snode { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-top: 3px solid var(--accent); }
+  .snode.tph { border-top-color: var(--amber); }
+  .snode.oph { border-top-color: var(--done); }
+  .sarrow { color: var(--muted); font-size: 0.8rem; }
+
+  /* behaviors grid */
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+
+  /* ============ phone mockup — DESIGN PREVIEW, fixed reference palette ============
+     Deliberately does NOT use theme variables: the customer shell's visual source of
+     truth is the reference's dark + orange DESIGN_PROMPT (#0b0f17 / #1b2230 / #f97316
+     / #e5e7eb). It must look the same in this page's light and dark themes. */
+  .anatomy { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .phone { flex: none; width: 390px; max-width: 100%; box-sizing: border-box; background: #0b0f17; color: #e5e7eb; border: 8px solid #232a38; border-radius: 28px; overflow: hidden; font-size: 12.5px; line-height: 1.45; }
+  .phone * { box-sizing: border-box; }
+  .ph-sec { position: relative; padding: 10px 12px; border-bottom: 1px solid #1f2734; }
+  .ph-n { position: absolute; top: 8px; right: 8px; z-index: 2; width: 18px; height: 18px; border-radius: 50%; background: #f97316; color: #0b0f17; font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .ph-h { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8b93a3; margin: 0 0 8px; }
+  .ph-banner { height: 196px; padding: 0; background: radial-gradient(130% 100% at 75% 0%, #57381a 0%, #2c1d0e 45%, #0b0f17 100%); display: flex; align-items: flex-end; }
+  .ph-banner .ph-title { padding: 14px; font-family: Georgia, "Times New Roman", serif; font-size: 26px; font-weight: 600; color: #f4ede3; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
+  .ph-search-box { display: flex; align-items: center; gap: 8px; background: #1b2230; border: 1px solid #2c3546; border-radius: 999px; padding: 7px 12px; color: #8b93a3; }
+  .ph-tabs { display: flex; gap: 14px; overflow: hidden; white-space: nowrap; font-size: 12px; color: #9aa3b2; background: #0e1420; }
+  .ph-tabs span { padding-bottom: 4px; }
+  .ph-tabs .on { color: #f97316; font-weight: 700; border-bottom: 2px solid #f97316; }
+  .ph-rail { display: flex; gap: 8px; overflow: hidden; }
+  .ph-mini { flex: none; width: 84px; background: #1b2230; border-radius: 10px; padding: 6px; }
+  .ph-thumb { height: 44px; border-radius: 6px; background: linear-gradient(135deg, #33405a, #232c3d); margin-bottom: 6px; }
+  .ph-bar { height: 8px; border-radius: 4px; background: #2a3344; }
+  .ph-card { position: relative; background: #1b2230; border-radius: 12px; padding: 8px; display: flex; gap: 8px; margin-bottom: 8px; }
+  .ph-card:last-child { margin-bottom: 0; }
+  .ph-img { flex: none; width: 56px; height: 56px; border-radius: 8px; background: linear-gradient(135deg, #3a4a68, #232c3d); }
+  .ph-card .ph-body { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .ph-price { color: #f97316; font-weight: 700; font-size: 12px; }
+  .ph-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .ph-pill { border: 1px solid #3a4356; border-radius: 999px; padding: 1px 8px; font-size: 10px; color: #c7cdd8; }
+  .ph-pill.on { background: #f97316; border-color: #f97316; color: #0b0f17; font-weight: 700; }
+  .ph-heart { position: absolute; top: 8px; right: 8px; color: #f97316; font-size: 13px; }
+  .ph-step { display: inline-flex; align-items: center; gap: 8px; background: #0e1420; border: 1px solid #2c3546; border-radius: 999px; padding: 1px 8px; font-family: var(--mono); font-size: 11px; }
+  .ph-step b { color: #f97316; }
+  .ph-het { position: absolute; inset: 0; border-radius: 12px; background: rgba(11,15,23,.74); display: flex; align-items: center; justify-content: center; font-weight: 700; letter-spacing: .18em; color: #e5e7eb; }
+  .ph-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 0; border-bottom: 1px dashed #242d3d; font-size: 12px; }
+  .ph-row:last-child { border-bottom: none; }
+  .ph-box { background: #141a26; border: 1px solid #242d3d; border-radius: 10px; padding: 8px 10px; margin-top: 8px; }
+  .ph-box .ph-h { margin-bottom: 4px; }
+  .ph-tablepill { display: inline-block; background: #f97316; color: #0b0f17; font-weight: 700; border-radius: 999px; padding: 2px 10px; font-size: 11px; }
+  .ph-float { display: flex; justify-content: space-between; align-items: center; background: #0e1420; }
+  .ph-fab { position: relative; width: 44px; height: 44px; border-radius: 50%; background: #1b2230; border: 1px solid #2c3546; display: flex; align-items: center; justify-content: center; color: #e5e7eb; font-size: 16px; box-shadow: 0 6px 16px rgba(0,0,0,.5); }
+  .ph-badge { position: absolute; top: -5px; right: -6px; background: #f97316; color: #0b0f17; font-family: var(--mono); font-size: 10px; font-weight: 700; border-radius: 999px; padding: 0 5px; }
+  .ph-pay { background: #f97316; color: #0b0f17; font-weight: 700; border-radius: 999px; padding: 9px 22px; font-size: 13px; box-shadow: 0 6px 16px rgba(249,115,22,.35); }
+  .ph-nav { display: flex; justify-content: space-between; background: #10161f; padding: 8px 10px 10px; font-size: 9.5px; color: #8b93a3; border-bottom: none; }
+  .ph-nav span { text-align: center; }
+  .ph-nav .on { color: #f97316; font-weight: 700; }
+  .callouts { flex: 1; min-width: 280px; }
+  .callouts ol { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 0.86rem; }
+  .callouts li { display: flex; gap: 10px; }
+  .co-n { flex: none; width: 19px; height: 19px; margin-top: 3px; border-radius: 50%; background: #f97316; color: #0b0f17; font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .callouts b { font-family: var(--mono); font-size: 0.8rem; }
+
+  /* schema boxes */
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · consolidated page plan · 2026-07-18</div>
+  <h1>Customer menu page — FE + BE build plan</h1>
+  <p class="lede">One plan for the highest-traffic surface: the customer-facing <code>/menu</code>
+  of the dine-in bánh cuốn restaurant. The page is a contract — public cached catalog reads,
+  a client-only Zustand cart, and the order-creation handoff on a guest JWT — so frontend and
+  backend are planned together.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-15</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="PLAN.md">PLAN.md</a> (this folder)</span></div>
+    <div class="fact"><span class="k">reference corpus</span><span class="v">reference/docs/system/08_pages/customer/customer_menu/ · 16 docs</span></div>
+    <div class="fact"><span class="k">ships across</span><span class="v">C-1…C-5 · T · O rows in <a href="../../TASKS.md">TASKS.md</a></span></div>
+  </div>
+  <div class="golden">
+    <p><b>Two ways a guest lands here:</b></p>
+    <p><b>QR path</b> — scanned <code>/table/:id</code> first (T phase): the guest JWT carries
+    <code>table_id</code>; ordering posts straight to the table.</p>
+    <p><b>Online path</b> — arrived directly: a table-less guest JWT is minted silently
+    (<code>POST /auth/guest/online</code>); checkout collects name/phone.</p>
+    <p style="margin-top:8px">Core loop: browse categories/combos → build a cart (client-only) →
+    confirm → <code>POST /orders</code> → live order tracking. The page re-enters in
+    <b>append mode</b> (<code>?add_to_order=&lt;id&gt;</code>) via "Gọi thêm" on
+    <code>/order/:id</code> to add items to an active order.</p>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#anatomy">01 anatomy</a>
+  <a href="#components">02 components</a>
+  <a href="#state">03 state</a>
+  <a href="#be">04 be contract</a>
+  <a href="#dataflow">05 dataflow</a>
+  <a href="#behaviors">06 behaviors</a>
+  <a href="#defects">07 defects out</a>
+  <a href="#tasks">08 tasks</a>
+  <a href="#decisions">09 decisions</a>
+</nav>
+
+<section id="anatomy">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy — mobile wireframe</h2></div>
+  <p><span class="chip amber">design preview</span>&nbsp; The mockup below deliberately uses the
+  <b>reference's dark + orange palette</b> (<code>#0b0f17</code> bg · <code>#1b2230</code> cards ·
+  <code>#f97316</code> accent · <code>#e5e7eb</code> text) in <em>both</em> themes of this page —
+  it is the customer shell's visual source of truth pending the ⚠️ theme flag (§09). Gray bars are
+  placeholder copy; real strings and the worked-example numbers (Bàn 04 · 103.000 đ · badge 13)
+  are shown where the plan fixes them.</p>
+
+  <div class="anatomy">
+    <div class="phone">
+
+      <div class="ph-sec ph-banner">
+        <span class="ph-n">1</span>
+        <div class="ph-title">Quán Bánh Cuốn</div>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">2</span>
+        <div class="ph-search-box"><span>⌕</span><span>Tìm món nhanh...</span></div>
+      </div>
+
+      <div class="ph-sec ph-tabs">
+        <span class="on">Tất cả</span><span>SUẤT</span><span>SUẤT TỰ TẠO</span><span>TRỨNG</span><span>BÁNH CUỐN</span><span>GIÒ</span>
+        <span class="ph-n">3</span>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">4</span>
+        <p class="ph-h">favourites rail</p>
+        <div class="ph-rail">
+          <div class="ph-mini"><div class="ph-thumb"></div><div class="ph-bar" style="width:70%"></div></div>
+          <div class="ph-mini"><div class="ph-thumb"></div><div class="ph-bar" style="width:55%"></div></div>
+          <div class="ph-mini"><div class="ph-thumb"></div><div class="ph-bar" style="width:80%"></div></div>
+          <div class="ph-mini"><div class="ph-thumb"></div><div class="ph-bar" style="width:60%"></div></div>
+        </div>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">5</span>
+        <p class="ph-h">SUẤT — combo section</p>
+        <div class="ph-card">
+          <div class="ph-img"></div>
+          <div class="ph-body">
+            <div class="ph-bar" style="width:60%"></div>
+            <div class="ph-pills"><span class="ph-pill on">Nhân thịt</span><span class="ph-pill">mộc nhĩ</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="ph-price">103.000 đ</span><span class="ph-step">−&nbsp;<b>1</b>&nbsp;+</span>
+            </div>
+          </div>
+          <span class="ph-heart">♥</span>
+        </div>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">6</span>
+        <p class="ph-h">SUẤT TỰ TẠO — custom suất (device-local)</p>
+        <div class="ph-card">
+          <div class="ph-img"></div>
+          <div class="ph-body">
+            <div class="ph-bar" style="width:50%"></div>
+            <div class="ph-bar" style="width:35%"></div>
+            <div style="display:flex;justify-content:flex-end"><span class="ph-step">+&nbsp;add</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">7</span>
+        <p class="ph-h">BÁNH CUỐN — product section</p>
+        <div class="ph-card">
+          <div class="ph-img"></div>
+          <div class="ph-body">
+            <div class="ph-bar" style="width:65%"></div>
+            <div class="ph-pills"><span class="ph-pill on">nhân thịt</span><span class="ph-pill">mộc nhĩ</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="ph-price">30.000 đ</span><span class="ph-step">−&nbsp;<b>2</b>&nbsp;+</span>
+            </div>
+          </div>
+          <span class="ph-heart">♥</span>
+        </div>
+        <div class="ph-card">
+          <div class="ph-img"></div>
+          <div class="ph-body">
+            <div class="ph-bar" style="width:55%"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="ph-price">30.000 đ</span><span class="ph-step">−&nbsp;<b>0</b>&nbsp;+</span>
+            </div>
+          </div>
+          <div class="ph-het">Hết</div>
+        </div>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">8</span>
+        <p class="ph-h">order summary <span style="float:right;margin-right:24px"><span class="ph-tablepill">Bàn 04</span></span></p>
+        <div class="ph-row"><span class="ph-bar" style="width:38%"></span><span class="ph-step">−&nbsp;<b>2</b>&nbsp;+</span><span class="ph-price">60.000 đ</span></div>
+        <div class="ph-row"><span class="ph-bar" style="width:30%"></span><span style="color:#f97316;font-size:11px">Chi tiết ▾</span><span class="ph-price">103.000 đ</span></div>
+        <div class="ph-box">
+          <p class="ph-h">canh stepper</p>
+          <div class="ph-row"><span>có rau</span><span class="ph-step">−&nbsp;<b>1</b>&nbsp;+</span></div>
+          <div class="ph-row"><span>không rau</span><span class="ph-step">−&nbsp;<b>0</b>&nbsp;+</span></div>
+        </div>
+        <div class="ph-box">
+          <p class="ph-h">TỔNG SỐ MÓN — rollup</p>
+          <div class="ph-row"><span class="ph-bar" style="width:30%"></span><span>× 4</span></div>
+          <div class="ph-row"><span class="ph-bar" style="width:24%"></span><span>× 2</span></div>
+        </div>
+        <div class="ph-box" style="color:#8b93a3;font-size:11px">note → <span style="font-family:var(--mono)">cart.orderNote</span> (starts empty)</div>
+      </div>
+
+      <div class="ph-sec ph-float">
+        <span class="ph-n">9</span>
+        <div class="ph-fab">☰<span class="ph-badge">13</span></div>
+        <div class="ph-pay">Thanh toán</div>
+      </div>
+
+      <div class="ph-sec ph-nav">
+        <span class="ph-n" style="background:#8b93a3">10</span>
+        <span class="on">Menu</span><span>Đơn Hàng</span><span>Yêu Thích</span><span>Theo Dõi</span><span>Cài Đặt</span>
+      </div>
+
+    </div>
+
+    <div class="callouts">
+      <ol>
+        <li><span class="co-n">1</span><span><b>MenuHeader</b> — 196px photo banner, gradient scrim,
+          serif title "Quán Bánh Cuốn". <em>One</em> banner only (the reference stacked a duplicate
+          <code>RestaurantBanner</code> under it — removed).</span></li>
+        <li><span class="co-n">2</span><span><b>SearchBar</b> — "Tìm món nhanh..." · client-side
+          filter from 2 characters; search mode reshapes the whole page (§06 · B2).</span></li>
+        <li><span class="co-n">3</span><span><b>MenuCategoryNav</b> — the page's <em>only</em>
+          sticky element. Scroll-spy anchor tabs, not filters: Tất cả · SUẤT · SUẤT TỰ TẠO ·
+          then categories by <code>sort_order</code> (TRỨNG · BÁNH CUỐN · GIÒ). Active tab =
+          orange text + underline.</span></li>
+        <li><span class="co-n">4</span><span><b>FavouritesRail</b> — pinned set + custom suất +
+          favourite product/combo cards; device-local, FE-only store.</span></li>
+        <li><span class="co-n">5</span><span><b>ComboSection</b> ("SUẤT") — combo cards with nhân
+          <em>multi</em>-select ("Nhân thịt" default; ≥ 1 always selected).</span></li>
+        <li><span class="co-n">6</span><span><b>CustomSuatSection</b> ("SUẤT TỰ TẠO") —
+          device-local custom suất, one-tap add.</span></li>
+        <li><span class="co-n">7</span><span><b>ProductList / ProductCard</b> — category sections;
+          nhân <em>single</em>-select pill (first pre-selected), favourite heart, qty stepper,
+          "Hết" overlay when 86'd, fly-to-cart on add, prices via <code>formatVND()</code>
+          ("30.000 đ").</span></li>
+        <li><span class="co-n">8</span><span><b>OrderSummary</b> — on-page cart panel: line editor,
+          per-combo "Chi tiết" expander, canh stepper (the only place soup is chosen — two rows,
+          có rau / không rau), "TỔNG SỐ MÓN" rollup table, note field →
+          <code>cart.orderNote</code>, table pill <b>Bàn 04</b>.</span></li>
+        <li><span class="co-n">9</span><span><b>CartBottomBar</b> — two floating pills: cart count
+          badge <b>13</b> (no total; scrolls to the summary) and <b>"Thanh toán"</b> (dims but
+          still fires when the canh gate blocks — §06 · B5).</span></li>
+        <li><span class="co-n" style="background:#8b93a3">10</span><span><b>Bottom nav</b> —
+          Menu · Đơn Hàng · Yêu Thích · Theo Dõi · Cài Đặt (customer shell chrome, outside this
+          page's scope contract).</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="components">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Component tree — FE file map (§4.1) with owning tasks</h2></div>
+  <p>Tags mark which TASKS.md row builds each file:
+  <span class="t c">C-4</span> menu page · <span class="t c">C-5</span> detail pages ·
+  <span class="t tt">T</span> cart / guest-auth tasks · <span class="t o">O</span> order-create task.</p>
+  <pre class="diagram">
+fe/src/app/(customer)/menu/
+├─ page.tsx                <span class="t c">C-4</span>  RSC: prefetch products/categories/combos → HydrationBoundary
+├─ loading.tsx             <span class="t c">C-4</span>  menu-shaped skeleton (header + rail + card grid)
+├─ error.tsx               <span class="t c">C-4</span>  segment retry
+├─ product/[id]/page.tsx   <span class="t c">C-5</span>  product detail (+ prefetch-on-hover)
+└─ combo/[id]/page.tsx     <span class="t c">C-5</span>  combo detail — combo modal is DEAD in reference; page won
+
+components/menu/
+├─ MenuHeader.tsx          <span class="t c">C-4</span>  196px photo banner, gradient, serif title — ONE banner only
+├─ MenuCategoryNav.tsx     <span class="t c">C-4</span>  THE only sticky element: scroll-spy anchor tabs (not filters)
+├─ SearchBar.tsx           <span class="t c">C-4</span>  ≥2-char client-side filter; search mode reshapes the page
+├─ FavouritesRail.tsx      <span class="t c">C-4</span>  pinned set + custom suất + fav product/combo cards
+├─ ComboSection.tsx        <span class="t c">C-4</span>  "SUẤT" — combo cards, nhân multi-select (≥1, thịt default)
+├─ CustomSuatSection.tsx   <span class="t c">C-4</span>  "SUẤT TỰ TẠO" — device-local custom suất, one-tap add
+├─ ProductList.tsx         <span class="t c">C-4</span>  category sections
+├─ ProductCard.tsx         <span class="t c">C-4</span>  nhân single-select pill; heart
+├─ OrderSummary.tsx        <span class="t tt">T</span>   cart panel: line editor, canh stepper, rollup, note, table pill
+├─ CartBottomBar.tsx       <span class="t tt">T</span>   two floating pills: count → scroll to summary · Thanh toán
+└─ TableConfirmModal.tsx   <span class="t o">O</span>   QR path: confirm → POST /orders (reads cart.orderNote)
+
+stores/
+├─ cart.store.ts           <span class="t tt">T</span>   licensed in FE_STATE §9 rule 7
+└─ favourites.store.ts     <span class="t c">C-4</span>  {items[], sets[], suats[]} — device-local, FE-only
+
+queries/catalog.ts         <span class="t c">C-4</span>  useProducts / useCategories / useCombos (keys from keys.ts)
+lib/order-payload.ts       <span class="t o">O</span>   THE one buildOrderItemsPayload() — 3 callers, 1 builder
+lib/menu-sections.ts       <span class="t c">C-4</span>  buildMenuSections() + isSoupName() — section + canh logic</pre>
+
+  <h3>Never ported — dead or disabled in the reference's own final audit</h3>
+  <ul class="plain">
+    <li><span class="dead">ToppingModal</span> — nhân pills live inline on cards; no modal, ever.</li>
+    <li><span class="dead">ComboModal</span> — the combo detail <em>page</em> won.</li>
+    <li><span class="dead">CategoryTabs</span> — replaced by scroll-spy anchors (tabs were filters).</li>
+    <li><span class="dead">RestaurantBanner</span> — the duplicate second banner, removed by decision.</li>
+    <li><span class="dead">MiniCartStrip</span> · <span class="dead">CartDrawer</span> — drawer had
+      no trigger; cart edits live in OrderSummary.</li>
+    <li><span class="dead">recovery / add-to-order banners</span> — ⏸ owner-pending in the
+      reference; revisit in the O phase.</li>
+  </ul>
+</section>
+
+<section id="state">
+  <div class="sec-head"><span class="sec-num">03</span><h2>State ownership (§4.2) — instance of FE_STATE §1, no new kinds</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>Data</th><th>Kind</th><th>Owner</th></tr>
+    <tr><td>products / categories / combos</td><td>server</td><td>TanStack Query, <code>staleTime</code> 5 min (matches the Redis TTL)</td></tr>
+    <tr><td>search text</td><td>URL (<code>?q=</code>)</td><td>FE rule 2 — shareable, survives reload</td></tr>
+    <tr><td>cart lines, tableId/Name, activeOrderId, orderNote</td><td>client</td><td><code>cart</code> store (Zustand, persisted)</td></tr>
+    <tr><td>favourites</td><td>client</td><td><code>favourites</code> store (persisted, device-local)</td></tr>
+    <tr><td>modal / drawer open</td><td>local</td><td><code>useState</code></td></tr>
+    <tr><td>guest session</td><td>session</td><td>httpOnly cookie + server verify — <b>no auth store</b></td></tr>
+  </table></div>
+
+  <h3>Cart-line id scheme — every filling combination is its own row</h3>
+  <pre class="diagram">
+product_&lt;id&gt;_&lt;nhânId|plain&gt;          one nhân, single-select → one row per variant
+combo_&lt;id&gt;_&lt;sortedNhânIds|plain&gt;     multi-select set, sorted → stable dedup key
+canh_&lt;productId&gt;_&lt;rau|plain&gt;         canh rows bound to the two real soup products
+
+→ addItem dedups naturally on id; the payload builder strips canh lines from
+  combo overrides so the BE never double-expands.</pre>
+
+  <h3>Persist rules</h3>
+  <ul class="plain">
+    <li><code>total()</code> / <code>itemCount()</code> are <b>selectors, never stored</b> (FE rule 11).</li>
+    <li><code>partialize</code>: persist only <code>{orderNote, activeOrderId, tableId, tableName}</code> —
+      cart <em>items</em> are session-only; versioned storage key with a migrate fn.</li>
+    <li>After <code>POST /orders</code> 201: cache order → <code>clearCart()</code> <b>keeps identity
+      fields</b> + <code>setActiveOrderId(id)</code> → <code>router.replace('/order/&lt;id&gt;')</code>
+      (reference GAP-2 decision).</li>
+  </ul>
+</section>
+
+<section id="be">
+  <div class="sec-head"><span class="sec-num">04</span><h2>BE contract — endpoints, schema, cache map</h2></div>
+
+  <h3>Endpoints the page consumes (§3.1 — all under <code>/api/v1</code>)</h3>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Route</th><th>Auth</th><th>Task</th><th>Behavior</th></tr>
+    <tr><td>1</td><td><code>GET /categories</code></td><td>public</td><td><span class="t c">C-2</span></td>
+      <td>Redis <code>categories:list</code>, 5-min TTL. Fields: <code>id, name, description, sort_order, is_active</code>.</td></tr>
+    <tr><td>2</td><td><code>GET /products</code></td><td>public</td><td><span class="t c">C-2</span></td>
+      <td>Redis <code>products:list</code>. Only <code>is_available=1</code>, soft-delete filtered; toppings joined via
+      <code>product_toppings</code>. <b>Deliberately no query params in v1</b> — filtering/search is client-side;
+      manager surfaces use <code>GET /products/all</code> (uncached, role-scoped — FE rule 13).</td></tr>
+    <tr><td>3</td><td><code>GET /combos</code></td><td>public</td><td><span class="t c">C-3</span></td>
+      <td>Redis <code>combos:list</code>. Combo + <code>combo_items: [{id, product_id, quantity}]</code> — <b>ids only</b>;
+      FE joins names/prices from the products query (one source of truth, no duplicated payloads).</td></tr>
+    <tr><td>4</td><td><code>POST /auth/guest/online</code></td><td>public, rate-limited</td><td><span class="t tt">T</span></td>
+      <td>No body → sets 2 h guest-JWT <b>httpOnly cookie</b> (table-less, <code>source='online'</code>). Reference's
+      <code>{access_token}</code>-for-memory-store shape <b>not adopted</b> (F-5 cookie decision).</td></tr>
+    <tr><td>5</td><td><code>POST /orders</code></td><td>guest JWT</td><td><span class="t o">O</span></td>
+      <td>Cart → order: server-side price/name snapshot, <code>toppings_snapshot JSON</code>, combo expansion (header row
+      <code>unit_price=0</code> + component rows via <code>combo_ref_id</code>), <code>RecalculateTotalAmount</code> in the
+      same tx. Returns the <b>full order object</b> (lesson 7: thin <code>{id}</code> DTOs caused "Đơn #undefined").</td></tr>
+    <tr><td>6</td><td><code>POST /orders/:id/items</code></td><td>guest JWT</td><td><span class="t o">O</span></td>
+      <td>Append mode; same items payload; recalc total in tx.</td></tr>
+  </table></div>
+  <p style="margin-top:10px">Errors ride the Session-0 envelope; codes from <code>BE_STATE.md §4</code>.</p>
+
+  <h3>Schema this page depends on (§3.2 — C-1 migration scope, 6 catalog tables)</h3>
+  <p>Conventions per <code>OVERALL_PLAN.md §3.2</code>: CHAR(36) PKs, soft delete,
+  <code>DECIMAL(10,0)</code> VND, snake_case, FK + status indexes.</p>
+  <div class="schema">
+    <div class="tbl"><div class="tname">categories</div>
+      <ul><li><b>name</b> · description</li><li><b>sort_order</b> · is_active</li></ul></div>
+    <div class="tbl"><div class="tname">products</div>
+      <ul><li><b>name</b> · description</li><li><b>price</b> (not base_price)</li>
+      <li><b>image_path</b> (relative, not URL)</li><li>category_id → categories</li><li>is_available</li></ul></div>
+    <div class="tbl"><div class="tname">toppings</div>
+      <ul><li><b>name</b> · <b>price</b></li><li>fillings are <b>₫0 toppings</b></li>
+      <li>(nhân thịt, mộc nhĩ)</li><li>no <code>filling</code> column — ever</li></ul></div>
+    <div class="tbl"><div class="tname">product_toppings</div>
+      <ul><li>junction</li><li>products ↔ toppings</li></ul></div>
+    <div class="tbl"><div class="tname">combos</div>
+      <ul><li>combo header</li></ul></div>
+    <div class="tbl"><div class="tname">combo_items</div>
+      <ul><li><b>combo_id</b> → combos</li><li><b>product_id</b> → products</li><li><b>quantity</b> (template)</li></ul></div>
+  </div>
+  <pre class="diagram">
+categories ──&lt;  products  &gt;── product_toppings ──&lt; toppings        combos ──&lt; combo_items &gt;── products
+   (category_id FK)              (junction)      (₫0 fillings)              ({combo_id, product_id, quantity})</pre>
+  <p><b>Seed (C-1 AC):</b> ≥ 10 products / ≥ 3 categories <b>+ ≥ 2 combos + the ₫0 topping set</b> —
+  the menu page renders every card type from day one. Order-side tables (<code>orders</code>,
+  <code>order_items</code> with <code>qty_served</code>, <code>combo_ref_id</code>,
+  <code>toppings_snapshot</code>, CHECK-constrained row shapes, <b>no item <code>status</code>
+  column</b> — derived state) belong to the O-phase task.</p>
+
+  <h3>Cache map (§3.3 — the C-2/C-3 AC; covers the old blind spot)</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Write</th><th>DEL keys</th></tr>
+    <tr><td>product create / update / delete / availability</td><td><code>products:list</code>, <code>product:&lt;id&gt;</code></td></tr>
+    <tr><td>topping write</td><td><code>toppings:list</code>, <code>products:list</code>, <b>every <code>product:&lt;id&gt;</code>
+      joined to it</b> (the old system's stale-product bug)</td></tr>
+    <tr><td>combo write</td><td><code>combos:list</code></td></tr>
+    <tr><td>category write</td><td><code>categories:list</code>, <code>products:list</code></td></tr>
+  </table></div>
+  <p style="margin-top:10px">Cache-aside in <b>services only</b> · 5-min TTL · <b>fail-open to MySQL</b>
+  (<code>BE_STATE.md §7</code>). Orders are never cached.</p>
+</section>
+
+<section id="dataflow">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Dataflow — catalog reads + order handoff</h2></div>
+
+  <h3>Read path (zero-spinner first paint)</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">browser</span><b>RSC prefetch</b><br>→ HydrationBoundary<br>→ TanStack Query<br><span style="color:var(--muted);font-size:.76rem">staleTime 5 min</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">edge</span><b>Caddy</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">api</span><b>Gin handlers</b><br><span style="color:var(--muted);font-size:.76rem">/api/v1 public reads</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">service</span><b>cache-aside</b><br>Redis <code>*:list</code><br><span style="color:var(--muted);font-size:.76rem">5-min TTL · fail-open</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">store</span><b>MySQL</b></div>
+  </div>
+  <p><code>loading.tsx</code> skeleton mirrors the real layout (rail + cards), never a centered
+  spinner — a deliberate upgrade over the reference, which spinner-gated the route, skeleton-gated
+  only products, and let failed categories/combos render silently empty. Our inline error slot
+  ("⚠ Kết nối mạng yếu" + Thử lại) covers all three catalog queries; five render branches
+  (loading / error / empty / searching / data).</p>
+
+  <h3>Order handoff (first server write on the page)</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">client</span><b>cart store</b><br><span style="color:var(--muted);font-size:.76rem">Zustand · selectors only</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">lib</span><b>buildOrderItemsPayload()</b><br><span style="color:var(--muted);font-size:.76rem">3 callers, 1 builder · strips canh from combo overrides</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">api</span><b>POST /orders</b><br><span style="color:var(--muted);font-size:.76rem">guest JWT httpOnly cookie · pessimistic (FE rule 4)</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">201</span><b>full order object</b><br><span style="color:var(--muted);font-size:.76rem">clearCart keeps identity → /order/&lt;id&gt;</span></div>
+  </div>
+  <p>Add-to-cart itself is pure client state — no mutation tier on this page. Append mode posts the
+  same payload to <code>POST /orders/:id/items</code>.</p>
+</section>
+
+<section id="behaviors">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors spec (§4.4) — the C-4 / T / O acceptance criteria</h2></div>
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">B1</span><span class="bt">Anchors, not filters</span>
+      <p>Every section always renders on one scrollable page. Tab order <b>Tất cả · SUẤT · SUẤT TỰ TẠO ·
+      &lt;categories by sort_order&gt;</b> (TRỨNG · BÁNH CUỐN · GIÒ). Tap smooth-scrolls; scrolling spies the
+      active tab (orange text + underline). The nav is the page's only sticky element.</p></div>
+    <div class="bcard"><span class="bn">B2</span><span class="bt">Search mode (≥ 2 chars)</span>
+      <p>Reshapes the page — hides nav/rail/combo sections, renders one flat filtered list (client-side) or
+      the empty state; 1 char shows "Nhập ít nhất 2 ký tự"; ✕ restores the sectioned menu.</p></div>
+    <div class="bcard"><span class="bn">B3</span><span class="bt">Nhân pills, inline on cards</span>
+      <p>Product cards <b>single-select</b> (first pre-selected; Bánh Chay/Giò have none) · combo cards
+      <b>multi-select</b> ("Nhân thịt" default, last one can't be deselected). Each combination = its own
+      cart row. No modal, ever.</p></div>
+    <div class="bcard"><span class="bn">B4</span><span class="bt">Canh is never a card</span>
+      <p>Soup products are filtered out of lists and search (<code>isSoupName</code>) and chosen only via the
+      OrderSummary stepper — two rows bound to the two real canh products (có rau / không rau).</p></div>
+    <div class="bcard"><span class="bn">B5</span><span class="bt">Canh gate</span>
+      <p>Zero canh bowls → "Thanh toán" pill dims but still fires → error toast + auto-open the cart list +
+      scroll-and-shake the canh box.</p></div>
+    <div class="bcard"><span class="bn">B6</span><span class="bt">Cart surfaces</span>
+      <p>On-page OrderSummary (line editor, per-combo "Chi tiết" expander, "TỔNG SỐ MÓN" rollup, table pill)
+      + CartBottomBar's two floating pills (count badge, no total) — one store, selectors only.</p></div>
+    <div class="bcard"><span class="bn">B7</span><span class="bt">Order note</span>
+      <p>Typed in OrderSummary → <code>cart.orderNote</code> → <b>read by TableConfirmModal at POST time</b>
+      (the reference's silent-loss bug, designed out); starts empty (owner-locked — no pre-fill).</p></div>
+    <div class="bcard"><span class="bn">B8</span><span class="bt">Two checkout paths</span>
+      <p>Table bound → TableConfirmModal → <code>POST /orders</code> (<code>source:'qr'</code>); no table →
+      <code>/checkout</code> (<code>source:'online'</code>). Append mode: <code>?add_to_order=&lt;id&gt;</code>
+      → <code>POST /orders/:id/items</code>.</p></div>
+    <div class="bcard"><span class="bn">B9</span><span class="bt">Cards</span>
+      <p>Price VND via <code>formatVND()</code> in the reference's format ("30.000 đ"), favourite heart
+      (toggle only, stopPropagation), qty stepper, "Hết" overlay when 86'd, fly-to-cart animation on add.</p></div>
+    <div class="bcard"><span class="bn">B10</span><span class="bt">VN-first copy</span>
+      <p>All strings Vietnamese, exactly the reference's (digest §9 set — "Quán Bánh Cuốn",
+      "Tìm món nhanh...", "Thanh toán", …), one constants file, no i18n framework yet.</p></div>
+    <div class="bcard"><span class="bn">B11</span><span class="bt">Images</span>
+      <p>API sends relative <code>image_path</code>; FE builds the URL (FE rule 14) — the reference defined
+      <code>buildImageURL</code> and never called it; ours is called or it doesn't merge.</p></div>
+    <div class="bcard"><span class="bn">B12</span><span class="bt">Worked example everywhere</span>
+      <p>Docs, seeds, screenshots all use the canonical numbers: <b>Bàn 04 · 103.000 đ · badge 13</b>.</p></div>
+  </div>
+</section>
+
+<section id="defects">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Reference defects designed out (§6)</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>Ref finding</th><th>Our countermeasure</th></tr>
+    <tr><td>🔴 TableConfirmModal drops <code>cart.orderNote</code> (own useState)</td>
+      <td>Modal reads the store; AC includes a note round-trip</td></tr>
+    <tr><td>"Combo" / "Suất" / "SUẤT" 3-way naming drift</td>
+      <td>One VN copy constant, used by nav + heading</td></tr>
+    <tr><td>Duplicate <code>RestaurantBanner</code> stacked under header</td>
+      <td>One banner in MenuHeader, none in the page body</td></tr>
+    <tr><td><code>buildImageURL</code> defined, never called → raw paths shipped</td>
+      <td>FE rule 14 enforced at SELF-REVIEW</td></tr>
+    <tr><td>BE <code>""</code> vs FE <code>string|null</code> type mismatch</td>
+      <td>DTO-mirror gate 8: FE types come from curl receipts</td></tr>
+    <tr><td>Docs said 3 render branches, code had 5</td>
+      <td>§4.3 names all five; loading doc written from code</td></tr>
+    <tr><td>Ghost query params on <code>GET /products</code> (handler ignored them)</td>
+      <td>No params in v1 (§3.4) — client-side filtering</td></tr>
+    <tr><td>Dead components shipped (ToppingModal, ComboModal, CategoryTabs)</td>
+      <td>Never ported (§02 strike-through list)</td></tr>
+  </table></div>
+  <p style="margin-top:12px">Also not adopted from the reference BE: the <code>filling</code> column
+  (added in migration 016, dropped in 017 — fillings are ₫0 toppings), bearer-token responses /
+  <code>?token=</code> streams (cookie JWT kills SEC-02), and unwired rate-limit middleware — ours
+  mounts on both guest-mint routes from day one.</p>
+</section>
+
+<section id="tasks">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Task mapping + build order (§5)</h2></div>
+  <p>The page ships across <em>existing</em> phase rows in <a href="../../TASKS.md">TASKS.md</a> —
+  no new phases invented; rows get restaurant-skinned per <code>OVERALL_PLAN.md §8</code>.</p>
+  <div class="strip">
+    <span class="snode">C-1 schema+seed</span><span class="sarrow">→</span>
+    <span class="snode">C-2 BE lists</span><span class="sarrow">→</span>
+    <span class="snode">C-3 combos</span><span class="sarrow">→</span>
+    <span class="snode">C-4 menu page</span><span class="sarrow">→</span>
+    <span class="snode">C-5 detail</span><span class="sarrow">→</span>
+    <span class="snode tph">T cart · guest auth</span><span class="sarrow">→</span>
+    <span class="snode oph">O order create</span>
+  </div>
+  <div class="table-wrap"><table>
+    <tr><th>TASKS.md row</th><th>This plan's slice</th><th>Receipt type</th></tr>
+    <tr><td><span class="t c">C-1</span> schema + seed</td><td>§04 tables + seed incl. combos / ₫0 toppings</td><td>migrate up/down + seed counts</td></tr>
+    <tr><td><span class="t c">C-2</span> BE list/detail</td><td>Endpoints #1–2 + cache map + invalidation AC</td><td>curl transcripts (hit/miss/DEL)</td></tr>
+    <tr><td><span class="t c">C-3</span> BE categories/search → <b>combos/toppings</b></td><td>Endpoint #3</td><td>curl: combos with items</td></tr>
+    <tr><td><span class="t c">C-4</span> FE menu page</td><td>Everything FE except cart writes: shell, nav, sections, cards, favourites, search</td><td>screenshots (mobile viewport)</td></tr>
+    <tr><td><span class="t c">C-5</span> FE product detail</td><td><code>/menu/product/[id]</code> + prefetch-on-hover</td><td>screenshots</td></tr>
+    <tr><td><span class="t tt">T</span> cart task</td><td><code>cart.store.ts</code> + drawer/bottom-bar/strip + canh gate</td><td>screenshots + store unit tests</td></tr>
+    <tr><td><span class="t tt">T</span> guest auth</td><td>Endpoint #4 cookie mint + rate limit</td><td>curl: cookie set, 429 on burst</td></tr>
+    <tr><td><span class="t o">O</span> order create</td><td>Endpoints #5–6 + TableConfirmModal + append mode</td><td>curl + 2-client screenshot</td></tr>
+  </table></div>
+  <p style="margin-top:12px"><b>Sizing:</b> each row keeps the 1-session / 1–2-file / 1-AC rule.
+  C-4 is the biggest and may split (shell+nav+cards / cart surfaces) when it opens — decided at
+  registration.</p>
+</section>
+
+<section id="decisions">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Decisions + flags (§7)</h2></div>
+
+  <div class="flag">
+    <p><b>⚠️ FLAG — customer-surface theme (awaits owner input before C-4).</b> The reference
+    DESIGN_PROMPT (visual source of truth, owner-locked there) is <b>dark + warm orange</b>
+    (<code>#0b0f17</code> bg, <code>#f97316</code> the only bright color, Playfair Display serif
+    title) — but our F-7 design system set brand primary <code>#2B59D9</code> harness blue with
+    "owner may swap hue before C-4".</p>
+    <p><b>Plan default:</b> the customer shell adopts the reference's dark/orange as its semantic
+    token values (staff/admin surfaces keep F-7's neutral system); the hue swap lands as one token
+    change in the C-4 task. <b>Say so before C-4 if blue should win.</b> The §01 mockup previews
+    the plan default.</p>
+  </div>
+
+  <ul class="plain">
+    <li>✅ <b>Client-side filtering/search in v1</b> — a one-restaurant menu is small (~tens of
+      items); one cached <code>products:list</code> + client filter beats param plumbing (the
+      reference sent <code>?search=</code> and the BE ignored it — we ship no ghost params).
+      💡 Revisit only if catalog size or multi-branch changes the math.</li>
+    <li>✅ <b>CartDrawer / MiniCartStrip / recovery banners: not built in v1</b> — the reference's
+      own final page disabled all of them (drawer has no trigger); cart editing lives in
+      OrderSummary. Re-opened, if ever, by the O-phase recovery task.</li>
+    <li>✅ <b>Combo payload = ids only</b>, FE joins from the products cache (reference shape kept —
+      it's the no-duplication choice).</li>
+    <li>✅ <b>Canh gate + ₫0-topping fillings</b> adopted as business rules of the house menu.</li>
+    <li>✅ <b>Cookie JWT everywhere</b> (F-5) — supersedes the reference's memory token; the
+      "F5 wipes the session, re-scan the QR" defect disappears structurally.</li>
+    <li>⚠️ <b>Cart-items persistence</b>: reference persists only note + activeOrderId (items die
+      with the tab). Kept — table sessions are short; full-cart persistence is a one-line
+      <code>partialize</code> change if the owner wants it.</li>
+    <li>❓ <b>Append-mode auth window</b>: adding items to a 1.5 h-old order with a 2 h JWT can
+      expire mid-flow; UX for re-mint lands in the O-phase task (default: toast + re-scan prompt,
+      per reference tracking behavior).</li>
+  </ul>
+
+  <h3>Verify plan (§8 — per-task receipts → <code>harness/VERIFICATION.md</code>)</h3>
+  <ul class="plain">
+    <li>BE rows: curl transcripts incl. cache hit/miss headers and post-write DEL proof.</li>
+    <li>FE rows: mobile-viewport screenshots per behavior B1–B12 + a note round-trip.</li>
+    <li>Cross: one two-client transcript (menu POST → order page SSE) when O/R land.</li>
+    <li>This plan itself (F-15): folder exists, MD complete, this page renders in both themes —
+      receipt row dated 2026-07-18.</li>
+  </ul>
+</section>
+
+<footer>
+  <p style="max-width:none">Written by <b>F-15</b> · 2026-07-18 · visual companion to
+  <a href="PLAN.md">PLAN.md</a> in this folder — <b>PLAN.md wins on any conflict</b> between the
+  two. Digested from the reference corpus
+  <code>reference/docs/system/08_pages/customer/customer_menu/</code> (16 docs, 2 Explore agents),
+  reconciled with <code>OVERALL_PLAN.md</code> phases C/T/O and the F-5/F-7/F-8/F-11/F-12 rule
+  sets. Task status lives in <a href="../../TASKS.md">TASKS.md</a>.</p>
+</footer>
+
+</div>
+</body>
+</html>

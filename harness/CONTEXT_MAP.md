@@ -9,8 +9,8 @@
 
 | Task type | Read | Skip |
 |---|---|---|
-| New BE endpoint | `BE_STATE.md` + `BE_PLAYBOOK.md` + `PLAN.md §Stack §Architecture` + domain section + `TOOLS.md` if AI-related | FE docs |
-| New FE page/component | `FE_STATE.md` + `PLAN.md §Architecture (FE)` + domain section | BE internals (use API contract only) |
+| New BE endpoint | `BE_STATE.md` + `BE_PLAYBOOK.md` + `PLAN.md §Stack §Architecture` + domain section + the page plan under `harness/plans/` if the endpoint serves a planned page + `TOOLS.md` if AI-related | FE docs |
+| New FE page/component | `FE_STATE.md` + `PLAN.md §Architecture (FE)` + domain section + the page plan under `harness/plans/` if one exists (menu: `plans/customer_menu/PLAN.md`) | BE internals (use API contract only) |
 | DB migration | `PLAN.md §File map (db)` + `BE_PLAYBOOK.md §1–2` (sqlc workflow + migration checklist) + migration skill in `SKILLS.md` | everything else |
 | Bug fix | `STATE.md` (recent decisions) + the failing area's PLAN section | unrelated domains |
 | Infra / DevOps | `DEVOPS.md` + `ENVIRONMENT.md` | domain specs |
@@ -67,6 +67,9 @@
 | `harness/diagrams/devops.html` | Visual companion to DEVOPS.md | nothing — snapshot; DEVOPS.md wins |
 | `harness/diagrams/task-F-13.html` | Per-task visual plan page for F-13 | nothing — plan snapshot; TASKS.md/DEVOPS.md win |
 | `harness/diagrams/task-F-14.html` | Per-task visual plan page for F-14 (docs alignment sweep; records the no-folder-moves decision) | nothing — plan snapshot; TASKS.md/CONTEXT_MAP.md win |
+| `harness/plans/customer_menu/PLAN.md` | Consolidated FE+BE build plan for the customer menu page (F-15, from `reference/…/customer/customer_menu`) | menu-page scope, FE/BE contract slice, behavior spec, TASKS.md row mapping (rules stay in their owning docs; TASKS.md owns status) |
+| `harness/plans/customer_menu/plan.html` | Visual companion to the menu-page plan (page anatomy, component tree, BE contract, dataflow) | nothing — snapshot; the folder's PLAN.md wins |
+| `harness/diagrams/task-F-15.html` | Per-task visual plan page for F-15 (customer-menu build plan) | nothing — plan snapshot; TASKS.md + `harness/plans/customer_menu/PLAN.md` win |
 | `harness/README.md` | Folder index: summary + link per harness file | nothing — navigation only; on any conflict the linked file wins |
 | `templates/` | Copy-paste templates: `TASK_TEMPLATE.md` (task rows) + `SCENARIO_TEMPLATE.md` | row/AC formats for TASKS.md registration |
 | `reference/docs/` | **Read-only north-star corpus** (867 files, restaurant platform; owner-committed 2026-07-18 `00f77d0`) — own index: `reference/docs/DOC_MAP.md`. Tasks cite into it, never edit it; adopted facts move to a harness doc (F-9/F-11/F-12/F-13 pattern) | nothing for this project — on any conflict the harness doc that adopted the fact wins |

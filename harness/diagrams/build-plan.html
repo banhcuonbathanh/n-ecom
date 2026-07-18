@@ -310,6 +310,21 @@
     <details class="report" open>
       <summary>
         <span class="r-date">2026-07-18</span>
+        <span class="r-title">F-15 — Customer-menu page build plan (FE + BE, one folder) · delivered</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> "take a look at <code style="font-family:var(--mono);font-size:0.85em">reference/…/customer/customer_menu</code> — I want to build that page; make a plan for FE and BE, consolidated in one folder including an HTML." Delivered: <code style="font-family:var(--mono);font-size:0.85em">harness/plans/customer_menu/</code> — <b>PLAN.md</b> (the consolidated FE+BE plan, source of truth) + <b>plan.html</b> (visual: phone-frame page anatomy in the reference's dark/orange, component tree, BE contract + schema + cache map, dataflow, 12-behavior spec, task mapping). Task page: <a href="task-F-15.html">task-F-15.html</a>.</p>
+        <p><b>TL;DR:</b> two Explore agents digested the 16-doc reference corpus (~4,200 lines). The page ships across <b>existing</b> TASKS.md rows — C-1 schema/seed grows combos + ₫0 toppings, C-2/C-3 are the cached public catalog GETs with an explicit cache-invalidation map, C-4 is the menu page itself, cart store + guest-auth land in T, order POST in O. The plan designs out the reference's own audited defects (the 🔴 order-note-loss bug, the triple "Combo/Suất/SUẤT" naming drift, ghost query params, four dead components never ported) and keeps our standing decisions where they beat the reference (httpOnly-cookie guest JWT, RSC prefetch instead of a route spinner).</p>
+        <h4>One flag for your eye ⚠️</h4>
+        <p><b>Customer-surface theme:</b> the reference design mandates dark + warm-orange (<code style="font-family:var(--mono);font-size:0.85em">#0b0f17</code> / <code style="font-family:var(--mono);font-size:0.85em">#f97316</code>, Playfair serif title) — F-7 chose harness-blue with a hue-swap window before C-4. Plan default: <b>customer shell goes dark/orange, staff/admin keep F-7 neutral</b>. Say otherwise before C-4, or this stands. Receipt in VERIFICATION.md.</p>
+      </div>
+    </details>
+
+    <details class="report" open>
+      <summary>
+        <span class="r-date">2026-07-18</span>
         <span class="r-title">F-14 — Docs alignment sweep · delivered (folders stay put)</span>
         <span class="chip done">done</span>
         <span class="r-hint">detail</span>

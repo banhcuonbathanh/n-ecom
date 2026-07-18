@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-15 — Customer-menu build plan · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.92rem; }
+  ul.checks li::before { content: "☑ "; color: var(--done); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="build-plan.html#report">← build-plan.html §R</a>
+  <p class="eyebrow" style="margin-top:18px">Task plan · Phase F</p>
+  <h1>F-15 — Customer-menu page build plan (FE + BE, one folder)</h1>
+  <p class="lede">Owner ask (2026-07-18): take <code>reference/…/customer/customer_menu</code> as the
+  reference, plan the page for FE and BE, consolidated in one folder including an HTML.
+  Deliverable: <code>harness/plans/customer_menu/</code> — <a href="../plans/customer_menu/PLAN.md">PLAN.md</a>
+  (source of truth) + <a href="../plans/customer_menu/plan.html">plan.html</a> (visual, FE + BE).</p>
+  <div class="facts">
+    <div class="fact"><span class="k">Status</span><span class="v">✅ delivered 2026-07-18</span></div>
+    <div class="fact"><span class="k">Deps</span><span class="v">F-9 · F-11 · F-12</span></div>
+    <div class="fact"><span class="k">Sources</span><span class="v">16 ref docs · 2 Explore digests</span></div>
+    <div class="fact"><span class="k">Branch</span><span class="v">main (docs task)</span></div>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">1</span><h2>Objective &amp; scope contract</h2></div>
+    <p>Digest the reference's 16-doc customer-menu corpus, reconcile it with the harness
+    rule set (OVERALL_PLAN C/T/O phases, FE_STATE, BE_STATE/PLAYBOOK, F-7 tokens), and
+    write one consolidated FE+BE plan the C-4 task can build from. Plan only — no app code.</p>
+    <div class="table-wrap"><table>
+      <tr><th>File</th><th>Change</th></tr>
+      <tr><td><code>harness/plans/customer_menu/PLAN.md</code></td><td>new — the consolidated plan (owns menu-page scope/contract/mapping)</td></tr>
+      <tr><td><code>harness/plans/customer_menu/plan.html</code></td><td>new — visual plan, FE + BE, both themes</td></tr>
+      <tr><td><code>harness/diagrams/task-F-15.html</code></td><td>new — this page</td></tr>
+      <tr><td><code>harness/TASKS.md</code> · <code>STATE.md</code> · <code>VERIFICATION.md</code> · <code>diagrams/build-plan.html</code></td><td>task row · checkpoint · receipt · §R report</td></tr>
+      <tr><td><code>harness/CONTEXT_MAP.md</code> · <code>harness/README.md</code> · root <code>README.md</code></td><td>index rows for the new <code>harness/plans/</code> area (Hard Rule 6)</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">2</span><h2>Steps taken</h2></div>
+    <ol class="steps">
+      <li>Registered F-15 + checkpoint commit before any writes.</li>
+      <li>2 parallel Explore agents digested the corpus — FE spec/design side · BE/dataflow side (~4,200 lines).</li>
+      <li>Wrote <code>PLAN.md</code>: BE contract (6 endpoints, 6-table schema slice, cache map), FE plan (file map, state ownership, 12 behaviors), defects-designed-out table, TASKS.md mapping, decisions/flags.</li>
+      <li>Delegated <code>plan.html</code> to a builder agent (house diagram style, dark+orange phone mockup as design preview).</li>
+      <li>Indexes, receipt, state, push.</li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">3</span><h2>Key decisions (detail in PLAN.md §7)</h2></div>
+    <div class="flag"><p>⚠️ <b>Customer-surface theme.</b> Reference design = dark + orange
+    (<code>#0b0f17</code>/<code>#f97316</code>, Playfair title); F-7 set harness-blue <code>#2B59D9</code> with a
+    pre-C-4 hue-swap window. <b>Default: customer shell adopts the reference's dark/orange
+    tokens; staff/admin keep F-7 neutral.</b> Owner says otherwise before C-4, or this stands.</p></div>
+    <ul class="checks">
+      <li>Client-side filter/search v1 — no ghost query params (the reference documented params its BE ignored).</li>
+      <li>Cookie guest-JWT (F-5) supersedes the reference's memory token — no bearer headers, no <code>?token=</code>.</li>
+      <li>Scroll-spy anchor nav, nhân pills inline (no modals), canh = stepper-only + checkout gate.</li>
+      <li>Dead/disabled reference components never ported (ToppingModal, ComboModal, CategoryTabs, MiniCartStrip, CartDrawer, 2nd banner).</li>
+      <li>Reference's 🔴 note-loss bug designed out: TableConfirmModal reads <code>cart.orderNote</code>.</li>
+      <li>Page ships across existing TASKS.md rows (C-1…C-5, T, O) — no new phases.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">4</span><h2>Receipt checklist</h2></div>
+    <ul class="checks">
+      <li>Folder exists with exactly one MD + one HTML; PLAN.md covers FE + BE + contract + task mapping.</li>
+      <li>plan.html renders both themes; tags balanced (tidy/browser check).</li>
+      <li>CONTEXT_MAP §Doc inventory + harness/README + root README carry the new <code>harness/plans/</code> rows.</li>
+      <li>Receipt row in VERIFICATION.md (2026-07-18) · STATE.md checkpoint · TASKS.md F-15 ✅ · pushed to <code>main</code>.</li>
+    </ul>
+    <div class="golden"><p><b>One fact one home:</b> this page is a snapshot. On any conflict,
+    <code>harness/plans/customer_menu/PLAN.md</code> wins for menu-page facts; TASKS.md wins for status.</p></div>
+  </section>
+</div>
+</body>
+</html>

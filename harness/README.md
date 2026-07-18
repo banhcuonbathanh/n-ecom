@@ -50,3 +50,11 @@
 | [devops.html](diagrams/devops.html) | DEVOPS.md | Visual DevOps ops: runtime topology, pipeline + tagging flow, rollback decision tree, severity table, Stage A/B cards, D-rules. |
 | [task-F-13.html](diagrams/task-F-13.html) | TASKS.md row F-13 | Per-task visual plan page for F-13 (owner rule 2026-07-17). |
 | [task-F-14.html](diagrams/task-F-14.html) | TASKS.md row F-14 | Per-task plan page for F-14: docs alignment sweep + the no-folder-moves decision (owner rule 2026-07-17). |
+| [task-F-15.html](diagrams/task-F-15.html) | TASKS.md row F-15 | Per-task plan page for F-15: customer-menu build plan (owner rule 2026-07-17). |
+
+## plans/ — per-page consolidated build plans (FE + BE in one folder)
+
+| File | Mirrors | Summary |
+|---|---|---|
+| [plans/customer_menu/PLAN.md](plans/customer_menu/PLAN.md) | — (F-15 deliverable) | Customer menu page plan: BE contract (endpoints, schema slice, cache map), FE plan (file map, state ownership, 12 behaviors), defects designed out, TASKS.md row mapping, decisions/flags. |
+| [plans/customer_menu/plan.html](plans/customer_menu/plan.html) | the folder's PLAN.md | Visual: phone-frame page anatomy (reference dark/orange), component tree, BE contract + dataflow, behavior grid, task mapping. |

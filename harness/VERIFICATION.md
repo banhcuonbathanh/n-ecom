@@ -32,6 +32,25 @@
 
 -->
 
+### F-15 — Customer-menu page build plan (FE + BE, one folder) · 2026-07-18
+**AC:** Folder holds one MD plan (FE + BE + API contract + task breakdown mapped to TASKS.md rows) and one HTML plan page rendering both themes covering FE and BE; zero rule duplication (links to owning docs); indexes updated per Hard Rule 6
+**Receipt:**
+```
+$ ls harness/plans/customer_menu/
+PLAN.md  plan.html                                  # exactly one MD + one HTML
+$ python3 tag-balance-check plan.html task-F-15.html build-plan.html
+plan.html        OPEN-UNCLOSED: none  MISMATCH: 0  SIZE: 49916
+task-F-15.html   OPEN-UNCLOSED: none  MISMATCH: 0  SIZE: 10099
+build-plan.html  OPEN-UNCLOSED: none  MISMATCH: 0  SIZE: 71372
+VN strings in plan.html: True                       # Quán Bánh Cuốn · Thanh toán · SUẤT TỰ TẠO · Bàn 04 · 103.000 · Tìm món nhanh
+PLAN.md lines: 286                                  # §3 BE (6 endpoints, schema slice, cache map)
+                                                    # §4 FE (file map, state, 12 behaviors) §5 TASKS map §6 defects §7 flags
+```
+Both themes: plan.html + task-F-15.html use the house prefers-color-scheme + data-theme
+override pattern (copied from task-F-13.html). Index rows added: CONTEXT_MAP §Doc
+inventory ×3 + §Routing (page-plan read rule), harness/README §plans/ + task-F-15 row.
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-14 — Docs alignment sweep · 2026-07-18
 **AC:** CONTEXT_MAP §Doc inventory has a row for every doc area in the repo (PROMPTS.md, CONTEXT_MAP itself, root README, templates/, reference/, personal/); stale "reference untracked" flag cleared from STATE.md; harness/README task summary + root README folder layout match reality; TASKS.md Phase-F rows in id order; docs render
 **Receipt:**
