@@ -137,6 +137,13 @@ into orders — see §4.3 row-type matrix):
 primary; Redis is wipeable per ARCHITECTURE §4):
 `(seq_date DATE PK, current_value INT NOT NULL DEFAULT 0)`.
 
+> **Counter re-seed rule (O phase, F-16 review):** on Redis counter miss (wipe,
+> restart), the order service must re-seed the Redis counter from
+> `order_sequences.current_value` **before** issuing a number — never restart at 1.
+> The `UNIQUE order_number` constraint is the last line of defense, not the
+> mechanism; without re-seeding, a mid-day wipe turns every new order into a
+> UNIQUE-violation failure.
+
 ### 4.3 Ordering (O phase) — home: `OBJECT_MODEL_ORDER.md`
 
 **`orders`**
@@ -200,6 +207,14 @@ Row-type matrix — enforce with CHECK `chk_oi_item_type`:
 | `email` | VARCHAR(100) NULL | |
 | `is_active` | TINYINT(1) DEFAULT 1 | |
 | std | timestamps + `deleted_at` | |
+
+> **Soft-delete × UNIQUE rule (S phase, F-16 review):** a soft-deleted row still
+> occupies its UNIQUE index — deleting `chef1` then re-hiring a `chef1` would fail
+> forever. On staff soft delete, the same UPDATE renames `username` to
+> `<username>#deleted-<id>` (id keeps it unique; prefix keeps it readable in
+> queries). Applies to any future UNIQUE column on a soft-deleted table;
+> `tables.qr_token` and `orders.order_number` are exempt (random/dated values
+> can't recollide).
 
 **`refresh_tokens`** — stub (columns finalized in the S-phase auth task, design in
 OVERALL_PLAN §3.4): `id` PK · `staff_id` FK→staff CASCADE · `token_hash` (hash

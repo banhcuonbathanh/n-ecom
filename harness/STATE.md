@@ -53,6 +53,11 @@
   phantom fields dropped (`flagged`, hardcoded `performance_score`) · ingredient
   wire uses DB names (rule 10) · ⚠ stock over-draw default = reject w/
   VALIDATION_FAILED (ref silently clamps) — owner may flip until AD opens.
+- Also (same session, owner asked "any comment… does it good" → "go ahead"): schema
+  review verdict good; two audit fixes folded into DB_SCHEMA.md — §4.2 counter
+  re-seed rule (Redis wipe must re-seed from order_sequences, never restart at 1)
+  + §4.4 soft-delete×UNIQUE rule (staff soft delete renames username to
+  `<name>#deleted-<id>`; qr_token/order_number exempt). Content-only edit.
 - Drift fixed / found: none new (`personal/command.md` flag stands). ⚠ `git push`
   denied in-session again (F-12/F-15 precedent) — commits local on `main`, push pending.
 - Next: unchanged — F-2 (dev stack skeleton); migrations build against DB_SCHEMA.md.
