@@ -41,7 +41,8 @@
   v1, no ghost params · dead reference components never ported · cookie JWT stands ·
   ref 🔴 note-loss bug designed out · ⚠ customer-shell theme dark/orange (default)
   vs F-7 blue — owner decides before C-4.
-- Drift fixed / found: none new (`personal/command.md` flag stands).
+- Drift fixed / found: none new (`personal/command.md` flag stands). ⚠ `git push`
+  denied in-session (F-12 precedent) — commits local on `main`, push pending.
 - Next: unchanged — F-2 (dev stack skeleton); C-4/C-5 read plans/customer_menu first.
 
 ### 2026-07-18 — Session 9 (F-14): docs alignment sweep
