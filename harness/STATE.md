@@ -40,6 +40,12 @@
   prefetch for details · component: 5-branch table, staleTime=TTL, refetch-on-focus
   self-heal, lazy images · mutation: none for cart, pessimistic POST /orders) +
   plan.html §05 mirrored (tier diagram + branch table). Content-only.
+- Also ("how fe and be communication… how each object look like" → confirmed add):
+  new PLAN.md §3.5 "Wire shapes" — JSON object gallery for all 6 endpoints (products
+  with ₫0-topping join, ids-only combos, cookie-only guest mint, priceless order
+  request, full 201 order object with combo_ref_id expansion, error envelope →
+  ApiError), flagged as contract-pending-curl-receipts (gate 8). plan.html §04
+  mirrored. Content-only.
 - Next: unchanged — F-2 (dev stack skeleton); C-4/C-5 read plans/customer_menu first.
 
 ### 2026-07-18 — Session 10 (F-15): customer-menu FE+BE build plan

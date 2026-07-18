@@ -554,6 +554,51 @@ categories ──&lt;  products  &gt;── product_toppings ──&lt; toppings
   </table></div>
   <p style="margin-top:10px">Cache-aside in <b>services only</b> · 5-min TTL · <b>fail-open to MySQL</b>
   (<code>BE_STATE.md §7</code>). Orders are never cached.</p>
+
+  <h3>Wire shapes (§3.5) — what each object looks like on the wire</h3>
+  <p>Contract shapes from the plan — spellings get <b>frozen by curl receipts</b> at C-2/C-3/O
+  (gate 8: <code>types.ts</code> is written from receipts, never guessed). Success responses are
+  never wrapped; only errors ride the envelope. The cart line never crosses the wire — FE-only (§03).</p>
+
+  <pre class="diagram">
+GET /products → 200                          <span style="color:var(--muted)">toppings pre-joined · price = bare VND int · image_path relative</span>
+[ { "id": "p12…", "name": "Bánh cuốn trứng", "price": 35000,
+    "image_path": "products/banh-cuon-trung.jpg",
+    "category_id": "c1a2…", "is_available": true,
+    "toppings": [ { "id": "t1…", "name": "Nhân thịt", "price": 0 } ] } ]
+
+GET /combos → 200                            <span style="color:var(--muted)">ids only — FE joins from the products cache</span>
+[ { "id": "cb1…", "name": "Suất đầy đủ", "price": 55000, "is_active": true,
+    "combo_items": [ { "id": "ci1…", "product_id": "p12…", "quantity": 2 } ] } ]
+
+POST /auth/guest/online                      <span style="color:var(--muted)">no request body · no response body — the object IS the Set-Cookie</span>
+
+POST /orders  (request)                      <span style="color:var(--muted)">buildOrderItemsPayload() · NO prices/names on the wire (rule 5)</span>
+{ "source": "qr", "table_id": "tb04…", "note": "ít hành",
+  "items": [ { "product_id": "p12…", "quantity": 2, "topping_ids": ["t1…"] },
+             { "combo_id": "cb1…", "quantity": 1, "topping_ids": ["t1…","t2…"] },
+             { "product_id": "p_canh_rau…", "quantity": 2 } ] }
+
+POST /orders → 201                           <span style="color:var(--muted)">FULL order object (lesson 7) · combo = header row + combo_ref_id rows</span>
+{ "id": "ord9…", "status": "pending", "table_name": "Bàn 04",
+  "note": "ít hành", "total_amount": 103000,
+  "items": [
+    { "id": "oi1…", "product_id": "p12…", "name": "Bánh cuốn trứng",
+      "unit_price": 35000, "quantity": 2, "qty_served": 0, "combo_ref_id": null,
+      "toppings_snapshot": [ { "name": "Nhân thịt", "price": 0 } ] },
+    { "id": "oi2…", "combo_id": "cb1…", "name": "Suất đầy đủ",
+      "unit_price": 0, "quantity": 1, "qty_served": 0, "combo_ref_id": null },
+    { "id": "oi3…", "product_id": "p12…", "name": "Bánh cuốn trứng",
+      "unit_price": 35000, "quantity": 2, "qty_served": 0, "combo_ref_id": "oi2…" } ] }
+
+any error, any endpoint                      <span style="color:var(--muted)">one envelope → client.ts throws ApiError{status,code,message,details}</span>
+{ "error": { "code": "VALIDATION_FAILED", "message": "Số lượng không hợp lệ",
+             "details": [ { "field": "items[0].quantity", "issue": "min=1" } ] } }</pre>
+
+  <p><code>name</code> / <code>unit_price</code> / <code>toppings_snapshot</code> in the order are
+  <b>frozen copies</b> — the menu can change tomorrow, the order object can't. Item state derives
+  from <code>qty_served</code> (no item <code>status</code> field). Append mode posts the same
+  <code>items</code> array to <code>POST /orders/:id/items</code>, returns the same order shape.</p>
 </section>
 
 <section id="dataflow">

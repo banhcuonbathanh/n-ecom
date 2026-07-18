@@ -102,6 +102,93 @@ Orders are never cached.
   filtering arrives only if the catalog outgrows client-side (💡 flag, §7).
 - ❌ Unwired rate-limit middleware — ours mounts on both guest-mint routes from day one.
 
+### 3.5 Wire shapes (the FE↔BE object gallery)
+
+> Contract shapes from this plan — field spellings get **frozen by curl receipts**
+> when C-2/C-3/O build them (gate 8: `fe/src/lib/api/types.ts` is written from
+> receipts, never guessed — kills the reference's `""` vs `null` mismatch).
+> Success responses are never wrapped; only errors ride the envelope.
+
+**`GET /categories` → 200**
+
+```json
+[ { "id": "c1a2…36", "name": "BÁNH CUỐN", "description": "…",
+    "sort_order": 2, "is_active": true } ]
+```
+
+**`GET /products` → 200** — toppings pre-joined; `price` (never `base_price`) is a
+bare VND integer (`DECIMAL(10,0)`); `image_path` relative (FE rule 14 builds the URL):
+
+```json
+[ { "id": "p12…36", "name": "Bánh cuốn trứng", "description": "…",
+    "price": 35000, "image_path": "products/banh-cuon-trung.jpg",
+    "category_id": "c1a2…36", "is_available": true,
+    "toppings": [ { "id": "t1…", "name": "Nhân thịt", "price": 0 },
+                  { "id": "t2…", "name": "Mộc nhĩ",  "price": 0 } ] } ]
+```
+
+The ₫0 toppings **are** the nhân pills — no `filling` field, ever (§3.4).
+
+**`GET /combos` → 200** — ids only; FE joins names/prices from the products cache:
+
+```json
+[ { "id": "cb1…36", "name": "Suất đầy đủ", "price": 55000,
+    "image_path": "combos/suat-day-du.jpg", "is_active": true,
+    "combo_items": [ { "id": "ci1…", "product_id": "p12…36", "quantity": 2 } ] } ]
+```
+
+**`POST /auth/guest/online`** — the object is deliberately absent: empty request;
+the response payload is a `Set-Cookie` (httpOnly guest JWT, 2 h, `source='online'`).
+No `{access_token}` body (§3.4).
+
+**`POST /orders` request** — built only by `buildOrderItemsPayload()`; **no prices,
+no names on the wire** (rule 5 — the server snapshots both); canh lines stripped
+from combo overrides by the builder:
+
+```json
+{ "source": "qr", "table_id": "tb04…36", "note": "ít hành",
+  "items": [
+    { "product_id": "p12…36", "quantity": 2, "topping_ids": ["t1…"] },
+    { "combo_id": "cb1…36", "quantity": 1, "topping_ids": ["t1…", "t2…"] },
+    { "product_id": "p_canh_rau…", "quantity": 2 } ] }
+```
+
+Online path: `source:"online"` + name/phone from `/checkout`. Append mode posts the
+same `items` array to `POST /orders/:id/items`.
+
+**`POST /orders` → 201** — the **full order object** (lesson 7: thin `{id}` DTOs
+caused "Đơn #undefined"). Combos come back expanded — header row `unit_price: 0` +
+component rows via `combo_ref_id`; item state derives from `qty_served` (no item
+`status` field); `name`/`unit_price`/`toppings_snapshot` are frozen copies:
+
+```json
+{ "id": "ord9…36", "status": "pending", "source": "qr",
+  "table_id": "tb04…36", "table_name": "Bàn 04", "note": "ít hành",
+  "total_amount": 103000, "created_at": "2026-07-18T11:02:00Z",
+  "items": [
+    { "id": "oi1…", "product_id": "p12…36", "name": "Bánh cuốn trứng",
+      "unit_price": 35000, "quantity": 2, "qty_served": 0, "combo_ref_id": null,
+      "toppings_snapshot": [ { "name": "Nhân thịt", "price": 0 } ] },
+    { "id": "oi2…", "combo_id": "cb1…36", "name": "Suất đầy đủ",
+      "unit_price": 0, "quantity": 1, "qty_served": 0, "combo_ref_id": null,
+      "toppings_snapshot": [] },
+    { "id": "oi3…", "product_id": "p12…36", "name": "Bánh cuốn trứng",
+      "unit_price": 35000, "quantity": 2, "qty_served": 0, "combo_ref_id": "oi2…",
+      "toppings_snapshot": [ { "name": "Nhân thịt", "price": 0 } ] } ] }
+```
+
+**Every error, every endpoint — one envelope** (`BE_STATE.md §4` owns the code
+table; FE branches only on codes the BE actually emits):
+
+```json
+{ "error": { "code": "VALIDATION_FAILED", "message": "Số lượng không hợp lệ",
+             "details": [ { "field": "items[0].quantity", "issue": "min=1" } ] } }
+```
+
+`client.ts` turns the envelope into a thrown `ApiError{status, code, message,
+details}` — no component ever sees a raw `Response`. The cart line object never
+crosses the wire at all — it's FE-only (§4.2's id scheme).
+
 ## 4. FE plan
 
 ### 4.1 Route + file map (extends `FE_STATE.md §8` — exact paths)
