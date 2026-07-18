@@ -571,11 +571,34 @@ categories ──&lt;  products  &gt;── product_toppings ──&lt; toppings
     <span class="farrow">→</span>
     <div class="fnode"><span class="fk">store</span><b>MySQL</b></div>
   </div>
-  <p><code>loading.tsx</code> skeleton mirrors the real layout (rail + cards), never a centered
-  spinner — a deliberate upgrade over the reference, which spinner-gated the route, skeleton-gated
-  only products, and let failed categories/combos render silently empty. Our inline error slot
-  ("⚠ Kết nối mạng yếu" + Thử lại) covers all three catalog queries; five render branches
-  (loading / error / empty / searching / data).</p>
+  <h3>Loading strategy (§4.3) — three tiers, never stacked</h3>
+  <pre class="diagram">
+Tier 1 · route     RSC prefetch ×3 catalog queries → HydrationBoundary
+                   = zero-spinner first paint; loading.tsx streams meanwhile,
+                   skeleton MIRRORS the layout (banner + nav + rail + card grid)
+                   detail pages: prefetchQuery on card hover → instant navigation
+
+Tier 2 · component five render branches (below); staleTime 5 min = Redis TTL;
+                   background isFetching keeps old data visible — no flash;
+                   refetch-on-focus ON (open tablet self-heals after an 86)
+
+Tier 3 · mutation  none for the cart (pure client state, fly-to-cart is the
+                   only feedback); POST /orders = pessimistic → confirm button
+                   disabled + "Đang gửi…" inline — never a full-page overlay</pre>
+
+  <div class="table-wrap"><table>
+    <tr><th>Branch</th><th>When</th><th>UI</th></tr>
+    <tr><td>loading</td><td><code>isPending</code>, no cached data</td><td>in-place section skeletons, no layout shift</td></tr>
+    <tr><td>error</td><td>any catalog query failed</td><td>one inline slot "⚠ Kết nối mạng yếu" + Thử lại — covers all three queries</td></tr>
+    <tr><td>empty</td><td>query ok, no items in category</td><td>dedicated empty state — not a spinner, not an error</td></tr>
+    <tr><td>searching</td><td><code>?q=</code> ≥ 2 chars</td><td>flat filtered list or "no match" (B2)</td></tr>
+    <tr><td>data</td><td>default</td><td>sectioned menu</td></tr>
+  </table></div>
+
+  <p>A deliberate upgrade over the reference, which spinner-gated the route, skeleton-gated only
+  products, let failed categories/combos render silently empty, and documented only three of its
+  five branches. Card images: <code>buildImageURL()</code> (FE rule 14) + native
+  <code>loading="lazy"</code> below the fold + fixed aspect-ratio boxes so cards never reflow.</p>
 
   <h3>Order handoff (first server write on the page)</h3>
   <div class="flow">

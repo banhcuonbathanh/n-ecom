@@ -35,6 +35,11 @@
   same cache · post-201 URL/persisted-slice handoff · RSC HydrationBoundary) flows,
   plus the FE_STATE §1 decision flow for new state in C-4/C-5. Content-only edit —
   no CONTEXT_MAP/README rows touched (rule 6 n/a). Committed straight to `main`.
+- Also (same session, "add loading stategy"): PLAN.md §4.3 rewritten as the full
+  3-tier loading strategy (route: RSC prefetch + layout-mirroring skeletons + hover
+  prefetch for details · component: 5-branch table, staleTime=TTL, refetch-on-focus
+  self-heal, lazy images · mutation: none for cart, pessimistic POST /orders) +
+  plan.html §05 mirrored (tier diagram + branch table). Content-only.
 - Next: unchanged — F-2 (dev stack skeleton); C-4/C-5 read plans/customer_menu first.
 
 ### 2026-07-18 — Session 10 (F-15): customer-menu FE+BE build plan

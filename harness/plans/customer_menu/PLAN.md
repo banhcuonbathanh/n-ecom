@@ -192,18 +192,42 @@ survives reload/share → URL; form → RHF; >1 distant component → Zustand; o
 `useState`. Zustand is the last resort: this page needs exactly the two stores
 above, and Query data is never copied into a store (FE rule 1's "never").
 
-### 4.3 Loading / error (instance of `FE_STATE.md §4–5`)
+### 4.3 Loading strategy (instance of `FE_STATE.md §4–5` — three tiers, never stacked)
 
-- RSC prefetch + `HydrationBoundary` → zero-spinner first paint; `loading.tsx`
-  skeleton mirrors the real layout (rail + cards), never a centered spinner.
-  **Deliberate upgrade over the reference**, which shipped a centered route spinner,
-  skeleton-gated only the products query, and let failed categories/combos render
-  as silently-empty sections — our error slot covers all three catalog queries.
-- Query error → inline slot retry ("⚠ Kết nối mạng yếu" + Thử lại); empty category →
-  dedicated empty state; five render branches (loading / error / empty / searching /
-  data) — the reference audit caught docs listing only three.
-- Add-to-cart is pure client state — no mutation tier on this page; the first
-  server write is `POST /orders` (pessimistic, per FE rule 4).
+**Tier 1 — route (first paint):**
+
+- RSC `page.tsx` prefetches all three catalog queries in parallel →
+  `HydrationBoundary` → client hydrates the same cache = **zero-spinner first paint**
+  on warm servers; `loading.tsx` streams while the RSC awaits.
+- `loading.tsx` skeleton **mirrors the real layout** (header banner + nav strip +
+  rail + card grid), never a centered spinner. **Deliberate upgrade over the
+  reference**, which shipped a centered route spinner, skeleton-gated only the
+  products query, and let failed categories/combos render as silently-empty sections.
+- Detail pages (`/menu/product/[id]`, `/menu/combo/[id]`): `prefetchQuery` on card
+  hover/touchstart → navigation lands on cached data; each segment has its own
+  layout-shaped `loading.tsx` for the cold-URL case.
+
+**Tier 2 — component (query states). Five render branches, all named, all built:**
+
+| Branch | When | UI |
+|---|---|---|
+| loading | `isPending`, no cached data | in-place section skeletons (no layout shift) |
+| error | any catalog query failed | one inline slot: "⚠ Kết nối mạng yếu" + Thử lại (covers all three queries — not per-section silence) |
+| empty | query ok, category has no items | dedicated empty state, not a spinner, not an error |
+| searching | `?q=` ≥ 2 chars | flat filtered list or "no match" empty state (§4.4 B2) |
+| data | default | sectioned menu |
+
+- `staleTime` 5 min matches the Redis TTL — background `isFetching` keeps old data
+  visible (no flash, no skeleton re-entry); refetch-on-focus stays ON so a menu left
+  open on a table tablet self-heals after an admin 86's a dish.
+- Card images: relative `image_path` → `buildImageURL()` (FE rule 14), native
+  `loading="lazy"` below the fold, fixed aspect-ratio box so cards never reflow.
+
+**Tier 3 — mutation:** none on this page for the cart — add-to-cart is pure client
+state (instant, fly-to-cart animation is the only feedback). The page's first server
+write is `POST /orders` (pessimistic, FE rule 4): the confirm button in
+TableConfirmModal goes disabled + inline "Đang gửi…" — never a full-page overlay;
+on error the modal stays open with the envelope message and the cart untouched.
 
 ### 4.4 Page behaviors (the spec the AC will test)
 
