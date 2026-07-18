@@ -53,7 +53,8 @@
   phantom fields dropped (`flagged`, hardcoded `performance_score`) · ingredient
   wire uses DB names (rule 10) · ⚠ stock over-draw default = reject w/
   VALIDATION_FAILED (ref silently clamps) — owner may flip until AD opens.
-- Drift fixed / found: none new (`personal/command.md` flag stands).
+- Drift fixed / found: none new (`personal/command.md` flag stands). ⚠ `git push`
+  denied in-session again (F-12/F-15 precedent) — commits local on `main`, push pending.
 - Next: unchanged — F-2 (dev stack skeleton); migrations build against DB_SCHEMA.md.
 
 ### 2026-07-18 — Session 11 (F-15 amendment): state-management flow spelled out
