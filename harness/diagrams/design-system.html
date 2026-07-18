@@ -423,6 +423,51 @@
   .order-steps .step::before { content: ""; position: absolute; top: 12px; left: -50%; width: 100%; height: 2px; background: var(--ds-border); }
   .order-steps .step:first-child::before { display: none; }
   .order-steps .step.done::before, .order-steps .step.now::before { background: var(--ds-success); }
+
+  /* ----- Commerce · restaurant menu patterns (F-15 customer_menu plan) ----- */
+  /* nhân / topping selection pills — inline on cards, no modal ever (B3) */
+  .opt-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .opt-pill { font-family: var(--sans); font-size: 0.74rem; font-weight: 600; line-height: 1; border: 1px solid var(--ds-border); background: var(--ds-surface); color: var(--ds-muted); border-radius: 999px; padding: 5px 11px; cursor: pointer; transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease; }
+  .opt-pill:hover { border-color: var(--ds-border-strong); color: var(--ds-ink); }
+  .opt-pill.on { background: var(--ds-primary); border-color: var(--ds-primary); color: var(--ds-on-primary); }
+
+  /* menu card — restaurant list row: VND price, nhân pill, heart, stepper, "Hết" */
+  .menu-card { position: relative; display: flex; gap: 12px; background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: 12px; padding: 12px; width: 360px; max-width: 100%; }
+  .menu-card .mc-img { flex: none; width: 68px; height: 68px; border-radius: 10px; background: var(--ds-surface-2); display: flex; align-items: center; justify-content: center; font-size: 1.9rem; }
+  .menu-card .mc-body { flex: 1; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .menu-card h4 { margin: 0; font-size: 0.95rem; line-height: 1.25; }
+  .menu-card .mc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
+  .menu-card .mc-heart { position: absolute; top: 10px; right: 10px; border: none; background: none; cursor: pointer; font-size: 1.05rem; line-height: 1; color: var(--ds-border-strong); padding: 0; }
+  .menu-card .mc-heart.on { color: var(--ds-sale); }
+  .menu-card.sold .mc-img, .menu-card.sold .mc-body { filter: grayscale(0.6); opacity: 0.55; }
+  .menu-card .mc-sold { position: absolute; inset: 0; border-radius: 12px; background: color-mix(in srgb, var(--ds-surface) 66%, transparent); display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 800; letter-spacing: 0.18em; color: var(--ds-ink); }
+  .price-vnd { font-family: var(--sans); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ds-primary); }
+
+  /* canh (soup) stepper block — the only place soup is chosen (B4) */
+  .canh-box { background: var(--ds-surface-2); border: 1px solid var(--ds-border); border-radius: 10px; padding: 12px 14px; width: 360px; max-width: 100%; }
+  .canh-box .cb-h { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ds-muted); margin: 0 0 8px; }
+  .canh-box.shake { animation: ds-shake 340ms ease; border-color: var(--ds-danger); }
+  @keyframes ds-shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-5px); } 40%,80% { transform: translateX(5px); } }
+  @media (prefers-reduced-motion: reduce) { .canh-box.shake { animation: none; } }
+  .canh-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 0; font-size: 0.88rem; }
+  .canh-row + .canh-row { border-top: 1px dashed var(--ds-border); }
+
+  /* order rollup — TỔNG SỐ MÓN */
+  .rollup { width: 360px; max-width: 100%; border: 1px solid var(--ds-border); border-radius: 10px; overflow: hidden; background: var(--ds-surface); }
+  .rollup .ru-h { display: flex; align-items: center; justify-content: space-between; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ds-muted); background: var(--ds-surface-2); padding: 8px 14px; }
+  .rollup .ru-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; font-size: 0.88rem; border-top: 1px solid var(--ds-border); }
+  .rollup .ru-row .ru-q { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ds-muted); }
+  .rollup .ru-row.total { font-weight: 700; background: var(--ds-surface-2); }
+
+  /* table pill — Bàn 04 */
+  .table-pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--sans); font-weight: 700; font-size: 0.78rem; background: var(--ds-primary-soft); color: var(--ds-primary); border-radius: 999px; padding: 4px 12px; }
+
+  /* cart bottom bar — two floating pills: count badge (no total) + Thanh toán (B6) */
+  .cart-bar { display: flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: 999px; padding: 8px 8px 8px 10px; box-shadow: var(--ds-shadow-3); width: 360px; max-width: 100%; }
+  .cart-bar .cb-count { position: relative; width: 42px; height: 42px; border-radius: 50%; background: var(--ds-surface-2); border: 1px solid var(--ds-border); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--ds-ink); cursor: pointer; }
+  .cart-bar .cb-count .cb-badge { position: absolute; top: -4px; right: -4px; background: var(--ds-sale); color: #fff; font-family: var(--mono); font-size: 0.62rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 999px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+  .cart-bar .cb-pay { flex: 1; }
+  .cart-bar .cb-pay.gated { opacity: 0.6; }
 </style>
 
 <div class="page">
@@ -1029,6 +1074,124 @@
       </div>
       <p class="demo-note">Cancelled orders don't render the tracker — they show the danger badge + cancellation date instead. The tracker maps 1:1 to the status enum; there is no client-side "estimated" step.</p>
     </div>
+
+    <h3 style="margin-top:48px; border-top:2px solid var(--ds-border); padding-top:28px;">Restaurant menu — the F-15 <code>customer_menu</code> patterns</h3>
+    <p>The dine-in bánh cuốn menu (<a href="../plans/customer_menu/plan.html">plan.html</a>) needs molecules the general storefront above doesn't: fillings picked <em>inline</em> (never a modal), soup chosen only from a stepper, and a two-pill floating cart. These specimens are the C-4 / T acceptance surface and are built from the same <code>--ds-*</code> tokens — so they re-skin with the page.</p>
+    <div class="golden warn"><p><strong>⚠️ FLAG (open in plan §09):</strong> the customer shell's visual source of truth is the reference's <b>dark + warm-orange</b> palette (<code>#0b0f17</code> / <code>#f97316</code>), not this system's blue. The cards below preview in blue on purpose — the hue swap is one token re-map in C-4, pending owner sign-off. Structure is final; color isn't.</p></div>
+
+    <h3>Selection pills — nhân / toppings, inline on the card</h3>
+    <div class="demo">
+      <div class="demo-row">
+        <span class="demo-label">Single-select (product) — first pre-selected, exactly one active (B3)</span>
+        <div class="opt-pills" role="radiogroup" aria-label="Nhân">
+          <button class="opt-pill on" role="radio" aria-checked="true">Nhân thịt</button>
+          <button class="opt-pill" role="radio" aria-checked="false">Mộc nhĩ</button>
+          <button class="opt-pill" role="radio" aria-checked="false">Chay</button>
+        </div>
+      </div>
+      <div class="demo-row">
+        <span class="demo-label">Multi-select (combo) — "Nhân thịt" default, the last one can't be deselected</span>
+        <div class="opt-pills" role="group" aria-label="Nhân (chọn nhiều)">
+          <button class="opt-pill on" aria-pressed="true">Nhân thịt</button>
+          <button class="opt-pill on" aria-pressed="true">Mộc nhĩ</button>
+          <button class="opt-pill" aria-pressed="false">Tôm</button>
+        </div>
+      </div>
+      <p class="demo-note">Each filling combination is its own cart row (<code>product_&lt;id&gt;_&lt;nhânId&gt;</code> / <code>combo_&lt;id&gt;_&lt;sortedNhânIds&gt;</code>). Products single-select, combos multi-select with a floor of one — same pill component, two modes. Fillings are ₫0 toppings, never a <code>filling</code> column.</p>
+    </div>
+
+    <h3>Menu card — the C-4 list unit (VND price · heart · stepper · "Hết")</h3>
+    <div class="demo">
+      <div class="demo-row" style="flex-direction:column; align-items:flex-start;">
+        <div class="menu-card">
+          <div class="mc-img">🥟</div>
+          <div class="mc-body">
+            <h4>Bánh cuốn trứng</h4>
+            <div class="opt-pills">
+              <button class="opt-pill on">nhân thịt</button>
+              <button class="opt-pill">mộc nhĩ</button>
+            </div>
+            <div class="mc-foot">
+              <span class="price-vnd">30.000 đ</span>
+              <span class="stepper" role="group" aria-label="Số lượng"><button aria-label="Bớt">−</button><span class="qty">2</span><button aria-label="Thêm">+</button></span>
+            </div>
+          </div>
+          <button class="mc-heart on" aria-label="Bỏ yêu thích" aria-pressed="true">♥</button>
+        </div>
+
+        <div class="menu-card">
+          <div class="mc-img">🍽️</div>
+          <div class="mc-body">
+            <h4>Suất đầy đủ <span class="badge badge-primary" style="vertical-align:middle;">SUẤT</span></h4>
+            <div class="opt-pills">
+              <button class="opt-pill on">Nhân thịt</button>
+              <button class="opt-pill on">mộc nhĩ</button>
+            </div>
+            <div class="mc-foot">
+              <span class="price-vnd">103.000 đ</span>
+              <span class="stepper" role="group" aria-label="Số lượng"><button aria-label="Bớt">−</button><span class="qty">1</span><button aria-label="Thêm">+</button></span>
+            </div>
+          </div>
+          <button class="mc-heart" aria-label="Yêu thích" aria-pressed="false">♡</button>
+        </div>
+
+        <div class="menu-card sold">
+          <div class="mc-img">🥟</div>
+          <div class="mc-body">
+            <h4>Bánh cuốn chay</h4>
+            <div class="mc-foot">
+              <span class="price-vnd">30.000 đ</span>
+              <span class="stepper" role="group" aria-label="Số lượng"><button aria-label="Bớt" disabled>−</button><span class="qty">0</span><button aria-label="Thêm" disabled>+</button></span>
+            </div>
+          </div>
+          <div class="mc-sold" aria-label="Hết hàng">HẾT</div>
+        </div>
+      </div>
+      <p class="demo-note">One card renders every menu row: product (single nhân), combo (multi nhân + "SUẤT" tag), and 86'd ("HẾT" overlay, muted, stepper locked). Price via <code>formatVND()</code> ("30.000 đ"). Heart toggles favourites (<code>stopPropagation</code>); add fires a fly-to-cart. Whole card links to detail; controls stop propagation. Soup is <em>never</em> a card here (B4).</p>
+    </div>
+
+    <h3>Canh stepper + table pill — soup gate &amp; the bound table</h3>
+    <div class="demo">
+      <div class="demo-row" style="align-items:flex-start; gap:20px;">
+        <div class="canh-box">
+          <p class="cb-h">Canh — bắt buộc chọn</p>
+          <div class="canh-row"><span>Có rau</span><span class="stepper" role="group" aria-label="Canh có rau"><button aria-label="Bớt">−</button><span class="qty">1</span><button aria-label="Thêm">+</button></span></div>
+          <div class="canh-row"><span>Không rau</span><span class="stepper" role="group" aria-label="Canh không rau"><button aria-label="Bớt" disabled>−</button><span class="qty">0</span><button aria-label="Thêm">+</button></span></div>
+        </div>
+        <div style="display:grid; gap:10px;">
+          <span class="table-pill">📍 Bàn 04</span>
+          <span class="toast" style="max-width:260px;"><span style="color:var(--ds-danger); font-weight:700;">✕</span> Chọn ít nhất 1 bát canh</span>
+        </div>
+      </div>
+      <p class="demo-note">Soup products are filtered out of every list/search (<code>isSoupName</code>) and chosen only here — two rows bound to the two real canh products. <b>Canh gate (B5):</b> zero bowls → "Thanh toán" dims but still fires → error toast + auto-open cart + scroll-and-shake this box. The table pill shows the QR-bound table (<code>Bàn 04</code>); online orders show none.</p>
+    </div>
+
+    <h3>Order rollup — TỔNG SỐ MÓN</h3>
+    <div class="demo">
+      <div class="rollup">
+        <div class="ru-h"><span>TỔNG SỐ MÓN</span><span class="table-pill">📍 Bàn 04</span></div>
+        <div class="ru-row"><span>Bánh cuốn trứng · nhân thịt</span><span class="ru-q">× 4</span></div>
+        <div class="ru-row"><span>Suất đầy đủ</span><span class="ru-q">× 2</span></div>
+        <div class="ru-row"><span>Canh có rau</span><span class="ru-q">× 1</span></div>
+        <div class="ru-row total"><span>Tổng</span><span class="price-vnd">103.000 đ</span></div>
+      </div>
+      <p class="demo-note">A read-only quantity roll-up over the cart lines — combos expand under a per-line "Chi tiết" expander in the full OrderSummary. Totals are <em>selectors</em> over the store (<code>total()</code> / <code>itemCount()</code>), never stored (FE rule 11). Worked example locks the canonical numbers: <b>Bàn 04 · 103.000 đ · badge 13</b>.</p>
+    </div>
+
+    <h3>Cart bottom bar — two floating pills</h3>
+    <div class="demo">
+      <div class="demo-row" style="flex-direction:column; align-items:flex-start; gap:16px;">
+        <div class="cart-bar">
+          <button class="cb-count" aria-label="Giỏ hàng, 13 món — cuộn tới tổng kết">☰<span class="cb-badge">13</span></button>
+          <button class="btn btn-primary btn-lg cb-pay">Thanh toán</button>
+        </div>
+        <div class="cart-bar">
+          <button class="cb-count" aria-label="Giỏ hàng, 13 món">☰<span class="cb-badge">13</span></button>
+          <button class="btn btn-primary btn-lg cb-pay gated">Thanh toán</button>
+        </div>
+      </div>
+      <p class="demo-note">Count badge (<b>no total</b> — scrolls to the on-page OrderSummary) + "Thanh toán". Second row = canh-gated: the pay pill dims but <b>still fires</b> so the gate can explain itself (B5), rather than a dead disabled button with no feedback. Both pills read the one cart store via selectors.</p>
+    </div>
   </section>
 
   <!-- ============================================================ -->
@@ -1044,6 +1207,7 @@
       <tr><td><span class="tcode">ui/dialog.tsx · dropdown-menu.tsx · tooltip.tsx</span></td><td>Overlays (Radix primitives underneath)</td><td>CC-3</td></tr>
       <tr><td><span class="tcode">ui/tabs.tsx · breadcrumb.tsx · pagination.tsx</span></td><td>Navigation; pagination reads/writes URL params</td><td>C-4 / C-5</td></tr>
       <tr><td><span class="tcode">features/catalog/product-card.tsx · features/cart/cart-line.tsx · features/orders/order-tracker.tsx · ui/quantity-stepper.tsx</span></td><td>Commerce molecules — compose <span class="tcode">ui/*</span>, never restyle it</td><td>C-4 / CC-3 / O-3</td></tr>
+      <tr><td><span class="tcode">components/menu/*</span> — <span class="tcode">ProductCard · ComboSection · CustomSuatSection · OrderSummary · CartBottomBar</span> + <span class="tcode">ui/option-pills.tsx</span></td><td>Restaurant menu molecules (F-15) — nhân pills, canh stepper, rollup, floating cart; compose the same tokens, orange re-map lands in C-4</td><td>C-4 / T / O</td></tr>
     </table></div>
 
     <h3>Hard rules (self-review checklist for every FE task)</h3>
