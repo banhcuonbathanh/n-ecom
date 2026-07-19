@@ -223,5 +223,55 @@ A high-fidelity render of the actual screen — the C-4 preview an owner can eye
 
 ---
 
+## 10. Page backlog — every page to plan
+
+The 34 pages defined in the reference (`reference/docs/system/08_pages/`), grouped by
+surface. `✅` has a plan set under `harness/plans/<slug>/`; `⬜` is unplanned. Each row
+is a candidate `harness/plans/<slug>/` folder — make its 4-doc set with this guide.
+
+### 🛒 Customer (14)
+
+| slug | plan set |
+|---|---|
+| `customer_menu` | ✅ F-15 |
+| `customer_welcome` | ⬜ |
+| `customer_table_qr` | ⬜ QR airlock — mints the guest JWT the menu consumes |
+| `customer_product_detail` | ⬜ partly pre-scoped as `/menu/product/[id]` (menu plan C-5) |
+| `customer_combo_detail` | ⬜ partly pre-scoped as `/menu/combo/[id]` (menu plan C-5) |
+| `customer_checkout` | ⬜ online path — `source:'online'`, name/phone |
+| `customer_orders_tracking` | ⬜ |
+| `customer_tracking` | ⬜ |
+| `customer_order_detail` | ⬜ |
+| `customer_order_list` | ⬜ |
+| `customer_favourites` | ⬜ |
+| `customer_profile` | ⬜ |
+| `customer_settings` | ⬜ |
+| `customer_introduction` | ⬜ |
+
+### 👨‍🍳 Staff (5)
+
+`staff_login` · `staff_pos` · `staff_kds` · `staff_cashier_payment` · `staff_register`
+— all ⬜. Staff/admin surfaces use the neutral F-7 `design-system.html` tokens, **not**
+the customer dark/orange shell (§7).
+
+### 🛠️ Admin (13)
+
+`admin_overview` · `admin_summary` · `admin_products` · `admin_categories` ·
+`admin_combos` · `admin_toppings` · `admin_ingredients` · `admin_storage` ·
+`admin_staff` · `admin_marketing` · `admin_training` · `admin_task_board` ·
+`admin_todo_list` — all ⬜.
+
+### 🌐 Public (2)
+
+`public_landing` · `public_legal` — both ⬜.
+
+**Suggested order** (cheapest first — most contract shared with the done menu plan):
+`customer_table_qr` → `customer_product_detail` / `customer_combo_detail` →
+`customer_checkout` → `customer_orders_tracking` / `customer_order_detail`. When a page
+is already partly scoped inside another plan (the two `*_detail` pages live in the menu
+plan's §4.1), **cross-link, don't re-derive.**
+
+---
+
 *Written 2026-07-19, distilled from the F-15 customer_menu page-plan set. This guide
 owns the page-plan format; page rules live in the docs named in §2 of any plan.*
