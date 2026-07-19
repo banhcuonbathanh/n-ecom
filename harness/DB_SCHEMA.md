@@ -319,10 +319,13 @@ are the `…0000000N` suffix per that file's prefix guide.
 **Scene.** Chị Lan scans the QR on **Bàn 05** (`tbl-05`), adds to her cart:
 
 - **2× Bánh Cuốn Thịt** (`ccc-01`, ₫4,000) with topping *Nhân thịt mộc nhĩ* (`bbb-02`, ₫0), note "ít mắm"
-- **1× Suất Giò** (`ddd-03`, combo list price ₫25,000) = 1× Giò (`ccc-07`, ₫9,000) · 4× Bánh Cuốn Thịt (`ccc-01`, ₫4,000) · 1× Canh có rau (`ccc-08`, ₫0)
+- **1× Suất Giò** (`ddd-03`, combo list price ₫25,000) = 1× Giò (`ccc-07`, ₫9,000) · 4× Bánh Cuốn Thịt (`ccc-01`, ₫4,000) · 1× Canh (bundled in the template)
+- …and she picks **Canh có rau** (`ccc-08`, ₫0) for the required soup — see the canh rule in §8
 
 **What the client POSTs** (`POST /orders`) — **ids + quantities only, no names, no prices**
-(§4.3: the client can never set its own price):
+(§4.3: the client can never set its own price). Note the combo's `combo_items` override
+does **not** list the canh — the builder strips it (`isSoupName`) so canh rides as its
+own top-level line (§8):
 
 ```jsonc
 {
@@ -333,8 +336,8 @@ are the `…0000000N` suffix per that file's prefix guide.
     { "product_id": "ccc-01", "quantity": 2, "topping_ids": ["bbb-02"], "note": "ít mắm" },
     { "combo_id": "ddd-03", "quantity": 1, "combo_items": [
         { "product_id": "ccc-07", "quantity": 1, "topping_ids": [] },
-        { "product_id": "ccc-01", "quantity": 4, "topping_ids": [] },
-        { "product_id": "ccc-08", "quantity": 1, "topping_ids": [] } ] }
+        { "product_id": "ccc-01", "quantity": 4, "topping_ids": [] } ] },
+    { "product_id": "ccc-08", "quantity": 1, "topping_ids": [] }
   ]
 }
 ```
@@ -360,14 +363,17 @@ all **snapshots frozen at order time**:
 | B | combo **header** | `NULL` | `ddd-03` | `NULL` | Suất Giò | **`0`** | 1 | 0 | `NULL` |
 | C | combo sub-item | `ccc-07` | `NULL` | `B` | Giò | `9000` | 1 | 0 | `NULL` |
 | D | combo sub-item | `ccc-01` | `NULL` | `B` | Bánh Cuốn Thịt | `4000` | 4 | 0 | `[]` |
-| E | combo sub-item | `ccc-08` | `NULL` | `B` | Canh có rau | `0` | 1 | 0 | `NULL` |
+| E | **standalone** (canh) | `ccc-08` | `NULL` | `NULL` | Canh có rau | `0` | 1 | 0 | `NULL` |
 
 - **Row B (header) `unit_price = 0`** — the label row. Suất Giò's ₫25,000 is charged
-  through its sub-items (C `9000` + D `4000×4` + E `0` = `25000`), so counting the
-  header too would double-charge. This is the "prevents double-count" rule made concrete.
-  (Note the reference contradicts itself on *which* row holds the price — §6 #15 rules
-  it: header 0, sub-items real. Every seed combo is break-even, so the total is the same
-  either way.)
+  through its sub-items (C `9000` + D `4000×4` = `25000`), so counting the header too
+  would double-charge. This is the "prevents double-count" rule made concrete. (Note the
+  reference contradicts itself on *which* row holds the price — §6 #15 rules it: header 0,
+  sub-items real. Every seed combo is break-even, so the total is the same either way.)
+- **Row E (canh) is standalone, not a combo sub-item** — even though Suất Giò's *template*
+  bundles a canh, the order builder strips it (`isSoupName`) and sends the customer's
+  chosen variant as its own `combo_id = NULL` line. Canh **always** rides as its own ₫0
+  row; the full "canh is mandatory" rule is §8.
 - **Snapshots, not lookups** — the ₫0 topping is frozen into `toppings_snapshot` at
   order time; if its price or availability changes tomorrow, this order is unaffected
   (§2: *never assume topping price is 0 in code* — snapshot the real value).
@@ -376,9 +382,9 @@ all **snapshots frozen at order time**:
   But only nhân is a **topping** (rides `toppings` → `toppings_snapshot`, seed has just 2).
   *Rau mùi tàu* is **not** a topping: the canh choice is modelled as two separate
   **products** — *Canh có rau* (`ccc-08`, "canh kèm rau mùi tàu") and *Canh không rau*
-  (`ccc-09`) — so row E above is a `product_id` sub-item, never a `toppings_snapshot`
-  entry (`MENU_CATALOG.md §2`). Reaching for a "rau mùi tàu" topping is the mistake the
-  seed deliberately designs out.
+  (`ccc-09`) — so row E above is a `product_id` **standalone row**, never a
+  `toppings_snapshot` entry (`MENU_CATALOG.md §2`). Reaching for a "rau mùi tàu" topping
+  is the mistake the seed deliberately designs out.
 
 **`total_amount` recompute** (`recalculateTotalAmount`, run in-tx after the inserts —
 header contributes nothing):
@@ -386,9 +392,9 @@ header contributes nothing):
 ```
 A  4000 × 2  =  8000
 B     0 × 1  =     0   ← combo header (label row)
-C  9000 × 1  =  9000  ┐
-D  4000 × 4  = 16000  ├ Suất Giò sub-items = 25000 = its list price ✓
-E     0 × 1  =     0  ┘
+C  9000 × 1  =  9000  ┐ Suất Giò sub-items = 25000 = its list price ✓
+D  4000 × 4  = 16000  ┘
+E     0 × 1  =     0   ← canh (own standalone row, stripped from combo; §8)
              ───────
 total           33000  → orders.total_amount (denormalized, §4.3)
 ```
@@ -407,3 +413,75 @@ reports **preparing**. The order then walks `pending→confirmed→…→paid` (
 > matrix needs an explicit ruling (candidate: header carries the discounted price and
 > sub-items go to 0 — the `MENU_CATALOG.md §4` convention — or sub-items store an
 > allocated price). Not a blocker today; flagged so it's a decision, not a silent bug.
+
+---
+
+## 8. Worked example — a party of 10, and why "canh is mandatory"
+
+Scaling §7 up to a full table shows the two things §7 only gestured at: how canh
+behaves, and where the **"every order needs a canh"** rule actually lives (spoiler:
+**not** in this schema).
+
+**Scene.** A family of 10 eats in and puts it all on **one bill** (one `orders` row).
+They order:
+
+- **5× Suất Đầy Đủ Trứng Tái** (`ddd-01`, ₫30,000) — each template = 1 Bánh Trứng Tái (`ccc-04`, ₫9,000) · 3 Bánh Cuốn Thịt (`ccc-01`, ₫4,000) · 1 Giò (`ccc-07`, ₫9,000) · 1 Canh
+- **Canh for all 10** (required): **7× Canh có rau** (`ccc-08`) + **3× Canh không rau** (`ccc-09`), every bowl ₫0
+
+### "Canh is mandatory" is a FE gate — the schema does NOT enforce it
+
+Checkout is blocked until the cart holds a canh line. `CartBottomBar` dims and
+`OrderSummary` shakes until
+
+```ts
+items.some(i => i.id.startsWith('canh_'))   // the canh-required gate
+```
+
+is true (`LOGIC_FE.md` · `customer_menu_crosscomponent_dataflow.md §6`). **Nothing in
+this schema models that** — no `NOT NULL`, no CHECK, no trigger forces a canh row onto an
+order. The rule is a *client* invariant keyed off an id **convention** (`canh_…`), not a
+type field. Consequences worth writing down:
+
+- **Never query the DB assuming every order has a canh.** Any path that bypasses the FE
+  gate — POS, data import, tests, a future API client — can legally write a canh-less
+  order. The DB trusts what it's handed.
+- If canh-required ever needs to be a *true* guarantee, it becomes a **service-layer
+  validation** (reject the order at `POST /orders`), not a column — there's no single
+  column a CHECK could hang off (canh is one product row among many).
+
+### Canh always rides as its own ₫0 row (stripped from every combo)
+
+Each Suất *template* bundles a canh, but the order builder pulls it out (`isSoupName`)
+and sends the customer's chosen variant as a standalone line (`combo_id = NULL`), keyed
+`canh_<productId>_rau|plain` in the cart (`order-payload.ts`). So each combo expands to
+a **header (₫0) + its non-canh sub-items only**, and canh appears **once per variant** as
+a batched standalone row.
+
+**What lands in `order_items`** — **22 rows**. One suất is shown expanded as the pattern
+(repeats ×5), then the two canh rows:
+
+| block | row type | product / combo | unit_price | qty | rows |
+|---|---|---|---|---|---|
+| Suất (×5) | combo **header** | Suất Đầy Đủ Trứng Tái (`ddd-01`) | **0** | 1 | 5 |
+| ” | sub-item | Bánh Trứng Tái (`ccc-04`) | 9000 | 1 | 5 |
+| ” | sub-item | Bánh Cuốn Thịt (`ccc-01`) | 4000 | 3 | 5 |
+| ” | sub-item | Giò (`ccc-07`) | 9000 | 1 | 5 |
+| canh | **standalone** | Canh có rau (`ccc-08`) | 0 | 7 | 1 |
+| canh | **standalone** | Canh không rau (`ccc-09`) | 0 | 3 | 1 |
+
+Per suất the sub-items sum to ₫30,000 (`9000 + 4000×3 + 9000`) = its list price (§6 #15,
+break-even); canh adds ₫0.
+
+**`total_amount`** = `5 × 30000` (suất, via sub-items) `+ 0` (all 10 canh) = **₫150,000**.
+
+### The `group_id` beat — when 10 people outgrow one table
+
+Tables seat 4 (`MENU_CATALOG.md §6`), so a party of 10 physically spans three. Two ways
+to model it, both already in the schema (§4.3):
+
+- **One combined bill** (above) — a single `orders` row; `table_id` = the host table (or
+  `source='pos'` rung up at the counter), `group_id = NULL`.
+- **Split bills, one party** — three `orders` rows, each with its own `table_id`, sharing
+  one `group_id`. That column is a **soft correlation** (deliberately *no* hard FK) whose
+  only job is to stitch per-table orders into one party for a combined view. No parent
+  `groups` table exists; the id is generated when the party is seated.
