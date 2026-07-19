@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin toppings — how it works at runtime (F-29)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE9E7; --violet: #6B3FA0; --violet-soft: #EFE7F7;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2857C; --red-soft: #3A1714; --violet: #C0A0E8; --violet-soft: #2A1D3D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2857C; --red-soft: #3A1714; --violet: #C0A0E8; --violet-soft: #2A1D3D;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE9E7; --violet: #6B3FA0; --violet-soft: #EFE7F7;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .bad { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .bad p { margin: 0 0 8px; } .bad p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, .bad code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .fnode.err { border-color: var(--red); }
+  .fnode.err b { color: var(--red); }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+  .steps { counter-reset: st; display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .step { display: flex; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; }
+  .step .sn { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .step .sb { font-size: 0.88rem; }
+  .step .sb b { font-family: var(--mono); font-size: 0.82rem; }
+  .step .sb p { margin: 2px 0 0; font-size: 0.85rem; color: var(--muted); max-width: none; }
+  .svg-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 12px; }
+  svg text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+  svg text.m { fill: var(--muted); font-size: 10px; }
+  svg .lane { fill: var(--surface); stroke: var(--line); }
+  svg .lanehd { fill: var(--accent-soft); stroke: var(--line); }
+  svg .ll { stroke: var(--line); stroke-dasharray: 3 3; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow">ecom-core · restaurant platform · runtime walkthrough · 2026-07-19</div>
+  <h1>Admin toppings — how it actually works</h1>
+  <p class="lede">Not <em>what we will build</em> but <em>what happens when it runs</em>: first load,
+  the save round-trip, the delete transaction, and how one topping edit reaches a customer's phone
+  with no realtime push anywhere in the system.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">task</span><span class="v">F-29</span></div>
+    <div class="fact"><span class="k">queries</span><span class="v">1 (was 2)</span></div>
+    <div class="fact"><span class="k">push</span><span class="v">none — pull only</span></div>
+    <div class="fact"><span class="k">staleness bound</span><span class="v">5 min TTL</span></div>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#s1">01 Big picture</a>
+  <a href="#s2">02 First load</a>
+  <a href="#s3">03 The save</a>
+  <a href="#s4">04 The delete tx</a>
+  <a href="#s5">05 Cache fan-out</a>
+  <a href="#s6">06 State across pages</a>
+</nav>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>The big picture</h2></div>
+  <p>The whole machine on one screen. A topping write touches <b>one DB row</b>, optionally
+  <b>N junction rows</b>, and deletes <b>three sets of Redis keys</b>. Nothing is pushed.</p>
+  <pre class="diagram">      ADMIN BROWSER (this page)              SERVER                    EVERYONE ELSE
+ ┌────────────────────────────────┐                              ┌──────────────────────────┐
+ │ TanStack (browser-local)       │                              │ customer phones · POS ·  │
+ │  ['admin','toppings'] 60s      │                              │ other admin tabs         │
+ └───────────────┬────────────────┘                              └──────────────────────────┘
+                 │ POST / PATCH / DELETE                                      ▲
+                 ▼                        ┌───────────────────────┐           │ next fetch only
+        ───────── THE WIRE ─────────────▶ │ toppings row     (1)  │           │ (no SSE / no WS)
+                                          │ product_toppings (N)  │           │
+                                          ├───────────────────────┤ ──────────┘
+        cache fan-out ───────────────────▶│ Redis DEL:            │  served on next read
+                                          │   toppings:list       │
+                                          │   products:list       │
+                                          │   product:&lt;id&gt; × N ✅  │
+                                          └───────────────────────┘</pre>
+  <div class="golden">
+    <p><b>Toppings have no realtime channel.</b> The SSE/WS layer carries <em>order</em> events only.
+    Topping changes propagate by <b>pull</b> — the next fetch on each surface, bounded by the 5-minute
+    Redis TTL plus each client's <code>staleTime</code>. That is a deliberate accepted latency, not an
+    oversight: catalog edits are rare and never time-critical.</p>
+  </div>
+  <div class="flag">
+    <p><b>The ✅ on <code>product:&lt;id&gt; × N</code> is the whole fix.</b> The reference Del'd only
+    the two list keys. Customer product-detail is the <em>only</em> reader of
+    <code>product:&lt;id&gt;</code>, so it served a stale topping price for up to five minutes after
+    every edit. We Del it too, using ids the write already has in hand.</p>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — one query, four branches</h2></div>
+  <p>The reference fired <b>two</b> queries here and gated only one of them. We fire <b>one</b>, and
+  the second query's entire class of bug disappears with it.</p>
+  <div class="steps">
+    <div class="step"><span class="sn">1</span><div class="sb"><b>Route enters</b>
+      <p><code>loading.tsx</code> paints a table-shaped skeleton — header row plus six placeholder
+      rows — so the layout is already the right shape when data lands. Nothing jumps.</p></div></div>
+    <div class="step"><span class="sn">2</span><div class="sb"><b>Guards resolve</b>
+      <p>The admin shell's auth guard confirms the session, then the role guard checks
+      <code>manager+</code>. A server/staff role stops here with the access-denied panel and
+      <code>ToppingsPage</code> never mounts.</p></div></div>
+    <div class="step"><span class="sn">3</span><div class="sb"><b>RSC prefetches on the server</b>
+      <p><code>page.tsx</code> calls <code>GET /toppings/all</code> during render and hands the result
+      down through <code>HydrationBoundary</code>. The client component receives a warm cache — first
+      paint has real rows, not a spinner.</p></div></div>
+    <div class="step"><span class="sn">4</span><div class="sb"><b>The server does the join</b>
+      <p>One SQL statement: <code>toppings LEFT JOIN product_toppings LEFT JOIN products</code>,
+      filtered on both <code>deleted_at IS NULL</code>, aggregated per topping. <code>LEFT</code> so an
+      unlinked topping still returns with an empty <code>products</code> array.</p></div></div>
+    <div class="step"><span class="sn">5</span><div class="sb"><b>The table picks exactly one branch</b>
+      <p><code>loading</code> · <code>error</code> · <code>empty</code> · <code>ready</code> — named,
+      mutually exclusive, and never conflated. An error shows a retry panel, <b>not</b> an empty
+      state that lies about there being no toppings.</p></div></div>
+  </div>
+  <div class="bad">
+    <p><b>What the reference did instead.</b> Two parallel queries — toppings, and the <em>entire
+    product catalogue</em>. Only the first had a loading gate. When toppings resolved first, every
+    row rendered “Chưa gắn sản phẩm”, then snapped to real product names when the second query
+    landed. The column visibly lied for a moment on every cold load.</p>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The save round-trip</h2></div>
+  <p>Create and edit share one modal and one path. The trip is <b>pessimistic</b> — the UI waits for
+  the server, because a topping edit is not a cart tap and a wrong price is worse than a 200ms wait.</p>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 900 330" width="900" height="330" role="img" aria-label="Save sequence across modal, Gin, service, MySQL and Redis">
+      <defs>
+        <marker id="ma" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#2B59D9"/></marker>
+        <marker id="mo" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#1E8A5A"/></marker>
+        <marker id="mr" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#B3261E"/></marker>
+      </defs>
+      <rect class="lanehd" x="10"  y="10" width="150" height="26" rx="5"/>
+      <rect class="lanehd" x="180" y="10" width="150" height="26" rx="5"/>
+      <rect class="lanehd" x="350" y="10" width="150" height="26" rx="5"/>
+      <rect class="lanehd" x="520" y="10" width="150" height="26" rx="5"/>
+      <rect class="lanehd" x="690" y="10" width="150" height="26" rx="5"/>
+      <text x="30"  y="28">ToppingFormModal</text>
+      <text x="205" y="28">Gin handler</text>
+      <text x="378" y="28">service</text>
+      <text x="560" y="28">MySQL</text>
+      <text x="735" y="28">Redis</text>
+      <line class="ll" x1="85"  y1="40" x2="85"  y2="315"/>
+      <line class="ll" x1="255" y1="40" x2="255" y2="315"/>
+      <line class="ll" x1="425" y1="40" x2="425" y2="315"/>
+      <line class="ll" x1="595" y1="40" x2="595" y2="315"/>
+      <line class="ll" x1="765" y1="40" x2="765" y2="315"/>
+
+      <line x1="85" y1="62" x2="250" y2="62" stroke="#2B59D9" marker-end="url(#ma)"/>
+      <text class="m" x="92" y="56">POST/PATCH {name, price, is_available}</text>
+
+      <line x1="255" y1="96" x2="420" y2="96" stroke="#2B59D9" marker-end="url(#ma)"/>
+      <text class="m" x="262" y="90">bind + validate · role manager+</text>
+
+      <line x1="425" y1="130" x2="590" y2="130" stroke="#2B59D9" marker-end="url(#ma)"/>
+      <text class="m" x="432" y="124">one sqlc stmt — all 3 columns</text>
+
+      <line x1="590" y1="164" x2="430" y2="164" stroke="#B3261E" marker-end="url(#mr)"/>
+      <text class="m" x="438" y="158">dup name → 409 DUPLICATE</text>
+
+      <line x1="425" y1="198" x2="760" y2="198" stroke="#1E8A5A" marker-end="url(#mo)"/>
+      <text class="m" x="432" y="192">DEL toppings:list · products:list · product:&lt;id&gt; × N</text>
+
+      <line x1="420" y1="232" x2="90" y2="232" stroke="#1E8A5A" marker-end="url(#mo)"/>
+      <text class="m" x="150" y="226">200 — the FULL topping object</text>
+
+      <rect x="20" y="252" width="330" height="52" rx="6" fill="#E8EDFB" stroke="#2B59D9"/>
+      <text x="32" y="271">write object into ['admin','toppings']</text>
+      <text class="m" x="32" y="290">modal closes · row updates · no refetch flash</text>
+    </svg>
+  </div>
+  <p>The response is the <b>full object</b>, never a thin <code>{id}</code> — the lesson-7 rule from
+  <a href="../../OVERALL_PLAN.md"><code>OVERALL_PLAN.md §6</code></a>. Because the row comes back
+  complete, the client writes it straight into the list cache and the table updates without a
+  second round-trip.</p>
+  <div class="flag">
+    <p><b>The modal resets on every open.</b> React Hook Form keeps its values between mount cycles;
+    the reference's own notes call stale-value leakage “the #1 modal bug in this project”. The reset
+    is asserted by behavior 10, so it is a test, not a hope.</p>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>The delete transaction</h2></div>
+  <p>Delete is <b>admin-only</b> and does two writes that must not half-happen — so they share one
+  transaction, per <a href="../../BE_STATE.md"><code>BE_STATE.md</code></a>.</p>
+  <div class="flow">
+    <div class="fnode"><span class="fk">1 read</span><b>junction ids</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">2 tx</span><b>soft delete</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">3 tx</span><b>purge junction</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">4 commit</span><b>204</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">5 fan-out</span><b>DEL × 3 sets</b></div>
+  </div>
+  <div class="steps">
+    <div class="step"><span class="sn">1</span><div class="sb"><b>Read the linked product ids first</b>
+      <p>Inside the tx, before anything is destroyed. These ids serve two purposes: they are the rows
+      to purge, <em>and</em> they are the <code>product:&lt;id&gt;</code> cache keys to Del in step 5.
+      Read them after the purge and they are gone.</p></div></div>
+    <div class="step"><span class="sn">2</span><div class="sb"><b>Soft delete the topping</b>
+      <p><code>deleted_at = NOW()</code>. The row stays — every read filters
+      <code>deleted_at IS NULL</code>. Past orders are untouched regardless, because they carry their
+      own <code>toppings_snapshot</code>.</p></div></div>
+    <div class="step"><span class="sn">3</span><div class="sb"><b>Purge the junction rows</b>
+      <p>The FK's <code>ON DELETE CASCADE</code> fires only on a <em>hard</em> delete, so a soft
+      delete alone leaves the links orphaned forever. We delete them explicitly.</p></div></div>
+    <div class="step"><span class="sn">4</span><div class="sb"><b>Commit, return <code>204</code></b>
+      <p>Both writes land or neither does. A crash between them cannot leave a live topping with no
+      links, or dead links pointing at a live topping.</p></div></div>
+    <div class="step"><span class="sn">5</span><div class="sb"><b>Fan out the invalidation</b>
+      <p>Using the ids captured in step 1. Cache failures are non-fatal — a dead Redis falls through
+      to MySQL rather than failing the delete that already committed.</p></div></div>
+  </div>
+  <div class="golden">
+    <p><b>Why delete unlinks instead of refusing.</b> Retiring a topping is ordinary manager work.
+    Blocking it until every product is edited first would be hostile — and the customer surface is
+    safe either way, since a soft-deleted topping vanishes from every read on the next fetch. So the
+    dialog <em>states the impact</em> (“đang áp dụng cho 2 sản phẩm — xóa sẽ gỡ liên kết”) rather
+    than standing in the way.</p>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Cache fan-out — who sees the change, and when</h2></div>
+  <p>One edit, five surfaces, no push. This table is the honest answer to “when does the customer
+  see my new price?”</p>
+  <div class="table-wrap"><table>
+    <tr><th>Surface</th><th>Reads</th><th>Sees the change</th></tr>
+    <tr><td>This page</td><td><code>/toppings/all</code> (uncached)</td><td><b>immediately</b> — the response object is written into the cache</td></tr>
+    <tr><td>Other <code>/admin/toppings</code> tabs</td><td>same, browser-local cache</td><td>on their own <code>staleTime</code> lapse (60s), refocus, or remount</td></tr>
+    <tr><td>Product form picker (<code>/admin/products</code>)</td><td><code>['admin','toppings']</code></td><td>on the shared-key invalidation — same browser, immediately</td></tr>
+    <tr><td>Customer <code>/menu</code> · POS</td><td><code>products:list</code></td><td>next fetch after the DEL — cold, so straight from MySQL</td></tr>
+    <tr><td>Customer <code>/menu/product/:id</code></td><td><code>product:&lt;id&gt;</code></td><td>next fetch — <b>because we Del it</b>; the reference made this one wait 5 min</td></tr>
+    <tr><td>Past orders</td><td><code>order_items.toppings_snapshot</code></td><td><b>never</b> — frozen at order time, by design</td></tr>
+  </table></div>
+  <div class="golden">
+    <p><b>Snapshot safety is why any of this is allowed.</b> Editing a topping's price does not
+    rewrite history: each order froze its own copy of the name and price at the moment it was placed.
+    So the fan-out above only ever affects <em>live catalog reads</em> — never money that has
+    already been counted.</p>
+  </div>
+  <h3>Staleness bound</h3>
+  <pre class="diagram">worst case for a customer already sitting on /menu:
+
+  edit committed ──▶ Redis DEL (instant) ──▶ customer's TanStack staleTime (≤ 5 min)
+                                              └─▶ refetch ──▶ MySQL (fresh) ──▶ sees it
+
+  worst case ≈ the client's own staleTime. The Redis TTL never adds to it,
+  because the DEL already happened — the next read rebuilds from MySQL.</pre>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>State across components &amp; pages</h2></div>
+  <p>Two hubs only, exactly as <a href="../../FE_STATE.md"><code>FE_STATE.md</code></a> prescribes:
+  the <b>TanStack cache</b> for server data and <b>Zustand</b> for the auth identity. Everything
+  else is local <code>useState</code> that dies with the page.</p>
+  <pre class="diagram">                    ┌──────────────────────────────────────┐
+                    │  TanStack: ['admin','toppings']      │ ← the only server-data hub
+                    └───────┬───────────────────┬──────────┘
+                            │                   │
+        ┌───────────────────▼──────┐   ┌────────▼─────────────────────┐
+        │ /admin/toppings          │   │ /admin/products              │
+        │  table · count · chips   │   │  ProductFormModal's picker   │
+        └───────────┬──────────────┘   └──────────────────────────────┘
+                    │ local useState — never leaves the page
+        ┌───────────▼──────────────────────────────────┐
+        │ modal target · delete target · search · filter│
+        └──────────────────────────────────────────────┘
+
+        Zustand useAuthStore ──▶ guards + "is this user an admin?" (Xóa visibility)</pre>
+  <div class="table-wrap"><table>
+    <tr><th>Crossing</th><th>Mechanism</th></tr>
+    <tr><td>Component → component (header count, table rows, chips)</td><td>all read the <b>same cache entry</b> — no prop drilling, no duplicated fetch</td></tr>
+    <tr><td>This page → the product form's picker</td><td>the <b>shared query key</b> — a write here invalidates there</td></tr>
+    <tr><td>This page → customer surfaces</td><td><b>the server</b> — Redis DEL, then each client's next fetch</td></tr>
+    <tr><td>Tab → tab, device → device</td><td><b>nothing direct.</b> Caches are per-browser; the DB is the only shared truth</td></tr>
+  </table></div>
+  <div class="flag">
+    <p><b>“Sync” here means “everyone re-reads the same row eventually.”</b> There is no coordination
+    channel between two managers editing at once — last write wins, and neither sees the other until
+    a refetch. Acceptable for a low-contention back-office catalog; it would not be for stock levels.</p>
+  </div>
+</section>
+
+<footer>
+  Written 2026-07-19 by the engineer-in-charge (F-29). Runtime companion to
+  <a href="admin_toppings_PLAN.md"><code>admin_toppings_PLAN.md</code></a>, <b>which wins on any
+  conflict</b> — this page re-draws its facts and owns none. Rules live in the docs named in its §2.
+</footer>
+
+</div>
+</body>
+</html>

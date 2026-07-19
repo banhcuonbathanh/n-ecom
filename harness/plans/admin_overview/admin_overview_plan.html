@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin overview page — FE + BE build plan (F-17)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3382C;
+    --red-soft: #F8E7E4;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E58278; --red-soft: #3A1D19;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E58278; --red-soft: #3A1D19;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* task tags: AD = admin phase, R = realtime phase, P = payment phase, O = orders */
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.ad { color: var(--accent); background: var(--accent-soft); }
+  .t.r  { color: var(--amber);  background: var(--amber-soft); }
+  .t.p  { color: var(--done);   background: var(--done-soft); }
+  .dead { color: var(--muted); text-decoration: line-through; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); margin: 14px 0; }
+  .snode { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-top: 3px solid var(--accent); }
+  .snode.rph { border-top-color: var(--amber); }
+  .snode.pph { border-top-color: var(--done); }
+  .sarrow { color: var(--muted); font-size: 0.8rem; }
+
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+
+  /* ====== dashboard wireframe — ADMIN surface, theme-aware F-7 tokens ======
+     Unlike the customer mockup (locked to the reference dark/orange), staff/admin
+     surfaces use design-system.html's neutral tokens, so this wireframe simply
+     uses the theme variables and adapts to the viewer's light/dark theme. */
+  .anatomy { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .boardwrap { flex: 1 1 520px; min-width: 300px; overflow-x: auto; }
+  .board { width: 560px; max-width: none; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 12px; line-height: 1.4; }
+  .board * { box-sizing: border-box; }
+  .bd-sec { position: relative; padding: 10px 12px; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .bd-n { position: absolute; top: 7px; right: 8px; z-index: 2; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .bd-h { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 7px; }
+  .bd-alert { background: var(--red-soft); color: var(--red); font-weight: 700; text-align: center; font-size: 11px; }
+  .bd-title { font-family: var(--sans); font-size: 15px; font-weight: 700; }
+  .bd-live { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 10px; color: var(--done); }
+  .bd-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--done); display: inline-block; }
+  .bd-search { display: flex; align-items: center; gap: 7px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; color: var(--muted); font-size: 11px; }
+  .bd-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .bd-kpi { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; }
+  .bd-kpi.urgent { background: var(--red-soft); border-color: var(--red); }
+  .bd-kpi .kv { font-family: var(--mono); font-size: 17px; font-weight: 700; }
+  .bd-kpi .kl { display: block; font-size: 9.5px; color: var(--muted); }
+  .bd-kpi.urgent .kv { color: var(--red); }
+  .bd-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .bd-chip { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 2px 9px; font-size: 10.5px; font-family: var(--mono); }
+  .bd-chip.delta { color: var(--amber); border-color: var(--amber); font-style: italic; }
+  .bd-row { display: grid; grid-template-columns: 62px 84px 58px 42px 1fr auto; gap: 7px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 11px; }
+  .bd-row:last-child { border-bottom: none; }
+  .bd-row.head { font-family: var(--mono); font-size: 9px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
+  .bd-badge { font-family: var(--mono); font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 1px 7px; background: var(--amber-soft); color: var(--amber); white-space: nowrap; }
+  .bd-badge.ok { background: var(--done-soft); color: var(--done); }
+  .bd-badge.acc { background: var(--accent-soft); color: var(--accent); }
+  .bd-btn { font-family: var(--mono); font-size: 9.5px; font-weight: 700; border-radius: 6px; padding: 2px 8px; background: var(--accent); color: var(--surface); white-space: nowrap; }
+  .bd-btn.ghost { background: var(--paper); color: var(--muted); border: 1px solid var(--line); }
+  .bd-btn.pay { background: var(--done); color: var(--surface); }
+  .bd-urg { border-left: 3px solid var(--red); padding-left: 6px; }
+  .bd-warn { border-left: 3px solid var(--amber); padding-left: 6px; }
+  .bd-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  .bd-tile { border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 7px; font-size: 10.5px; }
+  .bd-tile.busy { border-left: 3px solid var(--amber); }
+  .bd-tile.free { color: var(--muted); }
+  .bd-tile b { font-family: var(--mono); font-size: 11px; display: block; color: var(--ink); }
+  .bd-acc { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted); }
+  .bd-pop { margin: 0 12px 10px; border: 2px solid var(--accent); background: var(--surface); border-radius: 10px; padding: 9px 11px; box-shadow: 0 6px 18px rgba(0,0,0,.14); }
+  .callouts { flex: 1 1 280px; min-width: 260px; }
+  .callouts ol { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 0.86rem; }
+  .callouts li { display: flex; gap: 10px; }
+  .co-n { flex: none; width: 19px; height: 19px; margin-top: 3px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .callouts b { font-family: var(--mono); font-size: 0.8rem; }
+
+  svg.seq { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · consolidated page plan · 2026-07-19</div>
+  <h1>Admin overview page — FE + BE build plan</h1>
+  <p class="lede">One plan for the staff-facing <code>/admin/overview</code> — the live floor
+  command centre and the default admin landing page. Where the customer menu is cached reads +
+  a client cart, this page is a <b>realtime projection of active orders</b>: one SSE delta stream
+  mutating one TanStack Query cache, read by every zone on the board.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-17</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_overview_PLAN.md">admin_overview_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">reference corpus</span><span class="v">…/08_pages/admin/admin_overview/ · 10 docs</span></div>
+    <div class="fact"><span class="k">ships across</span><span class="v">AD · R · P rows (admin phase deferred)</span></div>
+    <div class="fact"><span class="k">surface</span><span class="v">staff — neutral F-7 tokens</span></div>
+  </div>
+  <div class="golden">
+    <p><b>The core loop — one order's life, watched live:</b></p>
+    <p>① New order arrives over the stream → <b>NewOrderPopup</b> → manager confirms
+    (<code>pending → confirmed</code>). ② Chef advances <code>confirmed → preparing → ready</code>
+    on <code>/staff/kds</code> — this board updates <b>with no HTTP call of its own</b>.
+    ③ Manager marks <code>ready → delivered</code>. ④ Cash payment
+    (<code>delivered → paid</code>) frees the table to <em>Trống</em>. ⑤ The order drops off the
+    live board into the Zone E paid log.</p>
+    <p style="margin-top:8px"><b>Worked example used in every doc + screenshot:</b>
+    floor <b>3 / 8 bàn</b> · <b>Bàn 03</b> · order <b>#BC-43</b> ·
+    Bánh cuốn trứng ×2 + Trứng ×1 = <b>70.000 đ</b> · 3 món.</p>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#anatomy">01 anatomy</a>
+  <a href="#components">02 components</a>
+  <a href="#state">03 state</a>
+  <a href="#be">04 be contract</a>
+  <a href="#dataflow">05 dataflow</a>
+  <a href="#behaviors">06 behaviors</a>
+  <a href="#defects">07 defects out</a>
+  <a href="#tasks">08 tasks</a>
+  <a href="#decisions">09 decisions</a>
+</nav>
+
+<section id="anatomy">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy — the floor board, top to bottom</h2></div>
+  <p><span class="chip amber">design preview</span>&nbsp; Admin is a <b>staff surface</b>, so this
+  wireframe uses the neutral F-7 tokens from <a href="../../diagrams/design-system.html">design-system.html</a>
+  and adapts to <em>your</em> light/dark theme — deliberately unlike the customer mockups, which are
+  locked to the reference dark/orange shell. Zone letters (A–F) are the reference's own names, kept so
+  the plan and the reference corpus stay greppable against each other.</p>
+
+  <div class="anatomy">
+    <div class="boardwrap">
+    <div class="board">
+
+      <div class="bd-sec bd-alert">
+        <span class="bd-n" style="background:var(--red)">1</span>
+        ⚠ Mất kết nối thời gian thực — đang thử lại…
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">2</span>
+        <div class="bd-pop" style="margin:0">
+          <p class="bd-h">new order popup — SSE doorbell</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <b style="font-family:var(--mono)">#BC-43</b><span class="bd-badge acc">Bàn 03</span>
+          </div>
+          <div class="bd-row" style="grid-template-columns:1fr auto auto"><span>Bánh cuốn trứng</span><span>×2</span><span>60.000 đ</span></div>
+          <div class="bd-row" style="grid-template-columns:1fr auto auto"><span>Trứng</span><span>×1</span><span>10.000 đ</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+            <span style="color:var(--muted)">3 món · Tổng <b>70.000 đ</b></span>
+            <span><span class="bd-btn ghost">Bỏ qua</span> <span class="bd-btn">✓ Xác nhận</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">3</span>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="bd-title">Tổng quan sàn</div>
+            <div style="color:var(--muted);font-size:10.5px">Tất cả bàn — cập nhật theo thời gian thực</div>
+          </div>
+          <span class="bd-live"><span class="bd-dot"></span>Live</span>
+        </div>
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">4</span>
+        <div class="bd-search"><span>⌕</span><span>Tìm theo mã đơn, số bàn, tên khách…</span></div>
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">5</span>
+        <p class="bd-h">zone A — StatCards (all derived, none stored)</p>
+        <div class="bd-kpis">
+          <div class="bd-kpi"><span class="kv">3 / 8</span><span class="kl">Bàn đang phục vụ</span></div>
+          <div class="bd-kpi"><span class="kv">12</span><span class="kl">Món chờ làm</span></div>
+          <div class="bd-kpi"><span class="kv">8</span><span class="kl">Món đang làm</span></div>
+          <div class="bd-kpi urgent"><span class="kv">2 / 5</span><span class="kl">Khẩn cấp / Cảnh báo</span></div>
+        </div>
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">6</span>
+        <p class="bd-h">zone D1/D2 — view toggle + Tổng món</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+          <b>Danh sách bàn</b>
+          <span><span class="bd-btn">☰ list</span> <span class="bd-btn ghost">▦ grid</span></span>
+        </div>
+        <div class="bd-chips">
+          <span class="bd-chip">Bánh ×10 ▾</span><span class="bd-chip">Trứng ×6</span>
+          <span class="bd-chip">Giò ×4</span><span class="bd-chip">Canh ×4 có/không rau</span>
+          <span class="bd-chip delta">+3 từ 🔍</span>
+        </div>
+        <div style="color:var(--muted);font-size:10px;margin-top:5px">🔍 2 bàn · 24 phần</div>
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">7</span>
+        <p class="bd-h">zone B — WaitingSection · <b>pending only</b></p>
+        <div class="bd-row head"><span>Bàn</span><span>Trạng thái</span><span>Mã đơn</span><span>T.gian</span><span>Còn lại</span><span>Thao tác</span></div>
+        <div class="bd-row bd-urg"><span>Bàn 03</span><span class="bd-badge">Chờ xác nhận</span><span>BC-43</span><span>2′</span><span>Bánh×2</span>
+          <span><span class="bd-btn ghost">🔍</span> <span class="bd-btn">Xác nhận</span></span></div>
+        <div class="bd-row bd-warn"><span>Bàn 01</span><span class="bd-badge">Chờ xác nhận</span><span>BC-42</span><span>8′</span><span>Bánh×4</span>
+          <span><span class="bd-btn ghost">🔍</span> <span class="bd-btn">Xác nhận</span></span></div>
+        <div style="color:var(--muted);font-size:10px;margin-top:5px">2 bàn · 3 loại món · 12 phần còn lại &nbsp;·&nbsp;
+          <b style="color:var(--red)">no Huỷ button here</b> — cancel lives on the row menu (§06 · B3)</div>
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">8</span>
+        <p class="bd-h">zone D4 — ConfirmedPrepList (excl. canh/giò)</p>
+        <div class="bd-row head" style="grid-template-columns:1fr 60px 60px 46px"><span>Món</span><span>SL ban đầu</span><span>⊕ SL thêm</span><span>Tổng</span></div>
+        <div class="bd-row" style="grid-template-columns:1fr 60px 60px 46px"><span>Bánh cuốn thịt</span><span>×2</span><span style="color:var(--amber);font-style:italic">+4</span><span><b>×6</b></span></div>
+        <div class="bd-row" style="grid-template-columns:1fr 60px 60px 46px"><span>Bánh trứng chín</span><span>–</span><span style="color:var(--amber);font-style:italic">+3</span><span><b>×3</b></span></div>
+        <div class="bd-row" style="grid-template-columns:1fr 60px 60px 46px"><span><b>TỔNG</b></span><span>×3</span><span style="color:var(--amber)">+9</span><span><b>×12</b></span></div>
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">9</span>
+        <p class="bd-h">zone D3 — TableList / TableGrid (both wired for pay + cancel)</p>
+        <div class="bd-tiles">
+          <div class="bd-tile busy"><b>Bàn 01</b>8′ · BC-42</div>
+          <div class="bd-tile busy"><b>Bàn 03</b>2′ · BC-43</div>
+          <div class="bd-tile busy"><b>Bàn 05</b>delivered<br><span class="bd-btn pay" style="margin-top:3px;display:inline-block">Đã thanh toán 💰</span></div>
+          <div class="bd-tile free"><b>Bàn 02</b>● Trống <span class="bd-btn ghost">Đặt hộ</span></div>
+        </div>
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">10</span>
+        <p class="bd-h">zone C — PrepPanel · <em>only when 🔍 kiemTraIds.size &gt; 0</em></p>
+        <div class="bd-row head" style="grid-template-columns:1fr 60px 90px 50px"><span>Tên món</span><span>Bàn</span><span>Nhân / Rau</span><span>Còn lại</span></div>
+        <div class="bd-row" style="grid-template-columns:1fr 60px 90px 50px"><span>Bánh cuốn trứng</span><span>Bàn 03</span><span>Nhân thịt</span><span>×2</span></div>
+        <div class="bd-row" style="grid-template-columns:1fr 60px 90px 50px"><span>♨ Canh</span><span>Bàn 01</span><span>có rau ×2</span><span>×2</span></div>
+      </div>
+
+      <div class="bd-sec">
+        <span class="bd-n">11</span>
+        <div class="bd-acc"><span><b>Đơn đã thanh toán hôm nay</b> · 5 đơn · 1.250.000 đ</span><span>▸</span></div>
+        <div class="bd-acc" style="margin-top:6px"><span><b>Đơn đã huỷ hôm nay</b> · 1 đơn</span><span>▸</span></div>
+        <div style="color:var(--muted);font-size:10px;margin-top:5px">zones E + F — collapsed accordions, lazy <code>enabled: open</code></div>
+      </div>
+
+    </div>
+    </div>
+
+    <div class="callouts">
+      <ol>
+        <li><span class="co-n" style="background:var(--red)">1</span><span><b>ConnectionBanner</b> — sticky red bar,
+          shown only when the SSE stream is down. The board holds its last data; auto-reconnect with backoff.</span></li>
+        <li><span class="co-n">2</span><span><b>NewOrderPopup</b> — the SSE <code>new_order</code> doorbell:
+          fetch <code>GET /orders/:id</code>, then show order #, table, kitchen items, total.
+          <em>Xác nhận</em> PATCHes <code>pending → confirmed</code>; <em>Bỏ qua</em> writes nothing.</span></li>
+        <li><span class="co-n">3</span><span><b>OverviewHeader</b> — static title + the animated
+          <b>Live</b> dot bound to the stream's connected flag (grey when down).</span></li>
+        <li><span class="co-n">4</span><span><b>OverviewSearchBar</b> — client-side filter over
+          <em>Zone B and Zone D together</em> (order #, id, customer name, table name). No debounce,
+          no refetch — it filters arrays already in the cache.</span></li>
+        <li><span class="co-n">5</span><span><b>Zone A · StatCards</b> — four derived KPIs from orders
+          with a real <code>table_id</code> + tables + <code>now</code>. The 4th is a <b>ratio</b>
+          (<code>urgent / warning</code> = &gt;20′ / 10–20′), red when urgent &gt; 0. Nothing stored.</span></li>
+        <li><span class="co-n">6</span><span><b>Zone D1/D2</b> — list/grid toggle (dumb; the parent owns
+          <code>viewMode</code>) + <b>DishSummaryStrip</b>, the floor-wide dish aggregate with a
+          <span style="color:var(--amber)">+Δ</span> preview contributed by 🔍-marked tables.</span></li>
+        <li><span class="co-n">7</span><span><b>Zone B · WaitingSection</b> — a <b>pending-only</b>
+          confirmation queue (the reference doc drew it as a multi-status queue with a Huỷ button the
+          code never rendered — defect D5, §07). Row border encodes urgency; 🔍 feeds Zone C.</span></li>
+        <li><span class="co-n">8</span><span><b>Zone D4 · ConfirmedPrepList</b> — prep rollup for
+          <code>confirmed</code> orders, sorted by total desc, with a TỔNG row. The amber
+          <b>⊕ SL thêm</b> column previews qty from <code>pending</code> orders toggled via the
+          «Chờ xác nhận» badge. Canh and giò are excluded.</span></li>
+        <li><span class="co-n">9</span><span><b>Zone D3 · TableList / TableGrid</b> — one row (or card)
+          per table, urgency border, <em>Đặt hộ</em> → <code>/pos</code> on empty tables, and
+          pay/cancel on delivered rows. <b>Both</b> views are wired for pay + cancel (the reference
+          wired only the list — gap closed).</span></li>
+        <li><span class="co-n">10</span><span><b>Zone C · PrepPanel</b> — renders <em>only</em> when
+          <code>kiemTraIds.size &gt; 0</code>; aggregates remaining dishes of 🔍-marked pending orders.
+          Canh (♨) is pinned last with a có/không-rau breakdown.</span></li>
+        <li><span class="co-n">11</span><span><b>Zones E + F · PaidLog / CancelLog</b> — collapsed
+          accordions sharing one lazy <code>['orders','history']</code> query; badge counts populate
+          only after first open. Logs show totals and timestamps — <code>items: []</code> by
+          design (§09).</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="components">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Component tree — FE file map (§4.1) with owning phases</h2></div>
+  <p>Tags mark which future row builds each file: <span class="t ad">AD</span> admin phase ·
+  <span class="t r">R</span> realtime phase · <span class="t p">P</span> payment phase.
+  Admin is Session-0 deferred, so these rows are seeded by this plan when the phase opens (§08).</p>
+  <pre class="diagram">
+fe/src/app/(admin)/overview/
+├─ page.tsx                  <span class="t ad">AD-2</span>  CSR page: owns the 2 eager queries + the SSE hook;
+│                                   the ONLY bridge cache↔zones (props down, onAction up)
+└─ loading.tsx               <span class="t ad">AD-2</span>  dashboard-shaped skeleton (header + KPI row + grid)
+                                    — upgrade: reference had only a route spinner
+
+components/admin/overview/
+├─ OverviewHeader.tsx        <span class="t ad">AD-2</span>  title + Live dot (bound to stream state)
+├─ OverviewSearchBar.tsx     <span class="t ad">AD-2</span>  client filter over Zone B + Zone D
+├─ ConnectionBanner.tsx      <span class="t r">R</span>     sticky red bar when the stream is down
+├─ NewOrderPopup.tsx         <span class="t r">R</span>     SSE new_order → confirm / dismiss overlay
+├─ StatCards.tsx             <span class="t ad">AD-2</span>  zone A — 4 derived KPIs + 30 s urgency timer
+├─ TableSection.tsx          <span class="t ad">AD-2</span>  zone D shell: owns viewMode; D1→D2→(B)→D4→D3
+├─ ViewToggleHeader.tsx      <span class="t ad">AD-2</span>  zone D1 — list/grid toggle (dumb)
+├─ DishSummaryStrip.tsx      <span class="t ad">AD-2</span>  zone D2 — floor dish aggregate + Δ preview
+├─ WaitingSection.tsx        <span class="t ad">AD-3</span>  zone B — pending-ONLY queue (fixes D5)
+├─ ConfirmedPrepList.tsx     <span class="t ad">AD-3</span>  zone D4 — prep rollup (excl. canh/giò)
+├─ TableList.tsx             <span class="t ad">AD-2</span>  zone D3 list — pay/cancel on delivered rows
+├─ TableGrid.tsx             <span class="t ad">AD-2</span>  zone D3 grid — pay/cancel wired too (gap closed)
+├─ PrepPanel.tsx             <span class="t ad">AD-3</span>  zone C — only when kiemTraIds.size &gt; 0
+├─ PaidLog.tsx               <span class="t ad">AD-2</span>  zone E — collapsed accordion, lazy history
+├─ CancelLog.tsx             <span class="t ad">AD-2</span>  zone F — shares the history query key
+├─ OrderDetail.tsx           <span class="t ad">AD-3</span>  shared expand card: progress + served counts
+├─ PaymentModal.tsx          <span class="t p">P</span>     two-checkbox cash gate → POST /payments
+└─ TableDetailDrawer.tsx     <span class="t ad">AD-3</span>  right drawer: items + total + "Xem đầy đủ →"
+
+queries/admin-orders.ts      <span class="t ad">AD-2</span>  useLiveOrders / useTables / useTodayHistory
+hooks/useAdminStream.ts      <span class="t r">R</span>     THE one SSE hook → setQueryData(['orders','live'])
+lib/overview-helpers.ts      <span class="t ad">AD-2</span>  itemStatus · itemCounts · toppingLabel · elapsedMins
+                                    · urgencyBorder · summarizeTableDishes — pure, stateless</pre>
+
+  <h3>Never ported — dead or duplicated in the reference's own audit</h3>
+  <ul class="plain">
+    <li><span class="dead">useOverviewWS</span> + <span class="dead">OrdersWSContext</span> — the second
+      realtime channel; folded into the single <code>useAdminStream</code> SSE hook (§04, §09).</li>
+    <li><span class="dead">checkedTableIds / onToggleCheck props on TableList</span> — declared, passed,
+      never destructured (defect D4). Our <code>checkedTableIds</code> is a real page-owned set.</li>
+    <li><span class="dead">TABLE_ACTIVE</span> — a byte-identical duplicate of <code>ACTIVE</code>;
+      one set only.</li>
+    <li><span class="dead">order_updated / order_completed handlers</span> — switch cases for events the
+      BE never publishes (defect D2).</li>
+  </ul>
+</section>
+
+<section id="state">
+  <div class="sec-head"><span class="sec-num">03</span><h2>State ownership (§4.2) — instance of FE_STATE §1, no new kinds</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>Data</th><th>Kind</th><th>Owner</th></tr>
+    <tr><td>live orders</td><td>server</td><td>TanStack Query <code>['orders','live']</code>, <code>staleTime</code> 15 s — <b>the shared realtime bus</b></td></tr>
+    <tr><td>tables</td><td>server</td><td>TanStack Query <code>['tables']</code>, <code>staleTime</code> 60 s</td></tr>
+    <tr><td>today's history (paid + cancelled)</td><td>server</td><td><code>['orders','history']</code>, 30 s, <b><code>enabled: accordionOpen</code></b> — lazy</td></tr>
+    <tr><td>stream connected?</td><td>session</td><td><code>useAdminStream</code> flag → ConnectionBanner + Live dot</td></tr>
+    <tr><td><code>loadingIds</code> (orders mid-PATCH)</td><td>local</td><td><code>page.tsx</code> useState → props down (disable buttons)</td></tr>
+    <tr><td><code>kiemTraIds</code> (order ids)</td><td>local</td><td><code>page.tsx</code> → zone C PrepPanel + Tổng-món Δ</td></tr>
+    <tr><td><code>checkedTableIds</code> (table ids)</td><td>local</td><td><code>page.tsx</code> → per-table "đã kiểm" mark</td></tr>
+    <tr><td><code>prepPreviewIds</code> (order ids)</td><td>local</td><td><code>page.tsx</code> → zone D4 amber ⊕ column</td></tr>
+    <tr><td><code>searchQuery</code> · <code>viewMode</code> · <code>popupOrder</code> · <code>now</code></td><td>local</td><td><code>page.tsx</code> useState</td></tr>
+  </table></div>
+
+  <div class="golden">
+    <p><b>No Zustand, no Redux, no context on this page.</b> Server-state (3 queries) +
+    <code>page.tsx</code> useState + one SSE hook is the whole model. <code>page.tsx</code> is the
+    single bridge: it owns every query, derives the filtered arrays, and passes them <b>down as
+    props</b>; writes flow <b>up</b> through <code>onAction</code> callbacks. Zero peer-to-peer
+    widget state.</p>
+    <p>Contrast the customer menu, which needs two Zustand stores — because there the cart is
+    client-owned state with no server twin. Here <em>every</em> fact on screen is server state or a
+    pure derivation of it, so Zustand would be copying Query data into a store (FE rule 1's "never").</p>
+  </div>
+
+  <h3>Three independent selection sets — do not confuse them</h3>
+  <pre class="diagram">
+kiemTraIds      Set&lt;order id&gt;   toggled by 🔍 in WaitingSection
+                                → drives zone C PrepPanel + the +Δ preview in Tổng món
+
+checkedTableIds Set&lt;table id&gt;   toggled in OrderDetail
+                                → per-table "đã kiểm" mark
+
+prepPreviewIds  Set&lt;order id&gt;   toggled by the «Chờ xác nhận» badge
+                                → drives the amber ⊕ SL thêm column in zone D4</pre>
+
+  <h3>Realtime propagation — ONE path, not two</h3>
+  <pre class="diagram">
+GET /sse/admin  (cookie JWT · AtLeast manager)  ──→  useAdminStream
+   new_order            → GET /orders/:id → prepend to ['orders','live'] + setPopupOrder
+   order_status_changed → patch, or DROP when the new status leaves ACTIVE
+   item_progress        → patch item.qty_served (the "Còn lại" column counts down live)
+   order_cancelled      → drop from ['orders','live']
+   payment_success      → drop from ['orders','live']
+
+the reference ran TWO channels: an SSE doorbell (manager, Bearer header) AND
+a WS board (?token=, NO role gate — any customer JWT connected). Collapsed to
+one cookie-JWT SSE stream: the SEC hole and the 2 dead switch cases both vanish.</pre>
+
+  <h3>Write path — optimistic <em>with</em> rollback (the reference had none)</h3>
+  <pre class="diagram">
+handleAction(id, next)
+  ① add id → loadingIds            (buttons disable, row shows '…')
+  ② await PATCH /orders/:id/status
+       success → setQueryData patch, reconciled by the RETURNED order object
+       error   → ROLLBACK the optimistic patch + toast the SPECIFIC ApiError.message
+  ③ finally → remove id from loadingIds
+
+reference: optimistic write, NO rollback — it leaned on the 15 s refetch, so a
+rejected transition flashed the wrong status on the board. We roll back — and
+buttons offer only VALID next transitions, so the reject path is unreachable
+in normal use anyway (§06 · B3).</pre>
+
+  <h3>Cross-page: the durable handoff is the DB row, not the browser</h3>
+  <ul class="plain">
+    <li><b>Nothing persists locally.</b> No <code>localStorage</code>, no persisted store, no URL id —
+      the page is an always-on dashboard, not a wizard. All three caches are memory-only and die on
+      F5, rebuilt from <code>GET /orders/live</code> + <code>GET /tables</code>.</li>
+    <li><b>The handoff is the order row.</b> <code>PATCH …/status</code> and <code>POST /payments</code>
+      write MySQL, then publish one delta to Redis, which fans out to every other surface —
+      <code>/staff/kds</code>, other overview tabs, and the customer's <code>/order/:id</code>.
+      Browser → BE → Redis → browser; never browser → browser.</li>
+    <li><b>Does not survive F5</b> (by design): <code>kiemTraIds</code>, <code>checkedTableIds</code>,
+      <code>prepPreviewIds</code>, <code>searchQuery</code>, <code>viewMode</code>, accordion open state.</li>
+  </ul>
+</section>
+
+<section id="be">
+  <div class="sec-head"><span class="sec-num">04</span><h2>BE contract — endpoints, schema, and why there is no cache map</h2></div>
+
+  <h3>Endpoints the page consumes (§3.1 — all under <code>/api/v1</code>)</h3>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Route</th><th>Auth</th><th>Phase</th><th>Behavior</th></tr>
+    <tr><td>1</td><td><code>GET /tables</code></td><td>staff (<code>AtLeast cashier</code>)</td><td><span class="t ad">AD</span></td>
+      <td><code>id, name, capacity, status, is_active, qr_token</code>; soft-delete filtered, <code>ORDER BY name</code>. Not cached.</td></tr>
+    <tr><td>2</td><td><code>GET /orders/live</code></td><td>staff (<code>AtLeast cashier</code>)</td><td><span class="t ad">AD</span></td>
+      <td>Active orders <code>status IN (pending,confirmed,preparing,ready,delivered)</code>, <code>ORDER BY created_at ASC</code>,
+      enriched with <code>items[]</code> + <code>table_name</code> in <b>one batched fetch — no N+1</b> (the reference did N+1 per order).
+      Feeds the shared bus <code>['orders','live']</code>.</td></tr>
+    <tr><td>3</td><td><code>GET /orders/history</code></td><td>staff (<code>AtLeast cashier</code>)</td><td><span class="t ad">AD</span></td>
+      <td><code>status IN (paid,cancelled) AND DATE(updated_at)=CURDATE()</code>, newest first. Returns <b><code>items: []</code>
+      deliberately</b> — the logs show totals only (§09).</td></tr>
+    <tr><td>4</td><td><code>GET /orders/:id</code></td><td>staff; customer restricted to own <code>table_id</code></td><td><span class="t ad">O</span></td>
+      <td>Full order + items with <b>derived</b> <code>item_status</code> (<code>pending/preparing/done</code> from
+      <code>qty_served</code> vs <code>quantity</code> — never stored). Fired on the <code>new_order</code> delta before the popup.</td></tr>
+    <tr><td>5</td><td><code>PATCH /orders/:id/status</code></td><td>staff (<code>AtLeast chef</code>)</td><td><span class="t r">R</span></td>
+      <td>Body <code>{status}</code>; validates the transition map below; writes in a tx; publishes <b>one</b> delta.
+      Invalid → <code>409 INVALID_STATUS_TRANSITION</code> with a <b>specific</b> message (the reference's generic toast hid the cause).
+      Returns the updated order.</td></tr>
+    <tr><td>6</td><td><code>POST /payments</code></td><td>staff (<code>AtLeast cashier</code>)</td><td><span class="t p">P</span></td>
+      <td>Body <code>{order_id, method}</code> <b>only — no <code>amount</code></b> (server reads <code>order.total_amount</code>).
+      Order must be <code>ready</code>/<code>delivered</code>. <code>cash</code>: synchronous complete → <code>MarkOrderPaid</code>
+      (<code>delivered → paid</code>) → publishes <code>payment_success</code>.</td></tr>
+    <tr><td>7</td><td><code>GET /sse/admin</code> <b>(SSE)</b></td><td><b>cookie JWT</b> + <code>AtLeast manager</code></td><td><span class="t r">R</span></td>
+      <td><b>The single realtime channel.</b> Emits every board delta — <code>new_order</code>,
+      <code>order_status_changed</code>, <code>item_progress</code>, <code>order_cancelled</code>,
+      <code>payment_success</code> — plus a 15 s keep-alive. Replaces the reference's SSE doorbell
+      <em>and</em> its ungated <code>WS /ws/orders-live?token=</code>.</td></tr>
+  </table></div>
+
+  <h3>The order state machine (§3.4) — the contract both sides validate against</h3>
+  <pre class="diagram">
+pending ──→ confirmed ──→ preparing ──→ ready ──→ delivered ──→ paid
+   │            │             │                                  (terminal)
+   └────────────┴─────────────┴──→ cancelled                     (terminal)
+
+cancel is valid from pending / confirmed / preparing ONLY.
+delivered → cancelled DOES NOT EXIST — the reference rendered a Huỷ button
+that called it anyway, so it 409'd every single time (defect D1, §07).
+We do not add the transition; we remove the button.</pre>
+
+  <div class="golden">
+    <p><b>There is no cache map — and that is the point.</b> Orders are <b>never cached</b>
+    (<code>BE_STATE.md §7</code>). Every read here hits MySQL directly; <b>Redis is pub/sub only</b>
+    on this page — the SSE fan-out bus, not a cache-aside store.</p>
+    <p>So the customer-menu plan's entire §3.3 invalidation table collapses to one rule. Freshness
+    comes from (a) the SSE push and (b) short <code>staleTime</code> safety-net polls — never from a
+    TTL'd blob that someone forgets to <code>DEL</code>.</p>
+  </div>
+
+  <h3>Schema this page depends on (columns canonical in <code>DB_SCHEMA.md</code>)</h3>
+  <div class="schema">
+    <div class="tbl"><div class="tname">tables</div>
+      <ul><li><b>name</b> · capacity</li><li><b>status</b> · is_active</li><li>qr_token</li></ul></div>
+    <div class="tbl"><div class="tname">orders</div>
+      <ul><li><b>order_number</b> · <b>status</b></li><li>source · table_id</li>
+      <li>customer_name</li><li><b>total_amount</b></li><li>created_at · updated_at</li></ul></div>
+    <div class="tbl"><div class="tname">order_items</div>
+      <ul><li><b>quantity</b> · <b>qty_served</b></li><li>combo_ref_id</li>
+      <li>toppings_snapshot</li><li><b>no status column</b></li><li>(item state is derived)</li></ul></div>
+    <div class="tbl"><div class="tname">payments</div>
+      <ul><li><b>order_id</b> · method</li><li><b>amount</b> (server-set)</li>
+      <li>status · paid_at</li></ul></div>
+  </div>
+  <p>No new columns invented here. The amount lives on the order (snapshotted at create) and on the
+  payment row — <b>never sent by the client</b>.</p>
+
+  <h3>Wire shapes (§3.5) — what each object looks like on the wire</h3>
+  <p>Contract shapes from the plan — spellings get <b>frozen by curl receipts</b> when the AD/R/P rows
+  build them (gate 8: <code>types.ts</code> written from receipts, never guessed). Success responses
+  are never wrapped; only errors ride the envelope.</p>
+  <pre class="diagram">
+GET /tables → 200
+[ { "id": "tb03…", "name": "Bàn 03", "capacity": 4, "status": "occupied",
+    "is_active": true, "qr_token": "qr_ab12…" } ]
+
+GET /orders/live → 200                     <span style="color:var(--muted)">items joined · table_name enriched · ONE batched fetch</span>
+[ { "id": "ord43…", "order_number": "BC-43", "status": "confirmed",
+    "source": "qr", "table_id": "tb03…", "table_name": "Bàn 03",
+    "customer_name": null, "total_amount": 70000,
+    "created_at": "2026-07-19T09:45:00Z", "updated_at": "2026-07-19T09:47:00Z",
+    "items": [
+      { "id": "oi1…", "name": "Bánh cuốn trứng", "quantity": 2, "qty_served": 0,
+        "combo_ref_id": null,
+        "toppings_snapshot": [ { "name": "Nhân thịt", "price": 0 } ] },
+      { "id": "oi2…", "name": "Trứng", "quantity": 1, "qty_served": 0,
+        "combo_ref_id": null, "toppings_snapshot": [] } ] } ]
+
+GET /orders/history → 200                  <span style="color:var(--muted)">logs — items ALWAYS empty, totals only (§09)</span>
+[ { "id": "ord41…", "order_number": "BC-41", "status": "paid",
+    "table_name": "Bàn 01", "total_amount": 120000,
+    "created_at": "…T04:30:00Z", "updated_at": "…T05:05:00Z",
+    "note": null, "items": [] } ]
+
+PATCH /orders/:id/status                   <span style="color:var(--muted)">→ 200 returns the UPDATED order (not a thin {id} — lesson 7)</span>
+{ "status": "confirmed" }
+
+POST /payments  (request)                  <span style="color:var(--muted)">no amount, ever — the server owns the charge</span>
+{ "order_id": "ord43…", "method": "cash" }
+
+POST /payments → 201                       <span style="color:var(--muted)">cash completes synchronously; gateway URLs are P-phase</span>
+{ "id": "pay1…", "pay_url": null, "qr_code_url": null }
+
+GET /sse/admin  (the ONE stream)           <span style="color:var(--muted)">cookie JWT · AtLeast manager · 15 s keep-alive</span>
+event: connected
+data: {}
+
+event: message
+data: { "type": "order_status_changed", "order_id": "ord43…", "status": "preparing" }
+
+event: message
+data: { "type": "item_progress", "order_id": "ord43…", "item_id": "oi1…",
+        "qty_served": 2, "quantity": 4 }
+
+any error, any endpoint                    <span style="color:var(--muted)">one envelope → client.ts throws ApiError{status,code,message,details}</span>
+{ "error": { "code": "INVALID_STATUS_TRANSITION",
+             "message": "Đơn đã giao chỉ có thể chuyển sang Đã thanh toán",
+             "details": [ { "field": "status",
+                            "issue": "delivered→cancelled not allowed" } ] } }</pre>
+  <p>The specific message is what lets the UI say <em>why</em> a transition failed — the reference
+  swallowed every failure into one generic "Không thể cập nhật trạng thái" toast (§07).</p>
+</section>
+
+<section id="dataflow">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Dataflow — the read board, the stream, the writes</h2></div>
+
+  <h3>Read path (no cache layer — MySQL direct)</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">browser</span><b>3 queries</b><br><span style="color:var(--muted);font-size:.76rem">live 15 s · tables 60 s<br>history lazy 30 s</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">edge</span><b>Caddy</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">api</span><b>Gin handlers</b><br><span style="color:var(--muted);font-size:.76rem">role-scoped, cookie JWT</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">service</span><b>no cache</b><br><span style="color:var(--muted);font-size:.76rem">orders are never cached</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">store</span><b>MySQL</b></div>
+  </div>
+
+  <h3>The stream — how the board stays live without polling</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">writer</span><b>KDS / this board</b><br><span style="color:var(--muted);font-size:.76rem">PATCH …/status</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">api</span><b>MySQL tx</b><br><span style="color:var(--muted);font-size:.76rem">UPDATE orders</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">bus</span><b>Redis pub/sub</b><br><span style="color:var(--muted);font-size:.76rem">one delta published</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">stream</span><b>GET /sse/admin</b><br><span style="color:var(--muted);font-size:.76rem">cookie JWT · manager</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">client</span><b>setQueryData</b><br><span style="color:var(--muted);font-size:.76rem">['orders','live'] patched</span></div>
+  </div>
+  <p>A chef's PATCH on <code>/staff/kds</code> repaints this board with <b>zero HTTP calls from this
+  page</b> — the delta arrives on the stream and mutates the cache in place. That is the whole point
+  of the design.</p>
+
+  <h3>Loading strategy (§4.3) — three tiers, never stacked</h3>
+  <pre class="diagram">
+Tier 1 · route      CSR page; all three queries default to [] so the board paints
+                    instantly with empty zones and fills in. loading.tsx renders a
+                    DASHBOARD-SHAPED skeleton (header + KPI row + table grid) —
+                    an upgrade over the reference's single centered /admin/* spinner.
+                    AuthGuard + RoleGuard(manager) resolve before the page mounts.
+
+Tier 2 · component  five named branches (below). staleTime 15 s on ['orders','live']
+                    is the SAFETY-NET poll — the SSE push is the primary freshness
+                    source, so the poll rarely does visible work. The 30 s `now` timer
+                    re-renders urgency borders with ZERO network. History is lazy:
+                    no fetch until an accordion opens (enabled: open); zones E and F
+                    share the key, so opening one warms the other.
+
+Tier 3 · mutation   status advance = OPTIMISTIC + ROLLBACK (§03);
+                    payment = PESSIMISTIC (FE rule 4) — modal confirm disables and
+                    shows "Đang xử lý…", never a full-page overlay; on error the
+                    modal stays open with the envelope message, order untouched.</pre>
+
+  <div class="table-wrap"><table>
+    <tr><th>Branch</th><th>When</th><th>UI</th></tr>
+    <tr><td>connecting</td><td>stream state <code>null</code>, queries pending</td><td>skeleton zones — <b>not</b> a blank window (the reference's AuthGuard returned <code>null</code>)</td></tr>
+    <tr><td>disconnected</td><td>stream state <code>false</code></td><td>sticky ConnectionBanner; board holds last data; backoff reconnect</td></tr>
+    <tr><td>new-order</td><td><code>popupOrder != null</code></td><td>NewOrderPopup overlay</td></tr>
+    <tr><td>empty</td><td>query ok, zone has no rows</td><td>per-zone empty copy ("Chưa có đơn hàng — quán đang yên tĩnh") — not a spinner</td></tr>
+    <tr><td>data</td><td>default</td><td>zones A–F</td></tr>
+  </table></div>
+</section>
+
+<section id="behaviors">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors spec (§4.4) — the AD / R / P acceptance criteria</h2></div>
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">B1</span><span class="bt">Board = a projection of one cache</span>
+      <p>Every zone reads the same filtered slice of <code>['orders','live']</code>; the SSE stream mutates
+      that cache via <code>setQueryData</code>. <b>No zone owns its own copy of an order.</b></p></div>
+    <div class="bcard"><span class="bn">B2</span><span class="bt">New-order doorbell</span>
+      <p>SSE <code>new_order</code> → <code>GET /orders/:id</code> → NewOrderPopup (order #, table, kitchen
+      items, total). <b>Xác nhận</b> PATCHes <code>pending → confirmed</code>; <b>Bỏ qua</b> writes nothing.</p></div>
+    <div class="bcard"><span class="bn">B3</span><span class="bt">Transition-validated buttons</span>
+      <p>Each row offers only the <b>valid</b> next status from the machine; cancel appears only on
+      <code>pending/confirmed/preparing</code> — <b>never a Huỷ on a delivered order</b> (D1 designed out).
+      Delivered rows offer only <em>Đã thanh toán 💰</em>.</p></div>
+    <div class="bcard"><span class="bn">B4</span><span class="bt">Search spans B + D</span>
+      <p>Client-side filter on <code>order_number</code> / id / <code>customer_name</code> / table name —
+      no debounce, no refetch. Header shows "N đơn · M bàn phù hợp".</p></div>
+    <div class="bcard"><span class="bn">B5</span><span class="bt">KPIs are derived</span>
+      <p>From orders with a real <code>table_id</code> + tables + <code>now</code>: <code>occupied/total</code>,
+      Σ pending, Σ preparing, and <code>urgent/warning</code> as a <b>ratio</b> (&gt;20′ / 10–20′), red when
+      urgent &gt; 0. <b>None stored.</b></p></div>
+    <div class="bcard"><span class="bn">B6</span><span class="bt">Zone B is pending-only</span>
+      <p>A confirmation queue, not a multi-status board (fixes D5). Urgency-bordered row, order #, elapsed,
+      remaining count, 🔍 Kiểm tra + one confirm button. <code>item_status</code> derives from
+      <code>qty_served</code>.</p></div>
+    <div class="bcard"><span class="bn">B7</span><span class="bt">Zone D composition</span>
+      <p>DishSummaryStrip (floor aggregate + <span style="color:var(--amber)">+Δ</span> from 🔍) →
+      ConfirmedPrepList (confirmed orders, <b>excl. canh/giò</b>, TỔNG row) → TableList/TableGrid toggle.
+      <b>Both views can pay and cancel</b> — the reference wired only the list.</p></div>
+    <div class="bcard"><span class="bn">B8</span><span class="bt">Zone C is conditional</span>
+      <p>PrepPanel renders <b>only</b> when <code>kiemTraIds.size &gt; 0</code>; aggregates remaining dishes of
+      🔍-marked pending orders. Canh (♨) pinned last with a có/không-rau breakdown.</p></div>
+    <div class="bcard"><span class="bn">B9</span><span class="bt">Cash payment gate</span>
+      <p>PaymentModal shows the total + two checkboxes ("Khách đã đưa tiền" + "Nhân viên đã nhận đủ");
+      confirm enabled <b>only when both</b> are ticked. Posts <code>{order_id, method:'cash'}</code> — no
+      amount. On 201: drop from live, invalidate history, table → <em>Trống</em>.</p></div>
+    <div class="bcard"><span class="bn">B10</span><span class="bt">Logs are lazy accordions</span>
+      <p>Zones E/F start collapsed; badge counts populate only after first open (<code>enabled: open</code>).
+      They share one query key, so opening one warms the other.</p></div>
+    <div class="bcard"><span class="bn">B11</span><span class="bt">Connection banner</span>
+      <p>Stream down → sticky red bar; the board holds its last data; auto-reconnect with backoff; the
+      Live dot goes grey. <b>Never a silent failure.</b></p></div>
+    <div class="bcard"><span class="bn">B12</span><span class="bt">Role-gated, one channel</span>
+      <p>Page is manager+; endpoints are role-scoped (FE rule 13); the realtime feed is a <b>single
+      cookie-JWT SSE stream</b> — no <code>?token=</code> WS, no second channel.</p></div>
+    <div class="bcard"><span class="bn">B13</span><span class="bt">Worked example everywhere</span>
+      <p>Docs, seeds and screenshots all use: floor <b>3 / 8 bàn</b> · <b>Bàn 03</b> · <b>#BC-43</b> ·
+      Bánh cuốn trứng ×2 + Trứng ×1 = <b>70.000 đ</b> · 3 món — fixing the reference's own numeric drift
+      across its wireframes.</p></div>
+  </div>
+</section>
+
+<section id="defects">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Reference defects designed out (§6)</h2></div>
+  <p>The reference's own audit graded this page <b>🔴 6 (4 distinct roots) · 🟡 16 · 🟢 ~30</b>.
+  Every 🔴 and the load-bearing 🟡s get a countermeasure here.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Ref finding</th><th>Our countermeasure</th></tr>
+    <tr><td>🔴 <b>D1</b> — <em>Huỷ</em> on delivered orders always <code>409</code>s
+      (<code>delivered→cancelled</code> is not in the machine); a generic toast hid the cause</td>
+      <td>Buttons offer only <b>valid</b> transitions (B3); no cancel past <code>preparing</code>;
+      <code>INVALID_STATUS_TRANSITION</code> carries a <b>specific</b> message</td></tr>
+    <tr><td>🔴 <b>D2</b> — two dead WS switch cases (<code>order_updated</code>,
+      <code>order_completed</code>) the BE never publishes</td>
+      <td>One SSE hook handling only the five real delta types (§03)</td></tr>
+    <tr><td>🔴 <b>D3</b> — phantom <code>amount</code> on <code>POST /payments</code>, silently ignored
+      by the BE, implying the client controls the charge</td>
+      <td><code>{order_id, method}</code> only; the server owns the charge (§04)</td></tr>
+    <tr><td>🔴 <b>D4</b> — dead <code>checkedTableIds</code> / <code>onToggleCheck</code> props:
+      declared, passed, never destructured</td>
+      <td>Props removed; <code>checkedTableIds</code> is a real page-owned set with a real mark</td></tr>
+    <tr><td>🔴 <b>D5</b> — Zone B documented as a multi-status queue with a Huỷ button the code
+      never rendered</td>
+      <td>Zone B is a <b>pending-only</b> queue; §01 and the mockup are drawn from behavior, not the stale doc</td></tr>
+    <tr><td>Two realtime channels; the WS <code>?token=</code> had <b>no role gate</b> — any parseable
+      JWT (incl. <code>customer</code>) connected</td>
+      <td>One cookie-JWT, manager-gated SSE stream — the SEC hole disappears structurally (§04 #7)</td></tr>
+    <tr><td>Optimistic status write with <b>no rollback</b> → a rejected transition flashed the wrong
+      status on the board</td>
+      <td>Optimistic <b>+ rollback</b>, reconciled by the returned order (§03)</td></tr>
+    <tr><td>N+1 enrichment on <code>GET /orders/live</code> (a separate query per order)</td>
+      <td>One batched fetch; called out in the AD-1 AC so it can't creep back (§09)</td></tr>
+    <tr><td><code>TABLE_ACTIVE</code> a byte-identical duplicate of <code>ACTIVE</code>;
+      <code>now</code> + several render branches undocumented</td>
+      <td>One <code>ACTIVE</code> set; all five branches named (§05)</td></tr>
+    <tr><td>TableGrid could not pay or cancel (only TableList was wired)</td>
+      <td>Both views wired (B7)</td></tr>
+    <tr><td>Zones E/F drawn as always-visible; Zone A's 4th card drawn as a single value</td>
+      <td>Accordions drawn collapsed (B10); the 4th card is a <code>urgent / warning</code> ratio (B5)</td></tr>
+  </table></div>
+</section>
+
+<section id="tasks">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Task mapping + build order (§5)</h2></div>
+  <p>Admin is <b>Session-0 deferred</b> (<code>OVERALL_PLAN.md</code> phase <b>AD</b>), so these are the
+  rows this plan seeds when the phase opens. The realtime and payment slices overlap the <b>R</b> and
+  <b>P</b> phases and <em>cross-link</em> there rather than duplicating.</p>
+  <div class="strip">
+    <span class="snode">AD-1 BE reads</span><span class="sarrow">→</span>
+    <span class="snode rph">R realtime + status</span><span class="sarrow">→</span>
+    <span class="snode pph">P payment (cash)</span><span class="sarrow">→</span>
+    <span class="snode">AD-2 FE shell</span><span class="sarrow">→</span>
+    <span class="snode">AD-3 FE order actions</span>
+  </div>
+  <div class="table-wrap"><table>
+    <tr><th>Future TASKS.md row</th><th>This plan's slice</th><th>Receipt type</th></tr>
+    <tr><td><span class="t ad">AD-1</span> BE reads</td>
+      <td>§04 #1–4: <code>GET /tables</code>, <code>/orders/live</code> (no N+1), <code>/orders/history</code>, <code>/orders/:id</code></td>
+      <td>curl transcripts + row counts</td></tr>
+    <tr><td><span class="t r">R</span> realtime</td>
+      <td>§04 #5 <code>PATCH …/status</code> + the transition map + #7 the <b>one</b> SSE channel (cookie JWT, manager)</td>
+      <td>curl: valid + 409 transition; SSE frame capture</td></tr>
+    <tr><td><span class="t p">P</span> payment (cash first)</td>
+      <td>§04 #6 <code>POST /payments</code> cash path → <code>MarkOrderPaid</code></td>
+      <td>curl: cash → paid; table freed</td></tr>
+    <tr><td><span class="t ad">AD-2</span> FE overview shell</td>
+      <td>§02 zones A/D/E/F + header/search/skeleton + <code>useAdminStream</code></td>
+      <td>screenshots (tablet viewport)</td></tr>
+    <tr><td><span class="t ad">AD-3</span> FE order actions</td>
+      <td>Zones B/C, OrderDetail, status buttons, PaymentModal, optimistic + rollback</td>
+      <td>screenshots + 2-client (KDS ↔ overview)</td></tr>
+  </table></div>
+  <p style="margin-top:12px"><b>Sizing:</b> each row keeps the 1-session / 1–2-file / 1-AC rule.
+  AD-2 is the biggest and may split (shell + zones / realtime wiring) at registration.</p>
+</section>
+
+<section id="decisions">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Decisions + flags (§7)</h2></div>
+
+  <div class="golden">
+    <p><b>✅ One SSE channel, cookie JWT, manager-gated</b> — supersedes the reference's SSE + WS split
+    and its ungated <code>?token=</code> WS. A dashboard only <em>receives</em> deltas, so a single
+    server→client SSE stream is the right primitive; WebSocket's bidirectionality was never used.</p>
+  </div>
+
+  <ul class="plain">
+    <li>✅ <b>Orders never cached; Redis is pub/sub only here</b> (<code>BE_STATE.md §7</code>) — there is
+      no cache-invalidation map to get wrong. The menu plan's §3.3 has no analog on this page.</li>
+    <li>✅ <b><code>items: []</code> on <code>GET /orders/history</code> kept</b> — the paid/cancel logs
+      show totals and timestamps only; fetching line items for a log nobody drills into is waste.
+      Drill-down uses <code>GET /orders/:id</code> on demand.</li>
+    <li>✅ <b>Optimistic status advance + rollback; pessimistic payment</b> (FE rule 4). Status advance is
+      high-frequency floor UX and deserves the snappy path; rollback + valid-only buttons make it safe.
+      Money is never optimistic.</li>
+    <li>✅ <b>Admin surface = neutral F-7 tokens</b> (<code>design-system.html</code>), <b>not</b> the
+      customer dark/orange shell — every visual in this folder is theme-aware.</li>
+  </ul>
+
+  <div class="flag">
+    <p><b>⚠️ FLAG — cash-payment phase.</b> v1 is COD (<code>OVERALL_PLAN.md</code> §Payment deferred), so
+    the <b>cash path</b> of <code>POST /payments</code> must land in the O/AD window even though gateways
+    are P-phase. This plan scopes cash only; <code>pay_url</code>/<code>qr_code_url</code> stay
+    <code>null</code> until P opens.</p>
+  </div>
+
+  <div class="flag">
+    <p><b>⚠️ FLAG — N+1 on the live list.</b> The reference enriched each order with its own query. Our
+    AD-1 AC requires <em>one batched fetch</em> — call it out at build time so it does not creep back in
+    under time pressure.</p>
+  </div>
+
+  <div class="flag">
+    <p><b>❓ CLARIFY — the cancel rule.</b> <code>OVERALL_PLAN.md §3.7</code> still carries the cancel rule
+    as an open question. This plan assumes cancel is valid from <code>pending/confirmed/preparing</code>
+    only (the reference machine). <b>Lock it in when the O phase opens.</b> If the house wants a
+    delivered-cancel (comp / void), that is a <em>new transition plus an audit reason</em> — not a silent
+    409 on a button nobody removed.</p>
+  </div>
+
+  <h3>Verify plan (§8 — per-task receipts → <code>harness/VERIFICATION.md</code>)</h3>
+  <ul class="plain">
+    <li><b>BE rows:</b> curl transcripts for #1–6 including a <b>valid</b> and a <b>rejected</b> status
+      transition (409 + the specific code), a cash payment → <code>paid</code> → freed table, and an SSE
+      frame capture proving the single channel emits all five delta types.</li>
+    <li><b>FE rows:</b> tablet-viewport screenshots per behavior B1–B13 — especially B3
+      (no Huỷ on delivered), B6 (pending-only Zone B), B9 (two-checkbox gate) — plus a 2-client
+      transcript showing a KDS PATCH updating this board <em>with no HTTP call from this page</em>.</li>
+    <li><b>This plan (F-17):</b> folder exists, MD complete, all three HTML companions render in both
+      themes — receipt row dated 2026-07-19.</li>
+  </ul>
+</section>
+
+<footer>
+  <p style="max-width:none">Written by <b>F-17</b> · 2026-07-19 · visual companion to
+  <a href="admin_overview_PLAN.md">admin_overview_PLAN.md</a> in this folder —
+  <b>the .md wins on any conflict</b> between the two. Digested from
+  <code>reference/docs/system/08_pages/admin/admin_overview/</code> (10 docs, 2 Explore agents),
+  reconciled with <code>OVERALL_PLAN.md</code> phases O/R/AD/P, <code>BE_STATE.md</code>,
+  <code>FE_STATE.md</code>, and the F-5 cookie-auth decision. Task status lives in
+  <a href="../../TASKS.md">TASKS.md</a>.</p>
+</footer>
+
+</div>
+</body>
+</html>

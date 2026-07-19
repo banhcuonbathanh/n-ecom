@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin overview — how it works at runtime (F-17)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4; --violet: #6B46C1; --violet-soft: #EDE7F8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E58278; --red-soft: #3A1D19; --violet: #B79CEC; --violet-soft: #241B3A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E58278; --red-soft: #3A1D19; --violet: #B79CEC; --violet-soft: #241B3A;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4; --violet: #6B46C1; --violet-soft: #EDE7F8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 0.92rem; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  .svg-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 16px 0; }
+  svg.seq { display: block; min-width: 680px; }
+  svg text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+  svg text.lbl { font-size: 10px; fill: var(--muted); }
+  svg text.actor { font-size: 11px; font-weight: 700; }
+  svg line.lane { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 3; }
+  svg rect.box { fill: var(--surface); stroke: var(--line); }
+  svg rect.hl { fill: var(--accent-soft); stroke: var(--accent); }
+  svg rect.warn { fill: var(--amber-soft); stroke: var(--amber); }
+  svg rect.err { fill: var(--red-soft); stroke: var(--red); }
+  svg rect.ok { fill: var(--done-soft); stroke: var(--done); }
+  svg path.a, svg line.a { stroke: var(--accent); stroke-width: 1.6; fill: none; }
+  svg path.g, svg line.g { stroke: var(--done); stroke-width: 1.6; fill: none; }
+  svg path.r, svg line.r { stroke: var(--red); stroke-width: 1.6; fill: none; }
+  svg path.m, svg line.m { stroke: var(--muted); stroke-width: 1.4; fill: none; stroke-dasharray: 4 3; }
+  svg path.v, svg line.v { stroke: var(--violet); stroke-width: 1.6; fill: none; }
+
+  .num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 700; margin-right: 6px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-19</div>
+  <h1>Admin overview — how it works at runtime</h1>
+  <p class="lede">Not <em>what we will build</em> (that is
+  <a href="admin_overview_plan.html">admin_overview_plan.html</a>) but <b>what happens when it runs</b>:
+  the board's first paint, a chef's status change repainting this screen with zero HTTP calls of its
+  own, what the SSE hook actually does to the cache, the write path through every layer including the
+  rejection rail, cash payment, and what happens when the stream drops.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-17</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_overview_PLAN.md">admin_overview_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">worked example</span><span class="v">Bàn 03 · #BC-43 · 70.000 đ · floor 3/8</span></div>
+    <div class="fact"><span class="k">owns</span><span class="v">nothing — re-draws the .md</span></div>
+  </div>
+  <div class="golden">
+    <p><b>The one sentence that explains this page:</b> the board is a <b>reactive projection of a
+    single TanStack Query cache entry</b> — <code>['orders','live']</code>. One SSE stream mutates that
+    entry; every zone reads a filtered slice of it. Understand that sentence and the rest is detail.</p>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#big">01 big picture</a>
+  <a href="#load">02 first load</a>
+  <a href="#live">03 the live update</a>
+  <a href="#hook">04 inside the stream hook</a>
+  <a href="#across">05 state across the app</a>
+  <a href="#write">06 the write path</a>
+  <a href="#pay">07 cash payment</a>
+  <a href="#drop">08 when the stream drops</a>
+</nav>
+
+<section id="big">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Big picture — the whole machine on one screen</h2></div>
+  <p>Four humans, four surfaces, one database, one message bus. The overview board is the manager's
+  window; the chef has his own; the guest has a third. <b>Nobody talks to anybody directly</b> — every
+  arrow between two browsers goes through the BE and Redis.</p>
+
+  <div class="svg-wrap">
+  <svg class="seq" viewBox="0 0 700 320" role="img" aria-label="System overview: four clients, Gin API, MySQL and Redis pub/sub">
+    <!-- clients -->
+    <rect class="hl"  x="12"  y="16" width="150" height="46" rx="7"/>
+    <text x="87" y="34" text-anchor="middle" class="actor">Manager</text>
+    <text x="87" y="50" text-anchor="middle" class="lbl">/admin/overview — THIS page</text>
+
+    <rect class="box" x="12" y="76" width="150" height="42" rx="7"/>
+    <text x="87" y="93" text-anchor="middle" class="actor">Chef</text>
+    <text x="87" y="108" text-anchor="middle" class="lbl">/staff/kds</text>
+
+    <rect class="box" x="12" y="132" width="150" height="42" rx="7"/>
+    <text x="87" y="149" text-anchor="middle" class="actor">Guest</text>
+    <text x="87" y="164" text-anchor="middle" class="lbl">/order/:id</text>
+
+    <rect class="box" x="12" y="188" width="150" height="42" rx="7"/>
+    <text x="87" y="205" text-anchor="middle" class="actor">Cashier</text>
+    <text x="87" y="220" text-anchor="middle" class="lbl">/pos</text>
+
+    <!-- api -->
+    <rect class="box" x="248" y="60" width="150" height="120" rx="7"/>
+    <text x="323" y="86" text-anchor="middle" class="actor">Gin API</text>
+    <text x="323" y="104" text-anchor="middle" class="lbl">/api/v1 · cookie JWT</text>
+    <text x="323" y="120" text-anchor="middle" class="lbl">role-scoped handlers</text>
+    <text x="323" y="140" text-anchor="middle" class="lbl">services own the tx</text>
+    <text x="323" y="160" text-anchor="middle" class="lbl">publish 1 delta / write</text>
+
+    <!-- mysql -->
+    <rect class="ok" x="480" y="36" width="128" height="56" rx="7"/>
+    <text x="544" y="60" text-anchor="middle" class="actor">MySQL</text>
+    <text x="544" y="77" text-anchor="middle" class="lbl">the only truth</text>
+
+    <!-- redis -->
+    <rect class="warn" x="480" y="118" width="128" height="66" rx="7"/>
+    <text x="544" y="141" text-anchor="middle" class="actor">Redis</text>
+    <text x="544" y="158" text-anchor="middle" class="lbl">pub/sub ONLY here</text>
+    <text x="544" y="174" text-anchor="middle" class="lbl">(no cache on this page)</text>
+
+    <!-- arrows in -->
+    <path class="a" d="M162 39 H205 V110 H246" marker-end="url(#ma)"/>
+    <path class="m" d="M162 97 H246" marker-end="url(#mm)"/>
+    <path class="m" d="M162 153 H205 V130 H246" marker-end="url(#mm)"/>
+    <path class="m" d="M162 209 H205 V150 H246" marker-end="url(#mm)"/>
+
+    <path class="g" d="M398 100 H440 V64 H478" marker-end="url(#mg)"/>
+    <path class="v" d="M398 140 H440 V151 H478" marker-end="url(#mv)"/>
+
+    <!-- fan-out back -->
+    <path class="v" d="M544 184 V250 H205 V62" marker-end="url(#mv)"/>
+    <text x="330" y="245" class="lbl">fan-out: one delta → every open board (SSE)</text>
+
+    <text x="205" y="278" class="lbl">Manager writes ─── Gin ─── MySQL, then Redis publishes; every other surface hears it.</text>
+    <text x="205" y="296" class="lbl">Browser → BE → Redis → browser. There is never a browser → browser arrow.</text>
+
+    <defs>
+      <marker id="ma" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--accent)"/></marker>
+      <marker id="mm" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--muted)"/></marker>
+      <marker id="mg" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--done)"/></marker>
+      <marker id="mv" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--violet)"/></marker>
+      <marker id="mr" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--red)"/></marker>
+    </defs>
+  </svg>
+  </div>
+
+  <h3>Traffic kinds on this page — only three</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Kind</th><th>What</th><th>How often</th></tr>
+    <tr><td><b>Reads</b></td><td><code>GET /tables</code> · <code>/orders/live</code> · <code>/orders/history</code> (lazy)</td>
+      <td>on mount, then a 15 s/60 s safety-net poll; history only on accordion open</td></tr>
+    <tr><td><b>The stream</b></td><td><code>GET /sse/admin</code> — one long-lived connection</td>
+      <td>continuous; a delta per write anywhere in the restaurant</td></tr>
+    <tr><td><b>Writes</b></td><td><code>PATCH /orders/:id/status</code> · <code>POST /payments</code></td>
+      <td>only on a manager click</td></tr>
+  </table></div>
+</section>
+
+<section id="load">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — from URL to a painted board</h2></div>
+  <p>This is a <b>CSR</b> page (unlike the customer menu's RSC prefetch): there is no SEO reason to
+  server-render a staff dashboard behind an auth gate, and the data is realtime anyway. Everything
+  hinges on the three queries defaulting to <code>[]</code> so the shell paints immediately.</p>
+
+  <div class="svg-wrap">
+  <svg class="seq" viewBox="0 0 700 330" role="img" aria-label="First load sequence across browser, guards, page, API">
+    <text x="70"  y="18" text-anchor="middle" class="actor">Browser</text>
+    <text x="215" y="18" text-anchor="middle" class="actor">Auth/Role guard</text>
+    <text x="370" y="18" text-anchor="middle" class="actor">page.tsx</text>
+    <text x="530" y="18" text-anchor="middle" class="actor">Gin API</text>
+    <text x="650" y="18" text-anchor="middle" class="actor">MySQL</text>
+    <line class="lane" x1="70"  y1="26" x2="70"  y2="310"/>
+    <line class="lane" x1="215" y1="26" x2="215" y2="310"/>
+    <line class="lane" x1="370" y1="26" x2="370" y2="310"/>
+    <line class="lane" x1="530" y1="26" x2="530" y2="310"/>
+    <line class="lane" x1="650" y1="26" x2="650" y2="310"/>
+
+    <line class="a" x1="70" y1="46" x2="213" y2="46" marker-end="url(#ma2)"/>
+    <text x="78" y="41" class="lbl">navigate /admin → redirect /admin/overview</text>
+
+    <rect class="warn" x="150" y="58" width="132" height="30" rx="5"/>
+    <text x="216" y="70" text-anchor="middle" class="lbl">AuthGuard: cookie → getMe()</text>
+    <text x="216" y="83" text-anchor="middle" class="lbl">RoleGuard: manager+</text>
+
+    <line class="m" x1="215" y1="102" x2="70" y2="102" marker-end="url(#mm2)"/>
+    <text x="86" y="97" class="lbl">loading.tsx — DASHBOARD-SHAPED skeleton (not a spinner)</text>
+
+    <line class="a" x1="215" y1="124" x2="368" y2="124" marker-end="url(#ma2)"/>
+    <text x="224" y="119" class="lbl">gate passed → mount</text>
+
+    <rect class="hl" x="300" y="136" width="142" height="30" rx="5"/>
+    <text x="371" y="148" text-anchor="middle" class="lbl">3 queries default to []</text>
+    <text x="371" y="161" text-anchor="middle" class="lbl">board paints EMPTY, instantly</text>
+
+    <line class="a" x1="370" y1="184" x2="528" y2="184" marker-end="url(#ma2)"/>
+    <text x="378" y="179" class="lbl">GET /tables · GET /orders/live  (parallel)</text>
+    <line class="g" x1="530" y1="204" x2="648" y2="204" marker-end="url(#mg2)"/>
+    <text x="538" y="199" class="lbl">1 batched query — NO N+1</text>
+    <line class="g" x1="648" y1="222" x2="372" y2="222" marker-end="url(#mg2)"/>
+    <text x="392" y="217" class="lbl">rows → zones A/B/D snap in (&lt; 200 ms)</text>
+
+    <line class="v" x1="370" y1="248" x2="528" y2="248" marker-end="url(#mv2)"/>
+    <text x="378" y="243" class="lbl">GET /sse/admin — cookie JWT, manager (opens, stays open)</text>
+    <line class="v" x1="528" y1="266" x2="372" y2="266" marker-end="url(#mv2)"/>
+    <text x="392" y="261" class="lbl">event: connected → Live dot goes green</text>
+
+    <rect class="box" x="300" y="280" width="142" height="26" rx="5"/>
+    <text x="371" y="297" text-anchor="middle" class="lbl">30 s `now` timer starts</text>
+
+    <defs>
+      <marker id="ma2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--accent)"/></marker>
+      <marker id="mm2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--muted)"/></marker>
+      <marker id="mg2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--done)"/></marker>
+      <marker id="mv2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--violet)"/></marker>
+    </defs>
+  </svg>
+  </div>
+
+  <h3>What is deliberately <em>not</em> fetched on mount</h3>
+  <ul class="plain">
+    <li><code>['orders','history']</code> — <code>enabled: accordionOpen</code>. Zones E and F stay
+      collapsed and cost <b>zero</b> bytes until a manager actually opens one. They share the key, so
+      opening Paid also warms Cancel.</li>
+    <li>Order line items for the logs — <code>GET /orders/history</code> returns <code>items: []</code>
+      by design; drill-down is a separate <code>GET /orders/:id</code>.</li>
+  </ul>
+
+  <div class="golden">
+    <p><b>The upgrade over the reference.</b> The old system had a single centered spinner at
+    <code>/admin/loading.tsx</code> covering every <code>/admin/*</code> route, an
+    <code>AuthGuard</code> that returned <code>null</code> (a genuinely blank window on hard reload),
+    and StatCards that snapped from <code>0</code> with no skeleton. We render a
+    <b>layout-mirroring skeleton</b> so the board's shape is on screen before its numbers are.</p>
+  </div>
+</section>
+
+<section id="live">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The live update — a chef's click repaints this board</h2></div>
+  <p>This is the sequence that justifies the whole architecture. The chef advances an order on a
+  different device, in a different app, and the manager's board updates — <b>with no HTTP request
+  originating from the manager's page at all</b>.</p>
+
+  <div class="svg-wrap">
+  <svg class="seq" viewBox="0 0 700 300" role="img" aria-label="Chef status change propagating to the manager board via Redis and SSE">
+    <text x="66"  y="18" text-anchor="middle" class="actor">Chef /kds</text>
+    <text x="216" y="18" text-anchor="middle" class="actor">Gin API</text>
+    <text x="360" y="18" text-anchor="middle" class="actor">MySQL</text>
+    <text x="490" y="18" text-anchor="middle" class="actor">Redis</text>
+    <text x="632" y="18" text-anchor="middle" class="actor">Manager board</text>
+    <line class="lane" x1="66"  y1="26" x2="66"  y2="284"/>
+    <line class="lane" x1="216" y1="26" x2="216" y2="284"/>
+    <line class="lane" x1="360" y1="26" x2="360" y2="284"/>
+    <line class="lane" x1="490" y1="26" x2="490" y2="284"/>
+    <line class="lane" x1="632" y1="26" x2="632" y2="284"/>
+
+    <line class="a" x1="66" y1="52" x2="214" y2="52" marker-end="url(#ma3)"/>
+    <text x="74" y="47" class="lbl">PATCH /orders/ord43/status {"status":"preparing"}</text>
+
+    <rect class="warn" x="158" y="64" width="118" height="30" rx="5"/>
+    <text x="217" y="76" text-anchor="middle" class="lbl">validTransitions check</text>
+    <text x="217" y="89" text-anchor="middle" class="lbl">confirmed→preparing ✓</text>
+
+    <line class="g" x1="216" y1="112" x2="358" y2="112" marker-end="url(#mg3)"/>
+    <text x="224" y="107" class="lbl">UPDATE orders SET status (in tx)</text>
+
+    <line class="v" x1="216" y1="140" x2="488" y2="140" marker-end="url(#mv3)"/>
+    <text x="240" y="135" class="lbl">PUBLISH one delta {type:"order_status_changed", order_id, status}</text>
+
+    <line class="v" x1="490" y1="168" x2="630" y2="168" marker-end="url(#mv3)"/>
+    <text x="498" y="163" class="lbl">SSE frame</text>
+
+    <rect class="hl" x="558" y="182" width="136" height="44" rx="5"/>
+    <text x="626" y="196" text-anchor="middle" class="lbl">useAdminStream:</text>
+    <text x="626" y="209" text-anchor="middle" class="lbl">setQueryData(['orders','live'])</text>
+    <text x="626" y="222" text-anchor="middle" class="lbl">patch that one order</text>
+
+    <rect class="ok" x="558" y="238" width="136" height="34" rx="5"/>
+    <text x="626" y="252" text-anchor="middle" class="lbl">zones A/B/D re-render</text>
+    <text x="626" y="265" text-anchor="middle" class="lbl">0 HTTP calls from this page</text>
+
+    <line class="m" x1="216" y1="196" x2="68" y2="196" marker-end="url(#mm3)"/>
+    <text x="86" y="191" class="lbl">200 + updated order</text>
+
+    <defs>
+      <marker id="ma3" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--accent)"/></marker>
+      <marker id="mm3" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--muted)"/></marker>
+      <marker id="mg3" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--done)"/></marker>
+      <marker id="mv3" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--violet)"/></marker>
+    </defs>
+  </svg>
+  </div>
+
+  <h3>The five delta types and what each does to the cache</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Delta</th><th>Effect on <code>['orders','live']</code></th><th>Visible result</th></tr>
+    <tr><td><code>new_order</code></td><td>fetch <code>GET /orders/:id</code>, <b>prepend</b> (dedup by id)</td><td>row appears in Zone B + NewOrderPopup opens</td></tr>
+    <tr><td><code>order_status_changed</code></td><td><b>patch</b> the order; <b>drop</b> it if the new status leaves ACTIVE</td><td>badge changes, or the row leaves the board</td></tr>
+    <tr><td><code>item_progress</code></td><td>patch <code>item.qty_served</code></td><td>the "Còn lại" column counts down live</td></tr>
+    <tr><td><code>order_cancelled</code></td><td>drop from the array</td><td>row vanishes; reappears in Zone F on next open</td></tr>
+    <tr><td><code>payment_success</code></td><td>drop from the array</td><td>table flips to <em>Trống</em>; Zone E gets a row</td></tr>
+  </table></div>
+
+  <div class="flag">
+    <p><b>Why this list is exactly five.</b> The reference's WS hook also had
+    <code>case 'order_updated'</code> and <code>case 'order_completed'</code> — live
+    <code>switch</code> branches for events <b>the backend never published</b> (defect D2). Dead
+    branches are worse than missing ones: they read like working features. Our hook handles the five
+    types the BE actually emits, and a delta type the hook does not know is logged, not silently
+    swallowed.</p>
+  </div>
+</section>
+
+<section id="hook">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Inside the stream hook — how SSE + setQueryData actually work</h2></div>
+  <p>If you have not wired a server-push cache before, this is the mechanism. It is much simpler than
+  it looks, and it is the same shape as Zustand's <code>set()</code>: <b>an external event writes to a
+  store, and everything subscribed to the changed slice re-renders.</b></p>
+
+  <h3>Server-Sent Events in one paragraph</h3>
+  <p>SSE is a plain HTTP <code>GET</code> that never finishes. The server holds the connection open
+  and writes text frames (<code>event: …</code> / <code>data: …</code>) whenever it has something to
+  say; the browser's built-in <code>EventSource</code> parses them and fires an <code>onmessage</code>
+  handler. It is <b>one-directional (server → client)</b>, it rides ordinary HTTP so cookies and
+  role middleware "just work", and the browser <b>reconnects automatically</b> when it drops. That
+  one-directionality is exactly right here: this board only ever <em>receives</em> deltas — it sends
+  its writes over normal <code>PATCH</code>/<code>POST</code> calls.</p>
+
+  <div class="svg-wrap">
+  <svg class="seq" viewBox="0 0 700 260" role="img" aria-label="Anatomy of the stream hook and the query cache">
+    <rect class="warn" x="14" y="36" width="176" height="94" rx="7"/>
+    <text x="102" y="56" text-anchor="middle" class="actor">EventSource</text>
+    <text x="102" y="74" text-anchor="middle" class="lbl">GET /sse/admin</text>
+    <text x="102" y="90" text-anchor="middle" class="lbl">cookie sent automatically</text>
+    <text x="102" y="106" text-anchor="middle" class="lbl">onmessage(frame)</text>
+    <text x="102" y="122" text-anchor="middle" class="lbl">auto-reconnect on drop</text>
+
+    <rect class="hl" x="248" y="24" width="196" height="128" rx="7"/>
+    <text x="346" y="44" text-anchor="middle" class="actor">useAdminStream</text>
+    <text x="346" y="64" text-anchor="middle" class="lbl">switch (frame.type) — 5 cases</text>
+    <text x="346" y="82" text-anchor="middle" class="lbl">queryClient.setQueryData(</text>
+    <text x="346" y="98" text-anchor="middle" class="lbl">  ['orders','live'],</text>
+    <text x="346" y="114" text-anchor="middle" class="lbl">  prev =&gt; patched(prev) )</text>
+    <text x="346" y="136" text-anchor="middle" class="lbl">returns: connected boolean</text>
+
+    <rect class="ok" x="500" y="24" width="188" height="70" rx="7"/>
+    <text x="594" y="44" text-anchor="middle" class="actor">Query cache</text>
+    <text x="594" y="62" text-anchor="middle" class="lbl">['orders','live'] = Order[]</text>
+    <text x="594" y="79" text-anchor="middle" class="lbl">ONE entry — the shared bus</text>
+
+    <rect class="box" x="500" y="110" width="188" height="76" rx="7"/>
+    <text x="594" y="130" text-anchor="middle" class="actor">Subscribed zones</text>
+    <text x="594" y="147" text-anchor="middle" class="lbl">A KPIs · B queue · D tables</text>
+    <text x="594" y="163" text-anchor="middle" class="lbl">re-render only if their</text>
+    <text x="594" y="179" text-anchor="middle" class="lbl">derived slice actually changed</text>
+
+    <line class="a" x1="192" y1="84" x2="246" y2="84" marker-end="url(#ma4)"/>
+    <line class="a" x1="446" y1="70" x2="498" y2="70" marker-end="url(#ma4)"/>
+    <line class="g" x1="594" y1="96" x2="594" y2="108" marker-end="url(#mg4)"/>
+
+    <text x="20" y="176" class="lbl">① frame arrives</text>
+    <text x="200" y="176" class="lbl">② hook patches the cache immutably</text>
+    <text x="470" y="204" class="lbl">③ TanStack notifies subscribers</text>
+    <text x="20" y="200" class="lbl">The hook is the ONLY writer of the cache besides the fetch itself and handleAction.</text>
+    <text x="20" y="222" class="lbl">page.tsx derives filteredOrders / filteredTables from it and passes them DOWN as props.</text>
+    <text x="20" y="244" class="lbl">No zone subscribes to the cache directly — one bridge, one direction.</text>
+
+    <defs>
+      <marker id="ma4" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--accent)"/></marker>
+      <marker id="mg4" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--done)"/></marker>
+    </defs>
+  </svg>
+  </div>
+
+  <h3>Why <code>setQueryData</code> and not <code>invalidateQueries</code></h3>
+  <pre class="diagram">
+invalidateQueries(['orders','live'])     setQueryData(['orders','live'], patch)
+  → marks stale                            → writes the new array straight in
+  → triggers a REFETCH                     → NO network call
+  → full list over the wire, every delta   → O(1) patch of one order
+  → on a busy floor: a request per event   → the board scales with the restaurant
+
+We use setQueryData for all five deltas. invalidateQueries is used exactly ONCE,
+and correctly: after a successful payment, to refresh ['orders','history'] —
+a list we do not have a delta for and rarely read.</pre>
+
+  <div class="golden">
+    <p><b>The mental model.</b> <code>['orders','live']</code> is a little in-memory database of the
+    restaurant's current state. The SSE hook is a replication log applying deltas to it. The zones are
+    views over it. Once you see it that way, every question ("where does this number come from?",
+    "why did that row vanish?") has one place to look.</p>
+  </div>
+</section>
+
+<section id="across">
+  <div class="sec-head"><span class="sec-num">05</span><h2>State across components and pages</h2></div>
+
+  <h3>Inside the page — one bridge, props down, callbacks up</h3>
+  <pre class="diagram">
+                     ┌──────────── page.tsx ────────────┐
+  3 useQuery ───────→│ owns every query + every useState │
+  useAdminStream ───→│ derives filteredOrders/Tables/Map │
+                     └───┬───────────┬───────────┬───────┘
+             props down  │           │           │   ↑ onAction callbacks up
+                  ┌──────┘     ┌─────┘     ┌─────┘    │
+              StatCards   WaitingSection  TableList ──┘
+                (A)            (B)          (D3)
+
+  Zones NEVER read the cache directly and NEVER talk to each other.
+  There is no Zustand, no Redux, no context on this page — because every
+  fact on screen is server state or a pure derivation of it, and copying
+  Query data into a store is FE rule 1's "never".</pre>
+
+  <h3>Across pages — the durable handoff is the database row</h3>
+  <p>The customer menu persists a cart slice, an <code>activeOrderId</code>, an order cache. This page
+  persists <b>nothing</b>: no <code>localStorage</code>, no persisted store, no id in the URL. It is an
+  always-on dashboard, not a wizard. Everything in memory dies on F5 and is rebuilt from two GETs.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>Datum</th><th>Lives in</th><th>Survives F5</th><th>Survives a new device</th></tr>
+    <tr><td><code>['orders','live']</code> · <code>['tables']</code> · <code>['orders','history']</code></td><td>TanStack memory</td><td>❌ refetched</td><td>❌</td></tr>
+    <tr><td><code>kiemTraIds</code> · <code>checkedTableIds</code> · <code>prepPreviewIds</code></td><td><code>useState</code></td><td>❌ by design</td><td>❌</td></tr>
+    <tr><td><code>searchQuery</code> · <code>viewMode</code> · accordion open</td><td><code>useState</code></td><td>❌ by design</td><td>❌</td></tr>
+    <tr><td><b>order row + status</b></td><td>MySQL</td><td>✅</td><td>✅</td></tr>
+    <tr><td><b>payment row</b></td><td>MySQL</td><td>✅</td><td>✅</td></tr>
+    <tr><td>realtime deltas</td><td>Redis pub/sub</td><td>n/a — re-derived from the row</td><td>✅</td></tr>
+  </table></div>
+
+  <h3>The fan-out — one write, four surfaces</h3>
+  <pre class="diagram">
+manager confirms #BC-43  →  PATCH /orders/ord43/status
+                         →  MySQL UPDATE (tx)
+                         →  Redis PUBLISH one delta
+                              ├─→ /staff/kds          — the cook board re-columns
+                              ├─→ other overview tabs — patch ['orders','live']
+                              ├─→ /order/:id (guest)  — status badge + toast
+                              └─→ /tracking           — queue/floor re-render
+
+one write, one publish, four repaints. No surface polls for it.</pre>
+</section>
+
+<section id="write">
+  <div class="sec-head"><span class="sec-num">06</span><h2>The write path — a status advance through every layer</h2></div>
+  <p>The manager clicks <b>Xác nhận</b> on #BC-43. Two rails are drawn: the happy path (blue/green) and
+  the rejection path (red) that the reference got wrong.</p>
+
+  <div class="svg-wrap">
+  <svg class="seq" viewBox="0 0 700 350" role="img" aria-label="Status advance write path with success and rejection rails">
+    <text x="70"  y="18" text-anchor="middle" class="actor">Board UI</text>
+    <text x="222" y="18" text-anchor="middle" class="actor">handleAction</text>
+    <text x="382" y="18" text-anchor="middle" class="actor">Gin handler</text>
+    <text x="530" y="18" text-anchor="middle" class="actor">order service</text>
+    <text x="654" y="18" text-anchor="middle" class="actor">MySQL</text>
+    <line class="lane" x1="70"  y1="26" x2="70"  y2="336"/>
+    <line class="lane" x1="222" y1="26" x2="222" y2="336"/>
+    <line class="lane" x1="382" y1="26" x2="382" y2="336"/>
+    <line class="lane" x1="530" y1="26" x2="530" y2="336"/>
+    <line class="lane" x1="654" y1="26" x2="654" y2="336"/>
+
+    <line class="a" x1="70" y1="46" x2="220" y2="46" marker-end="url(#ma5)"/>
+    <text x="78" y="41" class="lbl">click "Xác nhận"</text>
+
+    <rect class="hl" x="164" y="58" width="118" height="30" rx="5"/>
+    <text x="223" y="70" text-anchor="middle" class="lbl">① loadingIds.add(id)</text>
+    <text x="223" y="83" text-anchor="middle" class="lbl">button disables, row '…'</text>
+
+    <line class="a" x1="222" y1="106" x2="380" y2="106" marker-end="url(#ma5)"/>
+    <text x="230" y="101" class="lbl">PATCH /orders/ord43/status {"status":"confirmed"}</text>
+
+    <rect class="box" x="330" y="118" width="104" height="28" rx="5"/>
+    <text x="382" y="130" text-anchor="middle" class="lbl">cookie JWT verify</text>
+    <text x="382" y="142" text-anchor="middle" class="lbl">AtLeast(chef)</text>
+
+    <line class="a" x1="382" y1="162" x2="528" y2="162" marker-end="url(#ma5)"/>
+    <text x="390" y="157" class="lbl">service owns the tx (BE_STATE)</text>
+
+    <rect class="warn" x="470" y="174" width="120" height="30" rx="5"/>
+    <text x="530" y="186" text-anchor="middle" class="lbl">validTransitions[from]</text>
+    <text x="530" y="199" text-anchor="middle" class="lbl">contains(to) ?</text>
+
+    <!-- happy -->
+    <line class="g" x1="530" y1="222" x2="652" y2="222" marker-end="url(#mg5)"/>
+    <text x="538" y="217" class="lbl">✓ UPDATE … SET status, updated_at</text>
+    <line class="g" x1="652" y1="242" x2="532" y2="242" marker-end="url(#mg5)"/>
+    <rect class="ok" x="470" y="252" width="120" height="28" rx="5"/>
+    <text x="530" y="264" text-anchor="middle" class="lbl">PUBLISH 1 delta</text>
+    <text x="530" y="276" text-anchor="middle" class="lbl">→ Redis</text>
+    <line class="g" x1="470" y1="296" x2="226" y2="296" marker-end="url(#mg5)"/>
+    <text x="250" y="291" class="lbl">200 + the UPDATED order → setQueryData patch (reconciled, not guessed)</text>
+
+    <!-- error -->
+    <line class="r" x1="530" y1="318" x2="226" y2="318" marker-end="url(#mr5)"/>
+    <text x="250" y="313" class="lbl">✗ 409 INVALID_STATUS_TRANSITION + SPECIFIC message → ROLLBACK patch + toast</text>
+
+    <text x="78" y="338" class="lbl">③ finally: loadingIds.delete(id)</text>
+
+    <defs>
+      <marker id="ma5" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--accent)"/></marker>
+      <marker id="mg5" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--done)"/></marker>
+      <marker id="mr5" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="var(--red)"/></marker>
+    </defs>
+  </svg>
+  </div>
+
+  <div class="flag">
+    <p><b>The reference's two mistakes on this exact path — both designed out.</b></p>
+    <p><b>1. The unreachable-by-design button.</b> The old UI rendered a red <em>Huỷ ✕</em> on
+    <code>delivered</code> rows. <code>delivered → cancelled</code> is not in the transition map, so
+    that button <b>409'd 100% of the time</b> — and the catch printed one generic toast ("Không thể
+    cập nhật trạng thái"), so nobody could tell a business rule from a network blip. It was flagged in
+    three separate reference docs and still shipped. <b>Ours:</b> the row offers only valid
+    transitions, so the button does not exist; and the error carries a specific message when a race
+    does produce a 409.</p>
+    <p><b>2. Optimism with no rollback.</b> The old <code>handleAction</code> applied the optimistic
+    patch and, on failure, did nothing but toast — leaning on the 15 s refetch to fix the board. So a
+    rejected transition <em>flashed the wrong status</em> for up to fifteen seconds. <b>Ours</b> rolls
+    the patch back in the catch block.</p>
+  </div>
+</section>
+
+<section id="pay">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Cash payment — the one place money moves</h2></div>
+  <p>Payment is the only <b>pessimistic</b> write on the page (FE rule 4: money is never optimistic).
+  It is also where the reference leaked a false impression of client authority.</p>
+
+  <pre class="diagram">
+manager clicks "Đã thanh toán 💰" on Bàn 03 / #BC-43
+  │
+  ├─ PaymentModal opens — total 70.000 đ
+  │    ☐ Khách đã đưa tiền          ← two independent human confirmations
+  │    ☐ Nhân viên đã nhận đủ tiền
+  │    [Xác nhận]  ← ENABLED ONLY WHEN BOTH ARE TICKED
+  │
+  ├─ POST /payments { "order_id": "ord43…", "method": "cash" }
+  │        ▲ NO amount field. Ever. The server reads order.total_amount.
+  │          (The reference sent amount: 42000 and the BE silently ignored it —
+  │           a phantom field implying the client sets the price. Defect D3.)
+  │
+  ├─ BE: order must be ready|delivered → insert payment (pending)
+  │      → completePayment() → status=completed, paid_at=NOW()
+  │      → MarkOrderPaid()   → orders.status: delivered → paid
+  │      → PUBLISH payment_success
+  │
+  └─ 201 { id, pay_url: null, qr_code_url: null }        ← cash completes inline
+       │
+       ├─ drop the order from ['orders','live']   → Bàn 03 flips to ● Trống
+       ├─ invalidateQueries(['orders','history']) → Zone E will show it on open
+       └─ toast "Đã thu tiền thành công"; modal closes
+
+  on error: modal STAYS OPEN with the envelope message, order untouched,
+            confirm re-enabled. Never a full-page overlay.</pre>
+
+  <div class="golden">
+    <p><b>Why the amount never crosses the wire.</b> It is the same rule as the customer menu's
+    order payload carrying no prices: <b>the server is the only authority on money.</b> A client-sent
+    amount is either ignored (confusing) or trusted (a vulnerability). The reference chose ignored;
+    we choose absent.</p>
+  </div>
+
+  <p><span class="chip amber">⚠️ flag</span>&nbsp; v1 is COD, so only the <code>cash</code> branch is
+  built now — <code>pay_url</code>/<code>qr_code_url</code> stay <code>null</code> until the P phase
+  wires gateways. See <code>admin_overview_PLAN.md §7</code>.</p>
+</section>
+
+<section id="drop">
+  <div class="sec-head"><span class="sec-num">08</span><h2>When the stream drops — degradation, not silence</h2></div>
+  <p>A restaurant's wifi is not a datacentre's. The design assumption is that the stream
+  <em>will</em> drop, and the board must degrade honestly rather than quietly showing stale numbers.</p>
+
+  <pre class="diagram">
+stream state   UI                                   data freshness
+────────────   ──────────────────────────────────   ─────────────────────────────
+null           skeleton zones (connecting)          queries may still be in flight
+(connecting)   NOT a blank window
+
+true           Live dot green, no banner            realtime — deltas apply instantly
+(open)
+
+false          sticky red ConnectionBanner:         the 15 s / 60 s staleTime polls
+(dropped)      "Mất kết nối thời gian thực —        are now the ONLY freshness source;
+               đang thử lại…"; Live dot grey;       the board is at most ~15 s stale
+               board KEEPS its last data            and it SAYS SO on screen
+
+reconnect      EventSource auto-reconnects with     on reopen, the next poll reconciles
+               exponential backoff (cap ~30 s)      any delta missed while down</pre>
+
+  <div class="golden">
+    <p><b>The two-layer safety net.</b> The SSE stream is the <em>primary</em> freshness source and the
+    short <code>staleTime</code> poll is the <em>backstop</em> — neither alone is trusted. If the
+    stream dies, the poll keeps the board within ~15 s of truth and the banner tells the manager to
+    treat it as degraded. If the poll is slow, the stream has already pushed the delta. The reference
+    had this poll too, but used it to paper over a missing rollback (§06) rather than as an explicit
+    fallback tier.</p>
+  </div>
+
+  <div class="flag">
+    <p><b>One gap we inherit and must close at build time.</b> The reference's SSE hook had <b>no
+    disconnect UI at all</b> — only the WS channel drove the banner. So when the doorbell channel
+    died, new orders silently stopped popping up and nothing on screen said so. Consolidating to one
+    stream (§04) makes this structurally impossible: there is a single connected flag, and it drives
+    both the banner and the Live dot. <b>The AD-2 AC must include a stream-down screenshot.</b></p>
+  </div>
+
+  <h3>What a hard refresh (F5) recovers</h3>
+  <pre class="diagram">
+F5 → AuthGuard re-verifies the cookie → RoleGuard(manager)
+   → GET /tables + GET /orders/live      ← full board state, rebuilt from the DB
+   → GET /sse/admin reopens              ← deltas resume
+   ✓ recovered: every order, status, table, total
+   ✗ lost (by design): 🔍 kiemTraIds, checkedTableIds, prepPreviewIds,
+                       searchQuery, viewMode, accordion open state
+
+Nothing important lives in the browser, so nothing important can be lost there.</pre>
+</section>
+
+<footer>
+  <p style="max-width:none">Written by <b>F-17</b> · 2026-07-19 · runtime companion to
+  <a href="admin_overview_PLAN.md">admin_overview_PLAN.md</a> — this page <b>owns nothing</b>; it
+  re-draws the plan's facts, and <b>the .md wins on any conflict</b>. See also
+  <a href="admin_overview_plan.html">admin_overview_plan.html</a> (the plan) and
+  <a href="admin_overview_mockup-1.html">admin_overview_mockup-1.html</a> (the UI). Task status lives
+  in <a href="../../TASKS.md">TASKS.md</a>.</p>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Staff — how it works</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3372B;
+    --red-soft: #F9E7E4;
+    --violet: #6D3BC7;
+    --violet-soft: #EFE8FB;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E8887C; --red-soft: #3A1B17; --violet: #B49AF0; --violet-soft: #2A1E44;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E8887C; --red-soft: #3A1B17; --violet: #B49AF0; --violet-soft: #2A1E44;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3372B; --red-soft: #F9E7E4; --violet: #6D3BC7; --violet-soft: #EFE8FB;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; overflow-x: hidden; }
+  .page { max-width: 980px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 76ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 68ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  section { margin-top: 60px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code { border: none; background: transparent; padding: 0; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 76ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* ---- header facts row ---- */
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 4px; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: 0.8rem; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.8rem; color: var(--ink); }
+
+  /* ---- actor chips: one color per system, used everywhere on this page ---- */
+  .actor { display: inline-block; font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 5px; padding: 2px 8px; white-space: nowrap; }
+  .actor.client { color: var(--accent); background: var(--accent-soft); }   /* manager's browser: components + Query cache */
+  .actor.rsc    { color: var(--violet); background: var(--violet-soft); }   /* Next.js server (RSC shell) */
+  .actor.api    { color: var(--amber); background: var(--amber-soft); }     /* Gin handlers + services */
+  .actor.redis  { color: var(--red); background: var(--red-soft); }         /* Redis */
+  .actor.db     { color: var(--done); background: var(--done-soft); }       /* MySQL */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; align-items: center; font-size: 0.8rem; color: var(--muted); }
+
+  /* ---- SVG diagrams (theme-aware via CSS vars only) ---- */
+  .svgwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 12px 10px 6px; margin: 14px 0; }
+  .svgwrap svg { display: block; min-width: 860px; width: 100%; height: auto; }
+  .cap { font-size: 0.8rem; color: var(--muted); margin: -6px 0 18px 4px; }
+  svg text { font-family: var(--mono); }
+  svg .t1 { font-size: 11px; fill: var(--ink); }
+  svg .t2 { font-size: 10.5px; fill: var(--muted); }
+  svg .tb { font-size: 12px; font-weight: 700; }
+  svg .tred { fill: var(--red); }  svg .tgreen { fill: var(--done); }
+  svg .tamber { fill: var(--amber); }  svg .taccent { fill: var(--accent); }  svg .tviolet { fill: var(--violet); }
+  svg .lifeline { stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 5; }
+  svg .call { stroke: var(--ink); stroke-width: 1.6; fill: none; }
+  svg .resp { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 6 4; fill: none; }
+  svg .err  { stroke: var(--red); stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+  svg .flowa { stroke: var(--accent); stroke-width: 2; fill: none; }
+  svg .flowo { stroke: var(--amber); stroke-width: 2; fill: none; }
+  svg .flowg { stroke: var(--done); stroke-width: 2; fill: none; }
+  svg .flowr { stroke: var(--red); stroke-width: 2; fill: none; }
+  svg .abox { fill: var(--surface); stroke: var(--line); stroke-width: 1.4; }
+  svg .abox.client { stroke: var(--accent); }
+  svg .abox.rsc { stroke: var(--violet); }
+  svg .abox.api { stroke: var(--amber); }
+  svg .abox.redis { stroke: var(--red); }
+  svg .abox.db { stroke: var(--done); }
+  svg .region { fill: var(--amber-soft); stroke: var(--amber); stroke-width: 1; stroke-dasharray: 5 4; opacity: 0.55; }
+  svg .txbox { fill: var(--done-soft); stroke: var(--done); stroke-width: 1.2; stroke-dasharray: 6 4; opacity: 0.5; }
+  svg .delbox { fill: var(--red-soft); stroke: var(--red); stroke-width: 1.3; }
+  svg .okbox { fill: var(--done-soft); stroke: var(--done); stroke-width: 1.3; }
+  svg .infbox { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.3; }
+
+  /* ---- numbered sequence steps ---- */
+  .seq { list-style: none; margin: 14px 0; padding: 0; display: flex; flex-direction: column; }
+  .seq li { position: relative; display: flex; gap: 12px; padding: 0 0 18px 0; }
+  .seq li::before { content: ""; position: absolute; left: 12px; top: 26px; bottom: 0; width: 2px; background: var(--line); }
+  .seq li:last-child::before { display: none; }
+  .seq .n { flex: none; width: 25px; height: 25px; margin-top: 1px; border-radius: 50%; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 0.74rem; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .seq .body { font-size: 0.9rem; max-width: 78ch; }
+  .seq .body .who { margin-right: 6px; }
+  .seq .body .note { display: block; color: var(--muted); font-size: 0.83rem; margin-top: 2px; }
+  .seq.alt .n { background: var(--red); color: var(--paper); }
+
+  /* ---- big-picture map ---- */
+  .map { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 16px 0; }
+  .zone { border: 1px dashed var(--line); border-radius: 12px; padding: 12px 14px; background: transparent; }
+  .zone > .zt { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .boxes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bx { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 11px; font-size: 0.8rem; min-width: 110px; }
+  .bx b { font-family: var(--mono); font-size: 0.76rem; display: block; }
+  .bx .d { color: var(--muted); font-size: 0.72rem; }
+  .bx.client { border-top: 3px solid var(--accent); }
+  .bx.rsc { border-top: 3px solid var(--violet); }
+  .bx.api { border-top: 3px solid var(--amber); }
+  .bx.redis { border-top: 3px solid var(--red); }
+  .bx.db { border-top: 3px solid var(--done); }
+  .down { text-align: center; font-family: var(--mono); color: var(--muted); font-size: 0.85rem; margin: -2px 0; }
+
+  /* ---- flow rows ---- */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  /* ---- lane cards ---- */
+  .lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
+  .lane { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 0.86rem; }
+  .lane .lt { font-family: var(--sans); font-weight: 600; margin-bottom: 4px; }
+  .lane .lp { font-family: var(--mono); font-size: 0.74rem; line-height: 1.7; }
+  .lane p { margin: 6px 0 0; font-size: 0.82rem; color: var(--muted); max-width: none; }
+  .lane.read { border-top: 3px solid var(--accent); }
+  .lane.cart { border-top: 3px solid var(--amber); }
+  .lane.write { border-top: 3px solid var(--done); }
+  .lane.risk { border-top: 3px solid var(--red); }
+
+  /* ---- hub cards ---- */
+  .hubwrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 16px 0; }
+  .hub { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .hub .hcore { border-radius: 8px; padding: 8px 12px; font-family: var(--mono); font-size: 0.8rem; font-weight: 700; text-align: center; margin-bottom: 10px; }
+  .hub.q .hcore { background: var(--accent-soft); color: var(--accent); }
+  .hub.z .hcore { background: var(--amber-soft); color: var(--amber); }
+  .hub.r .hcore { background: var(--red-soft); color: var(--red); }
+  .hub ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
+  .hub li { display: flex; gap: 8px; align-items: baseline; }
+  .hub li .arr { font-family: var(--mono); color: var(--muted); flex: none; }
+  .hub li code { font-size: 0.76rem; }
+  .hub .hnote { margin-top: 10px; font-size: 0.78rem; color: var(--muted); }
+
+  /* ---- decision flowchart (CSS) ---- */
+  .dflow { margin: 16px 0; }
+  .drow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .dq { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: 0.84rem; }
+  .dyes { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+  .dres { font-family: var(--mono); font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; white-space: nowrap; }
+  .dres.q { color: var(--accent); background: var(--accent-soft); }
+  .dres.u { color: var(--violet); background: var(--violet-soft); }
+  .dres.z { color: var(--amber); background: var(--amber-soft); }
+  .dres.g { color: var(--done); background: var(--done-soft); }
+  .dres.r { color: var(--red); background: var(--red-soft); }
+  .dno { margin: 3px 0 3px 26px; font-family: var(--mono); color: var(--muted); font-size: 0.7rem; }
+
+  /* ---- render-branch cards ---- */
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 16px 0; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 0.84rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.74rem; font-weight: 700; border-radius: 5px; padding: 2px 8px; display: inline-block; margin-bottom: 6px; }
+  .bcard.b1 { border-top: 3px solid var(--muted); }   .bcard.b1 .bn { color: var(--muted); background: var(--line); }
+  .bcard.b2 { border-top: 3px solid var(--red); }     .bcard.b2 .bn { color: var(--red); background: var(--red-soft); }
+  .bcard.b3 { border-top: 3px solid var(--violet); }  .bcard.b3 .bn { color: var(--violet); background: var(--violet-soft); }
+  .bcard.b4 { border-top: 3px solid var(--amber); }   .bcard.b4 .bn { color: var(--amber); background: var(--amber-soft); }
+  .bcard.b5 { border-top: 3px solid var(--done); }    .bcard.b5 .bn { color: var(--done); background: var(--done-soft); }
+  .bcard .cond { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: block; margin-bottom: 4px; }
+
+  .warn { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 18px 0; max-width: 76ch; font-size: 0.9rem; }
+  .warn b { color: var(--red); }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 18px 0; max-width: 76ch; font-size: 0.9rem; }
+  .flag b { color: var(--amber); }
+  ul.plain { margin: 0 0 14px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+
+  /* ---- timeline strip (section 06) ---- */
+  .tl { display: flex; flex-wrap: wrap; gap: 0; margin: 16px 0; }
+  .tlstep { flex: 1 1 150px; border: 1px solid var(--line); border-left-width: 4px; background: var(--surface); padding: 9px 12px; font-size: 0.8rem; }
+  .tlstep .tlt { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .tlstep b { display: block; font-size: 0.84rem; }
+  .tlstep.g { border-left-color: var(--done); }
+  .tlstep.a { border-left-color: var(--accent); }
+  .tlstep.o { border-left-color: var(--amber); }
+  .tlstep.r { border-left-color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- shared SVG arrowheads for every diagram below -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="mi" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--ink)"/></marker>
+  <marker id="mm" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--muted)"/></marker>
+  <marker id="mr" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--red)"/></marker>
+  <marker id="ma" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--accent)"/></marker>
+  <marker id="mo" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--amber)"/></marker>
+  <marker id="mg" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--done)"/></marker>
+</defs></svg>
+
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-19</div>
+  <h1>Admin Staff — how it works</h1>
+  <p class="lede">Not <em>what we will build</em> — <em>what actually happens when it runs</em>.
+  This page traces <code>/admin/staff</code> end to end: the four loading layers and five render
+  branches on first paint, what a keystroke costs now that filtering is server-side, the four guards
+  a <code>POST /staff</code> passes through in order, why <code>PATCH</code> needs three-way field
+  semantics, and — the part that outlives the page — how one deactivate click reaches MySQL, Redis
+  and <code>refresh_tokens</code>, then fans out to four downstream surfaces.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">route</span><span class="v">/admin/staff</span></div>
+    <div class="fact"><span class="k">gate</span><span class="v">staff JWT · role ≥ manager</span></div>
+    <div class="fact"><span class="k">endpoints</span><span class="v">6 · all manager+ (DELETE = admin)</span></div>
+    <div class="fact"><span class="k">transport</span><span class="v">REST only · no SSE/WS</span></div>
+    <div class="fact"><span class="k">client state</span><span class="v">TanStack + URL · no Zustand</span></div>
+    <div class="fact"><span class="k">mutations</span><span class="v">all pessimistic</span></div>
+  </div>
+  <div class="legend">
+    <span>Every step and every diagram uses one color per system:</span>
+    <span class="actor client">manager's browser</span>
+    <span class="actor rsc">next server (RSC)</span>
+    <span class="actor api">gin api</span>
+    <span class="actor redis">redis</span>
+    <span class="actor db">mysql</span>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#map">01 big picture</a>
+  <a href="#load">02 first load</a>
+  <a href="#filter">03 filter &amp; search at runtime</a>
+  <a href="#write">04 the write path</a>
+  <a href="#patch">05 PATCH semantics</a>
+  <a href="#fanout">06 side-effect fan-out</a>
+  <a href="#durability">07 durability &amp; failure modes</a>
+</nav>
+
+<!-- ================================================================ -->
+<section id="map">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Big picture — the whole machine on one screen</h2></div>
+
+  <p>One manager, one browser tab, six REST endpoints. There is <b>no realtime channel</b> —
+  no SSE, no WebSocket, no polling loop. Every downstream surface is pull-only (PLAN §4.5).
+  On the client there is <b>no Zustand slice and no localStorage</b>: nothing on this page is
+  cross-page client state (PLAN §4.2, FE_STATE rule 7). Only two things are durable, and both
+  live on the server: the <code>staff</code> MySQL row (single source of truth) and the
+  <code>auth:staff:&lt;id&gt;</code> Redis key the auth middleware reads on every authed request.</p>
+
+  <div class="map">
+    <div class="zone">
+      <div class="zt">manager's browser</div>
+      <div class="boxes">
+        <div class="bx client"><b>components</b><span class="d">StaffPageClient · header · stats bar · filter bar · table + row actions</span></div>
+        <div class="bx client"><b>TanStack cache — list key</b><span class="d"><code>['admin','staff','list',{filters}]</code> · rows + meta.counts</span></div>
+        <div class="bx client"><b>TanStack cache — detail key</b><span class="d"><code>['admin','staff','detail',id]</code> · staleTime 30s · enabled only while the drawer is open</span></div>
+        <div class="bx client"><b>URL searchParams</b><span class="d">search · role · is_active · page — the only "persisted" client state</span></div>
+        <div class="bx client"><b>local useState / RHF</b><span class="d">which overlay is open + its target id · form field values</span></div>
+      </div>
+    </div>
+    <div class="down">↓ REST only — <code>/api/v1/staff*</code> with the staff JWT · ↑ JSON envelopes · <b>no SSE · no WS</b></div>
+    <div class="zone">
+      <div class="zt">next.js server</div>
+      <div class="boxes">
+        <div class="bx rsc"><b>page.tsx (RSC shell)</b><span class="d">reads searchParams · prefetches the list · HydrationBoundary</span></div>
+        <div class="bx rsc"><b>loading.tsx</b><span class="d">table-shaped skeleton — route segment tier</span></div>
+        <div class="bx rsc"><b>shell role guard</b><span class="d">role &lt; manager never sees a flash of content</span></div>
+      </div>
+    </div>
+    <div class="down">↓</div>
+    <div class="zone">
+      <div class="zt">go / gin api — <code>/staff</code> group: authMW + AtLeast("manager"); DELETE nested under AtLeast("admin")</div>
+      <div class="boxes">
+        <div class="bx api"><b>handlers</b><span class="d">shape validation only — never business rules</span></div>
+        <div class="bx api"><b>services</b><span class="d">the four guards: valid role · hierarchy · username unique · last-admin / no-self-harm</span></div>
+        <div class="bx api"><b>sqlc queries</b><span class="d">generated — no hand-rolled SQL layer</span></div>
+      </div>
+    </div>
+    <div class="down">↓</div>
+    <div class="zone">
+      <div class="zt">durable server state</div>
+      <div class="boxes">
+        <div class="bx db"><b>staff (MySQL)</b><span class="d">SINGLE SOURCE OF TRUTH · every column read · password_hash never serialized</span></div>
+        <div class="bx db"><b>refresh_tokens (MySQL)</b><span class="d">write-only from this page — rows DELETEd on deactivate + delete</span></div>
+        <div class="bx redis"><b>auth:staff:&lt;id&gt; (Redis)</b><span class="d">read by auth middleware on every authed request · this page only ever <code>DEL</code>s it</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>The three traffic kinds, and what each costs</h3>
+  <div class="lanes">
+    <div class="lane read">
+      <div class="lt">Reads — always MySQL</div>
+      <div class="lp">GET /staff · GET /staff/:id</div>
+      <p>The staff roster is <b>never read-cached</b> in Redis (ARCHITECTURE §4 — Redis is
+      catalog-cache + auth-rate-limit only). Every list and every detail fetch hits MySQL.
+      Server-filtered, server-paged.</p>
+    </div>
+    <div class="lane cart">
+      <div class="lt">Writes — MySQL only</div>
+      <div class="lp">POST /staff · PATCH /staff/:id</div>
+      <p>Create and edit touch nothing but the <code>staff</code> table. No cache to invalidate,
+      no sessions to revoke — the account keeps working exactly as before.</p>
+    </div>
+    <div class="lane risk">
+      <div class="lt">Writes with a blast radius</div>
+      <div class="lp">PATCH /staff/:id/status · DELETE /staff/:id</div>
+      <p>These three-touch writes hit MySQL <b>+ Redis <code>DEL</code> + refresh-token DELETE</b>,
+      and are felt on four other surfaces. That is all of §06.</p>
+    </div>
+  </div>
+
+  <div class="golden">
+    <p><b>The machine in one line:</b> a thin pull-only client (TanStack list key + detail key,
+    filters in the URL) over six REST endpoints whose guards all live in the service layer — and
+    exactly two writes that reach past this page into every other staff session on the platform.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section id="load">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — four loading layers, five render branches</h2></div>
+
+  <p>A manager clicks <b>Nhân viên</b> in the admin shell (or opens a deep link with filters already
+  in the query string). Four independent loading layers fire, in this order — and the table area
+  resolves to exactly <b>one of five named branches</b> (PLAN §4.3).</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 900 300" role="img" aria-label="The four loading layers of the admin staff page">
+    <rect x="20" y="30" width="190" height="72" rx="10" class="abox rsc"/>
+    <text x="115" y="55" class="tb tviolet" text-anchor="middle">LAYER 1 · segment</text>
+    <text x="115" y="73" class="t2" text-anchor="middle">loading.tsx — table-shaped</text>
+    <text x="115" y="89" class="t2" text-anchor="middle">skeleton, never a spinner</text>
+
+    <rect x="240" y="30" width="190" height="72" rx="10" class="abox rsc"/>
+    <text x="335" y="55" class="tb tviolet" text-anchor="middle">LAYER 2 · guard</text>
+    <text x="335" y="73" class="t2" text-anchor="middle">auth + role ≥ manager</text>
+    <text x="335" y="89" class="t2" text-anchor="middle">redirect, no content flash</text>
+
+    <rect x="460" y="30" width="190" height="72" rx="10" class="abox client"/>
+    <text x="555" y="55" class="tb taccent" text-anchor="middle">LAYER 3 · list query</text>
+    <text x="555" y="73" class="t2" text-anchor="middle">GET /staff from URL params</text>
+    <text x="555" y="89" class="t2" text-anchor="middle">rows + meta.counts</text>
+
+    <rect x="680" y="30" width="196" height="72" rx="10" class="abox client"/>
+    <text x="778" y="55" class="tb taccent" text-anchor="middle">LAYER 4 · drawer query</text>
+    <text x="778" y="73" class="t2" text-anchor="middle">GET /staff/:id — only once</text>
+    <text x="778" y="89" class="t2" text-anchor="middle">a row's 👁 is clicked</text>
+
+    <line x1="212" y1="66" x2="236" y2="66" class="call" marker-end="url(#mi)"/>
+    <line x1="432" y1="66" x2="456" y2="66" class="call" marker-end="url(#mi)"/>
+    <line x1="652" y1="66" x2="676" y2="66" class="resp" marker-end="url(#mm)"/>
+    <text x="664" y="120" class="t2" text-anchor="middle">(later, on demand)</text>
+
+    <rect x="20" y="150" width="856" height="66" rx="10" class="region"/>
+    <text x="448" y="176" class="tb tamber" text-anchor="middle">Stats bar reserves its height with ghost tiles the whole time</text>
+    <text x="448" y="196" class="t2" text-anchor="middle">so meta.counts arriving never pops in and shifts the table below it</text>
+
+    <rect x="20" y="238" width="856" height="46" rx="10" class="abox client"/>
+    <text x="448" y="266" class="t1" text-anchor="middle">Background refetch (tab focus) shows a subtle top progress bar — stale rows are never mistaken for fresh ones</text>
+  </svg></div>
+  <p class="cap">Layers 1–3 run on every load, left to right. Layer 4 is lazy — the drawer query is <code>enabled</code> only while the drawer is open.</p>
+
+  <h3>Step by step, first paint to rows</h3>
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor rsc who">next server</span> — the route segment starts rendering; <code>loading.tsx</code> paints a <b>table-shaped skeleton</b>: header row, ten ghost rows, and ghost stat tiles.
+      <span class="note">Not a bare "Đang tải…". The skeleton has the shape of what is coming, so nothing jumps when data lands (FE_STATE rule 3).</span></div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor rsc who">next server</span> — the admin shell's <b>auth + role guard</b> runs. A staff JWT below <code>manager</code> is redirected here, before any roster markup exists.
+      <span class="note">Behavior 1: a lower role is never shown a flash of content — the guard is upstream of the render, not a conditional inside it.</span></div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor rsc who">next server</span> — <code>page.tsx</code> reads <code>searchParams</code> (<code>search</code>, <code>role</code>, <code>is_active</code>, <code>page</code>, <code>limit</code>), prefetches the list with exactly those params, and wraps the tree in a <code>HydrationBoundary</code>.
+      <span class="note">This is why a deep link reproduces filters, page and search exactly — the URL is the input to the very first fetch, not something applied afterwards.</span></div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor api who">gin api</span> — <code>GET /staff</code> passes <code>authMW</code> + <code>AtLeast("manager")</code>, and the service runs one filtered, paged query plus the roster-wide counts.</div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor db who">mysql</span> — MySQL answers. No Redis is consulted on this path at all: <b>the roster is never read-cached</b>.</div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor api who">gin api</span> — responds <code>{data:[Staff], meta:{page,limit,total,counts}}</code>. <code>meta.counts</code> is roster-wide — it ignores <code>page</code>/<code>limit</code> so the stats bar does not change as you page (behavior 3).</div></li>
+    <li><span class="n">7</span><div class="body"><span class="actor client who">browser</span> — the client hydrates the <b>same</b> cache entry the RSC filled: <code>['admin','staff','list',{filters}]</code>. No second fetch, no flash of skeleton after hydration.</div></li>
+    <li><span class="n">8</span><div class="body"><span class="actor client who">browser</span> — the table area resolves to <b>one</b> of the five branches below, and the stats bar swaps ghost tiles for real numbers in the height it already reserved.</div></li>
+    <li><span class="n">9</span><div class="body"><span class="actor client who">browser</span> — layer 4 stays idle. The detail query fires only when a row's 👁 is clicked, and it has its own loading <em>and</em> error branch — a failed <code>GET /staff/:id</code> (the row was deleted on another device) shows "Không tải được. Thử lại / Đóng", never a stuck spinner.</div></li>
+  </ol>
+
+  <h3>The five render branches — mutually exclusive, each individually reachable</h3>
+  <p>This is the highest-value fix on the page. The reference collapsed three states into two
+  surfaces, so a manager could not tell <em>"we have no staff"</em> from <em>"your filter is too
+  narrow"</em>. Five named branches are the countermeasure, and behavior 6 asserts that exactly
+  one is ever on screen.</p>
+
+  <div class="bgrid">
+    <div class="bcard b1"><span class="bn">loading</span><span class="cond">first load, no data</span>Table-shaped skeleton — header + 10 ghost rows + stats-tile ghosts.</div>
+    <div class="bcard b2"><span class="bn">error</span><span class="cond">list query failed</span>Inline error panel + <code>Thử lại</code> → <code>refetch()</code>. The filters stay usable.</div>
+    <div class="bcard b3"><span class="bn">empty-roster</span><span class="cond">meta.counts.total === 0</span>"Chưa có nhân viên nào" + a primary <code>+ Thêm nhân viên</code> CTA.</div>
+    <div class="bcard b4"><span class="bn">empty-filtered</span><span class="cond">total &gt; 0, this filter matched 0</span>"Không có nhân viên khớp bộ lọc" + a <code>Xóa bộ lọc</code> CTA.</div>
+    <div class="bcard b5"><span class="bn">rows</span><span class="cond">data present</span>The table, with the four row actions per row.</div>
+  </div>
+
+  <div class="dflow">
+    <div class="drow"><div class="dq">query is loading and has no data?</div><span class="dyes">yes →</span><span class="dres q">loading</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">query failed?</div><span class="dyes">yes →</span><span class="dres r">error</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq"><code>meta.counts.total === 0</code>?</div><span class="dyes">yes →</span><span class="dres u">empty-roster</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">this filter matched 0 rows?</div><span class="dyes">yes →</span><span class="dres z">empty-filtered</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">otherwise</div><span class="dyes">→</span><span class="dres g">rows</span></div>
+  </div>
+  <p class="cap">Read top to bottom, first match wins — which is precisely what "mutually exclusive" means here. Note that <code>empty-roster</code> is decided by <code>meta.counts.total</code> (roster-wide) and <code>empty-filtered</code> by the page's own row count; that is the whole reason <code>meta.counts</code> exists.</p>
+</section>
+
+<!-- ================================================================ -->
+<section id="filter">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Filter &amp; search at runtime — what a keystroke costs</h2></div>
+
+  <p>The reference filtered on the client: it fetched <code>?limit=100</code> once and did all
+  searching, role-filtering and paging in memory. Zero network per keystroke — and a roster of more
+  than 100 people <b>silently truncated</b>. We reversed it (PLAN §3.4-b): the FE sends
+  <code>role</code>, <code>search</code>, <code>is_active</code>, <code>page</code> and
+  <code>limit</code> from the URL, and the server does the work. A keystroke now costs a round trip,
+  so the runtime picture is completely different.</p>
+
+  <div class="flow">
+    <div class="fnode"><span class="fk">t = 0 ms</span><b>keystroke</b><br><span style="color:var(--muted);font-size:.74rem">input is a controlled local value — it updates instantly</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">debounce</span><b>300 ms</b><br><span style="color:var(--muted);font-size:.74rem">still typing? timer restarts, nothing leaves</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">settle</span><b>write the URL</b><br><span style="color:var(--muted);font-size:.74rem"><code>?search=an&amp;page=1</code> — page resets to 1</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">derive</span><b>new query key</b><br><span style="color:var(--muted);font-size:.74rem"><code>['admin','staff','list',{search:'an',page:1,…}]</code></span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--amber)"><span class="fk">network</span><b>GET /staff?…</b><br><span style="color:var(--muted);font-size:.74rem">server filters + pages in SQL</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--done)"><span class="fk">paint</span><b>rows swap in</b><br><span style="color:var(--muted);font-size:.74rem">un-dim; stats bar unchanged</span></div>
+  </div>
+
+  <h3>The keystroke, step by step</h3>
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> — the manager types <code>a</code>, <code>n</code> in the search box. The input value is local and updates on every character; <b>nothing else moves yet</b>.</div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor client who">browser</span> — a <b>300 ms debounce</b> timer runs. Each new character restarts it. Typing "nguyen" at normal speed produces <em>one</em> request, not six.</div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor client who">browser</span> — the timer fires and the debounced value is <b>written to the URL</b>, together with <code>page=1</code>. The URL is the owner of filter state (FE_STATE rule 2), so this write is the single trigger for everything downstream.
+      <span class="note">Because it went through the URL, the back button walks the search history and the link is shareable — a colleague opening it sees the same filtered view.</span></div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor client who">browser</span> — the params change ⇒ the <b>query key changes</b> ⇒ TanStack treats it as a different query. There is no cache entry for the new key yet.</div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor client who">browser</span> — <code>placeholderData: keepPreviousData</code> hands back the <em>previous</em> key's rows while the new fetch is in flight. The table <b>dims rather than unmounting</b> — no skeleton flash, no layout collapse, no scroll jump (behavior 4).</div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor api who">gin api</span> → <span class="actor db who">mysql</span> — the server filters and pages in SQL and returns the matching page plus roster-wide <code>meta.counts</code>.</div></li>
+    <li><span class="n">7</span><div class="body"><span class="actor client who">browser</span> — rows swap in and the dimming lifts. <b>The stats bar does not move</b>: its numbers come from <code>meta.counts</code>, which ignores the filter's paging and stays roster-wide.</div></li>
+    <li><span class="n">8</span><div class="body"><span class="actor client who">browser</span> — if the new page has zero rows, the branch decision from §02 reruns: <code>total &gt; 0</code> and this page empty ⇒ <b>empty-filtered</b>, with a <code>Xóa bộ lọc</code> CTA — not the "no staff at all" message.</div></li>
+  </ol>
+
+  <h3>Why we changed it</h3>
+  <div class="table-wrap"><table>
+    <tr><th></th><th>Reference (client-side)</th><th>Us (server-side, PLAN §3.4-b)</th></tr>
+    <tr><td>Per keystroke</td><td>zero network — filter in memory</td><td>one debounced round trip (300 ms)</td></tr>
+    <tr><td>Roster size</td><td><code>?limit=100</code> hard-coded; person 101 is <b>invisible with no warning</b></td><td>no client cap — the server pages</td></tr>
+    <tr><td>BE filter params</td><td>implemented but never sent — dead contract</td><td>sent from the URL on every request</td></tr>
+    <tr><td>In-flight state</td><td>none existed, so none was designed</td><td>a real one: previous rows kept, dimmed (<code>keepPreviousData</code>)</td></tr>
+    <tr><td>Deep link</td><td>filters live in component state — a shared URL loses them</td><td>URL owns them — the view reproduces exactly</td></tr>
+  </table></div>
+
+  <div class="golden">
+    <p><b>The trade, stated plainly:</b> we bought correctness at scale (no silent 100-row
+    truncation) and shareable views, and paid for them with one network round trip per settled
+    keystroke. The 300 ms debounce bounds the cost; <code>keepPreviousData</code> hides the latency.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section id="write">
+  <div class="sec-head"><span class="sec-num">04</span><h2>The write path — <code>POST /staff</code> through every layer</h2></div>
+
+  <p>A manager fills the add modal and hits save. The request crosses five layers, and in the
+  service layer it must pass <b>four guards in a fixed order</b>. Order matters: each guard is
+  cheaper than the next, and each produces a different error code.</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 900 470" role="img" aria-label="POST /staff sequence diagram with actor lanes and the error rail">
+    <!-- actor headers -->
+    <rect x="20" y="16" width="140" height="34" rx="8" class="abox client"/>
+    <text x="90" y="38" class="tb taccent" text-anchor="middle">modal (RHF+Zod)</text>
+    <rect x="185" y="16" width="130" height="34" rx="8" class="abox api"/>
+    <text x="250" y="38" class="tb tamber" text-anchor="middle">gin handler</text>
+    <rect x="340" y="16" width="130" height="34" rx="8" class="abox api"/>
+    <text x="405" y="38" class="tb tamber" text-anchor="middle">service</text>
+    <rect x="495" y="16" width="120" height="34" rx="8" class="abox db"/>
+    <text x="555" y="38" class="tb tgreen" text-anchor="middle">sqlc</text>
+    <rect x="640" y="16" width="120" height="34" rx="8" class="abox db"/>
+    <text x="700" y="38" class="tb tgreen" text-anchor="middle">mysql</text>
+
+    <!-- lifelines -->
+    <line x1="90" y1="52" x2="90" y2="440" class="lifeline"/>
+    <line x1="250" y1="52" x2="250" y2="440" class="lifeline"/>
+    <line x1="405" y1="52" x2="405" y2="440" class="lifeline"/>
+    <line x1="555" y1="52" x2="555" y2="440" class="lifeline"/>
+    <line x1="700" y1="52" x2="700" y2="440" class="lifeline"/>
+
+    <!-- step 1 -->
+    <text x="30" y="76" class="t2">1</text>
+    <line x1="90" y1="84" x2="244" y2="84" class="flowa" marker-end="url(#ma)"/>
+    <text x="167" y="78" class="t2 taccent" text-anchor="middle">POST /staff {username,password,role,…}</text>
+    <text x="167" y="98" class="t2" text-anchor="middle">Zod already blocked malformed input client-side</text>
+
+    <!-- step 2 handler -->
+    <rect x="185" y="112" width="130" height="30" rx="6" class="abox api"/>
+    <text x="250" y="132" class="t2 tamber" text-anchor="middle">shape validation only</text>
+    <line x1="250" y1="146" x2="399" y2="146" class="flowo" marker-end="url(#mo)"/>
+    <text x="325" y="140" class="t2 tamber" text-anchor="middle">2 · caller identity + role as explicit params</text>
+
+    <!-- guards region -->
+    <rect x="330" y="162" width="150" height="176" rx="10" class="region"/>
+    <text x="405" y="180" class="tb tamber" text-anchor="middle">4 GUARDS, IN ORDER</text>
+    <text x="405" y="204" class="t1" text-anchor="middle">① valid role</text>
+    <text x="405" y="238" class="t1" text-anchor="middle">② hierarchy</text>
+    <text x="405" y="272" class="t1" text-anchor="middle">③ username unique</text>
+    <text x="405" y="306" class="t1" text-anchor="middle">④ bcrypt the password</text>
+    <text x="405" y="326" class="t2" text-anchor="middle">(cost, not a rejection)</text>
+
+    <!-- error rail -->
+    <line x1="330" y1="200" x2="130" y2="200" class="err" marker-end="url(#mr)"/>
+    <text x="228" y="194" class="t2 tred" text-anchor="middle">422 VALIDATION_FAILED · role: invalid</text>
+    <line x1="330" y1="234" x2="130" y2="234" class="err" marker-end="url(#mr)"/>
+    <text x="228" y="228" class="t2 tred" text-anchor="middle">403 FORBIDDEN · role: hierarchy</text>
+    <line x1="330" y1="268" x2="130" y2="268" class="err" marker-end="url(#mr)"/>
+    <text x="228" y="262" class="t2 tred" text-anchor="middle">409 CONFLICT · username: taken</text>
+
+    <!-- uniqueness pre-check -->
+    <line x1="405" y1="286" x2="549" y2="286" class="resp" marker-end="url(#mm)"/>
+    <text x="480" y="280" class="t2" text-anchor="middle">SELECT … username</text>
+
+    <!-- happy path -->
+    <line x1="405" y1="356" x2="549" y2="356" class="flowg" marker-end="url(#mg)"/>
+    <text x="478" y="350" class="t2 tgreen" text-anchor="middle">3 · CreateStaff(params)</text>
+    <line x1="555" y1="376" x2="694" y2="376" class="flowg" marker-end="url(#mg)"/>
+    <text x="626" y="370" class="t2 tgreen" text-anchor="middle">4 · INSERT is_active=1</text>
+    <rect x="640" y="386" width="120" height="26" rx="6" class="okbox"/>
+    <text x="700" y="404" class="t2 tgreen" text-anchor="middle">UNIQUE = backstop</text>
+
+    <!-- response -->
+    <line x1="694" y1="428" x2="96" y2="428" class="flowa" marker-end="url(#ma)"/>
+    <text x="400" y="422" class="t2 taccent" text-anchor="middle">5 · 201 {data: Staff} — password never echoed, password_hash never serialized 🔒</text>
+  </svg></div>
+  <p class="cap">Blue = the request/response the manager sees. Amber = handler→service. Green = the persistence path. Dashed red = the error rail: each guard exits to a different code, and the modal stays open with input intact.</p>
+
+  <h3>Layer by layer</h3>
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> — <b>React Hook Form + Zod</b> validate the form shape before anything leaves. The role <code>&lt;select&gt;</code> only ever offered roles <b>strictly below the caller's level</b>, so the common hierarchy violation is prevented at the widget, not discovered at the server (behavior 7).</div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor api who">gin api</span> — the <code>/staff</code> route group has already run <code>authMW</code> + <code>AtLeast("manager")</code>. The handler does <b>shape validation only</b> and passes the caller's identity and role to the service as <b>explicit params</b> — never business rules, never reaching into request context deep in the stack (BE_STATE §5, §6).</div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor api who">gin api</span> — the <b>service</b> runs the guards, in order:
+      <span class="note"><b>① valid role</b> — is the requested role in the enum at all? → <code>422 VALIDATION_FAILED</code>, <code>details: role: invalid</code>.</span>
+      <span class="note"><b>② hierarchy</b> — may this caller assign this role? You may only assign a role <em>strictly below</em> your own level (chef/cashier 2 · staff 3 · manager 4 · admin 5). → <code>403 FORBIDDEN</code>, <code>details: role: hierarchy</code>. Consequence: <b>no admin can ever be created through this page</b> (admin 5 ≮ admin 5) — admins are seeded by migration.</span>
+      <span class="note"><b>③ username unique</b> — checked before the insert so the manager gets a clean field-level message. → <code>409 CONFLICT</code>, <code>details: username: taken</code>.</span>
+      <span class="note"><b>④ bcrypt</b> — the password is hashed. Not a rejection gate; it is where the request spends its time, and it happens only after everything cheap has passed.</span></div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor db who">sqlc → mysql</span> — a <b>generated</b> query INSERTs the row with <code>is_active=1</code>. No hand-written SQL layer (BE_PLAYBOOK §1 golden rule). The <code>UNIQUE</code> index on <code>username</code> is the backstop behind guard ③, not the primary check.</div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor api who">gin api</span> — <code>201 {"data": Staff}</code>. <code>password</code> is write-only and never echoed; <code>password_hash</code> is 🔒 never serialized — enforced by the DTO, not by hoping.</div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor client who">browser</span> — the mutation is <b>pessimistic</b>: the save button showed a pending state and the table did not change until this 201 arrived. Now the modal closes, a toast fires, and <code>['admin','staff','list']</code> is invalidated across <b>all</b> filter combos — the new row appears on the refetch.
+      <span class="note">Optimistic updates are reserved for cart mutations (FE_STATE rule 4). An account change is not a place to guess.</span></div></li>
+  </ol>
+
+  <h3>The error rail — which guard produces which code</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Origin</th><th>Our code</th><th>HTTP</th><th><code>details[].issue</code></th><th>What the manager sees</th></tr>
+    <tr><td>handler / Zod — malformed field</td><td><code>VALIDATION_FAILED</code></td><td>400</td><td>per field</td><td>field-level, inside the modal</td></tr>
+    <tr><td>guard ① valid role</td><td><code>VALIDATION_FAILED</code></td><td>422</td><td><code>role: invalid</code></td><td>field-level</td></tr>
+    <tr><td>guard ② hierarchy</td><td><code>FORBIDDEN</code></td><td>403</td><td><code>role: hierarchy</code></td><td>"Không đủ quyền"</td></tr>
+    <tr><td>guard ③ username unique</td><td><code>CONFLICT</code></td><td>409</td><td><code>username: taken</code></td><td>"Tên đăng nhập đã tồn tại" <b>on the username field</b>; modal stays open, input intact</td></tr>
+    <tr><td>last-admin guard (DELETE)</td><td><code>CONFLICT</code></td><td>409</td><td><code>role: last_admin</code></td><td>"Không thể xóa admin cuối cùng" — the row stays</td></tr>
+    <tr><td>no-self-harm guard (status / delete)</td><td><code>FORBIDDEN</code></td><td>403</td><td><code>id: self</code></td><td>"Không thể thao tác trên chính mình"</td></tr>
+    <tr><td>row missing or soft-deleted</td><td><code>NOT_FOUND</code></td><td>404</td><td>—</td><td>"Không tìm thấy nhân viên"</td></tr>
+    <tr><td>anything unmapped</td><td><code>INTERNAL</code></td><td>500</td><td>—</td><td>generic — Go error text never leaks</td></tr>
+  </table></div>
+
+  <div class="flag">
+    <p><b>⚠️ Two different 409s share one code.</b> Both <code>username taken</code> and
+    <code>last admin</code> map to <code>CONFLICT</code>, so at runtime the FE must branch on
+    <code>code</code> <b>plus</b> <code>details[0].issue</code>. That still satisfies "branch on
+    structured data, never message text" — but it is a real widening of the contract, and it is why
+    the <code>issue</code> discriminator is load-bearing rather than decorative.</p>
+  </div>
+
+  <div class="warn">
+    <p><b>Two backstops that look like dead code but are not.</b> The row actions disable ⏻/🗑 on
+    your own row and on rows at or above your level, with a tooltip explaining why. The 403s above
+    still exist and are still tested — the disabled button is the UX, the guard is the security.
+    A hand-crafted request must not get further than a click would.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section id="patch">
+  <div class="sec-head"><span class="sec-num">05</span><h2>PATCH semantics — omitted vs. <code>null</code> vs. value</h2></div>
+
+  <p>This is subtle enough to deserve its own picture. <code>PATCH /staff/:id</code> must
+  distinguish <b>three</b> cases per field, and a plain Go struct-bind can only distinguish two —
+  a missing string and an empty string both arrive as <code>""</code>. Getting this wrong means
+  every edit silently wipes every field the manager did not touch.</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 880 320" role="img" aria-label="PATCH three-way field decision diagram">
+    <rect x="20" y="20" width="200" height="52" rx="10" class="abox client"/>
+    <text x="120" y="42" class="tb taccent" text-anchor="middle">PATCH body arrives</text>
+    <text x="120" y="60" class="t2" text-anchor="middle">for each field, ask one question</text>
+
+    <rect x="270" y="20" width="230" height="52" rx="10" class="abox api"/>
+    <text x="385" y="42" class="tb tamber" text-anchor="middle">is the KEY present in the JSON?</text>
+    <text x="385" y="60" class="t2" text-anchor="middle">decoded as map[string]json.RawMessage</text>
+    <line x1="222" y1="46" x2="264" y2="46" class="call" marker-end="url(#mi)"/>
+
+    <!-- branch A: absent -->
+    <line x1="385" y1="74" x2="150" y2="120" class="resp" marker-end="url(#mm)"/>
+    <text x="240" y="100" class="t2" text-anchor="middle">key ABSENT</text>
+    <rect x="20" y="124" width="250" height="62" rx="10" class="abox"/>
+    <text x="145" y="146" class="tb" text-anchor="middle" fill="var(--muted)">LEAVE</text>
+    <text x="145" y="164" class="t2" text-anchor="middle">pointer stays nil · column omitted</text>
+    <text x="145" y="178" class="t2" text-anchor="middle">from the UPDATE entirely</text>
+
+    <!-- branch B: null -->
+    <line x1="385" y1="74" x2="385" y2="120" class="err" marker-end="url(#mr)"/>
+    <text x="450" y="100" class="t2 tred" text-anchor="middle">key present, value null</text>
+    <rect x="270" y="124" width="230" height="62" rx="10" class="delbox"/>
+    <text x="385" y="146" class="tb tred" text-anchor="middle">CLEAR</text>
+    <text x="385" y="164" class="t2 tred" text-anchor="middle">SET col = NULL</text>
+    <text x="385" y="178" class="t2" text-anchor="middle">the column is actively emptied</text>
+
+    <!-- branch C: value -->
+    <line x1="500" y1="60" x2="640" y2="120" class="flowg" marker-end="url(#mg)"/>
+    <text x="620" y="96" class="t2 tgreen" text-anchor="middle">key present, real value</text>
+    <rect x="540" y="124" width="230" height="62" rx="10" class="okbox"/>
+    <text x="655" y="146" class="tb tgreen" text-anchor="middle">SET</text>
+    <text x="655" y="164" class="t2 tgreen" text-anchor="middle">SET col = &lt;value&gt;</text>
+    <text x="655" y="178" class="t2" text-anchor="middle">ordinary update</text>
+
+    <!-- worked example -->
+    <rect x="20" y="216" width="750" height="86" rx="10" class="infbox"/>
+    <text x="40" y="240" class="t1 taccent">PATCH /staff/:id  {"full_name": "Trần Thị Bích", "shifts": null}</text>
+    <text x="40" y="262" class="t2">full_name → present with a value → <tspan class="tgreen">SET</tspan>   ·   shifts → present as null → <tspan class="tred">CLEAR</tspan>   ·   job_title, phone, email, role, … → absent → <tspan>LEAVE</tspan></text>
+    <text x="40" y="284" class="t2">Edge case: PATCH {} is a legal no-op — it still returns 200 with the unchanged row.</text>
+  </svg></div>
+  <p class="cap">One question per field, three outcomes. The distinction between the middle and left branches is the entire reason this endpoint is a PATCH and not a PUT.</p>
+
+  <h3>How it is actually implemented</h3>
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> — the edit modal was prefilled from the row. On save it diffs against the original and <b>sends only changed keys</b>. Clearing an optional field sends an explicit <code>null</code>, not <code>""</code> (behavior 11).
+      <span class="note">The password field is absent in edit mode entirely — password change is a separate S-phase concern, and today's accepted gap is that a manager cannot reset a forgotten password from here (❓-1).</span></div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor api who">gin api</span> — the handler decodes into <code>map[string]json.RawMessage</code>, not a struct. <b>Key presence is the signal</b>; a struct-bind would have destroyed it before the service ever saw the body.</div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor api who">gin api</span> — each present key becomes a <code>*string</code> (or typed pointer): non-nil pointer to a value = SET, non-nil pointer to nil-inner = CLEAR, absent = nil pointer = LEAVE.</div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor api who">gin api</span> — the <b>hierarchy guard runs on both the current and the new role</b>. You may not edit someone at or above your level, and you may not promote anyone to at-or-above your level. Both directions, one endpoint.</div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor db who">mysql</span> — the UPDATE names only the columns that were present. Untouched columns are not in the statement at all, so they cannot be accidentally overwritten by a default.</div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor api who">gin api</span> — <code>200 {"data": Staff}</code> with the full row, so the client can replace its cached row wholesale rather than hand-patching it. Then the list key <b>and</b> <code>['admin','staff','detail',id]</code> are invalidated.</div></li>
+  </ol>
+
+  <div class="golden">
+    <p><b>The acceptance criteria that pin this down:</b> <code>PATCH {"job_title": null}</code>
+    clears the column; <code>PATCH {}</code> is a no-op that still returns 200 with the unchanged
+    row. Nullable columns serialize back as real <code>null</code> — never <code>""</code> — so a
+    round trip through the modal is idempotent. <code>shifts</code> is a JSON array or
+    <code>null</code>, never a string.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section id="fanout">
+  <div class="sec-head"><span class="sec-num">06</span><h2>The side-effect fan-out — where one click is actually felt</h2></div>
+
+  <p>This is the most important section on the page, because it is the part that is <b>not visible
+  on this page</b>. <code>POST</code> and <code>PATCH /staff/:id</code> touch one table and stop.
+  <code>PATCH /staff/:id/status</code> (deactivating) and <code>DELETE /staff/:id</code> do three
+  things at once, and are then felt on four other surfaces.</p>
+
+  <h3>What each write actually touches</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Write</th><th>MySQL effect</th><th>Redis effect</th><th><code>refresh_tokens</code></th></tr>
+    <tr><td><code>POST /staff</code></td><td>INSERT, <code>is_active=1</code></td><td>—</td><td>—</td></tr>
+    <tr><td><code>PATCH /staff/:id</code></td><td>UPDATE changed cols</td><td>—</td><td>—</td></tr>
+    <tr><td><code>PATCH /staff/:id/status</code></td><td><code>is_active</code> flipped</td><td><b><code>DEL auth:staff:&lt;id&gt;</code></b></td><td><b>DELETE all rows</b> when deactivating</td></tr>
+    <tr><td><code>DELETE /staff/:id</code></td><td><code>deleted_at=NOW()</code> + username renamed to <code>&lt;username&gt;#deleted-&lt;id&gt;</code></td><td><b><code>DEL auth:staff:&lt;id&gt;</code></b></td><td><b>DELETE all rows</b></td></tr>
+  </table></div>
+
+  <p>The username rename is not cosmetic: without it a soft-deleted row keeps occupying the
+  <code>UNIQUE</code> index, and re-hiring someone as <code>chef1</code> fails <em>forever</em>.
+  The token DELETE closes a genuine auth hole — the reference's "revoke sessions" was an
+  aspirational comment that revoked nothing.</p>
+
+  <h3>The fan-out, drawn</h3>
+  <div class="svgwrap"><svg viewBox="0 0 900 420" role="img" aria-label="Side-effect fan-out from a deactivate or delete write">
+    <rect x="30" y="20" width="200" height="56" rx="10" class="abox client"/>
+    <text x="130" y="44" class="tb taccent" text-anchor="middle">manager clicks ⏻ / 🗑</text>
+    <text x="130" y="62" class="t2" text-anchor="middle">typed confirm names the consequence</text>
+
+    <rect x="30" y="110" width="200" height="46" rx="10" class="abox api"/>
+    <text x="130" y="130" class="tb tamber" text-anchor="middle">service — one transaction</text>
+    <text x="130" y="147" class="t2" text-anchor="middle">guards pass, then three writes</text>
+    <line x1="130" y1="78" x2="130" y2="106" class="call" marker-end="url(#mi)"/>
+
+    <!-- three writes -->
+    <rect x="290" y="82" width="215" height="42" rx="8" class="abox db"/>
+    <text x="397" y="100" class="tb tgreen" text-anchor="middle">MySQL: staff row</text>
+    <text x="397" y="116" class="t2" text-anchor="middle">is_active=0 / deleted_at + rename</text>
+    <rect x="290" y="134" width="215" height="42" rx="8" class="abox redis"/>
+    <text x="397" y="152" class="tb tred" text-anchor="middle">Redis: DEL auth:staff:&lt;id&gt;</text>
+    <text x="397" y="168" class="t2" text-anchor="middle">forces a MySQL re-read next request</text>
+    <rect x="290" y="186" width="215" height="42" rx="8" class="abox db"/>
+    <text x="397" y="204" class="tb tgreen" text-anchor="middle">MySQL: refresh_tokens</text>
+    <text x="397" y="220" class="t2" text-anchor="middle">DELETE WHERE staff_id = ?</text>
+
+    <line x1="232" y1="126" x2="284" y2="102" class="flowg" marker-end="url(#mg)"/>
+    <line x1="232" y1="134" x2="284" y2="152" class="flowr" marker-end="url(#mr)"/>
+    <line x1="232" y1="142" x2="284" y2="204" class="flowg" marker-end="url(#mg)"/>
+
+    <!-- four surfaces -->
+    <text x="700" y="46" class="tb tamber" text-anchor="middle">FOUR DOWNSTREAM SURFACES — all pull-only</text>
+    <rect x="570" y="60" width="300" height="52" rx="8" class="abox redis"/>
+    <text x="720" y="80" class="tb tred" text-anchor="middle">① auth middleware — every authed request</text>
+    <text x="720" y="98" class="t2" text-anchor="middle">next request re-reads MySQL → immediate 401</text>
+
+    <rect x="570" y="122" width="300" height="52" rx="8" class="abox api"/>
+    <text x="720" y="142" class="tb tamber" text-anchor="middle">② login / refresh</text>
+    <text x="720" y="160" class="t2" text-anchor="middle">refused; the refresh tokens are gone</text>
+
+    <rect x="570" y="184" width="300" height="52" rx="8" class="abox client"/>
+    <text x="720" y="204" class="tb taccent" text-anchor="middle">③ assignee dropdowns (F-22 · F-20)</text>
+    <text x="720" y="222" class="t2" text-anchor="middle">read the same GET /staff — must send is_active=true</text>
+
+    <rect x="570" y="246" width="300" height="52" rx="8" class="abox db"/>
+    <text x="720" y="266" class="tb tgreen" text-anchor="middle">④ staff performance (admin_summary)</text>
+    <text x="720" y="284" class="t2" text-anchor="middle">aggregates orders by created_by against these rows</text>
+
+    <line x1="507" y1="103" x2="564" y2="86" class="flowo" marker-end="url(#mo)"/>
+    <line x1="507" y1="155" x2="564" y2="148" class="flowo" marker-end="url(#mo)"/>
+    <line x1="507" y1="200" x2="564" y2="210" class="flowo" marker-end="url(#mo)"/>
+    <line x1="507" y1="215" x2="564" y2="272" class="flowo" marker-end="url(#mo)"/>
+
+    <rect x="30" y="330" width="840" height="62" rx="10" class="region"/>
+    <text x="450" y="352" class="tb tamber" text-anchor="middle">NO SSE · NO WEBSOCKET · NO POLLING</text>
+    <text x="450" y="372" class="t2" text-anchor="middle">Nothing here is pushed. Surface ① feels it on the victim's next request; ②③④ feel it the next time they ask.</text>
+  </svg></div>
+  <p class="cap">Green = MySQL writes. Red = the single Redis touch (a <code>DEL</code>, never a read). Amber = the pull-only fan-out to four surfaces this page never renders.</p>
+
+  <h3>End to end: create a cashier, then cut them off</h3>
+  <p>The single most useful runtime story on this page — the full lifecycle of one account, from
+  the row being created to the moment their POS stops working.</p>
+
+  <div class="tl">
+    <div class="tlstep g"><span class="tlt">t0</span><b>row created</b>POST /staff · is_active=1</div>
+    <div class="tlstep a"><span class="tlt">t0 + 1 min</span><b>they log in</b>JWT + refresh token issued</div>
+    <div class="tlstep a"><span class="tlt">t0 → t+6h</span><b>they work</b>every request warms auth:staff:&lt;id&gt;</div>
+    <div class="tlstep o"><span class="tlt">t+6h</span><b>manager deactivates</b>3 writes, one transaction</div>
+    <div class="tlstep r"><span class="tlt">t+6h + seconds</span><b>next call 401s</b>no re-login possible</div>
+  </div>
+
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> — a manager creates cashier <code>cash02</code>. The row lands with <code>is_active=1</code>. Nothing is cached, nothing is revoked; the account simply exists.</div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor api who">gin api</span> — <code>cash02</code> logs in at the POS. Login checks the <code>staff</code> row, issues an access JWT and writes a <code>refresh_tokens</code> row. <b>A created account can log in at once</b> — there is no propagation delay to wait out.</div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor redis who">redis</span> — on each authed request the middleware calls <code>IsStaffActive</code>, which reads <code>auth:staff:&lt;id&gt;</code>. For six hours of shift this is a warm Redis hit and MySQL is never touched for auth.</div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor client who">browser</span> — end of shift, the manager clicks ⏻. The confirm dialog <b>names the consequence</b>: "… sẽ bị đăng xuất khỏi mọi thiết bị". Re-activating asks for confirmation too, but without that warning — only deactivation cuts someone off.</div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor api who">gin api</span> — the service runs its guards (you cannot toggle your own status; you cannot toggle someone at or above your level), then performs the three writes: flip <code>is_active</code>, <code>DEL auth:staff:&lt;id&gt;</code>, <code>DELETE FROM refresh_tokens WHERE staff_id=?</code>.</div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor client who">browser</span> — the manager's tab gets the <b>full row</b> back (not a thin <code>{id,is_active,updated_at}</code>), so the cache replaces the row wholesale instead of hand-patching, then invalidates the list and detail keys.</div></li>
+    <li><span class="n">7</span><div class="body"><span class="actor redis who">redis</span> — <code>cash02</code>'s POS makes its <b>very next API call</b>. The cache key is gone, so <code>IsStaffActive</code> falls through to MySQL, reads <code>is_active=0</code>, and the request <b>401s</b>. Lockout is immediate, not TTL-delayed — that is precisely what the <code>DEL</code> buys.</div></li>
+    <li><span class="n">8</span><div class="body"><span class="actor api who">gin api</span> — the POS tries to refresh its token. The <code>refresh_tokens</code> rows were deleted, so there is nothing to refresh with. A fresh login is refused by the same <code>is_active</code> check. <b>Every door is closed.</b></div></li>
+  </ol>
+
+  <h3>The multi-device asymmetry — and it is intended</h3>
+  <p>Two managers watching the same roster do <b>not</b> see each other's changes live. The person
+  being deactivated is cut off in seconds. Same write, two completely different latencies — because
+  one path is <em>pull</em> and the other is a <em>gate on every request</em>.</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 880 300" role="img" aria-label="Multi-device asymmetry: manager B pulls, the affected staff is gated">
+    <rect x="330" y="16" width="220" height="46" rx="10" class="abox api"/>
+    <text x="440" y="36" class="tb tamber" text-anchor="middle">Manager A deactivates cash02</text>
+    <text x="440" y="53" class="t2" text-anchor="middle">t = 0</text>
+
+    <!-- pull side -->
+    <rect x="30" y="120" width="330" height="130" rx="12" class="abox client"/>
+    <text x="195" y="146" class="tb taccent" text-anchor="middle">Manager B's tab — PULL ONLY</text>
+    <text x="195" y="170" class="t2" text-anchor="middle">no SSE · no WS · no polling</text>
+    <text x="195" y="192" class="t1" text-anchor="middle">still shows cash02 as active</text>
+    <text x="195" y="214" class="t2" text-anchor="middle">until a tab-focus refetch fires</text>
+    <text x="195" y="236" class="t2 taccent" text-anchor="middle">latency: seconds → minutes (user-driven)</text>
+    <line x1="380" y1="66" x2="240" y2="114" class="resp" marker-end="url(#mm)"/>
+    <text x="270" y="96" class="t2" text-anchor="middle">nothing is pushed</text>
+
+    <!-- gate side -->
+    <rect x="520" y="120" width="330" height="130" rx="12" class="abox redis"/>
+    <text x="685" y="146" class="tb tred" text-anchor="middle">cash02's POS — GATED</text>
+    <text x="685" y="170" class="t2" text-anchor="middle">auth middleware runs on every request</text>
+    <text x="685" y="192" class="t1" text-anchor="middle">next API call → 401</text>
+    <text x="685" y="214" class="t2" text-anchor="middle">refresh refused · re-login refused</text>
+    <text x="685" y="236" class="t2 tred" text-anchor="middle">latency: the next request (seconds)</text>
+    <line x1="500" y1="66" x2="640" y2="114" class="flowr" marker-end="url(#mr)"/>
+    <text x="610" y="96" class="t2 tred" text-anchor="middle">DEL removes the gate's cached yes</text>
+
+    <rect x="30" y="266" width="820" height="26" rx="8" class="infbox"/>
+    <text x="440" y="284" class="t2 taccent" text-anchor="middle">The asymmetry is the design: a stale roster row is a cosmetic inconvenience; a stale auth decision is a security hole.</text>
+  </svg></div>
+
+  <div class="flag">
+    <p><b>⚠️ Consumers must opt in to the filter.</b> Surface ③ — the assignee dropdowns on the task
+    board and to-do list — call the same <code>GET /staff</code>. <code>is_active</code> is a real
+    query param, but it is a param: a consumer that forgets to send <code>is_active=true</code> will
+    happily keep offering a deactivated cashier as an assignee. The list filters
+    <code>deleted_at</code> for you; it does not filter <code>is_active</code> for you.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section id="durability">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Durability &amp; failure modes — what survives F5, and what happens when Redis blinks</h2></div>
+
+  <h3>Press F5. What is still there?</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Thing</th><th>Lives in</th><th>Survives F5?</th><th>Survives logout / new device?</th></tr>
+    <tr><td>The roster rows on screen</td><td>TanStack list cache (memory)</td><td><b>No — refetched.</b> The cache is gone; the query re-runs from the URL params and repaints</td><td>No — refetched</td></tr>
+    <tr><td>Which filters/search/page you were on</td><td><b>URL</b> searchParams</td><td><b>Yes</b> — the view reproduces exactly, and the link is shareable</td><td>Yes — it is in the link</td></tr>
+    <tr><td>The staff row itself</td><td><b>MySQL <code>staff</code></b></td><td><b>Yes — this is the single source of truth</b></td><td>Yes, permanently</td></tr>
+    <tr><td>Auth "is this staff active" decision</td><td><b>Redis <code>auth:staff:&lt;id&gt;</code></b></td><td>Yes — until its TTL expires or a write <code>DEL</code>s it</td><td>Yes — it is server-side, not per-device</td></tr>
+    <tr><td>Refresh tokens</td><td>MySQL <code>refresh_tokens</code></td><td>Yes — until deactivate/delete removes them</td><td>Yes, per device, until revoked</td></tr>
+    <tr><td>Which overlay was open + its target id</td><td>local <code>useState</code></td><td><b>No</b> — deliberately not in the URL (💡-1: putting it there would make a record deep-linkable; not adopted for v1)</td><td>No</td></tr>
+    <tr><td>Half-typed form values</td><td>React Hook Form (memory)</td><td><b>No</b> — nothing is drafted anywhere</td><td>No</td></tr>
+    <tr><td>Current user identity (for self-row checks)</td><td>auth store, <b>memory</b></td><td>No — re-derived from the session on load; read-only on this page</td><td>No</td></tr>
+  </table></div>
+
+  <p><b>Nothing on this page uses localStorage and nothing uses Zustand.</b> The only client-side
+  thing that outlives a refresh is the URL — which is exactly the point of putting filters there.</p>
+
+  <h3>Failure mode 1 — Redis is down</h3>
+  <div class="hubwrap">
+    <div class="hub r">
+      <div class="hcore">⚠️ IsStaffActive fails OPEN</div>
+      <ul>
+        <li><span class="arr">→</span><span>When Redis is unreachable, <code>IsStaffActive</code> returns <b><code>true</code></b> — availability over strictness, inherited deliberately from ARCHITECTURE §4 and consistent with the rest of the platform.</span></li>
+        <li><span class="arr">→</span><span>Consequence: during a blip, a <b>just-deactivated</b> staff member's still-valid access token keeps working until it expires.</span></li>
+        <li><span class="arr">→</span><span>The alternative — fail closed — would turn a Redis blip into a total platform outage for every logged-in staff member. That is the trade we accepted.</span></li>
+      </ul>
+      <div class="hnote">Reads are unaffected: the roster is never read-cached, so <code>GET /staff</code> works normally with Redis down.</div>
+    </div>
+    <div class="hub q">
+      <div class="hcore">✅ but the refresh-token revoke BOUNDS it</div>
+      <ul>
+        <li><span class="arr">→</span><span>The token DELETE is a <b>MySQL</b> write, so it is <b>blip-proof</b> — it lands whether or not Redis is up.</span></li>
+        <li><span class="arr">→</span><span>So the exposure window is not "until someone notices" — it is <b>at most one access-token lifetime</b>. The moment that token expires there is nothing to refresh with and no login to be had.</span></li>
+        <li><span class="arr">→</span><span>Open lever if that window is still too wide: shorten the access-token TTL at S-2. Cost is more refresh traffic, no design change.</span></li>
+      </ul>
+      <div class="hnote">This is why the revoke is not redundant with the <code>DEL</code>: one makes lockout <em>fast</em>, the other makes it <em>certain</em>.</div>
+    </div>
+  </div>
+
+  <h3>Other things that go wrong, and what the runtime does</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Failure</th><th>What happens at runtime</th></tr>
+    <tr><td>List query fails</td><td><b>error branch</b>: inline panel + <code>Thử lại</code> → <code>refetch()</code>. The filter bar stays usable, so the manager can change the query and retry rather than being stuck</td></tr>
+    <tr><td>Detail fetch fails (the row was deleted on another device)</td><td>the drawer's <b>own error branch</b>: "Không tải được. Thử lại / Đóng" — never a stuck spinner</td></tr>
+    <tr><td>You delete a staff whose drawer is open</td><td>the drawer closes and <code>['admin','staff','detail',id]</code> is <b>removed</b>, not just invalidated — nothing refetches a row that no longer exists</td></tr>
+    <tr><td>Duplicate username on create</td><td>409 with <code>username: taken</code> → field-level message, <b>modal stays open, input intact</b>. Nothing was written</td></tr>
+    <tr><td>Deleting the last admin</td><td>409 with <code>role: last_admin</code> → "Không thể xóa admin cuối cùng", the row stays. There is no path through this UI that can leave the platform admin-less</td></tr>
+    <tr><td>A mutation is slow</td><td>every mutation is <b>pessimistic</b>: the button shows pending and the table does not change until the server confirms. There is no optimistic row to roll back, so there is no inconsistent intermediate state to reconcile</td></tr>
+    <tr><td>Background refetch on tab focus</td><td>a subtle top progress bar makes it visible — stale rows are never silently presented as fresh</td></tr>
+    <tr><td>A soft-deleted account needs restoring</td><td><b>no UI inverse exists.</b> The username was renamed to <code>&lt;username&gt;#deleted-&lt;id&gt;</code>, so restoring requires a DB edit (❓-2, accepted for v1)</td></tr>
+  </table></div>
+
+  <div class="golden">
+    <p><b>The durability rule in one line:</b> the browser holds nothing that matters — rows are
+    refetched, filters ride in the URL, everything else is memory. The <code>staff</code> MySQL row
+    is the only truth; Redis holds a fast, revocable <em>opinion</em> about it, and the
+    refresh-token table is the backstop that makes revocation stick even when that opinion cannot be
+    reached.</p>
+  </div>
+</section>
+
+<footer>
+  Written 2026-07-19 for F-23 · snapshot of <code>admin_staff_PLAN.md</code>, which wins on any conflict.
+</footer>
+
+</div>
+</body>
+</html>

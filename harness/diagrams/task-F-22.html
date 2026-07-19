@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-22 — Admin task-board page plan · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #C0392B;
+    --red-soft: #FBE9E7;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2837B; --red-soft: #3A1714;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2837B; --red-soft: #3A1714;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBE9E7;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.red { color: var(--red); background: var(--red-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, pre code { border: none; background: transparent; padding: 0; }
+  pre.tree { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; overflow-x: auto; font-family: var(--mono); font-size: 0.82rem; line-height: 1.7; margin: 0; }
+  pre.tree .c { color: var(--muted); }
+  pre.tree .ok { color: var(--done); font-weight: 700; }
+  pre.tree .warn { color: var(--amber); font-weight: 700; }
+  pre.tree .bad { color: var(--red); font-weight: 700; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  ul.checks { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  ul.checks li { padding-left: 28px; position: relative; }
+  ul.checks li::before { content: "☐"; position: absolute; left: 4px; color: var(--accent); font-weight: 700; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · task plan · 2026-07-19</div>
+  <h1>F-22 — The admin task board, planned with its four bugs removed</h1>
+  <p class="lede">You asked for the task-board page. The reference has one, fully
+  implemented — and fundamentally broken: a task's <code>status</code> is written once as
+  <code>pending</code> and <strong>no endpoint, no job, nothing in the codebase ever changes
+  it</strong>. So three of the four KPIs, the completion rate, the quality stars and the
+  overdue highlight are permanently zero on any live database. This task produces the
+  4-doc page-plan set, and the plan's job is to fix that before a line is built.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">task</span><span class="v">F-22</span></div>
+    <div class="fact"><span class="k">page</span><span class="v">/admin/staff/task-board</span></div>
+    <div class="fact"><span class="k">auth</span><span class="v">manager+</span></div>
+    <div class="fact"><span class="k">source</span><span class="v">7 reference docs</span></div>
+    <div class="fact"><span class="k">deps</span><span class="v">F-15 · F-16 · F-9</span></div>
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip amber">in progress</span></span></div>
+  </div>
+</header>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Objective</h2></div>
+  <p>Produce the four-document page-plan set for <code>/admin/staff/task-board</code> per
+  <a href="../plans/PAGE_PLAN_GUIDE.md">PAGE_PLAN_GUIDE.md</a>, reconciling the reference
+  implementation against our harness rules — and design out every defect the reference
+  documented about itself.</p>
+
+  <div class="golden">
+    <p><strong>The one thing this plan exists to fix.</strong> The reference board is a
+    dashboard that cannot show progress. Its <code>staff_tasks.status</code> column has four
+    values; exactly one is reachable. Its stats queries, its KPI row, its completion
+    percentages and its overdue highlight are all built on the three that are not.</p>
+    <p>Our correction is two decisions: add a <strong>status-transition endpoint</strong> so
+    status can move, and stop storing <code>overdue</code> — <strong>derive</strong> it from
+    <code>due_at &lt; NOW()</code> at read time, so it is correct by construction with no
+    sweeper job to write, deploy, or forget.</p>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Scope contract — exact files</h2></div>
+  <pre class="tree">harness/
+├── plans/admin_task_board/                     <span class="c">← new folder</span>
+│   ├── admin_task_board_PLAN.md                <span class="ok">source of truth — FE+BE contract</span>
+│   ├── admin_task_board_plan.html              <span class="c">visual: the plan</span>
+│   ├── admin_task_board_how-it-works.html      <span class="c">visual: the runtime</span>
+│   └── admin_task_board_mockup-1.html          <span class="c">visual: the UI</span>
+├── DB_SCHEMA.md                                <span class="warn">edit: promote staff_tasks out of the §4.7 stub</span>
+├── TASKS.md                                    <span class="warn">edit: register the F-22 row</span>
+├── CONTEXT_MAP.md                              <span class="warn">edit: 4 doc-inventory rows (Hard Rule 6)</span>
+├── README.md                                   <span class="warn">edit: 4 plans/ rows (Hard Rule 6)</span>
+├── VERIFICATION.md                             <span class="warn">edit: the receipt</span>
+├── STATE.md                                    <span class="warn">edit: the checkpoint</span>
+└── diagrams/task-F-22.html                     <span class="c">this page</span></pre>
+  <p style="margin-top:14px">Nothing outside this list is touched. <code>reference/</code> is
+  read-only. No application code exists yet — this is a planning task.</p>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>What the page is</h2></div>
+  <pre class="tree">┌────────────────────────────────────────────────────────────┐
+│ Nhân viên / Bảng công việc                  [+ Giao việc]  │  header
+├────────────────────────────────────────────────────────────┤
+│ [📅 19/06/2026 ▾]  [vai trò ▾] [trạng thái ▾] [tìm…]       │  filter bar
+├────────────────────────────────────────────────────────────┤
+│ ┌Tổng việc┐ ┌Đang làm┐ ┌Hoàn thành┐ ┌Quá hạn┐              │  4 KPIs
+│ │   18    │ │   4    │ │    9     │ │   2   │              │
+├────────────────────────────────────────────────────────────┤
+│ ▸ chef01    chef      5 việc   2 xong   40%   <span class="bad">! quá hạn</span>       │
+│ ▾ cash02    cashier   4 việc   3 xong   75%                │  staff table
+│    · Kiểm kê nguyên liệu   [cao]  21:00  [đang làm]        │  ← lazy expand
+│    · Lau quầy thu ngân     [vừa]  18:00  [hoàn thành]      │
+│ ▸ manager   manager   2 việc   1 xong   50%                │
+│ ▸ chef02    chef      0 việc    —        —                 │  ← zero-task staff
+└────────────────────────────────────────────────────────────┘</pre>
+  <p style="margin-top:14px"><strong>Core loop:</strong> pick a date → read the KPIs → scan
+  the staff table → expand a row to see that person's tasks → assign new work. The date is a
+  <em>server</em> filter (it re-keys both queries); role, status and search are
+  <em>client</em> filters over data already in hand.</p>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Decisions taken</h2></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Decision</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Add <code>PATCH /admin/tasks/:id/status</code> with a validated transition machine</td><td>Without it the board is decorative. This is the root fix</td></tr>
+      <tr><td>2</td><td><code>overdue</code> is <strong>derived, never stored</strong>; the stored enum is 4 values</td><td>A stored <code>overdue</code> needs a sweeper job to ever be true. Deriving it needs nothing and cannot drift</td></tr>
+      <tr><td>3</td><td><code>qualityScore</code> is <strong>dropped entirely</strong></td><td>It was <code>completionRate / 20</code> dressed up as an independent metric. No quality signal is captured anywhere. We do not ship invented data</td></tr>
+      <tr><td>4</td><td>Bad <code>staffId</code> → <strong>422</strong> <code>VALIDATION_FAILED</code>, not 500</td><td>Caller error, not server error. Pre-check the staff row instead of letting the FK constraint blow up</td></tr>
+      <tr><td>5</td><td>Stats DTO carries per-status counts (<code>byStatus</code>)</td><td>It is what makes the status filter functional instead of decorative</td></tr>
+      <tr><td>6</td><td>A write invalidates <strong>both</strong> the task's date and the filtered date</td><td>The reference invalidates only the task's date, so creating for another day leaves the visible KPIs stale</td></tr>
+      <tr><td>7</td><td>v1 ships create + status-change. Edit and delete deferred</td><td>The reference's "edit" silently inserts a duplicate row. Better to ship neither than half of one</td></tr>
+      <tr><td>8</td><td>No Redis in the task domain</td><td><a href="architecture.html">ARCHITECTURE §4</a> applied: Redis is catalog cache + auth rate-limit only</td></tr>
+      <tr><td>9</td><td>Neutral F-7 tokens, not the customer dark/orange shell</td><td>Admin surface rule, PAGE_PLAN_GUIDE §7</td></tr>
+      <tr><td>10</td><td>This plan owns the <code>/admin/tasks</code> contract; the sibling <code>admin_todo_list</code> plan links to it</td><td>Same table, same endpoints — one fact, one home</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>The status model</h2></div>
+  <pre class="tree">                 ┌──────────────► cancelled ◄──────────┐
+                 │                                      │
+   (create) → pending ──────► in_progress ──────► completed
+                 │                                  │
+                 └──────────────────────────────────┘   direct complete allowed
+
+   <span class="ok">stored</span>    pending · in_progress · completed · cancelled
+   <span class="warn">derived</span>   overdue  =  status IN ('pending','in_progress') AND due_at &lt; NOW()
+                        ↑ computed in the read query — no job, no write, never stale</pre>
+  <p style="margin-top:14px"><code>completed</code> → <code>cancelled</code> and anything out
+  of <code>cancelled</code> are rejected <strong>409 CONFLICT</strong>. A transition to the
+  same status is an idempotent 200, so a double-click is harmless. Validation lives in the
+  service layer — handlers shape, services decide (<a href="be-state-data.html">BE_STATE</a>).</p>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Steps</h2></div>
+  <ol class="steps">
+    <li>Digest the 7 reference docs (page · <code>_be</code> · <code>_loading</code> · 2 dataflow · <code>TASK_BOARD_BUGS</code> · scenario). <span class="chip done">done</span></li>
+    <li>Register the F-22 row in <code>TASKS.md</code>. <span class="chip done">done</span></li>
+    <li>Write <code>admin_task_board_PLAN.md</code> — the 8 sections, every reference decision adopted or rejected with a reason. <span class="chip done">done</span></li>
+    <li>Promote <code>staff_tasks</code> into <code>DB_SCHEMA.md §4.7</code> (15 columns + the derived-overdue ruling). <span class="chip done">done</span></li>
+    <li>Render the 3 HTML companions from the plan — parallel sub-agents, one per file.</li>
+    <li>Register all 4 new files in <code>CONTEXT_MAP.md §Doc inventory</code> + <code>README.md §plans/</code> (Hard Rule 6).</li>
+    <li>Verify: tag balance + both themes + no horizontal scroll; log the receipt in <code>VERIFICATION.md</code>.</li>
+    <li>Checkpoint <code>STATE.md</code>, refresh <code>build-plan.html</code>, commit to <code>main</code>.</li>
+  </ol>
+</section>
+
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Risks &amp; flags</h2></div>
+
+  <div class="flag">
+    <p><strong>⚠️ FLAG — task-id collision, again.</strong> Two <code>TASKS.md</code> rows both
+    claim <strong>F-20</strong> (<code>admin_training</code> and <code>admin_todo_list</code>),
+    and two both claim <strong>F-24</strong> — written by parallel sessions sharing this one
+    working tree. This is the same failure as the three-way <strong>F-10</strong> collision
+    recorded in <code>STATE.md</code> Session 7. This task took <strong>F-22</strong> to stay
+    clear of it, but someone must renumber the duplicates.</p>
+  </div>
+
+  <div class="flag">
+    <p><strong>💡 SUGGESTION — the assignee cannot see their own task.</strong> Both pages that
+    read <code>staff_tasks</code> are <code>manager+</code> gated. A manager can assign work
+    that the staff member has no screen to read. The row is written correctly; there is simply
+    no read surface for the intended recipient. Out of scope for this page, but it wants a
+    ruling before the AD phase closes — cheapest fix is a <code>GET /me/tasks</code> plus a
+    panel on the staff surface.</p>
+  </div>
+
+  <div class="flag">
+    <p><strong>❓ CLARIFY — who marks a task done?</strong> The plan lets a <em>manager</em>
+    move a status. If staff should mark their own work complete, endpoint 4's auth widens from
+    <code>manager+</code> to "manager+ <em>or</em> the assignee" — and that needs the surface
+    in the suggestion above. Defaulting to <code>manager+</code> only until you rule.</p>
+  </div>
+
+  <p><strong>Risk — shared working tree.</strong> Parallel sessions are editing
+  <code>TASKS.md</code>, <code>CONTEXT_MAP.md</code> and <code>README.md</code> concurrently.
+  Mitigation: every edit here is strictly additive (append a row, never rewrite a block), and
+  the commit stages only this task's paths.</p>
+</section>
+
+<section id="s8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Receipt checklist</h2></div>
+  <ul class="checks">
+    <li>All four files present, each prefixed <code>admin_task_board_</code>, in <code>harness/plans/admin_task_board/</code>.</li>
+    <li>The <code>.md</code> is the only source of truth; all three HTML footers say so.</li>
+    <li>Tag balance on each HTML: <code>&lt;section&gt;</code>, <code>&lt;div&gt;</code>, <code>&lt;svg&gt;</code> open == close.</li>
+    <li>Every topnav anchor resolves to a section <code>id</code>.</li>
+    <li>Both themes render — <code>prefers-color-scheme</code> and the <code>data-theme</code> toggle each win.</li>
+    <li>No horizontal page scroll; wide tables and diagrams scroll inside their own box.</li>
+    <li>Mockup uses neutral F-7 tokens (admin surface), real seed data, and renders <strong>no</strong> quality/★ column.</li>
+    <li>Mockup KPI totals reconcile with its staff-table rows.</li>
+    <li>All 13 reference defects appear in the plan's §6 with a countermeasure.</li>
+    <li><code>staff_tasks</code> reads "full", not "stub", in <code>DB_SCHEMA.md</code>.</li>
+    <li><code>CONTEXT_MAP.md</code> + <code>README.md</code> carry a row for each of the 4 new files.</li>
+    <li>Receipt logged in <code>VERIFICATION.md</code>; <code>STATE.md</code> checkpointed.</li>
+  </ul>
+</section>
+
+<footer>
+  Written 2026-07-19 for task F-22, from
+  <code>reference/docs/system/08_pages/admin/admin_task_board/</code> (7 docs).
+  Plan snapshot — <code>harness/TASKS.md</code> owns status and
+  <code>harness/plans/admin_task_board/admin_task_board_PLAN.md</code> owns the page contract;
+  both win over this page on any conflict.
+</footer>
+
+</div>
+</body>
+</html>

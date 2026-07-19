@@ -19,6 +19,54 @@
 
 ## Log (newest on top)
 
+### F-19 — Customer order detail: merge ruling + supplement · 2026-07-19
+**AC:** Supplement records the merge ruling, points at the real home, and owns the three
+items the merge left unhomed (deep-link gap · stepper ruling · redirect drift); zero
+duplication of the `/orders` plan; indexes updated per Hard Rule 6.
+
+**What changed vs. the registered scope.** The task opened as a 4-doc page-plan set for
+`/order/:id`. Two findings redirected it, both surfaced to the owner before any HTML was
+rendered: (1) the sibling `customer_orders_tracking` plan **merges `/order/:id` away**,
+and (2) it already specifies the detail view completely. Owner ruled *"merge — detail is
+a view, not a route"*, then *"short supplement, retire the set"*. The drafted `_PLAN.md`
+was therefore discarded (~90 % duplication — `PAGE_PLAN_GUIDE.md §10`) and replaced by a
+126-line supplement. **No HTML companions were built, deliberately.**
+
+**Receipt:**
+```
+$ ls harness/plans/customer_order_detail/ && wc -l harness/plans/customer_order_detail/*
+customer_order_detail_PLAN.md          19    # stub: "no plan here", points at the home
+customer_order_detail_SUPPLEMENT.md   126    # the deliverable
+
+$ grep -c "customer_orders_tracking" .../customer_order_detail_SUPPLEMENT.md
+2                                            # cross-links the owning plan, restates nothing
+
+$ grep -n "Superseded 2026-07-19" harness/plans/customer_menu/customer_menu_PLAN.md
+33:> **Superseded 2026-07-19 (F-19).** …   # §1 out-links  → /orders
+256:> **Superseded 2026-07-19 (F-19).** …  # §4.2 redirect → router.replace('/orders')
+
+$ grep -c "order/:id" harness/plans/customer_menu/customer_menu_PLAN.md
+2                                            # both inside the supersession notes (they
+                                             # explain the change); zero live stale refs
+
+$ grep -c "customer_order_detail" harness/CONTEXT_MAP.md harness/README.md
+harness/CONTEXT_MAP.md:2                     # Hard Rule 6 — a row per new file
+harness/README.md:2
+```
+
+**Open items handed to the owner** (recorded in the supplement, not resolved here):
+- 🚨 **Deep-link gap** — with `/order/:id` gone, detail is reachable only via
+  `activeOrderId` in the persisted client store. A shared link, a QR re-scan on a second
+  phone, a private tab, or a cleared store leaves a live order **unreachable**.
+  Recommendation: `/orders?id=<uuid>` (URL wins over the store; existing `table_id` 403
+  already covers a guessed id). Decide before the `/orders` FE row opens.
+- ⚠️ **Quantity stepper** dropped by omission — `PATCH /orders/items/:id/quantity` is in
+  the `/orders` plan's "Not built" list with no decision record. Default: stays dropped.
+- ⚠️ **Duplicate task ids** from parallel sessions (F-17 ×2 during this session, since
+  renumbered to F-27/F-28 by the sibling). Not fixed here — other sessions' in-flight rows.
+
+**Verdict:** AC met (as re-scoped by the two owner rulings) — marked ✅ in TASKS.md.
+
 ### F-24 — Customer-favourites page-plan set (4 docs, one folder) · 2026-07-19
 **AC:** Folder holds the 4 prefixed docs; `.md` is sole source of truth (each HTML footer says so); read-only 2-GET BE contract cross-links the menu plan (no re-derive); reference's empty≡loading≡error conflation designed out with named branches; DESIGN_PROMPT NEW features captured as flagged/deferred rows; both HTML themes render; indexes updated per Hard Rule 6
 **Receipt:**

@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Staff — page plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3261E;
+    --red-soft: #FBE9E7;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2938C; --red-soft: #3A1714;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2938C; --red-soft: #3A1714;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE9E7;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; overflow-x: hidden; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .chip.red { color: var(--red); background: var(--red-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, .bcard code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 74ch; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* sticky top nav */
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* task tags in the component tree / tables */
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.c { color: var(--accent); background: var(--accent-soft); }
+  .t.tt { color: var(--amber); background: var(--amber-soft); }
+  .t.o { color: var(--done); background: var(--done-soft); }
+  .dead { color: var(--muted); text-decoration: line-through; }
+
+  /* flow diagram */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  /* phase strip */
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); margin: 14px 0; }
+  .snode { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-top: 3px solid var(--accent); }
+  .snode.tph { border-top-color: var(--amber); }
+  .snode.oph { border-top-color: var(--done); }
+  .sarrow { color: var(--muted); font-size: 0.8rem; }
+
+  /* behaviors grid */
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+
+  /* schema boxes */
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+
+  /* ===== admin roster wireframe — NEUTRAL admin tokens, not the customer shell ===== */
+  .anatomy { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .screen-wrap { flex: 1 1 460px; min-width: 0; overflow-x: auto; }
+  .screen { width: 560px; max-width: none; box-sizing: border-box; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 12.5px; line-height: 1.45; }
+  .screen * { box-sizing: border-box; }
+  .sc-sec { position: relative; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .sc-sec:last-child { border-bottom: none; }
+  .sc-n { position: absolute; top: 8px; right: 8px; z-index: 2; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--paper); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .sc-h { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+  .sc-titlerow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .sc-title { font-family: var(--sans); font-size: 17px; font-weight: 700; }
+  .sc-btn { background: var(--accent); color: var(--paper); border-radius: 6px; padding: 6px 12px; font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+  .sc-btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  .sc-tiles { display: flex; gap: 8px; }
+  .sc-tile { flex: 1; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; }
+  .sc-tile .tk { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .sc-tile .tv { font-family: var(--mono); font-size: 15px; font-weight: 700; }
+  .sc-filters { display: flex; gap: 8px; align-items: center; }
+  .sc-input { flex: 1; background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; color: var(--muted); font-size: 11.5px; }
+  .sc-select { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+  table.sc-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  table.sc-table th { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  table.sc-table td { padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .sc-pill { display: inline-block; font-family: var(--mono); font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 1px 8px; }
+  .sc-pill.on { color: var(--done); background: var(--done-soft); }
+  .sc-pill.off { color: var(--muted); background: var(--line); }
+  .sc-pill.role { color: var(--accent); background: var(--accent-soft); }
+  .sc-acts { font-family: var(--mono); font-size: 13px; letter-spacing: 3px; white-space: nowrap; }
+  .sc-acts .dis { opacity: .35; }
+  .sc-page { display: flex; align-items: center; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .sc-page .pg { display: flex; gap: 4px; }
+  .sc-page .pg span { border: 1px solid var(--line); border-radius: 4px; padding: 2px 7px; }
+  .sc-page .pg span.cur { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); font-weight: 700; }
+  .callouts { flex: 1 1 280px; min-width: 260px; }
+  .callouts ol { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 0.86rem; }
+  .callouts li { display: flex; gap: 10px; }
+  .co-n { flex: none; width: 19px; height: 19px; margin-top: 3px; border-radius: 50%; background: var(--accent); color: var(--paper); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .callouts b { font-family: var(--mono); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · page plan · 2026-07-19</div>
+  <h1>Admin Staff — <code>/admin/staff</code></h1>
+  <p class="lede">The staff-account roster: the one screen where a manager creates, edits,
+  deactivates and deletes staff logins. Six manager+ gated endpoints, plain CRUD over the
+  <code>staff</code> table with three business guards — and the account-lifecycle origin of the
+  whole platform: every staff JWT, every POS/KDS session and every assignee dropdown downstream
+  begins with a row created here.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-23</span></span></div>
+    <div class="fact"><span class="k">endpoints</span><span class="v">6</span></div>
+    <div class="fact"><span class="k">gate</span><span class="v">manager+ (DELETE = admin)</span></div>
+    <div class="fact"><span class="k">behaviors</span><span class="v">20</span></div>
+    <div class="fact"><span class="k">defects designed out</span><span class="v">17</span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_staff_PLAN.md">admin_staff_PLAN.md</a></span></div>
+  </div>
+  <div class="golden">
+    <p><b>Why a write here outlives the page.</b> It changes two server hubs: the
+    <b><code>staff</code> MySQL row</b> (single source of truth) and the
+    <b><code>auth:staff:&lt;id&gt;</code> Redis key</b> the auth middleware reads on every
+    authenticated request.</p>
+    <p>Deactivating a cashier logs them out of the POS on their <em>next</em> API call — lockout is
+    immediate, not TTL-delayed, and their refresh tokens are deleted in the same transaction.</p>
+    <p style="margin-top:8px"><b>Not in scope:</b> staff <em>login</em> (<code>staff_login</code>),
+    per-staff KPIs (<code>admin_summary</code> · <code>GET /admin/staff-performance</code>), task
+    assignment (F-22 / F-20), training progress (F-20).</p>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#anatomy">01 anatomy</a>
+  <a href="#components">02 components</a>
+  <a href="#state">03 state</a>
+  <a href="#be">04 be contract</a>
+  <a href="#guards">05 guards + errors</a>
+  <a href="#branches">06 branches</a>
+  <a href="#behaviors">07 behaviors</a>
+  <a href="#defects">08 defects out</a>
+  <a href="#tasks">09 tasks + decisions</a>
+</nav>
+
+<section id="anatomy">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy — the roster screen</h2></div>
+  <p><span class="chip plan">neutral admin tokens</span>&nbsp; One table of every non-deleted staff
+  account, with filters, and <b>four row actions</b>. Two overlays sit on top: an add/edit modal and
+  a detail drawer (both dynamically imported, §02). The wireframe uses this page's own admin theme —
+  admin surfaces keep the neutral design-system tokens.</p>
+
+  <div class="anatomy">
+    <div class="screen-wrap">
+      <div class="screen">
+
+        <div class="sc-sec">
+          <span class="sc-n">1</span>
+          <p class="sc-h">StaffPageHeader</p>
+          <div class="sc-titlerow">
+            <div><span class="sc-title">Nhân viên</span>&nbsp; <span style="color:var(--muted);font-family:var(--mono);font-size:11px">12 tài khoản</span></div>
+            <span class="sc-btn" style="margin-right:22px">+ Thêm nhân viên</span>
+          </div>
+        </div>
+
+        <div class="sc-sec">
+          <span class="sc-n">2</span>
+          <p class="sc-h">StaffStatsBar — 5 tiles from meta.counts (roster-wide)</p>
+          <div class="sc-tiles">
+            <div class="sc-tile"><div class="tk">tổng</div><div class="tv">12</div></div>
+            <div class="sc-tile"><div class="tk">hoạt động</div><div class="tv">10</div></div>
+            <div class="sc-tile"><div class="tk">ngưng</div><div class="tv">2</div></div>
+            <div class="sc-tile"><div class="tk">bếp</div><div class="tv">5</div></div>
+            <div class="sc-tile"><div class="tk">thu ngân</div><div class="tv">4</div></div>
+          </div>
+        </div>
+
+        <div class="sc-sec">
+          <span class="sc-n">3</span>
+          <p class="sc-h">StaffFilterBar — all three write to the URL</p>
+          <div class="sc-filters">
+            <div class="sc-input">⌕ Tìm tên / tên đăng nhập… <span style="opacity:.6">(debounce 300 ms)</span></div>
+            <div class="sc-select">role: chef ▾</div>
+            <div class="sc-select">status: all ▾</div>
+          </div>
+        </div>
+
+        <div class="sc-sec" style="padding:0">
+          <span class="sc-n">4</span>
+          <div style="overflow-x:auto">
+          <table class="sc-table">
+            <tr><th>Họ tên</th><th>Tên đăng nhập</th><th>Vai trò</th><th>Ca</th><th>Trạng thái</th><th>Thao tác</th></tr>
+            <tr>
+              <td>Nguyễn Văn A</td><td><code style="font-size:10.5px">chef01</code></td>
+              <td><span class="sc-pill role">chef</span></td><td>sáng · chiều</td>
+              <td><span class="sc-pill on">hoạt động</span></td>
+              <td class="sc-acts">👁 ✎ ⏻ 🗑</td>
+            </tr>
+            <tr>
+              <td>Trần Thị B</td><td><code style="font-size:10.5px">cash02</code></td>
+              <td><span class="sc-pill role">cashier</span></td><td>tối</td>
+              <td><span class="sc-pill off">ngưng</span></td>
+              <td class="sc-acts">👁 ✎ ⏻ 🗑</td>
+            </tr>
+            <tr>
+              <td>Lê Văn C <span style="color:var(--muted);font-size:10px">(bạn)</span></td><td><code style="font-size:10.5px">mgr01</code></td>
+              <td><span class="sc-pill role">manager</span></td><td>—</td>
+              <td><span class="sc-pill on">hoạt động</span></td>
+              <td class="sc-acts">👁 ✎ <span class="dis">⏻ 🗑</span></td>
+            </tr>
+            <tr>
+              <td>Phạm Thị D</td><td><code style="font-size:10.5px">admin</code></td>
+              <td><span class="sc-pill role">admin</span></td><td>—</td>
+              <td><span class="sc-pill on">hoạt động</span></td>
+              <td class="sc-acts">👁 <span class="dis">✎ ⏻ 🗑</span></td>
+            </tr>
+          </table>
+          </div>
+        </div>
+
+        <div class="sc-sec">
+          <span class="sc-n">5</span>
+          <div class="sc-page">
+            <span>12 kết quả · trang 1 / 1 · limit 20</span>
+            <span class="pg"><span>‹</span><span class="cur">1</span><span>›</span></span>
+          </div>
+        </div>
+
+        <div class="sc-sec" style="background:var(--paper)">
+          <span class="sc-n">6</span>
+          <p class="sc-h">overlays — dynamic import, local state only</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="sc-btn ghost">AddEditStaffModal (add · edit)</span>
+            <span class="sc-btn ghost">StaffDetailDrawer (4 tabs)</span>
+            <span class="sc-btn ghost">ConfirmDialog (typed)</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="callouts">
+      <ol>
+        <li><span class="co-n">1</span><span><b>StaffPageHeader</b> — title + total +
+          <code>+ Thêm nhân viên</code>, the primary create entry point (behavior 7).</span></li>
+        <li><span class="co-n">2</span><span><b>StaffStatsBar</b> — 5 stat tiles fed by
+          <code>meta.counts</code>, which is <em>roster-wide</em> and therefore <b>does not change as
+          you page</b> (§3.1, behavior 3). Ghost tiles reserve the height while loading, so nothing
+          pops in.</span></li>
+        <li><span class="co-n">3</span><span><b>StaffFilterBar</b> — debounced search (300 ms) ·
+          role select · status select. All three live in the <b>URL</b>, so a deep link reproduces
+          the view exactly (behaviors 2, 4, 5).</span></li>
+        <li><span class="co-n">4</span><span><b>StaffTable + StaffRowActions</b> — the four row
+          actions <b>👁 view · ✎ edit · ⏻ toggle active · 🗑 delete</b>, each with per-row
+          enable/disable and a tooltip. Your own row and any row at or above your level are
+          disabled; 🗑 is hidden entirely for managers (behaviors 13, 14).</span></li>
+        <li><span class="co-n">5</span><span><b>Pagination</b> — server-side (<code>page</code>,
+          <code>limit</code> in the URL). No client-side 100-row cap; the reference's silent
+          truncation is designed out (§6 row 3).</span></li>
+        <li><span class="co-n">6</span><span><b>Overlays</b> — add/edit modal (RHF + Zod), detail
+          drawer (its own query, loading <em>and</em> error branches), and a
+          <b>typed-confirmation</b> dialog that names the account — never a native
+          <code>confirm()</code> (behaviors 15, 17).</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="components">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Component tree — the §4.1 file map with owning tasks</h2></div>
+  <p>Tags mark which proposed row builds each file:
+  <span class="t c">AD-1</span> FE roster (shell, URL params, table, filters, stats, 5 branches) ·
+  <span class="t tt">AD-2</span> FE overlays (add/edit modal, detail drawer, confirm dialogs).</p>
+  <pre class="diagram">
+fe/src/app/(dashboard)/admin/staff/
+├─ page.tsx                  <span class="t c">AD-1</span>  RSC shell — reads searchParams, prefetches list, HydrationBoundary
+├─ loading.tsx               <span class="t c">AD-1</span>  table-shaped skeleton (FE_STATE §9 rule 3) — NOT a bare spinner
+├─ error.tsx                 <span class="t c">AD-1</span>  segment error boundary + reset()
+├─ StaffPageClient.tsx       <span class="t c">AD-1</span>  'use client' — owns URL param sync + overlay open/close
+└─ components/
+   ├─ StaffPageHeader.tsx    <span class="t c">AD-1</span>  title + total + [+ Thêm nhân viên]
+   ├─ StaffStatsBar.tsx      <span class="t c">AD-1</span>  5 stat tiles from meta.counts
+   ├─ StaffFilterBar.tsx     <span class="t c">AD-1</span>  search (debounced) · role select · status select
+   ├─ StaffTable.tsx         <span class="t c">AD-1</span>  rows + the 4 row actions + per-row permission logic
+   ├─ StaffRowActions.tsx    <span class="t c">AD-1</span>  👁 ✎ ⏻ 🗑 with per-row enable/disable + tooltips
+   ├─ AddEditStaffModal.tsx  <span class="t tt">AD-2</span>  dynamic import — RHF + Zod, add &amp; edit modes
+   ├─ StaffDetailDrawer.tsx  <span class="t tt">AD-2</span>  dynamic import — detail query, 4 tabs
+   └─ ConfirmDialog.tsx      <span class="t tt">AD-2</span>  shared? → promote to components/shared if it exists
+
+features/admin/staff/
+├─ staff.api.ts              <span class="t c">AD-1</span>  the 6 typed callers
+├─ staff.queries.ts          <span class="t c">AD-1</span>  useStaffList / useStaffDetail + the 4 mutations
+├─ staff.keys.ts             <span class="t c">AD-1</span>  key factory (FE_STATE §9 rule 6)
+├─ staff.schema.ts           <span class="t tt">AD-2</span>  Zod: create/edit forms (mirrors BE tags, §5 validation)
+└─ staff.types.ts            <span class="t c">AD-1</span>  Staff DTO mirror (FE_STATE §9 rule 10 — string ids)</pre>
+
+  <div class="golden">
+    <p><b>Dependency note (§5).</b> AD-1/AD-2 cannot start before S-3/S-4 — this is a pure-CRUD page
+    with <b>no useful mock-first path</b>.</p>
+  </div>
+</section>
+
+<section id="state">
+  <div class="sec-head"><span class="sec-num">03</span><h2>State ownership (§4.2) — an instance of FE_STATE §1, no new kinds</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>Data</th><th>Kind</th><th>Owner</th></tr>
+    <tr><td>staff list + <code>meta.counts</code></td><td>server</td>
+      <td>TanStack <code>['admin','staff','list',{filters}]</code></td></tr>
+    <tr><td>one staff detail</td><td>server</td>
+      <td>TanStack <code>['admin','staff','detail',id]</code>, <code>staleTime 30s</code>, enabled only while the drawer is open</td></tr>
+    <tr><td><code>search</code> · <code>role</code> · <code>is_active</code> · <code>page</code></td><td><b>URL</b></td>
+      <td><code>searchParams</code> — FE_STATE §9 rule 2. Back button and shared links reproduce the view</td></tr>
+    <tr><td>which overlay is open + its target id</td><td>local</td>
+      <td><code>StaffPageClient</code> <code>useState</code> — deliberately <em>not</em> the URL (§07 💡-1)</td></tr>
+    <tr><td>form field values</td><td>local</td><td>React Hook Form inside the modal</td></tr>
+    <tr><td>current user identity (for self-row checks)</td><td>server→auth</td>
+      <td>the existing auth store; read-only here</td></tr>
+  </table></div>
+  <p style="margin-top:12px"><b>No Zustand slice.</b> Nothing here is cross-page client state
+  (FE_STATE §9 rule 7).</p>
+
+  <h3>Cache-invalidation map — what each mutation invalidates</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Mutation</th><th>Invalidates</th></tr>
+    <tr><td>create</td><td><code>['admin','staff','list']</code> (all filter combos)</td></tr>
+    <tr><td>update</td><td><code>['admin','staff','list']</code> + <code>['admin','staff','detail',id]</code></td></tr>
+    <tr><td>status toggle</td><td>same as update</td></tr>
+    <tr><td>delete</td><td><code>['admin','staff','list']</code> + <b>remove</b> <code>['admin','staff','detail',id]</code></td></tr>
+  </table></div>
+  <p style="margin-top:12px">All four are <b>pessimistic</b> — FE_STATE §9 rule 4 reserves optimistic
+  updates for cart mutations. <b>An account change is not a place to guess.</b></p>
+</section>
+
+<section id="be">
+  <div class="sec-head"><span class="sec-num">04</span><h2>BE contract — endpoints, schema, cache map, wire shapes</h2></div>
+
+  <h3>Endpoints the page consumes (§3.1 — all under <code>/api/v1</code>)</h3>
+  <p>Route group <code>/staff</code>, <code>authMW</code> + <code>AtLeast("manager")</code> on the
+  whole group; the <code>DELETE</code> sits in a nested group additionally requiring
+  <code>AtLeast("admin")</code>.</p>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Route</th><th>Auth</th><th>Task</th><th>Behavior</th></tr>
+    <tr><td>1</td><td><code>GET /staff</code></td><td>manager+</td><td><span class="t o">S-3</span></td>
+      <td>List, <b>server-filtered + server-paged</b>: <code>role</code>, <code>search</code>,
+      <code>is_active</code>, <code>page</code>, <code>limit</code>. Returns
+      <code>{data:[Staff], meta:{page,limit,total}}</code></td></tr>
+    <tr><td>2</td><td><code>GET /staff/:id</code></td><td>manager+</td><td><span class="t o">S-3</span></td>
+      <td>One row + <code>updated_at</code>. 404 if missing or soft-deleted</td></tr>
+    <tr><td>3</td><td><code>POST /staff</code></td><td>manager+</td><td><span class="t o">S-4</span></td>
+      <td>Create. Guards: valid role → hierarchy → username unique → bcrypt → INSERT.
+      201 <code>{data:Staff}</code></td></tr>
+    <tr><td>4</td><td><code>PATCH /staff/:id</code></td><td>manager+</td><td><span class="t o">S-4</span></td>
+      <td>Partial update. Only keys present in the body change (§3.7). Hierarchy guard on both current
+      and new role. 200 <code>{data:Staff}</code></td></tr>
+    <tr><td>5</td><td><code>PATCH /staff/:id/status</code></td><td>manager+</td><td><span class="t o">S-4</span></td>
+      <td><code>{is_active:bool}</code>. Self-toggle blocked, hierarchy guard, <b>+ auth-cache
+      invalidation + refresh-token revoke</b>. Returns the full row</td></tr>
+    <tr><td>6</td><td><code>DELETE /staff/:id</code></td><td><b>admin</b></td><td><span class="t o">S-4</span></td>
+      <td>Soft delete + username rename + last-admin guard + cache invalidation + token revoke.
+      200 <code>{data:{id}}</code></td></tr>
+  </table></div>
+
+  <div class="golden">
+    <p><b>Stats are derived, not fetched — and that breaks under paging.</b> The reference computed the
+    stats bar client-side from the full list. With server-side paging, page 2 of 5 can't count the
+    roster. So <code>GET /staff</code> returns a <code>meta.counts</code> block computed in the same
+    query as the total. <b>This is the one place we <em>add</em> to the reference contract rather than
+    trim it.</b></p>
+  </div>
+
+  <h3>Schema this page depends on (§3.2) — owned by <code>DB_SCHEMA.md §4.4</code>, not restated</h3>
+  <div class="schema">
+    <div class="tbl"><div class="tname">staff</div>
+      <ul>
+        <li><b>username</b> (UNIQUE)</li>
+        <li><b>role</b> · full_name</li>
+        <li>job_title · <b>shifts</b> (JSON)</li>
+        <li>responsibilities</li>
+        <li>phone · email</li>
+        <li><b>is_active</b> · deleted_at</li>
+        <li>created_at · updated_at</li>
+        <li>🔒 <b>password_hash</b> — never serialized</li>
+      </ul></div>
+    <div class="tbl"><div class="tname">refresh_tokens</div>
+      <ul>
+        <li>write-only from this page</li>
+        <li>rows for the target staff</li>
+        <li>are <b>DELETEd</b> on deactivate</li>
+        <li>and on delete (§3.3)</li>
+        <li>fixes reference Flag 6</li>
+      </ul></div>
+  </div>
+  <p>Every <code>staff</code> column is read; writes cover all columns except <code>id</code> /
+  <code>created_at</code>. <b>No migration is owned by this plan</b> — <code>staff</code> lands with the
+  S-phase auth task (the same task that seeds the first <code>admin</code>).</p>
+
+  <h3>Cache &amp; side-effect map (§3.3 — the S-4 acceptance criteria)</h3>
+  <p>Per <code>ARCHITECTURE.md §4</code>, Redis is catalog-cache + auth-rate-limit only.
+  <b>The staff roster is never read-cached</b> — every <code>GET /staff*</code> hits MySQL. The only
+  Redis touch is a <em>write</em>.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Write</th><th>MySQL effect</th><th>Redis effect</th><th><code>refresh_tokens</code> effect</th></tr>
+    <tr><td><code>POST /staff</code></td><td>INSERT, <code>is_active=1</code></td><td>—</td><td>—</td></tr>
+    <tr><td><code>PATCH /staff/:id</code></td><td>UPDATE changed cols</td><td>—</td><td>—</td></tr>
+    <tr><td><code>PATCH /staff/:id/status</code></td><td><code>is_active</code> flipped</td>
+      <td><b><code>DEL auth:staff:&lt;id&gt;</code></b></td><td><b>DELETE all rows</b> when deactivating</td></tr>
+    <tr><td><code>DELETE /staff/:id</code></td><td><code>deleted_at=NOW()</code> + username rename</td>
+      <td><b><code>DEL auth:staff:&lt;id&gt;</code></b></td><td><b>DELETE all rows</b></td></tr>
+  </table></div>
+  <p style="margin-top:12px">The <code>DEL</code> forces the auth middleware's next
+  <code>IsStaffActive</code> check to re-read MySQL, so lockout is <b>immediate, not TTL-delayed</b>.
+  Deleting the refresh-token rows closes the reference's unrevoked-session hole.</p>
+
+  <div class="flag">
+    <p><b>⚠️ Fail-open is inherited, deliberately.</b> <code>IsStaffActive</code> returns
+    <code>true</code> when Redis is down (ARCHITECTURE §4), so a Redis blip briefly weakens the
+    just-disabled lockout. Availability-over-strictness, consistent with the rest of the platform —
+    but now bounded by the token revoke, which is a MySQL write and therefore blip-proof.</p>
+  </div>
+
+  <h3>Wire shapes (§3.5) — the FE↔BE object gallery</h3>
+  <p><span class="chip amber">contract-pending</span>&nbsp; These are the designed shapes; they become
+  binding when the S-3/S-4 curl receipts land in <code>VERIFICATION.md</code> (gate 8). Field names are
+  the DB column names; nullable columns serialize as real <code>null</code>, never <code>""</code>.</p>
+
+  <pre class="diagram">
+<b>Staff</b> — the one shape every endpoint returns
+{
+  "id": "9f1c…",             <span style="color:var(--muted)">// string, always</span>
+  "username": "chef01",
+  "role": "chef",            <span style="color:var(--muted)">// chef | cashier | staff | manager | admin</span>
+  "full_name": "Nguyễn Văn A",
+  "job_title": "Bếp chính",  <span style="color:var(--muted)">// null when unset</span>
+  "shifts": ["sang", "chieu"],<span style="color:var(--muted)">// JSON array; null when unset — NOT a string</span>
+  "responsibilities": null,
+  "phone": "0901234567",
+  "email": null,
+  "is_active": true,
+  "created_at": "2026-07-19T08:30:00Z",
+  "updated_at": "2026-07-19T08:30:00Z"   <span style="color:var(--muted)">// detail (#2) + update (#4) only</span>
+}
+<span style="color:var(--muted)">password_hash never appears. 🔒 Enforced by the DTO, not by hoping.</span></pre>
+
+  <pre class="diagram">
+<b>#1 GET /staff?role=chef&amp;search=an&amp;is_active=true&amp;page=1&amp;limit=20</b>
+{
+  "data": [ /* Staff… */ ],
+  "meta": {
+    "page": 1, "limit": 20, "total": 12,
+    "counts": { "total": 12, "active": 10, "inactive": 2,
+                "by_role": { "admin": 1, "manager": 1, "cashier": 4, "chef": 5, "staff": 1 } }
+  }
+}
+<span style="color:var(--muted)">meta.counts is roster-wide (ignores page/limit) — it feeds the stats bar,
+which must not change as you page.</span></pre>
+
+  <pre class="diagram">
+<b>#3 POST /staff</b> — request
+{ "username": "cash02", "password": "…", "full_name": "Trần Thị B",
+  "role": "cashier", "job_title": null, "shifts": ["toi"],
+  "responsibilities": null, "phone": null, "email": null }
+→ 201 {"data": Staff}          <span style="color:var(--muted)">password is write-only and never echoed</span>
+
+<b>#4 PATCH /staff/:id</b> — only the keys present are changed
+{ "full_name": "Trần Thị Bích", "shifts": null }
+<span style="color:var(--muted)">"shifts": null CLEARS the column; omitting shifts LEAVES IT ALONE.
+That distinction is the whole reason this is a PATCH (§3.7).</span>
+
+<b>#5 PATCH /staff/:id/status</b> → {"is_active": false} → 200 {"data": Staff}
+<span style="color:var(--muted)">the FULL row — the reference returned a thin {id,is_active,updated_at},
+which forced the FE to patch its cache by hand.</span>
+
+<b>#6 DELETE /staff/:id</b> → 200 {"data":{"id":"9f1c…"}}
+<span style="color:var(--muted)">the reference returned a bare Vietnamese message with no data;
+an id lets the FE evict precisely.</span>
+
+<b>Error envelope</b> (BE_STATE §4) — e.g. duplicate username
+{ "error": { "code": "CONFLICT", "message": "Tên đăng nhập đã tồn tại",
+             "details": [ { "field": "username", "issue": "taken" } ] } }</pre>
+
+  <h3>Not adopted from the reference BE (§3.4 — decided here)</h3>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Reference did</th><th>We do</th><th>Why</th></tr>
+    <tr><td>a</td><td>Hand-written raw-SQL repo (<code>staff_repo.go</code>)</td>
+      <td><b>goose + sqlc</b>, generated queries</td><td>BE_PLAYBOOK §1 golden rule — no hand-rolled SQL layer</td></tr>
+    <tr><td>b</td><td>FE sends <code>?limit=100</code>, filters + paginates client-side; BE filter params unused</td>
+      <td><b>Server-side</b> filter + page from the URL</td>
+      <td>Kills the silent 100-row truncation; honours FE_STATE §9 rule 2</td></tr>
+    <tr><td>c</td><td><code>{"error":CODE,"message":…}</code></td><td>Our <code>{"error":{code,message,details}}</code></td>
+      <td>Session-0 contract, BE_STATE §4</td></tr>
+    <tr><td>d</td><td>9 page-specific error codes</td><td>Mapped onto our 9-code enum + a <code>details[].issue</code> discriminator</td>
+      <td>One enum for the whole platform; see ⚠️-1</td></tr>
+    <tr><td>e</td><td>Dead self-service guard (<code>id==callerID</code>)</td><td><b>Dropped</b></td>
+      <td>Dead code by construction under a manager+ group</td></tr>
+    <tr><td>f</td><td><code>performance_score: 0</code> hardcoded</td><td><b>Not serialized at all</b></td>
+      <td>No such column exists; real KPIs live on <code>GET /admin/staff-performance</code></td></tr>
+    <tr><td>g</td><td>Soft delete leaves <code>username</code> occupying the UNIQUE index</td>
+      <td>Rename to <code>&lt;username&gt;#deleted-&lt;id&gt;</code> in the same UPDATE</td>
+      <td>Otherwise re-hiring <code>chef1</code> fails forever</td></tr>
+    <tr><td>h</td><td>Soft delete leaves <code>refresh_tokens</code> rows live</td><td>Same tx deletes them</td>
+      <td>§3.3 — closes a real auth hole</td></tr>
+  </table></div>
+
+  <h3>PATCH semantics (§3.7) — a real design constraint</h3>
+  <p><code>PATCH /staff/:id</code> must distinguish three cases per field: <b>omitted</b> (leave),
+  <b><code>null</code></b> (clear), <b>value</b> (set). A plain struct-bind cannot — a missing string
+  and an empty string both arrive as <code>""</code>. The reference decoded into
+  <code>map[string]json.RawMessage</code> and built <code>*string</code> pointers; we keep that
+  approach (it is correct). <b>AC:</b> <code>PATCH {"job_title": null}</code> clears the column;
+  <code>PATCH {}</code> is a no-op that still returns 200 with the unchanged row.</p>
+</section>
+
+<section id="guards">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Guards &amp; error mapping — the heart of this page</h2></div>
+  <p>This is the section that makes the staff roster different from every other CRUD screen: four
+  guards, a role hierarchy, and two distinct 409s that share one error code.</p>
+
+  <h3>Role levels (§3.6)</h3>
+  <p>Proposed home: <code>OVERALL_PLAN.md §3</code> — see ⚠️-2 in §09.</p>
+  <div class="strip">
+    <span class="snode">chef · cashier — 2</span><span class="sarrow">&lt;</span>
+    <span class="snode">staff — 3</span><span class="sarrow">&lt;</span>
+    <span class="snode tph">manager — 4</span><span class="sarrow">&lt;</span>
+    <span class="snode oph">admin — 5</span>
+  </div>
+  <div class="table-wrap"><table>
+    <tr><th>role</th><th>level</th></tr>
+    <tr><td><code>chef</code> · <code>cashier</code></td><td>2</td></tr>
+    <tr><td><code>staff</code></td><td>3</td></tr>
+    <tr><td><code>manager</code></td><td>4</td></tr>
+    <tr><td><code>admin</code></td><td>5</td></tr>
+  </table></div>
+
+  <h3>The four guards — all in the <b>service</b> layer</h3>
+  <p>BE_STATE §5: business rules never in handlers, never in SQL.</p>
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">GUARD 1</span><span class="bt">Hierarchy</span>
+      <p>You may only act on a target <b>strictly below</b> your level, and may only assign a role
+      strictly below your level. Consequence: <b>no admin can be created or promoted through this
+      page</b> (admin 5 ≮ admin 5). Adopted from the reference deliberately — admins are seeded by
+      migration, never minted from the UI.</p></div>
+    <div class="bcard"><span class="bn">GUARD 2</span><span class="bt">Username uniqueness</span>
+      <p>Checked before insert; the <b>UNIQUE index is the backstop</b>. Surfaces as a field-level
+      409 on the username input, modal stays open (behavior 8).</p></div>
+    <div class="bcard"><span class="bn">GUARD 3</span><span class="bt">Last admin</span>
+      <p>Deleting the final active, non-deleted <code>admin</code> is <b>refused</b> —
+      "Không thể xóa admin cuối cùng", and the row stays (behavior 16).</p></div>
+    <div class="bcard"><span class="bn">GUARD 4</span><span class="bt">No self-harm</span>
+      <p>You cannot toggle your own status or delete your own account. The FE disables the buttons
+      with a tooltip; <b>the 403 is the backstop, not the UX</b> (behavior 13).</p></div>
+  </div>
+
+  <h3>Error mapping — reference code → our <code>BE_STATE.md §4</code> enum</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Reference code</th><th>Ours</th><th>HTTP</th><th><code>details[].issue</code></th><th>FE toast (VN)</th></tr>
+    <tr><td><code>INVALID_INPUT</code></td><td><code>VALIDATION_FAILED</code></td><td>400</td><td>per field</td><td>field-level, in the modal</td></tr>
+    <tr><td><code>INVALID_ROLE</code></td><td><code>VALIDATION_FAILED</code></td><td>422</td><td><code>role: invalid</code></td><td>field-level</td></tr>
+    <tr><td><code>USERNAME_TAKEN</code></td><td><code>CONFLICT</code></td><td>409</td><td><code>username: taken</code></td><td>"Tên đăng nhập đã tồn tại"</td></tr>
+    <tr><td><code>LAST_ADMIN</code></td><td><code>CONFLICT</code></td><td>409</td><td><code>role: last_admin</code></td><td>"Không thể xóa admin cuối cùng"</td></tr>
+    <tr><td><code>INSUFFICIENT_ROLE</code></td><td><code>FORBIDDEN</code></td><td>403</td><td><code>role: hierarchy</code></td><td>"Không đủ quyền"</td></tr>
+    <tr><td><code>SELF_DEACTIVATION_FORBIDDEN</code></td><td><code>FORBIDDEN</code></td><td>403</td><td><code>id: self</code></td><td>"Không thể thao tác trên chính mình"</td></tr>
+    <tr><td><code>STAFF_NOT_FOUND</code></td><td><code>NOT_FOUND</code></td><td>404</td><td>—</td><td>"Không tìm thấy nhân viên"</td></tr>
+    <tr><td><code>AUTH_003</code></td><td>—</td><td>—</td><td>—</td><td><b class="dead">dropped</b> (dead code, §3.4-e)</td></tr>
+    <tr><td><code>COMMON_002</code></td><td><code>INTERNAL</code></td><td>500</td><td>—</td><td>generic</td></tr>
+  </table></div>
+
+  <div class="flag">
+    <p><b>⚠️-1 — Two different 409s share one code.</b> Our 9-code enum maps both
+    <code>USERNAME_TAKEN</code> and <code>LAST_ADMIN</code> to <code>CONFLICT</code>, so the FE must
+    branch on <code>code</code> <b>plus</b> <code>details[0].issue</code>. That still satisfies
+    FE_STATE §9 rule 5 (branch on structured data, never message text), but it is a widening of the
+    contract. <b>Recommendation: keep the discriminator</b> — the enum is a platform-wide contract and
+    should not grow a code per page. Owner may flip this before S-4.</p>
+  </div>
+
+  <h3>What a write leaves behind (§4.5) — cross-surface effects</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Surface</th><th>Effect</th></tr>
+    <tr><td><b>Auth middleware</b> (every authed request)</td>
+      <td><code>DEL auth:staff:&lt;id&gt;</code> → next request re-reads MySQL → deactivated/deleted staff gets 401 immediately</td></tr>
+    <tr><td><b>Login / refresh</b></td>
+      <td>a created account can log in at once; a deactivated one is refused; its refresh tokens are gone</td></tr>
+    <tr><td><b>Assignee dropdowns</b> (task-board F-22, to-do-list F-20)</td>
+      <td>read the same <code>GET /staff</code>; gains/loses the person. ⚠️ they must send <code>is_active=true</code> — see §08 row 9</td></tr>
+    <tr><td><b>Staff performance</b> (admin_summary)</td>
+      <td>aggregates orders by <code>created_by</code> against these rows</td></tr>
+  </table></div>
+  <p style="margin-top:12px"><b>Multi-device:</b> two managers' tabs do <b>not</b> sync live. Manager B
+  sees A's change on tab-focus refetch. The <em>affected staff</em> is cut off immediately (auth
+  middleware). That asymmetry is intended. No SSE/WS — every downstream surface is pull-only.</p>
+</section>
+
+<section id="branches">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Loading branches (§4.3) — five named, mutually exclusive</h2></div>
+  <p>Four layers, and <b>five named render branches</b> — the reference had four layers but collapsed
+  three of its states into two surfaces. Named branches are the countermeasure.</p>
+
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">BRANCH 1</span><span class="bt"><code>loading</code></span>
+      <p><b>When:</b> first load, no data. <b>Renders:</b> a <b>table-shaped skeleton</b> — header +
+      10 ghost rows + stats-tile ghosts. Never a bare "Đang tải…".</p></div>
+    <div class="bcard"><span class="bn">BRANCH 2</span><span class="bt"><code>error</code></span>
+      <p><b>When:</b> list query failed. <b>Renders:</b> inline error panel + <code>Thử lại</code> →
+      <code>refetch()</code>; the filters stay usable.</p></div>
+    <div class="bcard"><span class="bn">BRANCH 3</span><span class="bt"><code>empty-roster</code></span>
+      <p><b>When:</b> <code>meta.counts.total === 0</code>. <b>Renders:</b> "Chưa có nhân viên nào" +
+      a primary <b><code>+ Thêm nhân viên</code> CTA</b>.</p></div>
+    <div class="bcard"><span class="bn">BRANCH 4</span><span class="bt"><code>empty-filtered</code></span>
+      <p><b>When:</b> <code>total &gt; 0</code> but this filter matched 0. <b>Renders:</b>
+      "Không có nhân viên khớp bộ lọc" + a <b><code>Xóa bộ lọc</code> CTA</b>.</p></div>
+    <div class="bcard"><span class="bn">BRANCH 5</span><span class="bt"><code>rows</code></span>
+      <p><b>When:</b> data present. <b>Renders:</b> the table.</p></div>
+  </div>
+
+  <div class="golden">
+    <p><b>The key fix: <code>empty-roster</code> vs <code>empty-filtered</code>.</b> This split is the
+    single highest-value fix on this page. The reference showed <b>one <code>EmptyState</code> for
+    both</b>, so a manager could not tell <em>"we have no staff"</em> from <em>"your filter is too
+    narrow."</em> Two branches, two CTAs, two different next actions.</p>
+  </div>
+
+  <h3>Other layer rules</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Rule</th><th>Why</th></tr>
+    <tr><td><b>Stats bar reserves its height</b> while loading (ghost tiles)</td>
+      <td>so it does not pop in and shift the table (ref loading-Flag 3)</td></tr>
+    <tr><td><b>Detail drawer has an error branch</b> — a failed <code>GET /staff/:id</code> shows
+      "Không tải được. Thử lại / Đóng"</td>
+      <td>never a stuck spinner when the row was deleted on another device (ref loading-Flag 1)</td></tr>
+    <tr><td><b>Background refetch is visible</b> — a subtle top progress bar while a focus-triggered
+      refetch is in flight</td>
+      <td>so silently-stale rows are not mistaken for fresh ones (ref loading-Flag 4)</td></tr>
+    <tr><td><b>Search is debounced 300 ms</b> and drives a server query; the table <b>dims rather than
+      unmounting</b> (<code>placeholderData: keepPreviousData</code>)</td>
+      <td>unlike the reference there <em>is</em> an in-flight state — keep the previous page visible</td></tr>
+  </table></div>
+</section>
+
+<section id="behaviors">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Behaviors spec (§4.4) — the twenty acceptance criteria</h2></div>
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">B1</span><span class="bt">Role gate, no flash</span>
+      <p>Page renders only for role ≥ manager; a lower role is redirected by the shell guard,
+      <b>never shown a flash of content</b>.</p></div>
+    <div class="bcard"><span class="bn">B2</span><span class="bt">Deep link reproduces the view</span>
+      <p>List loads server-filtered and server-paged from the URL params; a deep link reproduces
+      filters, page and search <b>exactly</b>.</p></div>
+    <div class="bcard"><span class="bn">B3</span><span class="bt">Stats survive paging</span>
+      <p>Stats bar shows roster-wide counts from <code>meta.counts</code> and does <b>not</b> change
+      when you page.</p></div>
+    <div class="bcard"><span class="bn">B4</span><span class="bt">Debounced search</span>
+      <p>Search debounces 300 ms, resets to page 1, and keeps the previous rows <b>visible (dimmed)</b>
+      while in flight.</p></div>
+    <div class="bcard"><span class="bn">B5</span><span class="bt">Filters reset the page</span>
+      <p>Role and status filters reset to page 1 and are reflected in the URL.</p></div>
+    <div class="bcard"><span class="bn">B6</span><span class="bt">Five branches, each reachable</span>
+      <p>The five render branches (§06) are <b>mutually exclusive</b> and each is individually
+      reachable.</p></div>
+    <div class="bcard"><span class="bn">B7</span><span class="bt">Add mode offers only lower roles</span>
+      <p><code>+ Thêm nhân viên</code> opens the modal in add mode; the role <code>&lt;select&gt;</code>
+      offers only roles <b>strictly below</b> the caller's level.</p></div>
+    <div class="bcard"><span class="bn">B8</span><span class="bt">Taken username, field-level</span>
+      <p>Create with a taken username surfaces "Tên đăng nhập đã tồn tại" <b>on the username
+      field</b>, and the modal stays open with input intact.</p></div>
+    <div class="bcard"><span class="bn">B9</span><span class="bt">Create success</span>
+      <p>Closes the modal, toasts, and the new row appears after the list invalidate.</p></div>
+    <div class="bcard"><span class="bn">B10</span><span class="bt">Edit mode, no password field</span>
+      <p>Row ✎ opens the modal in edit mode, prefilled; the password field is <b>absent</b> in edit
+      mode (password change is a separate S-phase concern — ❓-1).</p></div>
+    <div class="bcard"><span class="bn">B11</span><span class="bt">PATCH sends only changed keys</span>
+      <p>Clearing an optional field sends explicit <code>null</code> and the column <b>is
+      cleared</b> (§3.7).</p></div>
+    <div class="bcard"><span class="bn">B12</span><span class="bt">Toggle names its consequence</span>
+      <p>Row ⏻ toggles status; <b>re-activating asks for confirmation</b>, deactivating asks for
+      confirmation <em>and</em> names the consequence ("… sẽ bị đăng xuất khỏi mọi thiết bị").</p></div>
+    <div class="bcard"><span class="bn">B13</span><span class="bt">Your own row is disabled</span>
+      <p>Your own row's ⏻ and 🗑 are disabled <b>with a tooltip explaining why</b> — the 403 is the
+      backstop, not the UX.</p></div>
+    <div class="bcard"><span class="bn">B14</span><span class="bt">Rows at or above your level</span>
+      <p>Have ✎/⏻/🗑 disabled with a tooltip; <b>🗑 is hidden entirely for managers</b> (admin-only
+      route).</p></div>
+    <div class="bcard"><span class="bn">B15</span><span class="bt">Typed delete confirmation</span>
+      <p>Row 🗑 opens a <b>typed-confirmation</b> dialog (not a native <code>confirm()</code>), naming
+      the account.</p></div>
+    <div class="bcard"><span class="bn">B16</span><span class="bt">Last admin refused</span>
+      <p>Deleting the last admin is refused with "Không thể xóa admin cuối cùng" and <b>the row
+      stays</b>.</p></div>
+    <div class="bcard"><span class="bn">B17</span><span class="bt">Drawer has both branches</span>
+      <p>Row 👁 opens the detail drawer, which fetches its own detail and has loading <b>and</b> error
+      branches.</p></div>
+    <div class="bcard"><span class="bn">B18</span><span class="bt">Delete closes an open drawer</span>
+      <p>Deleting a staff whose drawer is open <b>closes the drawer</b> and evicts its detail
+      cache.</p></div>
+    <div class="bcard"><span class="bn">B19</span><span class="bt">Every mutation is pessimistic</span>
+      <p>The button shows a pending state; <b>the table does not change until the server
+      confirms</b>.</p></div>
+    <div class="bcard"><span class="bn">B20</span><span class="bt">Lockout is real</span>
+      <p>A deactivated or deleted staff is locked out on their next API call, and their refresh tokens
+      are gone (§04) — verified by the <b>S-4 receipt</b>, not by this page's UI.</p></div>
+  </div>
+</section>
+
+<section id="defects">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Reference defects designed out (§6)</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Reference finding</th><th>Countermeasure here</th></tr>
+    <tr><td>1</td><td>Dead self-service guard (<code>id==callerID</code> unreachable under a manager+ group)</td>
+      <td>Dropped (§3.4-e); a real self-profile route is an explicit ON-phase decision</td></tr>
+    <tr><td>2</td><td>BE filter params (<code>role</code>/<code>search</code>/<code>is_active</code>) exist but the page never sends them</td>
+      <td>FE sends them from the URL (§3.4-b)</td></tr>
+    <tr><td>3</td><td><code>?limit=100</code> hard-coded + client paging → a roster &gt;100 silently truncates</td>
+      <td>Server-side paging; no client cap</td></tr>
+    <tr><td>4</td><td>Self-status toggle blocked in <em>both</em> directions with a "deactivation" error name</td>
+      <td>Guard kept (correct), message renamed to "Không thể thao tác trên chính mình"</td></tr>
+    <tr><td>5</td><td><code>SELF_DEACTIVATION_FORBIDDEN</code> rarely surfaces because the FE disables the button — untested path</td>
+      <td>Both kept, and behavior 13 asserts the tooltip <em>and</em> the 403 backstop</td></tr>
+    <tr><td>6</td><td>Soft delete never revokes <code>refresh_tokens</code> ("revoke sessions" was an aspirational comment)</td>
+      <td>Same-tx <code>DELETE FROM refresh_tokens WHERE staff_id=?</code> on deactivate and delete</td></tr>
+    <tr><td>7</td><td>DB errors on create surface as untyped 500s</td>
+      <td>Validation tiers per BE_STATE §5; unmapped errors still 500 but <b>never leak Go text</b></td></tr>
+    <tr><td>8</td><td><code>performance_score: 0</code> hardcoded — no such column; renders a 0% bar for everyone</td>
+      <td>Not serialized (§3.4-f); the drawer links to admin_summary for real KPIs</td></tr>
+    <tr><td>9</td><td>Deactivated staff still appear in assignee dropdowns (list filters <code>deleted_at</code> only, not <code>is_active</code>)</td>
+      <td><code>is_active</code> is a real query param; <b>consumer plans must send <code>is_active=true</code></b> — cross-linked from F-20/F-22</td></tr>
+    <tr><td>10</td><td>Detail drawer has no error branch — a failed fetch sticks on "Đang tải…" forever</td>
+      <td>Named error branch (§06)</td></tr>
+    <tr><td>11</td><td>Loading / empty-roster / empty-filtered collapse into two surfaces</td>
+      <td><b>Five named, mutually exclusive branches</b> (§06)</td></tr>
+    <tr><td>12</td><td>Stats bar hidden while loading, then pops in (layout shift)</td>
+      <td>Ghost tiles reserve the height (§06)</td></tr>
+    <tr><td>13</td><td><code>refetchOnWindowFocus</code> + <code>staleTime:0</code> refetch silently; stale rows look fresh</td>
+      <td>Visible background-refetch indicator (§06)</td></tr>
+    <tr><td>14</td><td>No skeletons anywhere — every in-flight state is a spinner or a text line</td>
+      <td>Layout-shaped skeleton in <code>loading.tsx</code> (FE_STATE §9 rule 3)</td></tr>
+    <tr><td>15</td><td>Native <code>confirm()</code> for delete</td>
+      <td>Typed-confirmation dialog naming the account (behavior 15)</td></tr>
+    <tr><td>16</td><td>Soft delete leaves <code>username</code> holding the UNIQUE index — re-hiring the same username fails forever</td>
+      <td><code>&lt;username&gt;#deleted-&lt;id&gt;</code> rename in the same UPDATE (§3.4-g)</td></tr>
+    <tr><td>17</td><td>Status endpoint returns a thin <code>{id,is_active,updated_at}</code>; delete returns a bare <code>message</code></td>
+      <td>Both return enough to reconcile the cache (§3.5)</td></tr>
+  </table></div>
+</section>
+
+<section id="tasks">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Task mapping + decisions (§5, §7, §8)</h2></div>
+
+  <p>The <code>staff</code> table and its CRUD belong to the <b>S phase</b>; the admin screen belongs
+  to the <b>AD phase</b>. This plan <b>proposes</b> the rows below — <code>TASKS.md</code> owns their
+  status and they get registered <b>when the S phase opens, not now</b>.</p>
+
+  <div class="strip">
+    <span class="snode">S-1 schema+seed</span><span class="sarrow">→</span>
+    <span class="snode">S-2 auth</span><span class="sarrow">→</span>
+    <span class="snode">S-3 BE read</span><span class="sarrow">→</span>
+    <span class="snode">S-4 BE write</span><span class="sarrow">→</span>
+    <span class="snode tph">AD-1 FE roster</span><span class="sarrow">→</span>
+    <span class="snode oph">AD-2 FE overlays</span>
+  </div>
+
+  <div class="table-wrap"><table>
+    <tr><th>Proposed row</th><th>Slice of this plan</th><th>Receipt type</th></tr>
+    <tr><td><span class="t c">S-1</span></td><td><code>staff</code> migration + seed first admin</td>
+      <td>migrate up/down clean; seeded admin can log in</td></tr>
+    <tr><td><span class="t c">S-2</span></td><td>Auth: login/refresh/middleware + <code>auth:staff:&lt;id&gt;</code> cache + <code>refresh_tokens</code></td>
+      <td>curl: login → JWT; disabled account refused</td></tr>
+    <tr><td><span class="t c">S-3</span></td><td>BE read side — endpoints #1, #2 (filters, paging, <code>meta.counts</code>)</td>
+      <td>curl transcripts: filtered list, page 2, counts stable across pages, detail, 404</td></tr>
+    <tr><td><span class="t c">S-4</span></td><td>BE write side — endpoints #3–#6 + all four guards + the §04 side effects</td>
+      <td>curl: create, duplicate→409, hierarchy→403, self-toggle→403, last-admin→409, delete→soft+rename+tokens gone</td></tr>
+    <tr><td><span class="t tt">AD-1</span></td><td>FE roster: shell, URL params, table, filters, stats, 5 branches</td>
+      <td>screenshot per branch; deep-link reproduces view</td></tr>
+    <tr><td><span class="t o">AD-2</span></td><td>FE overlays: add/edit modal + detail drawer + confirm dialogs</td>
+      <td>screenshot: create, edit, field-level 409, drawer error branch</td></tr>
+  </table></div>
+
+  <h3>✅ Decided in this plan (§7)</h3>
+  <ul class="plain">
+    <li>✅ <b>Server-side filter + paging, URL-owned</b> — reverses the reference's client-side approach.</li>
+    <li>✅ <b><code>meta.counts</code> added</b> to the list response so the stats bar survives paging.</li>
+    <li>✅ <b>Refresh-token revocation on deactivate <em>and</em> delete</b> — a genuine hole closed.</li>
+    <li>✅ <b>No admin creatable or promotable from this page</b>; admins are seeded — adopted from the reference on purpose.</li>
+    <li>✅ <b>All mutations pessimistic.</b></li>
+    <li>✅ <b><code>performance_score</code> never serialized.</b></li>
+    <li>✅ <b>Overlay state stays in React, not the URL</b> — see 💡-1.</li>
+  </ul>
+
+  <h3>⚠️ Flags</h3>
+  <div class="flag">
+    <p><b>⚠️-1 — Two different 409s share one code.</b> <code>USERNAME_TAKEN</code> and
+    <code>LAST_ADMIN</code> both map to <code>CONFLICT</code>, so the FE branches on <code>code</code>
+    plus <code>details[0].issue</code>. <em>Alternative:</em> add two codes to
+    <code>BE_STATE.md §4</code>. <b>Recommendation: keep the discriminator.</b> Owner may flip this
+    before S-4. (Full detail in §05.)</p>
+  </div>
+  <div class="flag">
+    <p><b>⚠️-2 — RBAC hierarchy has no harness home.</b> The role-level table (§05) is proposed here but
+    will be needed by every staff/admin page. It should move to <code>OVERALL_PLAN.md §3</code> when
+    the S phase opens, with this plan linking it. Left as a flag rather than silently creating a second
+    home — <b>one fact, one home</b>.</p>
+  </div>
+  <div class="flag">
+    <p><b>⚠️-3 — Fail-open weakens lockout.</b> Inherited from ARCHITECTURE §4. Now bounded by the
+    token revoke, but a Redis outage still leaves a live access token valid until expiry.
+    <b>Accept, or shorten access-token TTL at S-2.</b></p>
+  </div>
+
+  <h3>💡 Suggestions · ❓ Clarify</h3>
+  <ul class="plain">
+    <li><b>💡-1 — Overlay state in the URL?</b> Putting the open drawer/modal in the URL
+      (<code>?view=&lt;id&gt;</code>) would make a staff record deep-linkable and the back button close
+      the overlay. Not adopted for v1 (adds param-sync complexity to a leaf admin screen), but it is
+      cheap to add later and would be a genuine UX win. <b>Owner's call.</b></li>
+    <li><b>💡-2 — Bulk deactivate.</b> Seasonal rosters make "select N → deactivate" plausible. Out of
+      scope for v1; noted so the table's row model is built <b>selection-ready</b>.</li>
+    <li><b>❓-1 — Password reset.</b> Edit mode has no password field, and no endpoint changes a
+      password — so a manager cannot reset a forgotten staff password, a real operational gap. Is that a
+      v1 gap we accept, or does S-4 need <code>PATCH /staff/:id/password</code>?
+      <b>Assumed for now:</b> accepted gap, admin resets via DB.</li>
+    <li><b>❓-2 — Reactivating a soft-deleted account.</b> Soft delete has no UI inverse; the username
+      has been renamed, so restoring needs a DB edit. Acceptable, or does the roster need a "deleted"
+      filter + restore action? <b>Assumed:</b> acceptable.</li>
+  </ul>
+
+  <h3>Verify plan (§8 — receipts logged in <code>harness/VERIFICATION.md</code>)</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Task</th><th>Receipt</th></tr>
+    <tr><td><span class="t c">S-3</span></td>
+      <td>curl transcripts: unfiltered list · <code>role=chef</code> · <code>search=</code> hit + miss ·
+      <code>is_active=false</code> · page 2 · <code>meta.counts</code> identical across two pages ·
+      detail 200 · detail 404</td></tr>
+    <tr><td><span class="t c">S-4</span></td>
+      <td>curl: create 201 · duplicate username 409 + <code>details.issue=taken</code> · manager creating
+      a manager 403 · self status-toggle 403 · last-admin delete 409 · delete 200 → row has
+      <code>deleted_at</code> <b>and</b> renamed username <b>and</b> zero <code>refresh_tokens</code>
+      rows · <code>auth:staff:&lt;id&gt;</code> absent from Redis</td></tr>
+    <tr><td><span class="t tt">AD-1</span></td>
+      <td>screenshots of all five render branches · a deep link reproducing filters+page · stats stable
+      across paging</td></tr>
+    <tr><td><span class="t o">AD-2</span></td>
+      <td>screenshots: add modal, edit modal prefilled, field-level 409 on username, typed delete
+      confirm, drawer loading branch, drawer error branch</td></tr>
+    <tr><td><span class="t c">F-23</span> (this plan)</td>
+      <td>all four files render in both themes; no horizontal page scroll — screenshot receipt</td></tr>
+  </table></div>
+</section>
+
+<footer>
+  <p style="max-width:none">Written <b>2026-07-19</b> for <b>F-23</b> · snapshot of
+  <a href="admin_staff_PLAN.md">admin_staff_PLAN.md</a>, <b>which wins on any conflict</b>.
+  Companions: <a href="admin_staff_how-it-works.html">admin_staff_how-it-works.html</a> ·
+  <a href="admin_staff_mockup-1.html">admin_staff_mockup-1.html</a>. Task status lives in
+  <a href="../../TASKS.md">TASKS.md</a>.</p>
+</footer>
+
+</div>
+</body>
+</html>

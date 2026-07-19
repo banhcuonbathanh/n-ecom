@@ -26,9 +26,16 @@ Core loop on the page: browse categories/combos → build a cart (client-only) �
 confirm → `POST /orders` → redirected to live order tracking. The menu page also
 re-enters in **append mode** (`?add_to_order=<id>`) to add items to an active order.
 
-In/out links: in from `/` (landing), `/table/:id` (QR airlock), `/order/:id`
+In/out links: in from `/` (landing), `/table/:id` (QR airlock), the `/orders` screen
 ("Gọi thêm" → append); out to `/menu/product/:id`, `/menu/combo/:id`, `/checkout`
-(online path), `/order/:id` (after POST).
+(online path), `/orders` (after POST).
+
+> **Superseded 2026-07-19 (F-19).** This section originally routed to `/order/:id`.
+> That route is **merged away** — order detail is now a view inside `/orders`
+> ([`../customer_orders_tracking/customer_orders_tracking_PLAN.md`](../customer_orders_tracking/customer_orders_tracking_PLAN.md)).
+> ⚠ If the `?id=` recommendation in
+> [`../customer_order_detail/customer_order_detail_SUPPLEMENT.md`](../customer_order_detail/customer_order_detail_SUPPLEMENT.md) §1
+> is adopted, the target becomes `/orders?id=<id>`.
 
 ## 2. Alignment — what governs this page (read, don't restate)
 
@@ -245,7 +252,13 @@ Cart store contract (adopted from the reference, adapted):
 - `partialize`: persist only `{orderNote, activeOrderId, tableId, tableName}` —
   cart items are session-only; versioned storage key with migrate fn.
 - After `POST /orders` 201: cache order → `clearCart()` **keeps identity fields** +
-  `setActiveOrderId(id)` → `router.replace('/order/<id>')` (reference GAP-2 decision).
+  `setActiveOrderId(id)` → `router.replace('/orders')` (reference GAP-2 decision).
+  > **Superseded 2026-07-19 (F-19).** Target was `/order/:id` until that route was
+  > merged into `/orders`. ⚠ The redirect now depends on `setActiveOrderId(id)` having
+  > landed first — the fragility written up in
+  > [`../customer_order_detail/customer_order_detail_SUPPLEMENT.md`](../customer_order_detail/customer_order_detail_SUPPLEMENT.md) §1,
+  > whose `?id=` fix (`router.replace('/orders?id=<id>')`) also removes that ordering
+  > dependency. Decide before the `/orders` FE row opens.
 
 **How state crosses components (same page) — two mechanisms, only two:**
 

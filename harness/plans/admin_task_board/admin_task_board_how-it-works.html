@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin task board — how it works at runtime (F-22)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBE9E7; --violet: #6B4FBB; --violet-soft: #EDE8FA;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2837B; --red-soft: #3A1714; --violet: #A992F0; --violet-soft: #241C3D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2837B; --red-soft: #3A1714; --violet: #A992F0; --violet-soft: #241C3D;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBE9E7; --violet: #6B4FBB; --violet-soft: #EDE8FA;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 940px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.35rem; font-weight: 600; margin: 0; }
+  h3 { font-size: 1.02rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 72ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .topnav { display: flex; flex-wrap: wrap; gap: 8px; margin: 32px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line); }
+  .topnav a { font-family: var(--mono); font-size: 0.74rem; text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: var(--surface); }
+  .topnav a:hover { border-color: var(--accent); }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 72ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 72ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .danger { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 72ch; }
+  .danger p { margin: 0 0 8px; } .danger p:last-child { margin: 0; }
+  .chip { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 999px; padding: 2px 9px; white-space: nowrap; display: inline-block; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.red { color: var(--red); background: var(--red-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 13px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 9px 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, .danger code, pre code, li code { border: none; background: transparent; padding: 0; }
+  pre.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; overflow-x: auto; font-family: var(--mono); font-size: 0.8rem; line-height: 1.65; margin: 16px 0; }
+  pre.diagram .c { color: var(--muted); }
+  pre.diagram .ok { color: var(--done); font-weight: 700; }
+  pre.diagram .warn { color: var(--amber); font-weight: 700; }
+  pre.diagram .bad { color: var(--red); font-weight: 700; }
+  pre.diagram .hi { color: var(--accent); font-weight: 700; }
+  pre.diagram .vi { color: var(--violet); font-weight: 700; }
+  .svg-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 16px 0; padding: 12px; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 16px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 13px; font-family: var(--mono); font-size: 0.75rem; }
+  .fnode b { display: block; color: var(--accent); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .farrow { color: var(--muted); font-family: var(--mono); }
+  ul.plain { margin: 0 0 14px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 72ch; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-19</div>
+  <h1>Admin task board — how it works</h1>
+  <p class="lede">Not what we will build — what actually happens when it runs. Seven numbered
+  sequences: first load, the lazy expand, the write path, the status transition, and the one
+  that matters most — how "quá hạn" gets computed without a single background job.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">route</span><span class="v">/admin/staff/task-board</span></div>
+    <div class="fact"><span class="k">realtime</span><span class="v">none — polling</span></div>
+    <div class="fact"><span class="k">redis</span><span class="v">none</span></div>
+    <div class="fact"><span class="k">durable state</span><span class="v">1 MySQL row</span></div>
+    <div class="fact"><span class="k">task</span><span class="v">F-22</span></div>
+  </div>
+  <nav class="topnav">
+    <a href="#s1">01 big picture</a>
+    <a href="#s2">02 first load</a>
+    <a href="#s3">03 lazy expand</a>
+    <a href="#s4">04 write path</a>
+    <a href="#s5">05 status transition</a>
+    <a href="#s6">06 how overdue works</a>
+    <a href="#s7">07 cache life</a>
+  </nav>
+</header>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>The big picture</h2></div>
+  <pre class="diagram">┌──── MANAGER'S BROWSER ─────────────────────────────────────────────┐
+│                                                                     │
+│  page.tsx  <span class="c">(coordinator: filters · expandedStaffId · modalOpen)</span>      │
+│     │                                                               │
+│     ├─ Query <span class="hi">['admin','tasks','stats', date]</span>   30s stale · 60s poll  │
+│     ├─ Query <span class="hi">['admin','tasks', staffId, date]</span> 15s stale · lazy      │
+│     └─ Query <span class="hi">['admin','staff']</span>                5min · modal only     │
+│                                                                     │
+└─────────────────────────────┬───────────────────────────────────────┘
+                              │  HTTPS · cookie JWT · manager+ gate
+  ════════════════════════════╪═══════════════ THE WIRE ══════════════
+                              │
+┌──── GIN (BE) ───────────────▼───────────────────────────────────────┐
+│  1 GET  /admin/tasks/stats?date=      <span class="c">day rollup + per-staff rows</span>  │
+│  2 GET  /admin/tasks?staffId=&amp;date=   <span class="c">one member's tasks</span>           │
+│  3 POST /admin/tasks                  <span class="c">create</span>                       │
+│  4 PATCH /admin/tasks/:id/status      <span class="ok">advance status</span>               │
+│  5 GET  /staff?limit=100              <span class="c">dropdown (staff domain)</span>       │
+└─────────────────────────────┬───────────────────────────────────────┘
+                              │  sqlc
+                    ┌─────────▼──────────┐
+                    │  MySQL staff_tasks │  <span class="ok">the ONLY durable artifact</span>
+                    └────────────────────┘
+
+  <span class="bad">NO Redis</span> · <span class="bad">NO SSE</span> · <span class="bad">NO WebSocket</span> · <span class="bad">NO localStorage</span>
+  <span class="c">Every browser polls independently. Nothing is pushed. Max staleness ≈ 60 s.</span></pre>
+
+  <div class="golden">
+    <p><strong>Everything above the wire is throwaway.</strong> Filters, expanded row, the
+    Query cache, the toast — all in-memory, all lost on F5. The one fact that survives is the
+    <code>staff_tasks</code> row. Every page that wants it asks the database again.</p>
+  </div>
+
+  <p>This is deliberate, not a gap: <code>ARCHITECTURE.md §4</code> scopes Redis to the catalog
+  cache and auth rate-limiting, and a manager-only board with a 60-second poll has no realtime
+  requirement worth a channel.</p>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — the three tiers</h2></div>
+
+  <div class="svg-wrap">
+  <svg viewBox="0 0 880 300" width="880" height="300" role="img" aria-label="First load sequence across four lanes">
+    <defs>
+      <marker id="mi" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2B59D9"/></marker>
+      <marker id="mo" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1E8A5A"/></marker>
+      <marker id="mg" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#5C6675"/></marker>
+    </defs>
+    <g font-family="ui-monospace, Menlo, monospace" font-size="11">
+      <text x="10" y="18" fill="currentColor" font-weight="700">Browser</text>
+      <text x="230" y="18" fill="currentColor" font-weight="700">page.tsx</text>
+      <text x="450" y="18" fill="currentColor" font-weight="700">Query cache</text>
+      <text x="700" y="18" fill="currentColor" font-weight="700">Gin → MySQL</text>
+      <line x1="40" y1="28" x2="40" y2="285" stroke="#5C6675" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="265" y1="28" x2="265" y2="285" stroke="#5C6675" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="495" y1="28" x2="495" y2="285" stroke="#5C6675" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="740" y1="28" x2="740" y2="285" stroke="#5C6675" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <line x1="40" y1="52" x2="258" y2="52" stroke="#2B59D9" stroke-width="1.5" marker-end="url(#mi)"/>
+      <text x="48" y="46" fill="#2B59D9">navigate → loading.tsx skeleton paints</text>
+
+      <line x1="265" y1="86" x2="488" y2="86" stroke="#2B59D9" stroke-width="1.5" marker-end="url(#mi)"/>
+      <text x="273" y="80" fill="#2B59D9">mount · stats query, key = date</text>
+
+      <line x1="495" y1="120" x2="733" y2="120" stroke="#2B59D9" stroke-width="1.5" marker-end="url(#mi)"/>
+      <text x="503" y="114" fill="#2B59D9">miss → GET /admin/tasks/stats</text>
+
+      <line x1="740" y1="154" x2="502" y2="154" stroke="#1E8A5A" stroke-width="1.5" marker-end="url(#mo)"/>
+      <text x="512" y="148" fill="#1E8A5A">metrics + staffStats[] (isOverdue derived)</text>
+
+      <line x1="495" y1="188" x2="272" y2="188" stroke="#1E8A5A" stroke-width="1.5" marker-end="url(#mo)"/>
+      <text x="285" y="182" fill="#1E8A5A">cached 30 s → subscribers notified</text>
+
+      <line x1="265" y1="222" x2="47" y2="222" stroke="#1E8A5A" stroke-width="1.5" marker-end="url(#mo)"/>
+      <text x="60" y="216" fill="#1E8A5A">skeletons swap for KPIs + table</text>
+
+      <line x1="495" y1="262" x2="733" y2="262" stroke="#5C6675" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#mg)"/>
+      <text x="503" y="256" fill="#5C6675">…then every 60 s, refetchInterval</text>
+    </g>
+  </svg>
+  </div>
+
+  <h3>The three tiers, and the branch it lands on</h3>
+  <div class="flow">
+    <div class="fnode"><b>tier 1 route</b>loading.tsx skeleton</div><span class="farrow">→</span>
+    <div class="fnode"><b>tier 2 component</b>KPI + table skeletons</div><span class="farrow">→</span>
+    <div class="fnode"><b>tier 3 mutation</b>n/a on load</div>
+  </div>
+
+  <pre class="diagram">  stats query ──┬─ in flight ───────────▶ <span class="warn">loading</span>       KPI skeleton blocks + 6 skeleton rows
+                ├─ failed ──────────────▶ <span class="bad">error</span>         panel + retry button
+                └─ loaded ──┬─ 0 tasks ──▶ <span class="hi">empty-day</span>     "Chưa có công việc nào cho ngày này"  + [Giao việc]
+                            ├─ filter→0 ─▶ <span class="hi">empty-filter</span>  "Không có nhân viên khớp bộ lọc"      + [Xoá bộ lọc]
+                            └─ rows &gt; 0 ─▶ <span class="ok">ready</span>         the table</pre>
+
+  <div class="flag">
+    <p><strong>What the reference does here instead.</strong> No <code>loading.tsx</code> at
+    this segment, so only the generic admin spinner covers navigation. KPI cards render the
+    <em>literal string</em> <code>'…'</code>. And the whole table region is behind a
+    <code>!statsLoading</code> guard, so it <em>unmounts</em> during load — the page below the
+    KPI row is simply blank, then jumps. All three are fixed above.</p>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The lazy row-expand</h2></div>
+  <pre class="diagram">  <span class="hi">click chevron on cash02</span>
+        │
+        ▼
+  page.tsx: setExpandedStaffId(prev =&gt; prev === id ? null : id)   <span class="c">toggle</span>
+        │
+        ▼
+  the lazy query's  <span class="hi">enabled: !!expandedStaffId</span>  flips false → true
+        │
+        ├─ key ['admin','tasks', 'cash02', '2026-07-19'] <span class="ok">fresh (&lt;15 s)</span> ─▶ cache hit, renders instantly
+        │
+        └─ stale or absent ──▶ GET /admin/tasks?staffId=cash02&amp;date=…
+                                    │
+                                    ├─ in flight ─▶ skeleton rows
+                                    ├─ error ─────▶ <span class="bad">inline message + [Thử lại]</span>  <span class="c">← retry refetches in place</span>
+                                    ├─ empty ─────▶ "Không có công việc nào trong ngày này"
+                                    └─ ok ────────▶ task rows: name · description · priority · giờ · [status ▾] · notes</pre>
+
+  <h3>Two rules that fall out of the single-value state</h3>
+  <ul class="plain">
+    <li><strong>One open at a time.</strong> <code>expandedStaffId</code> is a single
+    <code>string | null</code>, so expanding a second row collapses the first automatically —
+    no bookkeeping needed.</li>
+    <li><strong>Collapse does not evict.</strong> The old key stays in the cache with its 15 s
+    <code>staleTime</code>, so re-expanding the same row within 15 s is instant and silent.</li>
+  </ul>
+
+  <div class="flag">
+    <p><strong>Reference gap closed.</strong> Its expanded-row error is a dead-end string with
+    no retry — the only recovery is to collapse the row and expand it again. Ours retries in
+    place.</p>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>The write path — POST /admin/tasks</h2></div>
+
+  <pre class="diagram">  <span class="hi">CreateTaskModal</span>  (RHF + Zod)
+        │  client validation: staffId set · name 1–200 · priority ∈ enum · dueAt present
+        ▼
+  POST /admin/tasks   { staffId, name, description, priority, dueAt, … }
+        │             <span class="c">assignedBy is NOT in the body — rejected if present</span>
+        ▼
+  ┌─ GIN HANDLER ──────────────────────────────────────────────────┐
+  │  bind + shape-validate                    <span class="bad">fail → 400 VALIDATION_FAILED</span> │
+  │  manager+ gate (middleware)               <span class="bad">fail → 403 FORBIDDEN</span>         │
+  │  assignedBy := StaffIDFromContext(jwt)                          │
+  └────────────────────────────┬───────────────────────────────────┘
+                               ▼
+  ┌─ SERVICE  <span class="c">(business rules live here — handlers only shape)</span> ─────────┐
+  │  parse dueAt (RFC3339)                    <span class="bad">fail → 400 VALIDATION_FAILED</span> │
+  │  <span class="ok">PRE-CHECK: staff exists AND is active</span>     <span class="bad">fail → 422 VALIDATION_FAILED</span> │
+  │                                            <span class="c">↑ THE FIX — see below</span>        │
+  │  status := 'pending'                                            │
+  └────────────────────────────┬───────────────────────────────────┘
+                               ▼
+  ┌─ sqlc → MySQL ─────────────────────────────────────────────────┐
+  │  INSERT staff_tasks (…) VALUES (…)         <span class="bad">driver err → 500 INTERNAL</span>  │
+  │  re-read by id → full row                                       │
+  └────────────────────────────┬───────────────────────────────────┘
+                               ▼
+                        <span class="ok">201 { data: Task }</span>
+                               │
+        ┌──────────────────────┴────────────────────────┐
+        ▼                                               ▼
+  invalidate stats key                        invalidate tasks key
+  for <span class="hi">BOTH</span> task.dueDate AND filters.date        for task.staffId
+        │                                               │
+        └────────────▶ subscribers refetch ◀────────────┘
+                       KPIs · staff row counts · open expanded list</pre>
+
+  <div class="danger">
+    <p><strong>The 422 pre-check is the fix for a real reference bug.</strong> The reference has
+    no pre-check: it lets the insert run, the <code>fk_tasks_assigned_to</code> constraint
+    rejects it, the repo returns a driver error, and the service maps <em>every</em>
+    non-<code>ErrNoRows</code> error to <code>ErrInternalError</code>. So assigning a task to a
+    staff id that does not exist returns <strong>500</strong> and a generic "thử lại" toast —
+    caller error reported as server error, with no field-level message. (The
+    <code>sql.ErrNoRows</code> branch sitting above it is dead code: an INSERT never returns
+    it.)</p>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>The status transition — PATCH /admin/tasks/:id/status</h2></div>
+
+  <p>This endpoint does not exist in the reference at all. It is the single most important
+  addition in this plan, because without it the entire stats half of the page is dead.</p>
+
+  <pre class="diagram">                 ┌──────────────► cancelled ◄──────────┐
+                 │                                      │
+   (create) → pending ──────► in_progress ──────► completed
+                 │                                  │
+                 └──────────────────────────────────┘   <span class="c">direct complete allowed</span></pre>
+
+  <pre class="diagram">  <span class="hi">manager picks "hoàn thành" in the expanded row</span>
+        │  control disables (pessimistic — no optimistic update; that is cart-only)
+        ▼
+  PATCH /admin/tasks/3a7e…/status   { "status": "completed" }
+        │
+        ▼
+  SERVICE: look up current status
+        │
+        ├─ id unknown / soft-deleted ─────────────▶ <span class="bad">404 NOT_FOUND</span>
+        ├─ same status ───────────────────────────▶ <span class="warn">200 no-op</span>  <span class="c">idempotent — double-click is harmless</span>
+        ├─ completed → cancelled ─────────────────▶ <span class="bad">409 CONFLICT</span>
+        ├─ cancelled → anything ──────────────────▶ <span class="bad">409 CONFLICT</span>  <span class="c">terminal</span>
+        └─ legal ─────────────────────────────────▶ UPDATE status
+                                                     <span class="ok">entering completed → stamp completed_at</span>
+                                                     <span class="ok">leaving  completed → null completed_at</span>
+                                                          │
+                                                          ▼
+                                                    <span class="ok">200 { data: Task }</span>
+                                                          │
+                              invalidate both keys ───────┘
+                                    │
+                                    ▼
+                    KPI row moves: "Đang thực hiện" −1, "Hoàn thành" +1
+                    staff row completionRate recomputed on the refetch
+
+  <span class="bad">on 409</span> ──▶ toast "Không thể chuyển trạng thái này" ──▶ <span class="c">control reverts to its previous value</span></pre>
+
+  <div class="golden">
+    <p><strong>Why the transition rules live in the service.</strong> A handler's job is shape;
+    a service's job is whether the change is legal (<code>BE_STATE.md</code>). Putting the
+    machine in the service means the todo-list page — which writes the same table through the
+    same service — inherits the identical rules for free, with no second implementation to
+    drift.</p>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>How "quá hạn" is computed — the key insight</h2></div>
+
+  <div class="danger">
+    <p><strong>The reference stores <code>overdue</code> as a status value.</strong> That means
+    something must <em>write</em> it: a background sweeper that periodically flips
+    <code>pending</code> rows whose <code>due_at</code> has passed. No such job was ever
+    written. So the stored value is never set, the "Quá hạn" KPI reads
+    <code>SUM(CASE WHEN status='overdue')</code> = <strong>0</strong>, and the overdue badge
+    never appears — forever.</p>
+  </div>
+
+  <p><strong>We do not store it.</strong> <code>overdue</code> is not a status; it is a question
+  you can ask of a row at any moment:</p>
+
+  <pre class="diagram">  <span class="ok">isOverdue  =  status IN ('pending','in_progress')  AND  due_at &lt; NOW()</span>
+                <span class="c">↑ evaluated inside the read query, every read</span></pre>
+
+  <p>A task therefore becomes overdue the instant its deadline passes — with no write, no job,
+  and no window in which the database is wrong:</p>
+
+  <pre class="diagram">  task "Kiểm kê nguyên liệu"   due_at = 21:00   status = pending   <span class="c">(never written again)</span>
+
+  wall clock   20:58        20:59        <span class="bad">21:00</span>        21:01        21:02
+               │            │            │            │            │
+  our read     not overdue  not overdue  <span class="bad">OVERDUE</span>      <span class="bad">OVERDUE</span>      <span class="bad">OVERDUE</span>
+               <span class="c">↑ the row is byte-for-byte identical at every tick — only NOW() moved</span>
+
+  reference    not overdue  not overdue  not overdue  not overdue  not overdue
+               <span class="c">↑ waiting for a sweeper job that does not exist</span>
+
+  <span class="ok">KPI "Quá hạn"</span> updates on the next stats poll (≤60 s) with zero writes in between.</pre>
+
+  <div class="golden">
+    <p><strong>Derived beats stored whenever the value is a pure function of data you already
+    have.</strong> Stored state needs a writer, and a writer can be forgotten, crash, lag, or
+    run twice. <code>due_at &lt; NOW()</code> has none of those failure modes. This is the same
+    instinct as <code>FE_STATE.md</code>'s "derived, not stored" rule, applied on the
+    server.</p>
+  </div>
+
+  <p>The cost is honest and small: <code>overdueCount</code> and <code>hasOverdue</code> are
+  computed per read rather than looked up. Both are indexed range comparisons on
+  <code>due_at</code> over one day of rows for one restaurant — nothing that needs a cache.</p>
+</section>
+
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Cache &amp; invalidation life</h2></div>
+
+  <pre class="diagram">  <span class="hi">['admin','tasks','stats', date]</span>    stale 30 s   <span class="ok">poll every 60 s</span>   KPIs + staff table
+  <span class="hi">['admin','tasks', staffId, date]</span>   stale 15 s   lazy, no poll     expanded row
+  <span class="hi">['admin','staff']</span>                  stale 5 min  on modal open     dropdown
+
+  a write (POST or PATCH) fans out:
+        ├──▶ stats key @ task.dueDate      <span class="c">the day the task belongs to</span>
+        ├──▶ stats key @ filters.date      <span class="ok">the day on screen  ← the fix</span>
+        └──▶ tasks key @ (task.staffId, date)</pre>
+
+  <div class="danger">
+    <p><strong>The stale-KPI bug we designed out.</strong> The reference invalidates using
+    <code>task.dueDate</code> only. Watch what that does when a manager is looking at today and
+    assigns work for tomorrow:</p>
+  </div>
+
+  <pre class="diagram">  <span class="c">REFERENCE</span>
+  viewing filters.date = <span class="hi">19/06</span>          KPI "Tổng việc" shows 18
+  create task for       <span class="warn">20/06</span>   ──▶  invalidate stats@<span class="warn">20/06</span>
+                                          <span class="bad">stats@19/06 never invalidated</span>
+                                          <span class="bad">KPIs on screen still say 18 — for up to 60 s</span>
+                                          <span class="bad">manager sees no feedback that the task landed</span>
+
+  <span class="c">OURS</span>
+  viewing filters.date = <span class="hi">19/06</span>          KPI "Tổng việc" shows 18
+  create task for       <span class="warn">20/06</span>   ──▶  invalidate stats@<span class="warn">20/06</span>  <span class="c">(the task's day)</span>
+                                     ──▶  invalidate stats@<span class="hi">19/06</span>  <span class="ok">(the day on screen)</span>
+                                          <span class="ok">visible KPIs refetch immediately</span>
+                                          <span class="ok">counts for 19/06 are confirmed correct, not assumed</span></pre>
+
+  <p>Invalidating the on-screen date even when nothing about it changed is deliberate: one
+  cheap refetch buys the guarantee that what the manager is looking at is true after a write.
+  Assuming it is unchanged is exactly the assumption the reference got wrong.</p>
+
+  <h3>What survives what</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Datum</th><th>Lives in</th><th>Survives F5?</th><th>Other device?</th></tr></thead>
+    <tbody>
+      <tr><td>Filters, expanded row, modal state</td><td>React <code>useState</code></td><td><span class="chip red">no</span></td><td><span class="chip red">no</span></td></tr>
+      <tr><td>Query cache + invalidation signal</td><td>memory, one tab</td><td><span class="chip red">no</span></td><td><span class="chip red">no</span></td></tr>
+      <tr><td><code>staff_tasks</code> row</td><td>MySQL</td><td><span class="chip done">yes</span></td><td><span class="chip done">yes</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Two managers on two devices never synchronise directly — each polls. Maximum divergence is
+  one stats interval, ≈60 s. For a daily planning board that is well inside tolerance; if it
+  ever is not, the fix is a channel, and that decision belongs to
+  <code>OVERALL_PLAN.md §3.5</code>, not to this page.</p>
+</section>
+
+<footer>
+  Written 2026-07-19 for task F-22, from
+  <code>reference/docs/system/08_pages/admin/admin_task_board/</code> (7 docs).
+  Snapshot of <code>admin_task_board_PLAN.md</code>, which wins on any conflict.
+</footer>
+
+</div>
+</body>
+</html>

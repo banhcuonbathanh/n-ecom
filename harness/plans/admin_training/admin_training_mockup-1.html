@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Training — Mockup 1 (F-25)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3261E;
+    --red-soft: #FBE9E7;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2938C; --red-soft: #3A1714;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2938C; --red-soft: #3A1714;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE9E7;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; overflow-x: hidden; }
+  .page { max-width: 1120px; margin: 0 auto; padding: 36px 20px 88px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 1.9rem; font-weight: 700; margin: 8px 0 10px; }
+  p { margin: 0 0 12px; max-width: 74ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .lede { font-size: 1.02rem; color: var(--muted); max-width: 72ch; }
+  footer { margin-top: 56px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  footer p { max-width: 82ch; }
+
+  /* ---- caption / legend ---- */
+  .caption { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 18px 0 26px; max-width: 80ch; }
+  .caption p { margin: 0 0 8px; font-size: 0.9rem; } .caption p:last-child { margin: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+  /* ---- browser frame ---- */
+  .frame { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; box-shadow: 0 10px 28px rgba(0,0,0,.07); }
+  .frame-bar { display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: var(--paper); border-bottom: 1px solid var(--line); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); flex: none; }
+  .urlbar { flex: 1; min-width: 0; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .screen { padding: 22px 24px 26px; }
+
+  /* ---- A. page header ---- */
+  .pghead { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+  .pghead h2 { font-size: 1.35rem; font-weight: 700; margin: 0 0 2px; }
+  .pghead .sub { color: var(--muted); font-size: 0.88rem; }
+  .btn { font-family: var(--sans); font-size: 0.85rem; font-weight: 600; border-radius: 8px; padding: 8px 16px; border: 1px solid var(--accent); background: var(--accent); color: var(--surface); white-space: nowrap; display: inline-block; }
+  :root[data-theme="dark"] .btn, .btn { color: var(--paper); }
+  .btn.ghost { background: var(--surface); color: var(--ink); border-color: var(--line); }
+
+  /* ---- B. role tabs ---- */
+  .tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 18px; border-bottom: 1px solid var(--line); margin-top: 14px; }
+  .tab { font-size: 0.88rem; color: var(--muted); padding: 8px 2px 9px; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tab.on { color: var(--accent); font-weight: 700; border-bottom-color: var(--accent); }
+  .countchip { margin-left: auto; font-family: var(--mono); font-size: 0.7rem; font-weight: 700; letter-spacing: .06em; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 3px 10px; align-self: center; }
+
+  /* ---- C. guide cards ---- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin: 18px 0 6px; }
+  .gcard { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+  .cover { position: relative; aspect-ratio: 16 / 9; background: linear-gradient(135deg, var(--accent-soft), var(--paper) 70%); display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--muted); border-bottom: 1px solid var(--line); }
+  .cover.alt { background: linear-gradient(135deg, var(--done-soft), var(--paper) 72%); }
+  .cover.alt2 { background: linear-gradient(135deg, var(--amber-soft), var(--paper) 72%); }
+  .cover.dim { opacity: .42; filter: grayscale(.6); }
+  .nhap { position: absolute; top: 8px; left: 8px; font-family: var(--mono); font-size: 0.64rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: var(--amber-soft); color: var(--amber); border: 1px solid var(--amber); border-radius: 999px; padding: 2px 9px; }
+  .kebab { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); display: flex; align-items: center; justify-content: center; font-size: 15px; line-height: 1; }
+  .gbody { padding: 12px 13px 13px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .gtitle { font-family: var(--sans); font-weight: 700; font-size: 0.98rem; line-height: 1.25; margin: 0; }
+  .gdesc { font-size: 0.8rem; color: var(--muted); margin: 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .pill { font-size: 0.7rem; border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; color: var(--muted); background: var(--paper); white-space: nowrap; }
+  .pill.role { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+  .kpi { font-size: 0.74rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; }
+  .vlink { font-size: 0.8rem; color: var(--accent); text-decoration: none; }
+  .gfoot { margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--line); display: flex; justify-content: flex-end; }
+  .cta { font-family: var(--sans); font-size: 0.82rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+
+  /* ---- D. tracking table ---- */
+  .block { margin-top: 30px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
+  .block-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--line); background: var(--paper); }
+  .block-head h3 { margin: 0; font-size: 1rem; font-weight: 700; }
+  .select { font-family: var(--body); font-size: 0.82rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 28px 6px 11px; position: relative; display: inline-block; }
+  .select::after { content: "▾"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.7rem; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 0.86rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  .bar { display: flex; align-items: center; gap: 8px; min-width: 130px; }
+  .track { flex: 1; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .fill { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
+  .fill.ok { background: var(--done); }
+  .pct { font-family: var(--mono); font-size: 0.74rem; color: var(--muted); min-width: 34px; text-align: right; }
+  .dash { color: var(--muted); font-family: var(--mono); }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 600; border-radius: 999px; padding: 2px 10px; white-space: nowrap; border: 1px solid transparent; }
+  .badge.done { color: var(--done); background: var(--done-soft); border-color: var(--done); }
+  .badge.fail { color: var(--red); background: var(--red-soft); border-color: var(--red); }
+  .badge.learn { color: var(--amber); background: var(--amber-soft); border-color: var(--amber); }
+  .badge.none { color: var(--muted); background: var(--paper); border-color: var(--line); }
+  .pager { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding: 11px 16px; border-top: 1px solid var(--line); background: var(--paper); font-size: 0.82rem; color: var(--muted); }
+  .pgbtns { display: flex; gap: 6px; }
+  .pgbtn { font-family: var(--mono); font-size: 0.76rem; border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 6px; padding: 3px 10px; }
+  .pgbtn.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+
+  /* ---- E/F. modal previews ---- */
+  .modals { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 18px; margin-top: 26px; }
+  .scrim { background: var(--paper); border: 1px dashed var(--line); border-radius: 12px; padding: 16px; }
+  .scrim > .cap { font-family: var(--mono); font-size: 0.66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+  .modal { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 14px 30px rgba(0,0,0,.10); overflow: hidden; }
+  .m-head { padding: 12px 15px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .m-head h4 { margin: 0; font-family: var(--sans); font-size: 0.98rem; font-weight: 700; }
+  .m-head .x { color: var(--muted); font-size: 1rem; }
+  .m-body { padding: 14px 15px; display: flex; flex-direction: column; gap: 11px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 0.74rem; font-weight: 600; color: var(--muted); font-family: var(--sans); letter-spacing: .01em; }
+  .input { border: 1px solid var(--line); background: var(--paper); border-radius: 7px; padding: 7px 10px; font-size: 0.83rem; color: var(--ink); min-height: 34px; }
+  .input.ph { color: var(--muted); }
+  .input.area { min-height: 58px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hint { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; background: var(--paper); }
+  .toggle { width: 38px; height: 21px; border-radius: 999px; background: var(--accent); position: relative; flex: none; }
+  .toggle span { position: absolute; top: 2px; right: 2px; width: 17px; height: 17px; border-radius: 50%; background: var(--surface); }
+  .m-foot { padding: 11px 15px; border-top: 1px solid var(--line); background: var(--paper); display: flex; justify-content: flex-end; gap: 8px; }
+  .steps { display: flex; flex-direction: column; gap: 8px; }
+  .step { display: flex; gap: 9px; align-items: flex-start; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--paper); }
+  .step .ic { flex: none; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; background: var(--line); color: var(--muted); }
+  .step.ok .ic { background: var(--done-soft); color: var(--done); border: 1px solid var(--done); }
+  .step b { font-family: var(--sans); font-size: 0.85rem; display: block; }
+  .step small { color: var(--muted); font-size: 0.74rem; }
+  .saved { font-family: var(--mono); font-size: 0.7rem; color: var(--done); }
+  .who { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--sans); font-size: 0.85rem; flex: none; }
+  table.mini { min-width: 0; font-size: 0.8rem; }
+  table.mini th, table.mini td { padding: 6px 10px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">F-25 · Design preview</p>
+  <h1>Đào tạo nhân viên — mockup giao diện admin</h1>
+  <p class="lede">Bản dựng tĩnh (không phải app) của màn hình <code>/admin/training</code>, minh hoạ §4.1 và §4.4 của kế hoạch F-25.</p>
+
+  <div class="caption">
+    <p><b>Đây là bản xem trước thiết kế</b> của <code>admin_training_PLAN.md</code> (F-25), dựng trên bộ token trung tính F-7 dành cho admin (<code>--paper --surface --ink --muted --line --accent --done --amber --red</code>) — <b>không</b> dùng shell tối/cam của trang khách hàng. Hiển thị đúng ở cả theme sáng và tối.</p>
+    <p><b>Dữ liệu là ví dụ mẫu trong kế hoạch (§4.4 B12):</b> hướng dẫn “Cuốn bánh đúng cách” · vai trò Bếp · 12 nhân viên bếp · 1 Hoàn thành / 1 Đang học / 10 Chưa bắt đầu. Tên nhân viên và nội dung hướng dẫn lấy nguyên văn từ §3.5 của kế hoạch; các ô còn lại là chỗ giữ bố cục, không phải dữ liệu thật.</p>
+    <p><b>4 trạng thái phải phân biệt được bằng mắt</b> (§4.4 B5 — sửa lỗi bản tham chiếu gộp 2 trạng thái vào cùng một icon 🟡):</p>
+    <div class="legend">
+      <span class="badge done">✅ Hoàn thành</span>
+      <span class="badge fail">❌ Chưa qua quiz</span>
+      <span class="badge learn">🟡 Đang học</span>
+      <span class="badge none">⬜ Chưa bắt đầu</span>
+    </div>
+    <p class="hint" style="margin-top:8px">Ghi chú: ví dụ mẫu của kế hoạch không có nhân viên nào ở trạng thái “Chưa qua quiz”, nên badge đỏ chỉ xuất hiện trong chú giải này.</p>
+  </div>
+
+  <!-- ============ MAIN SCREEN ============ -->
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="urlbar">app.local/admin/training?role=chef&amp;guide=tg1a…36&amp;page=1</span>
+    </div>
+    <div class="screen">
+
+      <!-- A. header -->
+      <div class="pghead">
+        <div>
+          <h2>Đào tạo nhân viên</h2>
+          <div class="sub">Quản lý hướng dẫn và theo dõi tiến trình</div>
+        </div>
+        <span class="btn">+ Tạo hướng dẫn</span>
+      </div>
+
+      <!-- B. role tabs -->
+      <div class="tabs">
+        <span class="tab">Tất cả</span>
+        <span class="tab on">Bếp</span>
+        <span class="tab">Thu ngân</span>
+        <span class="tab">Nhân viên</span>
+        <span class="tab">Quản lý</span>
+        <span class="countchip">4 hướng dẫn</span>
+      </div>
+
+      <!-- C. guide cards -->
+      <div class="grid">
+
+        <!-- card 1 — the plan's worked-example guide -->
+        <div class="gcard">
+          <div class="cover">
+            <span class="kebab">⋯</span>
+          </div>
+          <div class="gbody">
+            <h3 class="gtitle">Cuốn bánh đúng cách</h3>
+            <p class="gdesc">Kỹ thuật tráng và cuốn bánh cho ca sáng.</p>
+            <div class="pills">
+              <span class="pill role">Bếp</span>
+            </div>
+            <div class="pills">
+              <span class="pill">Chịu trách nhiệm: Bếp</span>
+              <span class="pill">Quản lý</span>
+            </div>
+            <div class="pills">
+              <span class="kpi">📊 ≥ 95% bánh đạt chuẩn</span>
+              <span class="kpi">🎯 40 suất/giờ</span>
+            </div>
+            <a class="vlink" href="#">▶ Xem video hướng dẫn</a>
+            <div class="gfoot"><a class="cta" href="#">Xem tiến trình →</a></div>
+          </div>
+        </div>
+
+        <!-- card 2 — 📚 fallback cover -->
+        <div class="gcard">
+          <div class="cover alt">
+            📚
+            <span class="kebab">⋯</span>
+          </div>
+          <div class="gbody">
+            <h3 class="gtitle">Hướng dẫn Bếp — chỗ giữ bố cục</h3>
+            <p class="gdesc">Thẻ minh hoạ trường hợp thiếu ảnh bìa: hiển thị fallback 📚.</p>
+            <div class="pills"><span class="pill role">Bếp</span></div>
+            <div class="pills"><span class="pill">Chịu trách nhiệm: Bếp</span></div>
+            <div class="pills"><span class="kpi">📊 KPI chất lượng</span></div>
+            <a class="vlink" href="#">▶ Xem video hướng dẫn</a>
+            <div class="gfoot"><a class="cta" href="#">Xem tiến trình →</a></div>
+          </div>
+        </div>
+
+        <!-- card 3 — draft -->
+        <div class="gcard">
+          <div class="cover alt2 dim">
+            <span class="nhap">Nháp</span>
+            <span class="kebab">⋯</span>
+          </div>
+          <div class="gbody">
+            <h3 class="gtitle">Hướng dẫn Bếp — bản nháp</h3>
+            <p class="gdesc">published = false → ảnh bìa mờ + badge “Nháp”. Nhân viên không nhìn thấy.</p>
+            <div class="pills"><span class="pill role">Bếp</span></div>
+            <div class="pills"><span class="pill">Chịu trách nhiệm: Bếp</span><span class="pill">Quản lý</span></div>
+            <div class="pills"><span class="kpi">🎯 KPI số lượng</span></div>
+            <a class="vlink" href="#">▶ Xem video hướng dẫn</a>
+            <div class="gfoot"><a class="cta" href="#">Xem tiến trình →</a></div>
+          </div>
+        </div>
+
+        <!-- card 4 -->
+        <div class="gcard">
+          <div class="cover">
+            <span class="kebab">⋯</span>
+          </div>
+          <div class="gbody">
+            <h3 class="gtitle">Hướng dẫn Bếp — chỗ giữ bố cục</h3>
+            <p class="gdesc">Thẻ thứ tư để kiểm tra lưới 4 cột trên màn hình desktop.</p>
+            <div class="pills"><span class="pill role">Bếp</span></div>
+            <div class="pills"><span class="pill">Chịu trách nhiệm: Bếp</span></div>
+            <div class="pills"><span class="kpi">📊 KPI chất lượng</span><span class="kpi">🎯 KPI số lượng</span></div>
+            <a class="vlink" href="#">▶ Xem video hướng dẫn</a>
+            <div class="gfoot"><a class="cta" href="#">Xem tiến trình →</a></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- D. completion tracking table -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Theo dõi hoàn thành — Cuốn bánh đúng cách</h3>
+          <span class="select">Hướng dẫn: Cuốn bánh đúng cách</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nhân viên</th>
+                <th>Vai trò</th>
+                <th>Đã xem</th>
+                <th>Quiz</th>
+                <th>Cập nhật</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Nguyễn Văn Bếp</td>
+                <td>Bếp</td>
+                <td><span class="bar"><span class="track"><span class="fill ok" style="width:100%"></span></span><span class="pct">100%</span></span></td>
+                <td>Đạt</td>
+                <td>19/07/2026 03:20</td>
+                <td><span class="badge done">✅ Hoàn thành</span></td>
+              </tr>
+              <tr>
+                <td>Trần Thị Bánh</td>
+                <td>Bếp</td>
+                <td><span class="bar"><span class="track"><span class="fill" style="width:40%"></span></span><span class="pct">40%</span></span></td>
+                <td><span class="dash">—</span></td>
+                <td>19/07/2026 03:02</td>
+                <td><span class="badge learn">🟡 Đang học</span></td>
+              </tr>
+              <tr>
+                <td>Lê Văn Mới</td>
+                <td>Bếp</td>
+                <td><span class="bar"><span class="track"><span class="fill" style="width:0%"></span></span><span class="pct">0%</span></span></td>
+                <td><span class="dash">—</span></td>
+                <td><span class="dash">—</span></td>
+                <td><span class="badge none">⬜ Chưa bắt đầu</span></td>
+              </tr>
+              <tr>
+                <td>Nhân viên bếp 04</td>
+                <td>Bếp</td>
+                <td><span class="bar"><span class="track"><span class="fill" style="width:0%"></span></span><span class="pct">0%</span></span></td>
+                <td><span class="dash">—</span></td>
+                <td><span class="dash">—</span></td>
+                <td><span class="badge none">⬜ Chưa bắt đầu</span></td>
+              </tr>
+              <tr>
+                <td>Nhân viên bếp 05</td>
+                <td>Bếp</td>
+                <td><span class="bar"><span class="track"><span class="fill" style="width:0%"></span></span><span class="pct">0%</span></span></td>
+                <td><span class="dash">—</span></td>
+                <td><span class="dash">—</span></td>
+                <td><span class="badge none">⬜ Chưa bắt đầu</span></td>
+              </tr>
+              <tr>
+                <td>Nhân viên bếp 06</td>
+                <td>Bếp</td>
+                <td><span class="bar"><span class="track"><span class="fill" style="width:0%"></span></span><span class="pct">0%</span></span></td>
+                <td><span class="dash">—</span></td>
+                <td><span class="dash">—</span></td>
+                <td><span class="badge none">⬜ Chưa bắt đầu</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pager">
+          <span>Hiển thị 1–10 trong 12 nhân viên</span>
+          <span class="pgbtns">
+            <span class="pgbtn">←</span>
+            <span class="pgbtn on">1</span>
+            <span class="pgbtn">2</span>
+            <span class="pgbtn">→</span>
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ MODAL PREVIEWS ============ -->
+  <div class="modals">
+
+    <!-- E. guide form modal -->
+    <div class="scrim">
+      <p class="cap">Modal E · Tạo/Chỉnh sửa hướng dẫn</p>
+      <div class="modal">
+        <div class="m-head">
+          <h4>Tạo/Chỉnh sửa hướng dẫn</h4>
+          <span class="x">✕</span>
+        </div>
+        <div class="m-body">
+          <div class="field">
+            <label>Tiêu đề</label>
+            <div class="input">Cuốn bánh đúng cách</div>
+          </div>
+          <div class="field">
+            <label>Vai trò</label>
+            <div class="input select" style="padding-right:28px">Bếp</div>
+          </div>
+          <div class="field">
+            <label>Mô tả</label>
+            <div class="input area">Kỹ thuật tráng và cuốn bánh cho ca sáng.</div>
+          </div>
+          <div class="field">
+            <label>Ảnh bìa</label>
+            <div class="input ph">training/cuon-banh.jpg</div>
+          </div>
+          <div class="field">
+            <label>Link YouTube</label>
+            <div class="input ph">https://youtu.be/xxxxxxxxxxx</div>
+          </div>
+          <div class="field">
+            <label>KPI chất lượng</label>
+            <div class="input">≥ 95% bánh đạt chuẩn</div>
+          </div>
+          <div class="field">
+            <label>KPI số lượng</label>
+            <div class="input">40 suất/giờ</div>
+          </div>
+          <div class="two">
+            <div class="field">
+              <label>Điểm đạt (%)</label>
+              <div class="input">75</div>
+              <span class="hint">mặc định 75 · 50–100</span>
+            </div>
+            <div class="field">
+              <label>Số lần làm bài</label>
+              <div class="input">3</div>
+              <span class="hint">mặc định 3 · 1–10</span>
+            </div>
+          </div>
+          <div class="toggle-row">
+            <span style="font-size:.85rem;font-weight:600">Đã xuất bản</span>
+            <span class="toggle"><span></span></span>
+          </div>
+          <div class="field">
+            <label>Ai chịu trách nhiệm</label>
+            <div class="pills">
+              <span class="pill role">Bếp ✕</span>
+              <span class="pill role">Quản lý ✕</span>
+              <span class="pill">+ Thu ngân</span>
+              <span class="pill">+ Nhân viên</span>
+            </div>
+            <span class="hint">chọn ít nhất 1</span>
+          </div>
+        </div>
+        <div class="m-foot">
+          <span class="btn ghost">Huỷ</span>
+          <span class="btn">Lưu hướng dẫn</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- F. staff progress modal -->
+    <div class="scrim">
+      <p class="cap">Modal F · Chi tiết tiến trình</p>
+      <div class="modal">
+        <div class="m-head">
+          <h4>Chi tiết tiến trình</h4>
+          <span class="x">✕</span>
+        </div>
+        <div class="m-body">
+          <div class="who">
+            <span class="avatar">TB</span>
+            <span>
+              <b style="font-family:var(--sans)">Trần Thị Bánh</b><br>
+              <small style="color:var(--muted)">Bếp · Cuốn bánh đúng cách</small>
+            </span>
+          </div>
+
+          <div class="steps">
+            <div class="step ok">
+              <span class="ic">✓</span>
+              <span><b>Xem video</b><small>Đã xem 40% — cần đạt 100%</small></span>
+            </div>
+            <div class="step ok">
+              <span class="ic">✓</span>
+              <span><b>Làm bài kiểm tra</b><small>Đã làm 1 lần · chưa đạt (60 / cần 75)</small></span>
+            </div>
+            <div class="step">
+              <span class="ic">3</span>
+              <span><b>Hoàn thành</b><small>Chưa hoàn thành</small></span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Lịch sử làm bài</label>
+            <div class="table-wrap" style="border:1px solid var(--line);border-radius:8px">
+              <table class="mini">
+                <thead><tr><th>Lần</th><th>Điểm</th><th>Đạt</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>60</td><td><span class="badge fail">❌ Không đạt</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <span class="hint">Còn 2 lượt</span>
+          </div>
+
+          <div class="field">
+            <label>Ghi chú quản lý</label>
+            <div class="input area">Cần luyện thêm phần tráng bánh.</div>
+            <span class="saved">Đã lưu ✓</span>
+          </div>
+        </div>
+        <div class="m-foot">
+          <span class="btn ghost">Đóng</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Mockup #1 cho <b>F-25</b> — 2026-07-19. Đây là ảnh chụp trạng thái của <code>admin_training_PLAN.md</code>; khi có mâu thuẫn, <b>kế hoạch thắng</b>.</p>
+    <p>Bề mặt admin dùng bộ token trung tính F-7 của <code>harness/diagrams/design-system.html</code> (thêm <code>--red</code> cho trạng thái “Chưa qua quiz”), không dùng shell tối/cam của trang khách hàng.</p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin toppings — UI mockup #1 (F-29)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE9E7;
+    --shell: #1E293B; --shell-ink: #E2E8F0; --shell-on: #F59E0B;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2857C; --red-soft: #3A1714;
+      --shell: #0B111B; --shell-ink: #CBD5E1; --shell-on: #D9A83E;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2857C; --red-soft: #3A1714;
+    --shell: #0B111B; --shell-ink: #CBD5E1; --shell-on: #D9A83E;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE9E7;
+    --shell: #1E293B; --shell-ink: #E2E8F0; --shell-on: #F59E0B;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 1080px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.3rem; font-weight: 600; margin: 0 0 6px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  section { margin-top: 52px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 18px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+
+  /* ===== the app frame — neutral F-7 admin tokens (NOT the customer dark/orange shell) ===== */
+  .frame-wrap { overflow-x: auto; }
+  .frame { min-width: 880px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 28px rgba(0,0,0,.10); }
+
+  .nav { display: flex; align-items: center; gap: 22px; background: var(--shell); color: var(--shell-ink); padding: 0 20px; height: 52px; font-size: 13px; }
+  .nav .brand { font-family: var(--sans); font-weight: 700; font-size: 13.5px; padding-right: 22px; border-right: 1px solid rgba(255,255,255,.14); }
+  .nav .tabs { display: flex; gap: 20px; height: 100%; align-items: center; }
+  .nav .tabs span { height: 100%; display: flex; align-items: center; border-bottom: 2px solid transparent; color: rgba(226,232,240,.72); }
+  .nav .tabs span.on { color: var(--shell-on); font-weight: 700; border-bottom-color: var(--shell-on); }
+  .nav .who { margin-left: auto; font-family: var(--mono); font-size: 11px; color: rgba(226,232,240,.6); }
+
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px 12px; }
+  .head .ttl { display: flex; align-items: center; gap: 10px; }
+  .head h3 { font-family: var(--sans); font-size: 19px; font-weight: 700; margin: 0; }
+  .cnt { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 9px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 7px; padding: 8px 14px; font-size: 13px; font-weight: 600; border: 1px solid transparent; white-space: nowrap; }
+  .btn.pri { background: var(--accent); color: #fff; }
+  .btn.gho { background: var(--surface); color: var(--ink); border-color: var(--line); }
+  .btn.dgr { background: var(--red); color: #fff; }
+  .btn.sm { padding: 5px 10px; font-size: 12px; }
+
+  .toolbar { display: flex; align-items: center; gap: 10px; padding: 0 20px 14px; flex-wrap: wrap; }
+  .search { flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; color: var(--muted); font-size: 13px; }
+  .filters { display: flex; gap: 6px; }
+  .fchip { font-size: 12px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; color: var(--muted); }
+  .fchip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin: 0 20px 20px; overflow: hidden; }
+  table.t { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.t th { text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--paper); }
+  table.t td { padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  table.t tr:last-child td { border-bottom: none; }
+  .nm { font-weight: 600; }
+  .nm .sub { display: block; font-family: var(--mono); font-size: 10px; color: var(--muted); font-weight: 400; }
+  .chip { display: inline-block; border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 2px 9px; font-size: 11.5px; color: var(--ink); margin: 2px 3px 2px 0; }
+  .none { color: var(--muted); font-size: 12.5px; font-style: italic; }
+  .free { color: var(--done); font-weight: 700; }
+  .cost { color: var(--amber); font-weight: 700; font-family: var(--mono); font-size: 12.5px; }
+  .bdg { font-family: var(--mono); font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 2px 9px; }
+  .bdg.ok { color: var(--done); background: var(--done-soft); }
+  .bdg.no { color: var(--muted); background: var(--line); }
+  .acts { display: flex; gap: 6px; justify-content: flex-end; }
+  .lnk { font-size: 12.5px; color: var(--accent); font-weight: 600; }
+  .lnk.del { color: var(--red); }
+  .lnk.off { color: var(--muted); opacity: .45; }
+
+  /* state panels */
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .panel .pt { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--paper); }
+  .panel .pb { padding: 18px 14px; }
+  .sk { height: 12px; border-radius: 6px; background: var(--line); margin: 9px 0; opacity: .75; }
+  .empty { text-align: center; padding: 26px 12px; }
+  .empty .ico { font-size: 30px; }
+  .empty p { color: var(--muted); font-size: 13px; margin: 8px 0 0; max-width: none; }
+  .errp { text-align: center; padding: 22px 12px; }
+  .errp .ico { font-size: 26px; color: var(--red); }
+  .errp p { color: var(--muted); font-size: 13px; margin: 8px 0 12px; max-width: none; }
+
+  /* modal + dialog */
+  .ovl { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+  .modal { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 34px rgba(0,0,0,.16); max-width: 380px; margin: 0 auto; overflow: hidden; }
+  .mh { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .mh b { font-family: var(--sans); font-size: 15px; }
+  .mh .x { color: var(--muted); }
+  .mb { padding: 16px; }
+  .fld { margin-bottom: 14px; }
+  .fld label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .fld .req { color: var(--red); }
+  .inp { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; padding: 8px 11px; font-size: 13px; }
+  .inp.bad { border-color: var(--red); background: var(--red-soft); }
+  .hint { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+  .err { font-size: 11.5px; color: var(--red); margin-top: 4px; font-weight: 600; }
+  .tog { display: inline-flex; align-items: center; gap: 8px; }
+  .sw { width: 36px; height: 20px; border-radius: 999px; background: var(--done); position: relative; }
+  .sw::after { content: ""; position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+  .sw.off { background: var(--line); }
+  .sw.off::after { right: auto; left: 2px; }
+  .mf { display: flex; gap: 8px; justify-content: flex-end; padding: 13px 16px; border-top: 1px solid var(--line); background: var(--paper); }
+  .dlg-ico { font-size: 22px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow">ecom-core · restaurant platform · UI mockup #1 · 2026-07-19</div>
+  <h1>Admin toppings — the screen</h1>
+  <p class="lede">A high-fidelity preview of <code>/admin/toppings</code> on the <b>neutral F-7 admin
+  tokens</b> with real seed data — the AD-TOP-2 target an owner can eyeball before a line of code exists.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">task</span><span class="v">F-29 → AD-TOP-2</span></div>
+    <div class="fact"><span class="k">tokens</span><span class="v">F-7 neutral</span></div>
+    <div class="fact"><span class="k">viewport</span><span class="v">desktop ≥ 1280</span></div>
+    <div class="fact"><span class="k">role</span><span class="v">admin (sees Xóa)</span></div>
+  </div>
+</header>
+
+<div class="golden">
+  <p><b>Not the customer shell.</b> The customer surface is locked to the reference dark/orange
+  theme; every staff and admin surface instead uses the neutral tokens from
+  <a href="../../diagrams/design-system.html"><code>design-system.html</code></a>, so this page
+  follows the viewer's light/dark theme rather than hard-coding a palette.</p>
+</div>
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>Ready state — the table</h2></div>
+  <div class="frame-wrap">
+    <div class="frame">
+      <div class="nav">
+        <span class="brand">Quản trị hệ thống</span>
+        <span class="tabs">
+          <span>Tổng quan</span><span>Tổng kết</span><span>Sản phẩm</span><span>Combo</span>
+          <span>Danh mục</span><span class="on">Topping</span><span>Nhân viên</span><span>Kho NL</span>
+        </span>
+        <span class="who">chị Hà · admin</span>
+      </div>
+
+      <div class="head">
+        <div class="ttl"><h3>Topping</h3><span class="cnt">7</span></div>
+        <span class="btn pri">+ Thêm topping</span>
+      </div>
+
+      <div class="toolbar">
+        <div class="search">🔍 Tìm topping theo tên…</div>
+        <div class="filters">
+          <span class="fchip on">Tất cả</span><span class="fchip">Có sẵn</span><span class="fchip">Hết</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <table class="t">
+          <tr>
+            <th style="width:24%">Tên topping</th>
+            <th style="width:34%">Áp dụng cho sản phẩm</th>
+            <th style="width:14%">Giá thêm</th>
+            <th style="width:13%">Trạng thái</th>
+            <th style="width:15%"></th>
+          </tr>
+          <tr>
+            <td class="nm">Nhân thịt mộc nhĩ<span class="sub">nhân · ₫0 filling</span></td>
+            <td><span class="chip">Bánh Cuốn Thịt</span><span class="chip">BC Thập Cẩm</span></td>
+            <td class="free">Miễn phí</td>
+            <td><span class="bdg ok">Có sẵn</span></td>
+            <td><div class="acts"><span class="lnk">Sửa</span><span class="lnk del">Xóa</span></div></td>
+          </tr>
+          <tr>
+            <td class="nm">Nhân tôm<span class="sub">nhân · ₫0 filling</span></td>
+            <td><span class="chip">Bánh Cuốn Tôm</span></td>
+            <td class="free">Miễn phí</td>
+            <td><span class="bdg ok">Có sẵn</span></td>
+            <td><div class="acts"><span class="lnk">Sửa</span><span class="lnk del">Xóa</span></div></td>
+          </tr>
+          <tr>
+            <td class="nm">Chả quế</td>
+            <td><span class="chip">Bánh Cuốn Thịt</span><span class="chip">Bánh Cuốn Tôm</span></td>
+            <td class="cost">+8.000đ</td>
+            <td><span class="bdg ok">Có sẵn</span></td>
+            <td><div class="acts"><span class="lnk">Sửa</span><span class="lnk del">Xóa</span></div></td>
+          </tr>
+          <tr>
+            <td class="nm">Giò lụa</td>
+            <td><span class="chip">BC Thập Cẩm</span></td>
+            <td class="cost">+10.000đ</td>
+            <td><span class="bdg ok">Có sẵn</span></td>
+            <td><div class="acts"><span class="lnk">Sửa</span><span class="lnk del">Xóa</span></div></td>
+          </tr>
+          <tr>
+            <td class="nm">Hành phi</td>
+            <td><span class="chip">Bánh Cuốn Thịt</span></td>
+            <td class="free">Miễn phí</td>
+            <td><span class="bdg ok">Có sẵn</span></td>
+            <td><div class="acts"><span class="lnk">Sửa</span><span class="lnk del">Xóa</span></div></td>
+          </tr>
+          <tr>
+            <td class="nm">Tôm tươi</td>
+            <td><span class="none">Chưa gắn sản phẩm</span></td>
+            <td class="cost">+15.000đ</td>
+            <td><span class="bdg ok">Có sẵn</span></td>
+            <td><div class="acts"><span class="lnk">Sửa</span><span class="lnk del">Xóa</span></div></td>
+          </tr>
+          <tr>
+            <td class="nm">Trứng chiên</td>
+            <td><span class="none">Chưa gắn sản phẩm</span></td>
+            <td class="cost">+5.000đ</td>
+            <td><span class="bdg no">Hết</span></td>
+            <td><div class="acts"><span class="lnk">Sửa</span><span class="lnk del off">Xóa</span></div></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <p style="margin-top:16px"><b>Reading the row.</b> ₫0 rows render <b class="free">Miễn phí</b> in the
+  success colour, never “+0đ” — those are the nhân fillings the customer menu shows as pills. Paid
+  rows render <code class="cost">+8.000đ</code> through the one shared <code>formatVND()</code>.
+  Product chips come from the server-joined <code>products[]</code> and are <b>read-only</b> here.
+  The last row shows a <b>disabled Xóa</b> — that row's delete is already in flight.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>The form modal — add &amp; edit</h2></div>
+  <div class="grid2">
+    <div>
+      <div class="panel"><div class="pt">edit mode — pre-filled</div><div class="pb ovl">
+        <div class="modal">
+          <div class="mh"><b>Sửa topping</b><span class="x">✕</span></div>
+          <div class="mb">
+            <div class="fld"><label>Tên topping <span class="req">*</span></label>
+              <div class="inp">Chả quế</div></div>
+            <div class="fld"><label>Giá thêm (đ)</label>
+              <div class="inp">8000</div>
+              <div class="hint">Để <b>0</b> nếu topping miễn phí</div></div>
+            <div class="fld"><label>Trạng thái</label>
+              <div class="tog"><span class="sw"></span><span style="font-size:13px">Có sẵn</span></div></div>
+          </div>
+          <div class="mf"><span class="btn gho sm">Hủy</span><span class="btn pri sm">Lưu topping</span></div>
+        </div>
+      </div></div>
+    </div>
+    <div>
+      <div class="panel"><div class="pt">duplicate name — 409 DUPLICATE</div><div class="pb ovl">
+        <div class="modal">
+          <div class="mh"><b>Thêm topping</b><span class="x">✕</span></div>
+          <div class="mb">
+            <div class="fld"><label>Tên topping <span class="req">*</span></label>
+              <div class="inp bad">Chả quế</div>
+              <div class="err">Tên topping đã tồn tại</div></div>
+            <div class="fld"><label>Giá thêm (đ)</label>
+              <div class="inp">0</div>
+              <div class="hint">Để <b>0</b> nếu topping miễn phí</div></div>
+            <div class="fld"><label>Trạng thái</label>
+              <div class="tog"><span class="sw off"></span><span style="font-size:13px">Hết</span></div></div>
+          </div>
+          <div class="mf"><span class="btn gho sm">Hủy</span><span class="btn pri sm">Lưu topping</span></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <p style="margin-top:16px">One modal, two modes — the title and pre-fill are derived from whether an
+  edit target is set. The <b>status toggle works on create too</b>; the reference hardcoded new
+  toppings to “Có sẵn” and left the control lying. The duplicate-name error is a <b>real</b> server
+  <code>409</code>, not the reference's dead branch, and the modal stays open with nothing lost.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Delete dialog — states the impact</h2></div>
+  <div class="grid2">
+    <div>
+      <div class="panel"><div class="pt">linked topping — admin only</div><div class="pb ovl">
+        <div class="modal">
+          <div class="mh"><b>Xóa topping?</b><span class="x">✕</span></div>
+          <div class="mb" style="display:flex;gap:12px">
+            <span class="dlg-ico">⚠️</span>
+            <div style="font-size:13px">
+              <b>Chả quế</b> đang áp dụng cho <b>2 sản phẩm</b>
+              (Bánh Cuốn Thịt, Bánh Cuốn Tôm).<br>
+              <span style="color:var(--muted)">Xóa sẽ gỡ liên kết khỏi các sản phẩm này.
+              Đơn hàng cũ không thay đổi.</span>
+            </div>
+          </div>
+          <div class="mf"><span class="btn gho sm">Hủy</span><span class="btn dgr sm">Xóa topping</span></div>
+        </div>
+      </div></div>
+    </div>
+    <div>
+      <div class="panel"><div class="pt">unlinked topping</div><div class="pb ovl">
+        <div class="modal">
+          <div class="mh"><b>Xóa topping?</b><span class="x">✕</span></div>
+          <div class="mb" style="display:flex;gap:12px">
+            <span class="dlg-ico">⚠️</span>
+            <div style="font-size:13px">
+              <b>Tôm tươi</b> chưa gắn với sản phẩm nào.<br>
+              <span style="color:var(--muted)">Topping sẽ biến mất khỏi menu ngay lần tải tiếp theo.</span>
+            </div>
+          </div>
+          <div class="mf"><span class="btn gho sm">Hủy</span><span class="btn dgr sm">Xóa topping</span></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <p style="margin-top:16px">A real dialog, not a browser <code>confirm()</code>. The count comes from
+  the row's own joined <code>products[]</code>, so it is always truthful. <b>Managers never see the
+  Xóa button</b> — delete is admin-only, and hiding it beats letting it 403.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>The other three branches</h2></div>
+  <div class="grid2">
+    <div class="panel"><div class="pt">loading — skeleton, not bare text</div><div class="pb">
+      <div class="sk" style="width:92%"></div><div class="sk" style="width:78%"></div>
+      <div class="sk" style="width:85%"></div><div class="sk" style="width:70%"></div>
+      <div class="sk" style="width:88%"></div><div class="sk" style="width:64%"></div>
+    </div></div>
+    <div class="panel"><div class="pt">empty — no toppings yet</div><div class="pb">
+      <div class="empty"><div class="ico">🍜</div>
+        <p>Chưa có topping nào — nhấn <b>+ Thêm topping</b> để bắt đầu</p></div>
+    </div></div>
+    <div class="panel"><div class="pt">error — never mistaken for empty</div><div class="pb">
+      <div class="errp"><div class="ico">⚠</div>
+        <p>Không tải được danh sách topping.</p>
+        <span class="btn gho sm">Thử lại</span></div>
+    </div></div>
+  </div>
+  <p style="margin-top:16px">Four named, mutually exclusive branches — <code>loading</code>,
+  <code>error</code>, <code>empty</code>, <code>ready</code>. The reference collapsed loading into a
+  single line of text (“Đang tải…”) that made the table jump when data arrived, and had no error
+  branch at all, so a failed fetch looked exactly like “you have no toppings”.</p>
+</section>
+
+<footer>
+  Written 2026-07-19 by the engineer-in-charge (F-29). Mockup #1 for
+  <a href="admin_toppings_PLAN.md"><code>admin_toppings_PLAN.md</code></a>, <b>which wins on any
+  conflict</b>. Component specs live in
+  <a href="../../diagrams/design-system.html"><code>design-system.html</code></a>; seed data matches
+  the catalog seed in <a href="../../DB_SCHEMA.md"><code>DB_SCHEMA.md</code></a>.
+</footer>
+
+</div>
+</body>
+</html>

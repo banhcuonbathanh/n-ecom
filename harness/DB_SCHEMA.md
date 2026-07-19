@@ -53,7 +53,7 @@ Moved here from `OVERALL_PLAN.md §3.2`:
 | S — staff/auth | `staff` `refresh_tokens` | §4.4 full / stub |
 | S·P — payments | `payments` | §4.5 stub (no reference home file — no seed data existed) |
 | AD — inventory | `ingredients` `product_ingredients` `stock_movements` | §4.6 full |
-| AD — workforce/files | `staff_tasks` `training_guides` `training_progress` `file_attachments` | §4.7 stub |
+| AD — workforce/files | `staff_tasks` **full** (F-22) · `training_guides` `training_progress` `file_attachments` stubs | §4.7 |
 
 "Full" = column-complete, traced from the object spec. "Stub" = key decisions only;
 column detail lands in that phase's plan page **and gets promoted into this file**
@@ -261,11 +261,37 @@ the same tx:
 | `created_by` | CHAR(36) NULL FK→staff SET NULL | |
 | `created_at` | DATETIME | index `ingredient_id`, `created_at`, `created_by`; no update/delete — ledger |
 
-### 4.7 Workforce & files (AD phase) — stubs
+### 4.7 Workforce & files (AD phase)
 
-`staff_tasks`, `training_guides`, `training_progress`, `file_attachments` — no
+`training_guides`, `training_progress`, `file_attachments` — still stubs; no
 object spec traced yet (reference home files don't cover them). Spec'd in their
 AD-phase plan pages, promoted here in the same task, per §3.
+
+#### `staff_tasks` — promoted by F-22 (`plans/admin_task_board/`)
+
+Work assigned by a manager to a staff member for a given day. Read by
+`/admin/staff/task-board` and `/admin/todo-list`.
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | CHAR(36) PK | UUID, app-generated |
+| `assigned_to` | CHAR(36) NOT NULL FK→staff | index `(assigned_to, due_at)` |
+| `assigned_by` | CHAR(36) NOT NULL FK→staff | the caller, stamped from the JWT — never from the request body |
+| `title` | VARCHAR(200) NOT NULL | 1–200 |
+| `description` | TEXT NULL | |
+| `priority` | ENUM('high','medium','low') NOT NULL | queries order high→medium→low |
+| `status` | ENUM('pending','in_progress','completed','cancelled') NOT NULL DEFAULT 'pending' | **4 values — `overdue` is NOT stored**, it is derived read-side as `status IN ('pending','in_progress') AND due_at < NOW()` (F-22 ruling; the reference stored it and nothing ever set it) |
+| `due_at` | DATETIME NOT NULL | `DATE(due_at)` is the day key; index `(due_at)` |
+| `due_time_start` | TIME NULL | optional display window |
+| `due_time_end` | TIME NULL | optional display window |
+| `notes` | TEXT NULL | |
+| `completed_at` | DATETIME NULL | stamped on entry to `completed`, nulled on exit |
+| `created_at` | DATETIME NOT NULL | |
+| `updated_at` | DATETIME NOT NULL | |
+| `deleted_at` | DATETIME NULL | soft delete; every query filters `deleted_at IS NULL` |
+
+Status transition rules live in `plans/admin_task_board/admin_task_board_PLAN.md §3.6`
+(service-layer concern, not a schema constraint).
 
 ---
 

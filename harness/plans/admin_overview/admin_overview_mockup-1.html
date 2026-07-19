@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin overview — mockup #1 (F-17)</title>
+<style>
+  /* ============================================================
+     ADMIN SURFACE MOCKUP — neutral F-7 design-system tokens.
+     Unlike the customer mockups (locked to the reference dark/orange
+     shell), staff/admin surfaces use design-system.html's neutral
+     palette, so this mockup is THEME-AWARE and renders correctly in
+     both the viewer's light and dark themes.
+     ============================================================ */
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+    /* design-system product tokens (design-system.html §tokens) */
+    --ds-primary: #2B59D9; --ds-primary-hover: #2249B4; --ds-primary-soft: #E8EDFB;
+    --ds-on-primary: #FFFFFF;
+    --ds-ink: #1D2530; --ds-muted: #5C6675;
+    --ds-surface: #FFFFFF; --ds-surface-2: #F3F4F6;
+    --ds-border: #D3D8DF; --ds-border-strong: #9AA3AF;
+    --ds-success: #1E8A5A; --ds-success-soft: #E2F2EA;
+    --ds-warning: #96690A; --ds-warning-soft: #F6EDD8;
+    --ds-danger: #C0392B; --ds-danger-soft: #F8E7E4;
+    --ds-shadow-1: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.10);
+    --ds-shadow-2: 0 4px 8px -2px rgba(16,24,40,.10), 0 2px 4px -2px rgba(16,24,40,.06);
+    --ds-shadow-3: 0 12px 16px -4px rgba(16,24,40,.10), 0 4px 6px -2px rgba(16,24,40,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --ds-primary: #6E8FF0; --ds-primary-hover: #8AA8F8; --ds-primary-soft: #1D2A4A;
+      --ds-on-primary: #0F141C;
+      --ds-ink: #E6EAF2; --ds-muted: #97A1B0;
+      --ds-surface: #171E29; --ds-surface-2: #1C2431;
+      --ds-border: #2E3848; --ds-border-strong: #4A5568;
+      --ds-success: #4FC08D; --ds-success-soft: #14332A;
+      --ds-warning: #D9A83E; --ds-warning-soft: #34290F;
+      --ds-danger: #E58278; --ds-danger-soft: #3A1D19;
+      --ds-shadow-1: 0 1px 2px rgba(0,0,0,.4);
+      --ds-shadow-2: 0 4px 8px -2px rgba(0,0,0,.5);
+      --ds-shadow-3: 0 12px 18px -4px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --ds-primary: #6E8FF0; --ds-primary-hover: #8AA8F8; --ds-primary-soft: #1D2A4A;
+    --ds-on-primary: #0F141C;
+    --ds-ink: #E6EAF2; --ds-muted: #97A1B0;
+    --ds-surface: #171E29; --ds-surface-2: #1C2431;
+    --ds-border: #2E3848; --ds-border-strong: #4A5568;
+    --ds-success: #4FC08D; --ds-success-soft: #14332A;
+    --ds-warning: #D9A83E; --ds-warning-soft: #34290F;
+    --ds-danger: #E58278; --ds-danger-soft: #3A1D19;
+    --ds-shadow-1: 0 1px 2px rgba(0,0,0,.4);
+    --ds-shadow-2: 0 4px 8px -2px rgba(0,0,0,.5);
+    --ds-shadow-3: 0 12px 18px -4px rgba(0,0,0,.55);
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --ds-primary: #2B59D9; --ds-primary-hover: #2249B4; --ds-primary-soft: #E8EDFB;
+    --ds-on-primary: #FFFFFF;
+    --ds-ink: #1D2530; --ds-muted: #5C6675;
+    --ds-surface: #FFFFFF; --ds-surface-2: #F3F4F6;
+    --ds-border: #D3D8DF; --ds-border-strong: #9AA3AF;
+    --ds-success: #1E8A5A; --ds-success-soft: #E2F2EA;
+    --ds-warning: #96690A; --ds-warning-soft: #F6EDD8;
+    --ds-danger: #C0392B; --ds-danger-soft: #F8E7E4;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.55; font-size: 16px; margin: 0; }
+  .page { max-width: 1180px; margin: 0 auto; padding: 32px 20px 80px; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-top: 16px; }
+  h1 { font-family: var(--sans); font-size: 1.8rem; font-weight: 700; margin: 8px 0 10px; }
+  .lede { color: var(--muted); max-width: 70ch; margin: 0 0 18px; }
+  .note { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 18px 0; font-size: 0.9rem; max-width: 78ch; }
+  .note p { margin: 0 0 6px; } .note p:last-child { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.85em; }
+  footer { margin-top: 56px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 14px; }
+
+  /* ---------- app frame ---------- */
+  .appwrap { overflow-x: auto; border-radius: 14px; box-shadow: var(--ds-shadow-3); border: 1px solid var(--ds-border); }
+  .app { min-width: 980px; background: var(--ds-surface-2); font-size: 13.5px; }
+
+  /* top bar */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: var(--ds-surface); border-bottom: 1px solid var(--ds-border); padding: 10px 18px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-family: var(--sans); }
+  .brand .logo { width: 28px; height: 28px; border-radius: 8px; background: var(--ds-primary); color: var(--ds-on-primary); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+  .tabs { display: flex; gap: 2px; }
+  .tabs span { padding: 6px 12px; border-radius: 8px; color: var(--ds-muted); font-size: 13px; white-space: nowrap; }
+  .tabs span.on { background: var(--ds-primary-soft); color: var(--ds-primary); font-weight: 600; }
+  .whoami { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--ds-muted); }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--ds-surface-2); border: 1px solid var(--ds-border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--ds-ink); }
+
+  /* banner */
+  .banner { background: var(--ds-danger-soft); color: var(--ds-danger); border-bottom: 1px solid var(--ds-danger); padding: 8px 18px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+  .main { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* page head */
+  .phead { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .phead h2 { font-family: var(--sans); font-size: 20px; font-weight: 700; margin: 0; }
+  .phead .sub { color: var(--ds-muted); font-size: 12.5px; }
+  .live { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px; color: var(--ds-success); background: var(--ds-success-soft); border-radius: 999px; padding: 4px 11px; font-weight: 700; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ds-success); }
+
+  /* search */
+  .search { display: flex; align-items: center; gap: 9px; background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: 10px; padding: 9px 13px; color: var(--ds-muted); font-size: 13px; box-shadow: var(--ds-shadow-1); }
+  .search .hint { margin-left: auto; font-size: 11.5px; font-family: var(--mono); }
+
+  /* cards */
+  .card { background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: 12px; box-shadow: var(--ds-shadow-1); overflow: hidden; }
+  .card-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; border-bottom: 1px solid var(--ds-border); }
+  .card-h h3 { font-family: var(--sans); font-size: 14px; font-weight: 700; margin: 0; }
+  .card-h .meta { font-size: 11.5px; color: var(--ds-muted); font-family: var(--mono); }
+  .card-b { padding: 12px 14px; }
+
+  /* kpis */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi { background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: 12px; padding: 13px 15px; box-shadow: var(--ds-shadow-1); }
+  .kpi .v { font-family: var(--mono); font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .kpi .l { font-size: 12px; color: var(--ds-muted); margin-top: 3px; }
+  .kpi .s { font-size: 11px; color: var(--ds-muted); font-family: var(--mono); margin-top: 2px; }
+  .kpi.alarm { background: var(--ds-danger-soft); border-color: var(--ds-danger); }
+  .kpi.alarm .v { color: var(--ds-danger); }
+  .kpi.alarm .l, .kpi.alarm .s { color: var(--ds-danger); }
+
+  /* buttons (design-system §button) */
+  .btn { display: inline-flex; align-items: center; gap: 5px; font-family: var(--body); font-size: 12px; font-weight: 600; border-radius: 8px; padding: 5px 11px; border: 1px solid transparent; white-space: nowrap; cursor: default; }
+  .btn.pri { background: var(--ds-primary); color: var(--ds-on-primary); }
+  .btn.sec { background: var(--ds-surface); color: var(--ds-ink); border-color: var(--ds-border-strong); }
+  .btn.ghost { background: transparent; color: var(--ds-muted); border-color: var(--ds-border); }
+  .btn.ok { background: var(--ds-success); color: #fff; }
+  .btn.sm { font-size: 11px; padding: 3px 8px; }
+  .btn.disabled { opacity: .45; }
+
+  /* badges */
+  .badge { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
+  .badge.wait { background: var(--ds-warning-soft); color: var(--ds-warning); }
+  .badge.conf { background: var(--ds-primary-soft); color: var(--ds-primary); }
+  .badge.prep { background: var(--ds-primary-soft); color: var(--ds-primary); }
+  .badge.ready { background: var(--ds-success-soft); color: var(--ds-success); }
+  .badge.deliv { background: var(--ds-success-soft); color: var(--ds-success); }
+  .badge.free { background: var(--ds-surface-2); color: var(--ds-muted); }
+
+  /* chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .dchip { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--ds-border); background: var(--ds-surface-2); border-radius: 999px; padding: 4px 11px; font-size: 12px; }
+  .dchip b { font-family: var(--mono); }
+  .dchip .plus { color: var(--ds-warning); font-style: italic; font-family: var(--mono); font-size: 11px; }
+
+  /* tables */
+  .tw { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  th { text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--ds-muted); padding: 7px 10px; border-bottom: 1px solid var(--ds-border); font-weight: 700; white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--ds-border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  td.mono, th.mono { font-family: var(--mono); }
+  td.right, th.right { text-align: right; }
+  tr.urgent td:first-child { box-shadow: inset 3px 0 0 var(--ds-danger); }
+  tr.warn td:first-child { box-shadow: inset 3px 0 0 var(--ds-warning); }
+  tr.total td { font-weight: 700; background: var(--ds-surface-2); }
+  .acts { display: flex; gap: 5px; justify-content: flex-end; }
+
+  /* table tiles (grid view sample) */
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .tile { border: 1px solid var(--ds-border); background: var(--ds-surface); border-radius: 10px; padding: 11px 12px; box-shadow: var(--ds-shadow-1); }
+  .tile.busy { box-shadow: inset 3px 0 0 var(--ds-warning), var(--ds-shadow-1); }
+  .tile.hot { box-shadow: inset 3px 0 0 var(--ds-danger), var(--ds-shadow-1); }
+  .tile .tn { font-family: var(--sans); font-weight: 700; font-size: 14px; }
+  .tile .tm { font-size: 11.5px; color: var(--ds-muted); font-family: var(--mono); margin: 2px 0 8px; }
+
+  /* accordions */
+  .acc { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; }
+  .acc .lft { display: flex; align-items: center; gap: 9px; }
+  .acc h3 { font-family: var(--sans); font-size: 14px; font-weight: 700; margin: 0; }
+  .acc .cnt { font-family: var(--mono); font-size: 11.5px; color: var(--ds-muted); }
+  .caret { color: var(--ds-muted); font-size: 12px; }
+
+  /* popup overlay */
+  .stage { position: relative; }
+  .scrim { position: absolute; inset: 0; background: rgba(15,20,28,.42); backdrop-filter: blur(1.5px); display: flex; align-items: flex-start; justify-content: center; padding-top: 54px; z-index: 5; }
+  .popup { width: 420px; max-width: 92%; background: var(--ds-surface); border: 1px solid var(--ds-border); border-radius: 14px; box-shadow: var(--ds-shadow-3); overflow: hidden; }
+  .popup-h { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--ds-border); }
+  .popup-h .t { font-family: var(--sans); font-weight: 700; font-size: 15px; }
+  .popup-b { padding: 13px 16px; }
+  .popup-f { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--ds-border); background: var(--ds-surface-2); }
+  .prow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--ds-border); font-size: 13px; }
+  .prow:last-of-type { border-bottom: none; }
+  .prow .q { font-family: var(--mono); color: var(--ds-muted); }
+  .ptot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--ds-border); font-weight: 700; }
+
+  /* payment modal (second stage) */
+  .checkline { display: flex; align-items: center; gap: 9px; padding: 8px 0; font-size: 13px; }
+  .box { width: 17px; height: 17px; border-radius: 5px; border: 1.5px solid var(--ds-border-strong); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; color: var(--ds-on-primary); flex: none; }
+  .box.on { background: var(--ds-primary); border-color: var(--ds-primary); }
+
+  .caption { font-size: 12px; color: var(--muted); font-family: var(--mono); margin: 8px 0 0; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow">ecom-core · restaurant platform · mockup #1 · 2026-07-19</div>
+  <h1>Admin overview — the floor board, rendered</h1>
+  <p class="lede">A high-fidelity preview of <code>/admin/overview</code> built from
+  <a href="../../diagrams/design-system.html">design-system.html</a>'s neutral F-7 components, with the
+  plan's real seed data and worked example. This is the screen the AD-2 / AD-3 rows have to reproduce.</p>
+
+  <div class="note">
+    <p><b>Worked example (identical in every doc, seed, and screenshot):</b> floor <b>3 / 8 bàn</b> ·
+    <b>Bàn 03</b> · order <b>#BC-43</b> · Bánh cuốn trứng ×2 + Trứng ×1 = <b>70.000 đ</b> · 3 món.</p>
+    <p><b>Theme-aware by design.</b> Admin is a staff surface, so this mockup uses the neutral
+    design-system tokens and follows <em>your</em> light/dark theme — unlike the customer mockups,
+    which are hard-locked to the reference dark/orange shell.</p>
+  </div>
+
+  <h3 style="font-family:var(--sans);font-size:1rem;margin:26px 0 10px">State 1 — the doorbell: a new order arrives</h3>
+  <div class="appwrap">
+  <div class="app stage">
+
+    <div class="topbar">
+      <div class="brand"><span class="logo">B</span> Bánh Cuốn · Quản trị</div>
+      <div class="tabs">
+        <span class="on">Tổng quan</span><span>Tổng kết</span><span>Sản phẩm</span><span>Nhân viên</span><span>Thêm ▾</span>
+      </div>
+      <div class="whoami"><span>Nguyễn Quản Lý · manager</span><span class="avatar">NQ</span></div>
+    </div>
+
+    <div class="scrim">
+      <div class="popup">
+        <div class="popup-h">
+          <span class="t">Đơn mới</span>
+          <span><span class="badge conf">Bàn 03</span> <span class="badge wait" style="margin-left:4px">#BC-43</span></span>
+        </div>
+        <div class="popup-b">
+          <div class="prow"><span>Bánh cuốn trứng <span class="q">· Nhân thịt</span></span><span><span class="q">×2</span> &nbsp;60.000 đ</span></div>
+          <div class="prow"><span>Trứng</span><span><span class="q">×1</span> &nbsp;10.000 đ</span></div>
+          <div class="ptot"><span>3 món</span><span>Tổng 70.000 đ</span></div>
+        </div>
+        <div class="popup-f">
+          <span class="btn sec">Bỏ qua</span>
+          <span class="btn pri">✓ Xác nhận nhận đơn</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="main" style="filter:saturate(.9)">
+      <div class="phead">
+        <div>
+          <h2>Tổng quan sàn</h2>
+          <div class="sub">Tất cả bàn — cập nhật theo thời gian thực</div>
+        </div>
+        <span class="live"><span class="dot"></span> LIVE</span>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="v">3 / 8</div><div class="l">Bàn đang phục vụ</div></div>
+        <div class="kpi"><div class="v">12</div><div class="l">Món chờ làm</div><div class="s">Chưa bắt đầu</div></div>
+        <div class="kpi"><div class="v">8</div><div class="l">Món đang làm</div><div class="s">Đang chế biến</div></div>
+        <div class="kpi alarm"><div class="v">2 / 5</div><div class="l">Khẩn cấp / Cảnh báo</div><div class="s">&gt;20 phút / 10–20 phút</div></div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <p class="caption">SSE <code>new_order</code> → <code>GET /orders/:id</code> → popup. "Xác nhận" PATCHes
+  <code>pending → confirmed</code>; "Bỏ qua" writes nothing.</p>
+
+  <h3 style="font-family:var(--sans);font-size:1rem;margin:34px 0 10px">State 2 — the working board (stream healthy)</h3>
+  <div class="appwrap">
+  <div class="app">
+
+    <div class="topbar">
+      <div class="brand"><span class="logo">B</span> Bánh Cuốn · Quản trị</div>
+      <div class="tabs">
+        <span class="on">Tổng quan</span><span>Tổng kết</span><span>Sản phẩm</span><span>Nhân viên</span><span>Thêm ▾</span>
+      </div>
+      <div class="whoami"><span>Nguyễn Quản Lý · manager</span><span class="avatar">NQ</span></div>
+    </div>
+
+    <div class="main">
+
+      <div class="phead">
+        <div>
+          <h2>Tổng quan sàn</h2>
+          <div class="sub">Tất cả bàn — cập nhật theo thời gian thực</div>
+        </div>
+        <span class="live"><span class="dot"></span> LIVE</span>
+      </div>
+
+      <div class="search">
+        <span>⌕</span><span>Tìm theo mã đơn, số bàn, tên khách…</span>
+        <span class="hint">3 đơn · 8 bàn</span>
+      </div>
+
+      <!-- ZONE A -->
+      <div class="kpis">
+        <div class="kpi"><div class="v">3 / 8</div><div class="l">Bàn đang phục vụ</div></div>
+        <div class="kpi"><div class="v">12</div><div class="l">Món chờ làm</div><div class="s">Chưa bắt đầu</div></div>
+        <div class="kpi"><div class="v">8</div><div class="l">Món đang làm</div><div class="s">Đang chế biến</div></div>
+        <div class="kpi alarm"><div class="v">2 / 5</div><div class="l">Khẩn cấp / Cảnh báo</div><div class="s">&gt;20 phút / 10–20 phút</div></div>
+      </div>
+
+      <!-- ZONE D1 + D2 -->
+      <div class="card">
+        <div class="card-h">
+          <h3>Danh sách bàn</h3>
+          <span><span class="btn pri sm">☰ Danh sách</span> <span class="btn ghost sm">▦ Lưới</span></span>
+        </div>
+        <div class="card-b">
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ds-muted);margin-bottom:8px">Tổng món · toàn sàn</div>
+          <div class="chips">
+            <span class="dchip">Bánh <b>×10</b> <span style="color:var(--ds-muted)">▾</span></span>
+            <span class="dchip">Trứng <b>×6</b></span>
+            <span class="dchip">Giò <b>×4</b></span>
+            <span class="dchip">Canh <b>×4</b> <span style="color:var(--ds-muted);font-size:11px">có/không rau</span></span>
+            <span class="dchip"><span class="plus">+3 từ 🔍</span></span>
+          </div>
+          <div style="margin-top:9px;font-size:12px;color:var(--ds-muted)">🔍 <b>2 bàn</b> đang kiểm tra · <b>24 phần</b>
+            <span class="btn ghost sm" style="margin-left:8px">Bỏ kiểm tra (2)</span>
+            <span class="btn ghost sm">Xem tất cả</span></div>
+        </div>
+      </div>
+
+      <!-- ZONE B -->
+      <div class="card">
+        <div class="card-h">
+          <h3>Danh sách bàn cần chuẩn bị</h3>
+          <span class="meta">2 bàn · 3 loại món · 12 phần còn lại</span>
+        </div>
+        <div class="tw">
+          <table>
+            <tr><th>Bàn</th><th>Trạng thái</th><th class="mono">Mã đơn</th><th class="mono">Thời gian</th><th>Còn lại</th><th class="right">Thao tác</th></tr>
+            <tr class="urgent">
+              <td><b>Bàn 01</b></td><td><span class="badge wait">Chờ xác nhận</span></td><td class="mono">BC-42</td>
+              <td class="mono">22′</td><td>Bánh ×4 · Trứng ×2</td>
+              <td class="right"><span class="acts"><span class="btn ghost sm">🔍 Kiểm tra</span><span class="btn pri sm">Xác nhận</span></span></td>
+            </tr>
+            <tr class="warn">
+              <td><b>Bàn 03</b></td><td><span class="badge wait">Chờ xác nhận</span></td><td class="mono">BC-43</td>
+              <td class="mono">12′</td><td>Bánh ×2 · Trứng ×1</td>
+              <td class="right"><span class="acts"><span class="btn ghost sm">🔍 Kiểm tra</span><span class="btn pri sm">Xác nhận</span></span></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- ZONE D4 -->
+      <div class="card">
+        <div class="card-h">
+          <h3>Đơn hàng cần làm</h3>
+          <span class="meta">4 loại món · 3 phần · <span style="color:var(--ds-warning)">⊕ +9</span></span>
+        </div>
+        <div class="tw">
+          <table>
+            <tr><th>Món</th><th class="right">SL ban đầu</th><th class="right">⊕ SL thêm</th><th class="right">Tổng</th></tr>
+            <tr><td>Bánh cuốn thịt</td><td class="right mono">×2</td><td class="right mono" style="color:var(--ds-warning);font-style:italic">+4</td><td class="right mono"><b>×6</b></td></tr>
+            <tr><td>Bánh trứng chín</td><td class="right mono">–</td><td class="right mono" style="color:var(--ds-warning);font-style:italic">+3</td><td class="right mono"><b>×3</b></td></tr>
+            <tr><td>Bánh chay</td><td class="right mono">–</td><td class="right mono" style="color:var(--ds-warning);font-style:italic">+2</td><td class="right mono"><b>×2</b></td></tr>
+            <tr><td>Bánh trứng tái</td><td class="right mono">×1</td><td class="right mono">–</td><td class="right mono"><b>×1</b></td></tr>
+            <tr class="total"><td>TỔNG</td><td class="right mono">×3</td><td class="right mono" style="color:var(--ds-warning)">+9</td><td class="right mono">×12</td></tr>
+          </table>
+        </div>
+        <div class="card-b" style="border-top:1px solid var(--ds-border);color:var(--ds-muted);font-size:11.5px">
+          Canh và giò được loại khỏi bảng này — chúng không đi qua bếp bánh.
+        </div>
+      </div>
+
+      <!-- ZONE D3 -->
+      <div class="card">
+        <div class="card-h"><h3>Bàn · dạng lưới</h3><span class="meta">8 bàn · 3 đang phục vụ</span></div>
+        <div class="card-b">
+          <div class="tiles">
+            <div class="tile hot">
+              <div class="tn">Bàn 01</div><div class="tm">BC-42 · 22′</div>
+              <div><span class="badge wait">Chờ xác nhận</span></div>
+              <div class="acts" style="justify-content:flex-start;margin-top:9px"><span class="btn sec sm">Chi tiết ⌄</span></div>
+            </div>
+            <div class="tile busy">
+              <div class="tn">Bàn 03</div><div class="tm">BC-43 · 12′</div>
+              <div><span class="badge prep">Đang làm</span></div>
+              <div class="acts" style="justify-content:flex-start;margin-top:9px"><span class="btn sec sm">Chi tiết ⌄</span></div>
+            </div>
+            <div class="tile busy">
+              <div class="tn">Bàn 05</div><div class="tm">BC-40 · 31′</div>
+              <div><span class="badge deliv">Đã giao</span></div>
+              <div class="acts" style="justify-content:flex-start;margin-top:9px"><span class="btn ok sm">Đã thanh toán 💰</span></div>
+            </div>
+            <div class="tile">
+              <div class="tn">Bàn 02</div><div class="tm">—</div>
+              <div><span class="badge free">● Trống</span></div>
+              <div class="acts" style="justify-content:flex-start;margin-top:9px"><span class="btn sec sm">Đặt hộ →</span></div>
+            </div>
+          </div>
+          <p style="margin:11px 0 0;font-size:11.5px;color:var(--ds-muted)">
+            Hàng <b>Đã giao</b> chỉ có nút <b>Đã thanh toán</b> — không có nút Huỷ.
+            Huỷ chỉ xuất hiện ở <code>pending / confirmed / preparing</code> (§B3).
+          </p>
+        </div>
+      </div>
+
+      <!-- ZONE C -->
+      <div class="card">
+        <div class="card-h">
+          <h3>Danh sách món ăn cần chuẩn bị</h3>
+          <span class="meta">🔍 2 đơn đang kiểm tra</span>
+        </div>
+        <div class="tw">
+          <table>
+            <tr><th>Tên món</th><th>Bàn</th><th>Nhân / Rau</th><th class="right">Còn lại</th></tr>
+            <tr><td>Bánh cuốn trứng</td><td>Bàn 03</td><td>Nhân thịt</td><td class="right mono">×2</td></tr>
+            <tr><td>Bánh cuốn thịt</td><td>Bàn 01</td><td>Nhân thịt · mộc nhĩ</td><td class="right mono">×4</td></tr>
+            <tr><td>Trứng</td><td>Bàn 01</td><td>—</td><td class="right mono">×2</td></tr>
+            <tr><td>♨ Canh</td><td>Bàn 01</td><td>có rau ×2 · không rau ×1</td><td class="right mono">×3</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- ZONES E + F -->
+      <div class="split">
+        <div class="card">
+          <div class="acc">
+            <div class="lft"><h3>Đơn đã thanh toán hôm nay</h3><span class="cnt">5 đơn · 1.250.000 đ</span></div>
+            <span class="caret">▸</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="acc">
+            <div class="lft"><h3>Đơn đã huỷ hôm nay</h3><span class="cnt">1 đơn</span></div>
+            <span class="caret">▸</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+  <p class="caption">Zones A → D2 → B → D4 → D3 → C → E/F. Zone C is present only because
+  <code>kiemTraIds.size === 2</code>; with nothing marked 🔍 it is absent from the DOM entirely.</p>
+
+  <h3 style="font-family:var(--sans);font-size:1rem;margin:34px 0 10px">State 3 — cash payment + the degraded stream</h3>
+  <div class="split">
+    <div class="appwrap">
+    <div class="app stage" style="min-width:0">
+      <div class="scrim" style="padding-top:26px">
+        <div class="popup" style="width:340px">
+          <div class="popup-h"><span class="t">Thu tiền — Bàn 03</span><span class="badge conf">#BC-43</span></div>
+          <div class="popup-b">
+            <div class="ptot" style="margin-top:0;padding-top:0;border-top:none;font-size:19px">
+              <span style="font-weight:600;font-size:13px;color:var(--ds-muted)">Tổng tiền</span>
+              <span style="font-family:var(--mono)">70.000 đ</span>
+            </div>
+            <div style="margin-top:10px;border-top:1px solid var(--ds-border);padding-top:8px">
+              <div class="checkline"><span class="box on">✓</span> Khách đã đưa tiền</div>
+              <div class="checkline"><span class="box on">✓</span> Nhân viên đã nhận đủ tiền</div>
+            </div>
+          </div>
+          <div class="popup-f">
+            <span class="btn sec">Đóng</span>
+            <span class="btn ok">Xác nhận thu tiền</span>
+          </div>
+        </div>
+      </div>
+      <div class="main" style="min-height:270px;filter:saturate(.9)">
+        <div class="phead"><div><h2>Tổng quan sàn</h2><div class="sub">Tất cả bàn</div></div></div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="v">3 / 8</div><div class="l">Bàn đang phục vụ</div></div>
+          <div class="kpi"><div class="v">12</div><div class="l">Món chờ làm</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="appwrap">
+    <div class="app" style="min-width:0">
+      <div class="banner">⚠ Mất kết nối thời gian thực — đang thử lại…</div>
+      <div class="main" style="min-height:270px">
+        <div class="phead">
+          <div><h2>Tổng quan sàn</h2><div class="sub">Dữ liệu có thể chậm tới ~15 giây</div></div>
+          <span class="live" style="background:var(--ds-surface-2);color:var(--ds-muted)">
+            <span class="dot" style="background:var(--ds-muted)"></span> OFFLINE</span>
+        </div>
+        <div class="kpis" style="grid-template-columns:repeat(2,1fr)">
+          <div class="kpi"><div class="v">3 / 8</div><div class="l">Bàn đang phục vụ</div><div class="s">giữ dữ liệu cuối</div></div>
+          <div class="kpi alarm"><div class="v">2 / 5</div><div class="l">Khẩn cấp / Cảnh báo</div></div>
+        </div>
+        <div class="card"><div class="card-b" style="font-size:12px;color:var(--ds-muted)">
+          Bảng vẫn hiển thị dữ liệu cuối cùng. Poll 15 giây trở thành nguồn cập nhật duy nhất
+          cho tới khi stream kết nối lại (backoff, tối đa ~30 giây).
+        </div></div>
+      </div>
+    </div>
+    </div>
+  </div>
+  <p class="caption">Left: the two-checkbox cash gate — confirm is enabled only when <b>both</b> are ticked;
+  the request carries <code>{order_id, method:"cash"}</code> and <b>no amount</b>.
+  Right: stream down — the board degrades <em>honestly</em> (banner + grey dot + "may be ~15 s stale"),
+  it never goes silent.</p>
+
+  <div class="note" style="margin-top:26px">
+    <p><b>What a reviewer should check against this mockup:</b> ① no <em>Huỷ</em> button on a delivered
+    row · ② Zone B contains only <code>pending</code> orders · ③ the 4th KPI is a
+    <code>urgent / warning</code> ratio, not one number · ④ zones E/F are collapsed with counts ·
+    ⑤ grid tiles can pay, not just list rows · ⑥ payment needs both checkboxes.</p>
+  </div>
+
+  <footer>
+    <p style="max-width:none">Mockup #1 for <b>F-17</b> · 2026-07-19 · snapshot of
+    <a href="admin_overview_PLAN.md">admin_overview_PLAN.md</a>, <b>which wins on any conflict</b>.
+    Components mapped from <a href="../../diagrams/design-system.html">design-system.html</a> (F-7
+    neutral tokens — the staff/admin palette). See also
+    <a href="admin_overview_plan.html">admin_overview_plan.html</a> (the plan) and
+    <a href="admin_overview_how-it-works.html">admin_overview_how-it-works.html</a> (the runtime).</p>
+  </footer>
+
+</div>
+</body>
+</html>

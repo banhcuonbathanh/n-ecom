@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Training — Plan (F-25)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* sticky top nav */
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* task tags in the component tree / tables */
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.c { color: var(--accent); background: var(--accent-soft); }
+  .t.tt { color: var(--amber); background: var(--amber-soft); }
+  .t.o { color: var(--done); background: var(--done-soft); }
+  .dead { color: var(--muted); text-decoration: line-through; }
+
+  /* flow diagram */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  /* phase strip */
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); margin: 14px 0; }
+  .snode { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-top: 3px solid var(--accent); }
+  .snode.tph { border-top-color: var(--amber); }
+  .snode.oph { border-top-color: var(--done); }
+  .sarrow { color: var(--muted); font-size: 0.8rem; }
+
+  /* behaviors grid */
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+
+  /* schema boxes */
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+
+  /* two-half split (section 01) */
+  .halves { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 18px 0; }
+  .half { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; border-top: 4px solid var(--done); }
+  .half.inert { border-top-color: var(--amber); }
+  .half h4 { font-family: var(--sans); font-size: 0.98rem; margin: 0 0 6px; }
+  .half p { font-size: 0.86rem; color: var(--muted); margin: 0 0 8px; max-width: none; }
+  .half p:last-child { margin: 0; }
+</style>
+</head>
+<body><div class="page">
+
+  <header>
+    <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+    <div class="eyebrow">ecom-core · restaurant platform · page plan · 2026-07-19</div>
+    <h1>Admin Training — <span style="font-weight:400">Đào tạo nhân viên</span></h1>
+    <p class="lede">The manager-facing surface at <code>/admin/training</code> where a manager
+      <b>authors job guides</b> (title, role, video, KPI targets, pass rules) and
+      <b>tracks who completed them</b>. FE and BE planned together, because this page is a contract:
+      guide CRUD, a role-filtered read, and a per-staff progress read that only works if a
+      staff-facing write path exists.</p>
+    <div class="facts">
+      <div class="fact"><span class="k">task</span><span class="v">F-25</span></div>
+      <div class="fact"><span class="k">phase</span><span class="v">AD · workforce</span></div>
+      <div class="fact"><span class="k">surface</span><span class="v">Admin (manager+)</span></div>
+      <div class="fact"><span class="k">endpoints</span><span class="v">10</span></div>
+      <div class="fact"><span class="k">behaviors</span><span class="v">12</span></div>
+      <div class="fact"><span class="k">defects designed out</span><span class="v">19</span></div>
+      <div class="fact"><span class="k">tasks</span><span class="v">AD-T1 → AD-T6</span></div>
+      <div class="fact"><span class="k">cache</span><span class="v">no Redis</span></div>
+    </div>
+  </header>
+
+  <nav class="topnav">
+    <a href="#s01">01 · Page anatomy</a>
+    <a href="#s02">02 · Component tree</a>
+    <a href="#s03">03 · State ownership</a>
+    <a href="#s04">04 · BE contract</a>
+    <a href="#s05">05 · Dataflow</a>
+    <a href="#s06">06 · Behaviors</a>
+    <a href="#s07">07 · Defects out</a>
+    <a href="#s08">08 · Task mapping</a>
+    <a href="#s09">09 · Decisions + flags</a>
+  </nav>
+
+  <div class="flag">
+    <p><b>🚨 The one idea that governs this whole plan.</b> The reference page was a working
+      guide-authoring CMS bolted onto a <b>dead progress-tracking shell</b>. No API path ever wrote
+      <code>training_progress</code> or <code>quiz_attempts</code> — so <b>3 of its 7 endpoints
+      could never return data</b>, forever. The page <i>looked</i> like it tracked training and
+      recorded nothing; a manager trusted an empty table for as long as it shipped.</p>
+    <p><b>Our countermeasure:</b> the staff-facing write path (<code>watch</code> / <code>quiz</code> /
+      <code>my-guides</code>) is scoped here as <span class="t tt">AD-T4</span>, and the tracking UI
+      <span class="t c">AD-T6</span> is <b>blocked on it</b>. If AD-T4 slips, AD-T6 ships
+      <i>without</i> the tracking half rather than with an inert one. Those endpoints are not this
+      page's UI — they are this page's <b>truth condition</b>.</p>
+  </div>
+
+  <!-- ============================ 01 ============================ -->
+  <section id="s01">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy</h2></div>
+
+    <p>Desktop-first admin surface for a bánh cuốn restaurant's staff onboarding. A manager lands
+      from the admin shell nav (<code>/admin/*</code>, gated <code>minRole=manager</code>).
+      <b>Core loop:</b> author a job guide → publish it → watch the completion table fill as staff
+      of that role watch the video and take the quiz → leave a coaching note on anyone who fails.</p>
+
+    <p>Entry paths: <b>admin shell nav only</b>. In from <code>/admin</code> (overview); out to
+      nothing — training is the <b>sole producer and consumer</b> of <code>training_*</code> data.
+      No other page reads these tables.</p>
+
+    <h3>The two halves — the reference only ever shipped one</h3>
+    <div class="halves">
+      <div class="half">
+        <h4>Authoring half <span class="chip done">adopt ✅</span></h4>
+        <p>Guide CRUD: role tabs, guide card grid, create/edit modal. <b>Worked end-to-end</b> in the
+          reference. We adopt it, with the fixes in §07.</p>
+        <p>Ships as <span class="t c">AD-T5</span>, on <span class="t tt">AD-T2</span>.</p>
+      </div>
+      <div class="half inert">
+        <h4>Tracking half <span class="chip amber">inert in the reference</span></h4>
+        <p>Completion table + per-staff detail + manager notes. <b>Nothing ever wrote the rows.</b>
+          3 of 7 endpoints could only return empty/404 forever (Bug 1).</p>
+        <p>Ships as <span class="t c">AD-T6</span> — <b>conditional</b> on the staff-facing write
+          path <span class="t tt">AD-T4</span> shipping with it.</p>
+      </div>
+    </div>
+
+    <h3>Screen sketch — header · role tabs · guide grid · tracking table · 2 modals</h3>
+    <pre class="diagram">┌─ /admin/training ───────────────────────────────────── manager+ ─┐
+│  Đào tạo nhân viên                          [ + Tạo hướng dẫn ]  │  ← header
+│  Quản lý hướng dẫn và theo dõi tiến trình                        │
+├──────────────────────────────────────────────────────────────────┤
+│  [ Tất cả 4 ] [ Bếp 2 ]* [ Thu ngân 1 ] [ Nhân viên 1 ] [ Quản lý ]│ ← role tabs → ?role=
+├──────────────────────────────────────────────────────────────────┤
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐   AUTHORING  │
+│  │ [cover 📚 ]  │ │ [cover]      │ │ [cover] Nháp │   HALF ✅     │
+│  │ Cuốn bánh    │ │ …            │ │ (dimmed)     │   worked in  │
+│  │ [Bếp][QL]    │ │              │ │              │   the ref    │
+│  │ 📊 ≥95% đạt  │ │              │ │              │              │
+│  │ 🎯 40 suất/h │ │              │ │              │              │
+│  │ ▶ Xem video  │ │              │ │              │              │
+│  │ Xem tiến →  ⋯│ │            ⋯ │ │            ⋯ │  ⋯ = Sửa/Xoá │
+│  └──────────────┘ └──────────────┘ └──────────────┘              │
+├══════════════════════════════════════════════════════════════════┤ ← the split
+│  Tiến trình hoàn thành      [ guide ▾ = ?guide= ]   TRACKING     │
+│  ┌────────────┬────────┬─────────┬──────┬────────┬────────────┐  │  HALF ⚠️
+│  │ Nhân viên  │ Vai trò│ Đã xem  │ Quiz │Cập nhật│ Trạng thái │  │  INERT in
+│  ├────────────┼────────┼─────────┼──────┼────────┼────────────┤  │  the ref —
+│  │ Nguyễn V.B │ Bếp    │ ▓▓▓ 100%│  ✔   │ 03:20  │ ✅Hoàn thành│  │  no writer
+│  │ Trần Thị B │ Bếp    │ ▓░░  40%│  ✘   │ 03:02  │ ❌Chưa qua  │  │  existed
+│  │ Lê Văn Mới │ Bếp    │ ░░░   0%│  –   │   –    │ ⬜Chưa bắt  │  │
+│  └────────────┴────────┴─────────┴──────┴────────┴────────────┘  │
+│  Hiển thị 1–10 trong 12 nhân viên            [ ‹ 1 2 › ]         │
+└──────────────────────────────────────────────────────────────────┘
+
+   MODAL 1  GuideFormModal        MODAL 2  StaffProgressModal
+   ┌───────────────────────┐      ┌──────────────────────────────┐
+   │ Tạo / Sửa hướng dẫn   │      │ Trần Thị Bánh · Bếp          │
+   │ title* role* mô tả    │      │ ① Xem video ≥100%  ▓░ 40%    │
+   │ cover youtube_url     │      │ ② Làm bài kiểm tra  1/3      │
+   │ 📊 KPI  🎯 KPI        │      │ ③ Hoàn thành        ✘        │
+   │ pass 50–100 (75)      │      │ Lịch sử quiz: #1 · 60 · ✘    │
+   │ attempts 1–10 (3)     │      │ Còn lại: 2 lượt              │
+   │ responsible_roles ≥1  │      │ Ghi chú quản lý [textarea]   │
+   │ [ Huỷ ] [ Lưu ]       │      │            Đang lưu… / Đã lưu│
+   └───────────────────────┘      └──────────────────────────────┘
+     AD-T5                          AD-T6 (blocked on AD-T4)</pre>
+
+    <p><b>Audience note</b> (<code>business_description.md</code>): guides are per-position
+      (Bếp · Thu ngân · Phục vụ · Quản lý); staff consume them through a separate role-scoped
+      surface, <b>never this page</b>. That staff surface does not exist in the reference and is
+      the missing half scoped in §04 endpoints #8–#10.</p>
+  </section>
+
+  <!-- ============================ 02 ============================ -->
+  <section id="s02">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Component tree</h2></div>
+    <p>The §4.1 route + file map, extending <code>FE_STATE.md §8</code>. Each node carries its
+      owning task.</p>
+
+    <pre class="diagram">fe/src/app/(admin)/admin/training/
+├── page.tsx                   RSC: prefetch guides → HydrationBoundary   <span class="t c">AD-T5</span>
+├── loading.tsx                layout-mirroring skeleton                  <span class="t c">AD-T5</span>
+│                              (header + tabs + 4 cards + table)
+└── error.tsx                  segment retry — scoped, NOT a full-page    <span class="t c">AD-T5</span>
+                               takeover
+
+components/admin/training/
+├── RoleFilterTabs.tsx         Tất cả · Bếp · Thu ngân · Nhân viên ·      <span class="t c">AD-T5</span>
+│                              Quản lý + count
+├── JobGuideCardGrid.tsx       grid + skeleton + empty state              <span class="t c">AD-T5</span>
+├── JobGuideCard.tsx           cover, role badge, "Nháp" overlay,         <span class="t c">AD-T5</span>
+│                              KPI chips, video link, kebab
+├── GuideFormModal.tsx         create/edit — RHF + Zod, full-object       <span class="t c">AD-T5</span>
+│                              submit
+├── CompletionTrackingTable.tsx roster table + guide selector +           <span class="t tt">AD-T6</span>
+│                              server pagination
+├── TrainingStatusBadge.tsx    THE one place the 4 derived statuses       <span class="t tt">AD-T6</span>
+│                              render (§06 B5)
+└── StaffProgressModal.tsx     per-staff detail: steps, quiz history,     <span class="t tt">AD-T6</span>
+                               manager notes
+
+queries/training.ts            useJobGuides / useGuideProgress /          <span class="t c">AD-T5</span> <span class="t tt">AD-T6</span>
+                               useStaffProgressDetail + mutations
+lib/training-status.ts         deriveTrainingStatus() + deriveSteps()     <span class="t tt">AD-T6</span>
+                               — pure, unit-tested
+lib/capabilities.ts            can('training.delete', role) — ONE source  <span class="t c">AD-T5</span>
+                               for gate + button
+
+NOT PORTED (dead in the reference's own audit)
+├── <span class="dead">trainingStore.ts</span>            a Zustand store imported by nothing — §03
+└── <span class="dead">TrainingStatus (EN 3-state)</span>  unused English type vs live VN 4-state labels</pre>
+
+    <div class="strip">
+      <span class="snode">AD-T5 authoring FE</span>
+      <span class="sarrow">·</span>
+      <span class="snode tph">AD-T6 tracking FE</span>
+      <span class="sarrow">·</span>
+      <span class="snode oph">shared: queries + lib</span>
+    </div>
+  </section>
+
+  <!-- ============================ 03 ============================ -->
+  <section id="s03">
+    <div class="sec-head"><span class="sec-num">03</span><h2>State ownership</h2></div>
+    <p>An instance of <code>FE_STATE.md §1</code> — <b>no new state kinds</b>.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Data</th><th>Kind</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td>guides / progress rows / staff detail</td><td>server</td><td>TanStack Query (<code>staleTime</code> 5 min guides · 2 min progress)</td></tr>
+          <tr><td>active role tab, selected guide, page</td><td><b>URL</b> (<code>?role=&amp;guide=&amp;page=</code>)</td><td>FE rule 2 — shareable + survives F5</td></tr>
+          <tr><td>modal open, editing guide, selected staff</td><td>local</td><td><code>useState</code> in <code>page.tsx</code> (lifted, not drilled)</td></tr>
+          <tr><td>guide form fields</td><td>form</td><td>RHF + Zod (<code>FE_STATE.md §1</code>)</td></tr>
+          <tr><td>staff session</td><td>session</td><td>httpOnly cookie + server verify — no auth store</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="golden">
+      <p><b>✅ No Zustand on this page.</b> Run <code>FE_STATE.md §1</code>'s decision flow and every
+        value lands elsewhere: server data → Query, filter/selection → URL, modal flags →
+        <code>useState</code>.</p>
+      <p>The reference shipped <code>trainingStore.ts</code> and then <b>never imported it</b> — a
+        trap for the next reader. We don't build it (Zustand is the last resort, FE rule 1).</p>
+    </div>
+
+    <div class="golden">
+      <p><b>✅ Upgrade over the reference.</b> It held <code>activeRole</code> and the selected guide
+        in <code>useState</code>, so F5 reset the tab and a filtered view could not be shared or
+        linked. Ours are <b>URL params</b> — the same rule that governs the menu page's
+        <code>?q=</code>.</p>
+    </div>
+
+    <h3>How state crosses components</h3>
+    <p>One fetch of <code>guides</code> in <code>page.tsx</code> fans out as a prop to <b>both</b>
+      the card grid and the tracking table, so both re-derive from the same array and can never
+      disagree about the active role. Modal opens are lifted page state + callbacks — <b>no
+      sibling-to-sibling props, no context, no store</b>.</p>
+
+    <div class="flow">
+      <div class="fnode"><span class="fk">url</span><b>?role=&amp;guide=&amp;page=</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">page.tsx</span><b>useJobGuides()</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">prop</span><b>JobGuideCardGrid</b></div>
+      <span class="farrow">+</span>
+      <div class="fnode"><span class="fk">prop</span><b>CompletionTrackingTable</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">useState ↑</span><b>2 modals</b></div>
+    </div>
+  </section>
+
+  <!-- ============================ 04 ============================ -->
+  <section id="s04">
+    <div class="sec-head"><span class="sec-num">04</span><h2>BE contract</h2></div>
+
+    <h3>4.1 · Ten endpoints (all under <code>/api/v1</code>)</h3>
+    <p>Manager-facing reads/writes (#1–#5) plus the <b>staff-facing write path (#8–#10)</b> the
+      reference never built, without which #5–#7 are dead on arrival.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Route</th><th>Auth</th><th>Task</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><code>GET /admin/training/guides?role=</code></td><td>staff JWT, <code>manager+</code></td><td><span class="t tt">AD-T2</span></td><td>Optional <code>role</code> ∈ <code>chef|cashier|staff|manager</code>; <code>all</code>/empty → no filter. Returns guides + <code>responsible_roles</code> in <b>one JOIN'd query</b> (reference ran an N+1). Drafts included (admin authoring view). Soft-deleted excluded.</td></tr>
+          <tr><td>2</td><td><code>POST /admin/training/guides</code></td><td>staff JWT, <code>manager+</code></td><td><span class="t tt">AD-T2</span></td><td>Create. <code>title</code>+<code>role</code> required; <code>pass_threshold</code> default 75 (range 50–100), <code>max_attempts</code> default 3 (range 1–10). <code>created_by</code> from the JWT identity <b>passed as a service parameter</b> (BE_STATE §3). 201 + full guide object.</td></tr>
+          <tr><td>3</td><td><code>PUT /admin/training/guides/:id</code></td><td>staff JWT, <code>manager+</code></td><td><span class="t tt">AD-T2</span></td><td><b>Full replace — named <code>PUT</code>, not <code>PATCH</code>.</b> The reference called it <code>PATCH</code> while requiring every field and overwriting every column. 404 <code>TRAINING_GUIDE_NOT_FOUND</code>.</td></tr>
+          <tr><td>4</td><td><code>DELETE /admin/training/guides/:id</code></td><td>staff JWT, <b><code>manager+</code></b></td><td><span class="t tt">AD-T2</span></td><td>Soft delete (<code>deleted_at=NOW()</code>). <b>Lowered from the reference's <code>admin</code>-only gate</b> — same role that creates/edits deletes (decision 3, kills Bug 2).</td></tr>
+          <tr><td>5</td><td><code>GET /admin/training/guides/:id/progress?page&amp;pageSize</code></td><td>staff JWT, <code>manager+</code></td><td><span class="t tt">AD-T3</span></td><td><b>Roster-first, not progress-first.</b> Driven by <code>staff LEFT JOIN training_progress</code> over all active staff whose <code>role = guide.role</code> — every assigned staff member appears, "Chưa bắt đầu", from day one. <code>pageSize</code> default 10, clamped 1–100. Quiz verdict aggregated in the <b>same query</b>.</td></tr>
+          <tr><td>6</td><td><code>GET /admin/training/staff/:staffId/progress/:guideId</code></td><td>staff JWT, <code>manager+</code></td><td><span class="t tt">AD-T3</span></td><td>Per-staff detail: watched %, quiz attempt history, attempts remaining, manager notes. Returns a <b>zeroed "not started" object, not a 404</b>, when no progress row exists.</td></tr>
+          <tr><td>7</td><td><code>PUT /admin/training/staff/:staffId/progress/:guideId/notes</code></td><td>staff JWT, <code>manager+</code></td><td><span class="t tt">AD-T3</span></td><td>Manager notes. <b>Upserts</b> the progress row so a note can be left before the staff member starts (reference 404'd).</td></tr>
+          <tr><td>8</td><td><code>POST /training/guides/:id/watch</code></td><td>staff JWT, <b>any staff role</b></td><td><span class="t tt">AD-T4</span></td><td><b>The missing write path.</b> Body <code>{watched_percent}</code>; upserts <code>training_progress</code>, monotonic (never decreases a high-water mark). Role-scoped: a staff member writes only their own row (<code>staff_id</code> from the JWT, never from the body).</td></tr>
+          <tr><td>9</td><td><code>POST /training/guides/:id/quiz</code></td><td>staff JWT, <b>any staff role</b></td><td><span class="t tt">AD-T4</span></td><td>Records a quiz attempt: <code>{score}</code> → server computes <code>passed = score &gt;= guide.pass_threshold</code>, assigns <code>attempt_number</code>, and <b>rejects past <code>max_attempts</code></b> with <code>TRAINING_ATTEMPTS_EXHAUSTED</code>. Attempt insert + progress upsert in <b>one tx</b>.</td></tr>
+          <tr><td>10</td><td><code>GET /training/my-guides</code></td><td>staff JWT, any staff role</td><td><span class="t tt">AD-T4</span></td><td>The staff's own published guides + their progress. Feeds the staff-facing surface; <b>published-only</b> (drafts never leak to staff).</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top:14px">Errors ride the Session-0 envelope; codes from <code>BE_STATE.md §4</code>
+      plus three training codes: <code>INVALID_TRAINING_ROLE</code> (400),
+      <code>TRAINING_GUIDE_NOT_FOUND</code> (404), <code>TRAINING_ATTEMPTS_EXHAUSTED</code> (409).</p>
+
+    <div class="golden">
+      <p><b>Response shape law.</b> Success payloads are <b>never wrapped</b> — an array endpoint
+        returns a bare array, a paged endpoint returns <code>{data, total, page, page_size}</code>,
+        a single object returns the object. Only errors ride the envelope.</p>
+      <p>This structurally kills the reference's 🚨 unwrap inconsistency — <code>r.data</code> on one
+        call, <code>r.data.data</code> on its five siblings — a silent-<code>undefined</code> trap.</p>
+    </div>
+
+    <h3>4.2 · Schema this page depends on (AD-phase migration)</h3>
+    <p><code>DB_SCHEMA.md §4.7</code> currently <b>stubs</b> <code>training_guides</code> /
+      <code>training_progress</code> with no columns. This plan proposes the column set for that
+      promotion; <b><code>DB_SCHEMA.md</code> wins once written</b> — when AD opens, these move
+      there and this section shrinks to a link.</p>
+
+    <div class="schema">
+      <div class="tbl"><div class="tname">training_guides</div>
+        <ul>
+          <li><b>title</b></li>
+          <li><b>role</b> ENUM (5-value staff.role)</li>
+          <li>description</li>
+          <li><b>cover_image_path</b> relative</li>
+          <li>youtube_url</li>
+          <li>quality_kpi_target</li>
+          <li>quantity_kpi_target</li>
+          <li>pass_threshold (def 75)</li>
+          <li>max_attempts (def 3)</li>
+          <li>published TINYINT</li>
+          <li>created_by FK→staff.id (null)</li>
+          <li>created_at · updated_at</li>
+          <li><b>deleted_at</b> (soft delete)</li>
+        </ul>
+      </div>
+      <div class="tbl"><div class="tname">training_guide_roles</div>
+        <ul>
+          <li>junction table</li>
+          <li><b>guide_id</b></li>
+          <li><b>role</b></li>
+          <li>— the secondary</li>
+          <li>"who is responsible" chips</li>
+        </ul>
+      </div>
+      <div class="tbl"><div class="tname">training_progress</div>
+        <ul>
+          <li><b>guide_id</b></li>
+          <li><b>staff_id</b></li>
+          <li>watched_percent INT 0–100</li>
+          <li>manager_notes</li>
+          <li>created_at · updated_at</li>
+          <li><b>UNIQUE (guide_id, staff_id)</b></li>
+        </ul>
+      </div>
+      <div class="tbl"><div class="tname">quiz_attempts</div>
+        <ul>
+          <li><b>guide_id</b></li>
+          <li><b>staff_id</b></li>
+          <li>attempt_number</li>
+          <li>score</li>
+          <li>passed</li>
+          <li>created_at</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="golden">
+      <p><b>No <code>status</code> column anywhere.</b> Completion status is <b>derived</b> from
+        <code>watched_percent</code> + the latest attempt's <code>passed</code> (§06 B5). This is
+        the reference's one genuinely good call and it matches FE rule 11 (derived-not-stored) and
+        its BE twin.</p>
+      <p><b>Field-name law:</b> <code>cover_image_path</code> is <b>relative</b>, not
+        <code>coverImageUrl</code> — FE rule 14 builds the URL, same as <code>products.image_path</code>.</p>
+      <p><b>Soft delete: guides only.</b> Per <code>DB_SCHEMA.md §4.4</code>, the reference's
+        <code>ON DELETE CASCADE</code> on progress rows <b>never fires</b> (soft delete is an
+        UPDATE) — so a re-published guide keeps its history, which is what we want.</p>
+    </div>
+
+    <h3>4.3 · Cache map</h3>
+    <p><b>Training is not cached server-side.</b> Live admin data sits on the do-not-cache side of
+      <code>ARCHITECTURE.md §4</code> (Redis = catalog cache + auth rate-limit only). Reads go
+      straight to sqlc/MySQL. Adopted from the reference — it made the same call.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Write</th><th>Invalidates (client cache only — TanStack Query)</th></tr></thead>
+        <tbody>
+          <tr><td>guide create / update / delete</td><td><code>['training','guides']</code> (all role variants)</td></tr>
+          <tr><td>manager notes save</td><td><code>['training','staffProgress',staffId,guideId]</code> + <code>['training','progress',guideId]</code></td></tr>
+          <tr><td>staff watch / quiz (staff surface)</td><td>that surface's own keys; the manager's table converges on <b>refetch, not push</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>4.4 · Wire shapes (the FE↔BE object gallery)</h3>
+    <p>Contract shapes from this plan — field spellings get <b>frozen by curl receipts</b> when the
+      AD rows build them (gate 8: FE types are written from receipts, never guessed).</p>
+
+    <p><b><code>GET /admin/training/guides?role=chef</code> → 200</b> — bare array;
+      <code>cover_image_path</code> relative:</p>
+    <pre class="diagram">[ { "id": "tg1a…36", "title": "Cuốn bánh đúng cách", "role": "chef",
+    "description": "Kỹ thuật tráng và cuốn bánh cho ca sáng.",
+    "cover_image_path": "training/cuon-banh.jpg",
+    "youtube_url": "https://youtu.be/xxxxxxxxxxx",
+    "quality_kpi_target": "≥ 95% bánh đạt chuẩn",
+    "quantity_kpi_target": "40 suất/giờ",
+    "pass_threshold": 75, "max_attempts": 3, "published": true,
+    "responsible_roles": ["chef", "manager"],
+    "created_at": "2026-07-19T02:01:00Z", "updated_at": "2026-07-19T02:05:00Z" } ]</pre>
+
+    <p><b><code>GET /admin/training/guides/:id/progress?page=1&amp;pageSize=10</code> → 200</b> —
+      the paged envelope; <b>every active staff member of the guide's role appears</b>, whether or
+      not they have started (<code>watched_percent: 0</code>, <code>quiz_passed: null</code> =
+      "Chưa bắt đầu"):</p>
+    <pre class="diagram">{ "data": [
+    { "staff_id": "st1…36", "staff_name": "Nguyễn Văn Bếp", "staff_role": "chef",
+      "watched_percent": 100, "quiz_passed": true,  "last_activity": "2026-07-19T03:20:00Z" },
+    { "staff_id": "st2…36", "staff_name": "Trần Thị Bánh", "staff_role": "chef",
+      "watched_percent": 40,  "quiz_passed": null,  "last_activity": "2026-07-19T03:02:00Z" },
+    { "staff_id": "st3…36", "staff_name": "Lê Văn Mới",   "staff_role": "chef",
+      "watched_percent": 0,   "quiz_passed": null,  "last_activity": null } ],
+  "total": 12, "page": 1, "page_size": 10 }
+
+# last_activity is real null when absent — never "" (F-16 wire-serialization
+# ruling, kills the reference's "" vs null mismatch).</pre>
+
+    <p><b><code>POST /training/guides/:id/quiz</code> request / 201</b> — score in, verdict out
+      (the FE never decides pass/fail — the server owns the rule). And the one error envelope:</p>
+    <pre class="diagram">{ "score": 80 }
+→ { "attempt_number": 2, "score": 80, "passed": true, "attempts_remaining": 1 }
+
+# Every error, every endpoint — one envelope (BE_STATE.md §4 owns the code table):
+{ "error": { "code": "TRAINING_ATTEMPTS_EXHAUSTED",
+             "message": "Bạn đã hết lượt làm bài kiểm tra.",
+             "details": [ { "field": "attempts", "issue": "max=3" } ] } }
+
+# client.ts turns the envelope into a thrown
+# ApiError{status, code, message, details}</pre>
+
+    <h3>Not adopted from the reference (decided here)</h3>
+    <ul class="plain">
+      <li>❌ <b>INNER JOIN progress-first roster</b> — a staff member with no progress row was invisible; combined with Bug 1 the table was permanently empty. Ours <b>LEFT JOINs from the staff roster</b>.</li>
+      <li>❌ <b>404 as an empty state</b> (endpoints 6, 7) — a missing progress row is a <b>legitimate zero state, not an error</b>; ours returns a zeroed object and upserts on notes.</li>
+      <li>❌ <b><code>PATCH</code> that is a full replace</b> — renamed <code>PUT</code>. Honest verbs (FE rule 12 HTTP-method parity has a BE twin).</li>
+      <li>❌ <b><code>DELETE</code> gated <code>admin</code> while create/edit are <code>manager</code></b> — the asymmetry that produced a silent 403 behind a visible button.</li>
+      <li>❌ <b>Bearer token from a memory store</b> — cookie JWT (F-5). The reference's axios interceptor read the token from Zustand memory, so F5 logged the manager out.</li>
+      <li>❌ <b>N+1 reads</b> — <code>GetGuideRoles</code> per guide and <code>ListQuizAttempts</code> per progress row. Ours JOINs/aggregates in one query each.</li>
+      <li>❌ <b>Wrapped success payloads + inconsistent unwrapping</b> (response-shape law above).</li>
+      <li>❌ <b>Drafts visible to staff</b> — <code>ListGuides</code> had no <code>published</code> filter. Fine for the admin authoring view (kept), but staff endpoint #10 is published-only.</li>
+    </ul>
+  </section>
+
+  <!-- ============================ 05 ============================ -->
+  <section id="s05">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Dataflow</h2></div>
+
+    <h3>Read path</h3>
+    <div class="flow">
+      <div class="fnode"><span class="fk">url</span><b>?role=chef</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">rsc</span><b>page.tsx prefetch</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">be #1</span><b>GET guides</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">hydrate</span><b>HydrationBoundary</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">grid</span><b>JobGuideCardGrid</b></div>
+    </div>
+    <div class="flow">
+      <div class="fnode"><span class="fk">url</span><b>?guide=&amp;page=</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">be #5</span><b>roster LEFT JOIN</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">derive</span><b>deriveTrainingStatus()</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">ui</span><b>TrainingStatusBadge</b></div>
+      <span class="farrow">→</span>
+      <div class="fnode"><span class="fk">be #6</span><b>row click → detail</b></div>
+    </div>
+
+    <h3>Three loading tiers — never stacked (<code>FE_STATE.md §4–5</code>)</h3>
+
+    <div class="bgrid">
+      <div class="bcard">
+        <span class="bn">TIER 1 — ROUTE</span>
+        <span class="bt">RSC prefetch + <code>loading.tsx</code></span>
+        <p><code>page.tsx</code> prefetches the guides query → <code>HydrationBoundary</code> →
+          <b>zero-spinner first paint</b>. <code>loading.tsx</code> streams while the RSC awaits and
+          <b>mirrors the real layout</b> (header + tab strip + card grid + table), never a centered
+          spinner. The reference had <b>no <code>loading.tsx</code> at all</b> and was
+          <code>'use client'</code> top-to-bottom.</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">TIER 2 — COMPONENT</span>
+        <span class="bt">Five render branches, all named, all built</span>
+        <p>See the table below. Skeleton count matches the <b>last known guide count</b> (falls back
+          to 4), not a hardcoded 4. Cover images: relative <code>cover_image_path</code> →
+          <code>buildImageURL()</code> (FE rule 14), native lazy loading, fixed aspect-ratio box.</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">TIER 3 — MUTATION</span>
+        <span class="bt">Pessimistic (FE rule 4)</span>
+        <p>Save button disabled + inline "Đang lưu…"; on error the modal <b>stays open</b> with the
+          envelope message and the form intact. Manager notes: 500 ms debounce + <b>flush on modal
+          close</b> (prevents the lost-note race) + a "Đang lưu… / Đã lưu ✓" indicator.
+          <b>Every mutation has an <code>onError</code></b> — the reference had none on any of its
+          four, so create/update/delete/notes all failed silently.</p>
+      </div>
+    </div>
+
+    <h3>The five render branches</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Branch</th><th>When</th><th>UI</th></tr></thead>
+        <tbody>
+          <tr><td><b>loading</b></td><td><code>isPending</code>, no cached data</td><td>card-shaped skeletons + table row skeletons (no layout shift)</td></tr>
+          <tr><td><b>error</b></td><td>guides query failed</td><td><b>inline retry panel inside the content region</b> — header + tabs stay put</td></tr>
+          <tr><td><b>empty</b></td><td>no guides for this role</td><td>📚 empty state + "+ Tạo hướng dẫn" CTA</td></tr>
+          <tr><td><b>not-started</b></td><td>guides exist, no staff activity yet</td><td>roster table renders every assigned staff as "Chưa bắt đầu" — <b>a real state, not an error</b></td></tr>
+          <tr><td><b>data</b></td><td>default</td><td>grid + populated table</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="golden">
+      <p><b>Deliberate upgrade.</b> The reference's guide-list error <b>replaced the entire page</b>
+        including the header and tabs (<code>page.tsx:69-83</code>), and its only recovery was
+        <code>window.location.reload()</code>. Ours scopes the error to the content region and
+        retries the query, not the document.</p>
+    </div>
+  </section>
+
+  <!-- ============================ 06 ============================ -->
+  <section id="s06">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors spec</h2></div>
+    <p>The twelve §4.4 behaviors — <b>these are the acceptance criteria</b> the AC will test.</p>
+
+    <div class="bgrid">
+      <div class="bcard">
+        <span class="bn">B1 <span class="t c">AD-T5</span></span>
+        <span class="bt">Role tabs filter, they don't navigate</span>
+        <p><code>Tất cả · Bếp · Thu ngân · Nhân viên · Quản lý</code> filter on the guide's
+          <b>single primary <code>role</code></b>; the count chip shows the filtered count.
+          <code>responsible_roles</code> is a <i>separate</i> concept (secondary chips) and is
+          <b>never</b> the filter key. Tab state lives in <code>?role=</code>.</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B2 <span class="t c">AD-T5</span></span>
+        <span class="bt">Guide cards</span>
+        <p>Cover (📚 fallback on missing/broken), primary role badge, <code>responsible_roles</code>
+          pills, KPI chips (<code>📊 quality</code>, <code>🎯 quantity</code>, each only if set), a
+          "▶ Xem video" link opening YouTube in a new tab, and a kebab (⋯) with Sửa / Xoá.</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B3 <span class="t c">AD-T5</span></span>
+        <span class="bt">Draft overlay</span>
+        <p><code>published === false</code> → dimmed cover + "<b>Nháp</b>" badge. Drafts are visible
+          to manager+ in this authoring view and <b>invisible to staff</b> (endpoint #10).</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B4 <span class="t c">AD-T5</span></span>
+        <span class="bt">Create/edit — one modal</span>
+        <p>RHF + Zod: <code>title</code> + <code>role</code> required; <code>pass_threshold</code>
+          50–100 default 75; <code>max_attempts</code> 1–10 default 3;
+          <code>responsible_roles</code> ≥ 1; URLs valid-or-empty. Submit sends the whole object.
+          <b>One threshold range, one constant</b> — the reference's Zod said 1–100 while its own
+          decision log said 50–100.</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B5 <span class="t tt">AD-T6</span></span>
+        <span class="bt">Completion status is derived, never stored</span>
+        <p>One <code>deriveTrainingStatus()</code>, one <code>TrainingStatusBadge</code>, four
+          <b>visually distinct</b> states — see the table below.</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B6 <span class="t tt">AD-T6</span></span>
+        <span class="bt">The tracking table is a roster</span>
+        <p>Not an activity log: every active staff member whose role matches the guide appears,
+          sorted by name, "Chưa bắt đầu" until they act. Columns: <b>Nhân viên · Vai trò · Đã xem
+          (bar + %) · Quiz · Cập nhật · Trạng thái</b>. Server-paginated at 10/page; the footer
+          reads "Hiển thị 1–10 trong 12 nhân viên".</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B7 <span class="t tt">AD-T6</span></span>
+        <span class="bt">Guide selection is single-sourced</span>
+        <p>The table's guide is <code>?guide=</code>, defaulting to the first guide of the active
+          role. Changing the role tab <b>re-defaults the table's guide</b> — the reference kept a
+          second independent <code>selectedGuideId</code> inside the table, so switching tabs could
+          leave it showing a guide not in the current filter.</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B8 <span class="t tt">AD-T6</span></span>
+        <span class="bt">"Xem tiến trình →" selects <i>and</i> scrolls</span>
+        <p>The card button selects that guide in the table <b>and</b> scrolls to it. In the reference
+          it only scrolled, leaving the table on a different guide — the button appeared to do
+          nothing.</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B9 <span class="t tt">AD-T6</span></span>
+        <span class="bt">Row click → staff detail modal</span>
+        <p>With the row's <b>real</b> <code>staff_name</code> and <code>staff_role</code> (the
+          reference passed an empty name and recovered the role from the <i>guide</i>, so the modal
+          header was blank). Shows a 3-step checklist (Xem video ≥100% · Làm bài kiểm tra · Hoàn
+          thành), quiz attempt history (số lần · điểm · đạt/không),
+          <code>attempts_remaining</code>, and the manager-notes textarea.</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B10 <span class="t c">AD-T5</span></span>
+        <span class="bt">Delete is capability-gated, once</span>
+        <p><code>can('training.delete', role)</code> drives <b>both</b> the kebab item's visibility
+          and the expectation of the BE gate; a role that cannot delete never sees the action. The
+          reference rendered it unconditionally and let the 403 die silently (Bug 2).</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B11 <span class="t c">AD-T5</span></span>
+        <span class="bt">VN-first copy</span>
+        <p>All strings Vietnamese, one constants file, no i18n framework yet
+          (<code>OVERALL_PLAN.md §9.4</code> default). Page title "<b>Đào tạo nhân viên</b>", sub
+          "Quản lý hướng dẫn và theo dõi tiến trình".</p>
+      </div>
+      <div class="bcard">
+        <span class="bn">B12 <span class="t o">all rows</span></span>
+        <span class="bt">Worked example everywhere</span>
+        <p>Docs, seeds, screenshots: guide "<b>Cuốn bánh đúng cách</b>" · role Bếp · 12 chef staff ·
+          <b>1 hoàn thành / 1 đang học / 10 chưa bắt đầu</b>.</p>
+      </div>
+    </div>
+
+    <h3>B5 — the four derived statuses</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Status</th><th>Condition</th><th>Badge</th></tr></thead>
+        <tbody>
+          <tr><td><code>Hoàn thành</code></td><td><code>quiz_passed === true</code></td><td>✅ green</td></tr>
+          <tr><td><code>Chưa qua quiz</code></td><td><code>quiz_passed === false</code></td><td>❌ <b>red</b></td></tr>
+          <tr><td><code>Đang học</code></td><td><code>quiz_passed === null &amp;&amp; watched_percent &gt; 0</code></td><td>🟡 amber</td></tr>
+          <tr><td><code>Chưa bắt đầu</code></td><td><code>quiz_passed === null &amp;&amp; watched_percent === 0</code></td><td>⬜ neutral</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flag">
+      <p>The reference collapsed <b>"Chưa qua quiz"</b> and <b>"Đang học"</b> into the <b>same 🟡
+        icon</b>, distinguishable only by a <code>title=</code> tooltip — the two states a manager
+        most needs to tell apart. Ours gives failure its own colour.</p>
+    </div>
+  </section>
+
+  <!-- ============================ 07 ============================ -->
+  <section id="s07">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Reference defects designed out</h2>
+      <span class="chip plan">19 rows</span></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ref finding</th><th>Severity</th><th>Our countermeasure</th></tr></thead>
+        <tbody>
+          <tr><td>🔴 <b>Bug 1</b> — no API path writes <code>training_progress</code>/<code>quiz_attempts</code>; 3 of 7 endpoints permanently dead</td><td><span class="chip amber">High</span></td><td>Endpoints #8–9 build the staff write path; <b>AD-T6 may not ship without AD-T4</b></td></tr>
+          <tr><td>🟠 <b>Bug 2</b> — delete button visible to managers, <code>DELETE</code> gated <code>admin</code> → silent 403</td><td><span class="chip plan">Med</span></td><td>Gate lowered to <code>manager</code> <b>and</b> one <code>can()</code> capability drives both button and expectation (B10)</td></tr>
+          <tr><td><code>ListGuideProgress</code> INNER JOINs progress → un-started staff invisible</td><td><span class="chip amber">High</span></td><td>Roster-first LEFT JOIN from <code>staff</code> (endpoint #5)</td></tr>
+          <tr><td>404 used as the empty state (endpoints 6, 7)</td><td><span class="chip plan">Med</span></td><td>Zeroed object + notes upsert</td></tr>
+          <tr><td>🚨 Unwrap inconsistency: <code>r.data</code> on one call, <code>r.data.data</code> on five</td><td><span class="chip amber">High</span></td><td>Success payloads never wrapped (response-shape law)</td></tr>
+          <tr><td>Status icon collapses "Chưa qua quiz" + "Đang học" into one 🟡</td><td><span class="chip plan">Med</span></td><td>Four visually distinct badges, failure in red (B5)</td></tr>
+          <tr><td>Dead <code>TrainingStatus</code> English 3-state type vs live VN 4-state labels</td><td><span class="chip done">Low</span></td><td>One derived status module, one label set</td></tr>
+          <tr><td>Dead <code>trainingStore.ts</code> (imported nowhere)</td><td><span class="chip done">Low</span></td><td>Never built — URL + Query + <code>useState</code> cover it</td></tr>
+          <tr><td><code>activeRole</code> / selected guide in <code>useState</code> → lost on F5, unshareable</td><td><span class="chip plan">Med</span></td><td>URL params (§03)</td></tr>
+          <tr><td>Table keeps a second independent <code>selectedGuideId</code> → stale on tab switch</td><td><span class="chip plan">Med</span></td><td>Single source <code>?guide=</code>, re-defaults with the role (B7)</td></tr>
+          <tr><td>"Xem tiến trình →" only scrolls, doesn't select the guide</td><td><span class="chip plan">Med</span></td><td>Selects <b>and</b> scrolls (B8)</td></tr>
+          <tr><td>Modal 2 receives an empty <code>staffName</code>; role taken from the guide</td><td><span class="chip done">Low</span></td><td>Row's real <code>staff_name</code>/<code>staff_role</code> passed (B9)</td></tr>
+          <tr><td>No <code>onError</code> on any of the 4 mutations → silent failures</td><td><span class="chip plan">Med</span></td><td>Every mutation handles error; modal stays open (tier 3)</td></tr>
+          <tr><td>Guide-list error replaces the whole page; recovery = <code>window.location.reload()</code></td><td><span class="chip plan">Med</span></td><td>Scoped <code>error.tsx</code> + query retry</td></tr>
+          <tr><td>No <code>loading.tsx</code>; fixed 4-card skeleton</td><td><span class="chip done">Low</span></td><td>Layout-mirroring route skeleton, count-aware</td></tr>
+          <tr><td>N+1: roles per guide, quiz attempts per row</td><td><span class="chip done">Low</span></td><td>One JOIN / one aggregate each</td></tr>
+          <tr><td><code>PATCH</code> that is semantically a full replace</td><td><span class="chip done">Low</span></td><td>Renamed <code>PUT</code> (endpoint #3)</td></tr>
+          <tr><td><code>pass_threshold</code> range drift: Zod 1–100 vs decision log 50–100</td><td><span class="chip done">Low</span></td><td>One constant, 50–100 (B4)</td></tr>
+          <tr><td>Bearer token from memory store → F5 logs the manager out</td><td><span class="chip plan">Med</span></td><td>httpOnly cookie JWT (F-5)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================ 08 ============================ -->
+  <section id="s08">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Task mapping</h2></div>
+    <p>Training is an <b>AD-phase</b> surface (<code>OVERALL_PLAN.md §8</code>, <code>workforce</code>
+      domain). The Phase-4 ⛔ "Admin" row is un-deferred when AD opens; these rows get registered
+      then — they do <b>not</b> exist in <code>TASKS.md</code> yet.</p>
+
+    <h3>Build order</h3>
+    <div class="strip">
+      <span class="snode">AD-T1 schema</span>
+      <span class="sarrow">→</span>
+      <span class="snode">AD-T2 BE guide CRUD</span>
+      <span class="sarrow">→</span>
+      <span class="snode">AD-T3 BE progress reads</span>
+      <span class="sarrow">→</span>
+      <span class="snode tph">AD-T4 BE staff write path</span>
+      <span class="sarrow">→</span>
+      <span class="snode oph">AD-T5 FE authoring</span>
+      <span class="sarrow">→</span>
+      <span class="snode tph">AD-T6 FE tracking</span>
+    </div>
+
+    <pre class="diagram">          the hard dependency this plan exists to enforce
+          ┌──────────────────────────────────────────────┐
+AD-T1 ──► AD-T2 ──► AD-T3 ──► <b>AD-T4</b> ─ ─ ─ ─ ─ ─ ─ ─ ─ ─► <b>AD-T6</b>
+schema    guide     progress   staff write      blocks      FE tracking
+          CRUD      reads      path (watch/                 half
+                               quiz/my-guides)
+                    │                                          ▲
+                    └──► AD-T5 FE authoring half ──────────────┘
+                         (ships independently)
+
+If AD-T4 slips → AD-T6 ships WITHOUT the tracking half,
+                 never WITH an inert one.</pre>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Proposed row</th><th>This plan's slice</th><th>Receipt type</th></tr></thead>
+        <tbody>
+          <tr><td><span class="t c">AD-T1</span> schema</td><td>§04 four tables promoted into <code>DB_SCHEMA.md §4.7</code> + seed (1 guide + 12 chef staff)</td><td>migrate up/down + seed counts</td></tr>
+          <tr><td><span class="t c">AD-T2</span> BE guide CRUD</td><td>Endpoints #1–4 + the one-query JOIN for <code>responsible_roles</code></td><td>curl: list/filter, create, replace, soft-delete, 404s</td></tr>
+          <tr><td><span class="t c">AD-T3</span> BE progress reads</td><td>Endpoints #5–7 + the LEFT-JOIN roster + notes upsert</td><td>curl: roster shows un-started staff; zeroed detail; note round-trip</td></tr>
+          <tr><td><span class="t tt">AD-T4</span> BE staff write path</td><td>Endpoints #8–10 — <b>the half the reference never built</b></td><td>curl: watch → % rises; quiz → verdict; 4th attempt 409</td></tr>
+          <tr><td><span class="t c">AD-T5</span> FE authoring half</td><td>§02 grid/tabs/modal, §06 B1–B4, B10–B11</td><td>screenshots + Zod validation cases</td></tr>
+          <tr><td><span class="t tt">AD-T6</span> FE tracking half</td><td>§02 table/status/detail modal, §06 B5–B9</td><td>screenshots per status + note flush test</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top:14px"><b>Sizing:</b> each row keeps the 1-session / 1–2-file / 1-AC rule.
+      <b>AD-T4 is a hard dependency of AD-T6</b> — see decision 1 below.</p>
+  </section>
+
+  <!-- ============================ 09 ============================ -->
+  <section id="s09">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Decisions + flags</h2></div>
+
+    <div class="flag">
+      <p><b>1 · 🚨 RISK — the tracking half must not ship alone.</b> The reference's page <i>looks</i>
+        like it tracks training and records nothing; a manager trusted an empty table for as long as
+        it shipped. <b>Decision: AD-T6 (tracking UI) is blocked on AD-T4 (staff watch/quiz
+        endpoints).</b> If AD-T4 slips, AD-T6 ships <b>without</b> the tracking half rather than with
+        an inert one. This is the single most consequential call in the plan and the reason the
+        staff-facing endpoints are scoped here at all — they are not this page's UI, but they are
+        this page's <b>truth condition</b>.</p>
+    </div>
+
+    <div class="golden">
+      <p><b>2 · ✅ Roster-first progress.</b> The table lists every assigned staff member from the
+        roster, so it is useful (and honest) from the first render, even at zero activity.</p>
+    </div>
+
+    <div class="golden">
+      <p><b>3 · ✅ <code>DELETE</code> lowered to <code>manager</code>.</b> The role that authors a
+        guide owns its lifecycle, and delete is a reversible soft delete. The alternative (hide the
+        button for managers) keeps a capability split with no product rationale. Either way the
+        <code>can()</code> helper keeps button and gate in sync — 💡 say so if delete should stay
+        admin-only and only the FE gate changes.</p>
+    </div>
+
+    <div class="golden">
+      <p><b>4 · ✅ Auto-assignment by role, no assignment UI.</b> A guide is assigned to all active
+        staff whose <code>role</code> matches <code>guide.role</code> (reference decision log §3,
+        consistent with its "Showing 5 of 12 staff" wireframe). No per-guide picker in v1.</p>
+    </div>
+
+    <div class="golden">
+      <p><b>5 · ✅ No Redis, no realtime.</b> Live admin data is do-not-cache; two managers converge
+        by refetch, not push. A second manager sees a new guide on their next refetch (staleTime
+        5 min or window refocus). Adopted from the reference deliberately — ⚠️ if the AD phase adds
+        an admin-wide SSE channel, training is a candidate <i>consumer</i>, not a driver.</p>
+    </div>
+
+    <div class="flag">
+      <p><b>6 · ⚠️ FLAG — <code>training_*</code> tables are <code>DB_SCHEMA.md §4.7</code>
+        stubs.</b> §04 proposes their columns; the moment AD-T1 opens, those columns move to
+        <code>DB_SCHEMA.md</code> and that section becomes a link. Until then this is the only place
+        they are written down — a temporary second home, closed by AD-T1.</p>
+    </div>
+
+    <div class="flag">
+      <p><b>7 · ⚠️ FLAG — CSP and YouTube.</b> The reference flagged that embedding YouTube needs a
+        <code>frame-src</code> allowance. <b>Plan default: no iframe</b> — the card links out to
+        YouTube in a new tab, so no CSP change is needed. Revisit only if in-page playback becomes a
+        requirement (it would also make watch-% tracking far more accurate).</p>
+    </div>
+
+    <div class="flag">
+      <p><b>8 · ❓ CLARIFY — how is <code>watched_percent</code> measured?</b> With an out-of-page
+        YouTube link (decision 7) the platform cannot observe watch time;
+        <code>POST …/watch</code> would be driven by a manual "Tôi đã xem xong" confirmation (honest
+        but self-reported), whereas an embedded player could report real progress.
+        <b>Default: self-reported confirmation</b>, because it ships without CSP work and without the
+        YouTube IFrame API. <b>Decide before AD-T4.</b></p>
+    </div>
+
+    <div class="golden">
+      <p><b>9 · 💡 SUGGESTION — deferred reference proposals.</b> Its decision log proposed a
+        <code>required</code> (bắt buộc) toggle gating shift scheduling, and a "Reset attempts"
+        button for managers. Both are coherent but neither exists in the reference schema or code.
+        <b>Deferred</b> — register as their own AD rows if the owner wants them; the schema in §04
+        leaves room for <code>required</code> as an additive column.</p>
+    </div>
+
+    <h3>Verify plan — per-task receipts, logged in <code>harness/VERIFICATION.md</code></h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Task</th><th>Receipt</th></tr></thead>
+        <tbody>
+          <tr><td><span class="t c">AD-T1</span></td><td>migrate up/down clean; seed inserts 1 guide + 12 chef staff.</td></tr>
+          <tr><td><span class="t c">AD-T2</span></td><td>curl transcripts — list (all + <code>?role=chef</code>), create 201, replace 200, soft-delete 200 then absent from list, 404 on a deleted id, 400 on a bad role.</td></tr>
+          <tr><td><span class="t c">AD-T3</span></td><td>curl — roster returns 12 rows with 10 at <code>watched_percent: 0</code> <b>before any progress row exists</b> (the anti-Bug-1 receipt); zeroed detail object; note round-trip.</td></tr>
+          <tr><td><span class="t tt">AD-T4</span></td><td>curl — watch raises %, monotonic on a lower resend; quiz returns the server-computed verdict; the 4th attempt 409s <code>TRAINING_ATTEMPTS_EXHAUSTED</code>.</td></tr>
+          <tr><td><span class="t c">AD-T5</span> / <span class="t tt">AD-T6</span></td><td>desktop-viewport screenshots per behavior; one screenshot showing all four status badges distinct; a note-flush test (type → close modal → reopen).</td></tr>
+          <tr><td><span class="t o">F-25</span> (this plan)</td><td>folder holds the 4 prefixed docs, all three HTML render in both themes, no horizontal page scroll — receipt row dated 2026-07-19.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Alignment — what governs this page (read, don't restate)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Concern</th><th>Owning doc</th></tr></thead>
+        <tbody>
+          <tr><td>Stack + versions</td><td><code>harness/PLAN.md §Stack</code></td></tr>
+          <tr><td>BE layering, tx policy, error envelope, error codes</td><td><code>harness/BE_STATE.md</code></td></tr>
+          <tr><td>goose+sqlc workflow, Go/Gin gotchas, N+1 discipline</td><td><code>harness/BE_PLAYBOOK.md</code></td></tr>
+          <tr><td>FE state kinds, cache map, loading tiers, hard rules 1–14</td><td><code>harness/FE_STATE.md</code></td></tr>
+          <tr><td>Design tokens + admin components (<b>neutral F-7 set, NOT the customer dark/orange shell</b>)</td><td><code>harness/diagrams/design-system.html</code> (F-7)</td></tr>
+          <tr><td>Table columns, <code>staff.role</code> enum, soft-delete×UNIQUE rule</td><td><code>harness/DB_SCHEMA.md</code> (§4.6 staff · §4.7 workforce stubs)</td></tr>
+          <tr><td>Redis policy (why training is <b>not</b> cached)</td><td><code>harness/ARCHITECTURE.md §4</code> + <code>OVERALL_PLAN.md §3.6</code></td></tr>
+          <tr><td>AD-phase scope, RBAC surface map, lessons register</td><td><code>harness/OVERALL_PLAN.md</code> (F-9)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:14px">Reference docs are the <b>what</b>; the harness rules above are the
+      <b>how</b>. Where they conflict, <b>the harness wins</b> (established F-9 pattern — e.g. cookie
+      JWT beats the reference's memory-token + <code>Authorization</code> Bearer interceptor).</p>
+  </section>
+
+  <footer>
+    <p>Written by <b>F-25</b>, 2026-07-19. This page is a <b>snapshot</b> of
+      <code>harness/plans/admin_training/admin_training_PLAN.md</code> — that file is the source of
+      truth and <b>wins on any conflict</b>. Task status lives in <code>TASKS.md</code>; rules live
+      in the docs listed under Alignment above.</p>
+    <p>Visual companions: <a href="admin_training_how-it-works.html">admin_training_how-it-works.html</a>
+      (runtime) · <a href="admin_training_mockup-1.html">admin_training_mockup-1.html</a> (the UI).</p>
+  </footer>
+
+</div></body>
+</html>

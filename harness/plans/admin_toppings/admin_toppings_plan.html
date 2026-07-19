@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin toppings page — FE + BE build plan (F-29)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE9E7;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2857C; --red-soft: #3A1714;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2857C; --red-soft: #3A1714;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE9E7;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.c { color: var(--accent); background: var(--accent-soft); }
+  .t.tt { color: var(--amber); background: var(--amber-soft); }
+  .t.o { color: var(--done); background: var(--done-soft); }
+  .dead { color: var(--muted); text-decoration: line-through; }
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); margin: 14px 0; }
+  .snode { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-top: 3px solid var(--accent); }
+  .snode.tph { border-top-color: var(--amber); }
+  .snode.oph { border-top-color: var(--done); }
+  .sarrow { color: var(--muted); font-size: 0.8rem; }
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+
+  /* ===== admin screen mock — neutral F-7 tokens (admin surface, NOT the customer shell) ===== */
+  .anatomy { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .screen { flex: 1 1 460px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 12.5px; }
+  .screen * { box-sizing: border-box; }
+  .sc-sec { position: relative; border-bottom: 1px solid var(--line); padding: 10px 12px; }
+  .sc-n { position: absolute; top: 8px; right: 8px; z-index: 2; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .sc-nav { display: flex; gap: 12px; background: var(--ink); color: var(--paper); font-size: 11px; padding: 9px 12px; overflow: hidden; white-space: nowrap; }
+  .sc-nav .on { color: var(--amber); font-weight: 700; border-bottom: 2px solid var(--amber); }
+  .sc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .sc-title { font-family: var(--sans); font-weight: 700; font-size: 15px; }
+  .sc-badge { display: inline-block; background: var(--accent-soft); color: var(--accent); font-family: var(--mono); font-size: 10px; font-weight: 700; border-radius: 999px; padding: 1px 8px; }
+  .sc-btn { background: var(--accent); color: #fff; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 600; }
+  .sc-tbl { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  .sc-tbl th { font-family: var(--mono); font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  .sc-tbl td { padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .sc-tbl tr:last-child td { border-bottom: none; }
+  .sc-chip { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; font-size: 10px; color: var(--muted); margin: 1px 2px 1px 0; }
+  .sc-free { color: var(--done); font-weight: 700; }
+  .sc-cost { color: var(--amber); font-weight: 700; }
+  .sc-badge2 { font-family: var(--mono); font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 1px 7px; }
+  .sc-badge2.ok { color: var(--done); background: var(--done-soft); }
+  .sc-badge2.no { color: var(--muted); background: var(--line); }
+  .sc-act { font-size: 10px; color: var(--accent); }
+  .sc-act .del { color: var(--red); }
+  .sc-modal { border: 1px dashed var(--line); border-radius: 10px; background: var(--paper); padding: 10px 12px; }
+  .sc-field { margin-bottom: 8px; }
+  .sc-lab { display: block; font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+  .sc-in { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; font-size: 11px; color: var(--muted); }
+  .callouts { flex: 1 1 280px; min-width: 260px; }
+  .callouts ol { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 0.86rem; }
+  .callouts li { display: flex; gap: 10px; }
+  .co-n { flex: none; width: 19px; height: 19px; margin-top: 3px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .callouts b { font-family: var(--mono); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow">ecom-core · restaurant platform · page plan · 2026-07-19</div>
+  <h1>Admin toppings — <code>/admin/toppings</code></h1>
+  <p class="lede">The back-office CRUD screen for toppings — the paid add-ons <em>and</em> the ₫0 nhân
+  fillings the customer menu renders as pills. One table, one modal, five endpoints, and six
+  reference defects designed out.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">task</span><span class="v">F-29</span></div>
+    <div class="fact"><span class="k">surface</span><span class="v">admin · manager+</span></div>
+    <div class="fact"><span class="k">endpoints</span><span class="v">5</span></div>
+    <div class="fact"><span class="k">behaviors</span><span class="v">16</span></div>
+    <div class="fact"><span class="k">defects out</span><span class="v">12</span></div>
+    <div class="fact"><span class="k">tokens</span><span class="v">F-7 neutral</span></div>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#s1">01 Anatomy</a>
+  <a href="#s2">02 Component tree</a>
+  <a href="#s3">03 State</a>
+  <a href="#s4">04 BE contract</a>
+  <a href="#s5">05 Dataflow</a>
+  <a href="#s6">06 Behaviors</a>
+  <a href="#s7">07 Defects out</a>
+  <a href="#s8">08 Tasks</a>
+  <a href="#s9">09 Decisions</a>
+</nav>
+
+<div class="golden">
+  <p><b>The one move that matters.</b> The reference fetched the <em>entire product catalogue</em>
+  — uncached, with an N+1 topping query per product — for the sole purpose of printing product
+  names in one column. This plan replaces it with a single server-joined
+  <code>GET /toppings/all</code>. That one change kills the N+1, the second query, and the
+  column flash together.</p>
+</div>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy</h2></div>
+  <p>Desktop back-office screen on the <b>neutral F-7 tokens</b> — the admin surface never uses the
+  customer dark/orange shell.</p>
+  <div class="anatomy">
+    <div class="screen">
+      <div class="sc-nav"><span>Tổng quan</span><span>Sản phẩm</span><span>Combo</span><span>Danh mục</span><span class="on">Topping</span><span>Nhân viên</span><span>Kho NL</span></div>
+      <div class="sc-sec"><span class="sc-n">1</span>
+        <div class="sc-head">
+          <div><span class="sc-title">Topping</span> <span class="sc-badge">23</span></div>
+          <span class="sc-btn">+ Thêm topping</span>
+        </div>
+      </div>
+      <div class="sc-sec"><span class="sc-n">2</span>
+        <div class="sc-lab" style="margin-bottom:6px">🔍 Tìm theo tên · <span class="sc-chip">Tất cả</span><span class="sc-chip">Có sẵn</span><span class="sc-chip">Hết</span></div>
+      </div>
+      <div class="sc-sec" style="padding:0"><span class="sc-n">3</span>
+        <table class="sc-tbl">
+          <tr><th>Tên topping</th><th>Áp dụng cho sản phẩm</th><th>Giá thêm</th><th>Trạng thái</th><th></th></tr>
+          <tr>
+            <td>Nhân thịt mộc nhĩ</td>
+            <td><span class="sc-chip">Bánh Cuốn Thịt</span><span class="sc-chip">BC Thập Cẩm</span></td>
+            <td class="sc-free">Miễn phí</td>
+            <td><span class="sc-badge2 ok">Có sẵn</span></td>
+            <td class="sc-act">Sửa · <span class="del">Xóa</span></td>
+          </tr>
+          <tr>
+            <td>Chả quế</td>
+            <td><span class="sc-chip">Bánh Cuốn Thịt</span><span class="sc-chip">BC Tôm</span></td>
+            <td class="sc-cost">+8.000đ</td>
+            <td><span class="sc-badge2 ok">Có sẵn</span></td>
+            <td class="sc-act">Sửa · <span class="del">Xóa</span></td>
+          </tr>
+          <tr>
+            <td>Tôm tươi</td>
+            <td style="color:var(--muted)">Chưa gắn sản phẩm</td>
+            <td class="sc-cost">+15.000đ</td>
+            <td><span class="sc-badge2 ok">Có sẵn</span></td>
+            <td class="sc-act">Sửa · <span class="del">Xóa</span></td>
+          </tr>
+          <tr>
+            <td>Rau</td>
+            <td style="color:var(--muted)">Chưa gắn sản phẩm</td>
+            <td class="sc-free">Miễn phí</td>
+            <td><span class="sc-badge2 no">Hết</span></td>
+            <td class="sc-act">Sửa · <span class="del">Xóa</span></td>
+          </tr>
+        </table>
+      </div>
+      <div class="sc-sec"><span class="sc-n">4</span>
+        <div class="sc-modal">
+          <div style="font-weight:700;margin-bottom:8px;font-size:12px">Sửa topping</div>
+          <div class="sc-field"><span class="sc-lab">Tên topping *</span><div class="sc-in">Chả quế</div></div>
+          <div class="sc-field"><span class="sc-lab">Giá thêm (đ) — 0 = Miễn phí</span><div class="sc-in">8000</div></div>
+          <div class="sc-field"><span class="sc-lab">Trạng thái</span><span class="sc-badge2 ok">● Có sẵn</span></div>
+          <div style="display:flex;gap:6px;justify-content:flex-end;margin-top:10px">
+            <span class="sc-in" style="font-size:10px">Hủy</span><span class="sc-btn">Lưu topping</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callouts">
+      <ol>
+        <li><span class="co-n">1</span><div><b>ToppingPageHeader</b> — title + count badge derived from
+          <code>data.length</code> (never a stored number) + the add CTA.</div></li>
+        <li><span class="co-n">2</span><div><b>ToppingToolbar</b> — name search + status filter, both
+          <b>client-side</b>. No pagination, no URL params in v1.</div></li>
+        <li><span class="co-n">3</span><div><b>ToppingTable</b> — 5 columns; the 5th header is
+          intentionally unlabelled. Product chips come from the server-joined <code>products[]</code>,
+          read-only (linking lives on <code>/admin/products</code>).</div></li>
+        <li><span class="co-n">4</span><div><b>ToppingFormModal</b> — one modal, mode derived from
+          whether an edit target is set. RHF + Zod, <b>reset on every open</b>.</div></li>
+      </ol>
+      <div class="flag" style="margin-top:18px">
+        <p><b>₫0 is a first-class value.</b> <code>price === 0</code> renders “Miễn phí”, never
+        “+0đ” — the ₫0 rows <em>are</em> the nhân fillings the customer menu shows as pills.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Component tree</h2></div>
+  <pre class="diagram">fe/src/app/(dashboard)/admin/toppings/
+├── page.tsx                  RSC · prefetch ['admin','toppings'] → HydrationBoundary   <span class="t c">AD-TOP-2</span>
+├── loading.tsx               table-shaped skeleton (reference had none)                <span class="t c">AD-TOP-2</span>
+└── _components/
+    ├── ToppingPageHeader     title · count badge · "+ Thêm topping"                    <span class="t c">AD-TOP-2</span>
+    ├── ToppingToolbar        name search + status filter — client-side                 <span class="t c">AD-TOP-2</span>
+    ├── ToppingTable          5 cols · 4 named render branches                          <span class="t c">AD-TOP-2</span>
+    │   └── ToppingRow        owns its own delete-pending state                         <span class="t c">AD-TOP-2</span>
+    ├── ToppingFormModal      RHF + Zod · dynamic() *with* fallback                     <span class="t c">AD-TOP-2</span>
+    └── ToppingDeleteDialog   real dialog · states N linked products                    <span class="t c">AD-TOP-2</span>
+
+fe/src/features/admin/
+├── toppings.api.ts           the 5 calls                                               <span class="t c">AD-TOP-2</span>
+├── toppings.queries.ts       useToppings / useCreate / useUpdate / useDelete           <span class="t c">AD-TOP-2</span>
+└── toppings.types.ts         Topping DTO — DB field names, not extraPrice              <span class="t c">AD-TOP-2</span>
+
+shared kit (design-system.html): Button · Badge · Input · Label · Modal · EmptyState</pre>
+  <p>Everything under <code>_components/</code> is <b>local to the route</b> — nothing on this page
+  is shared, matching the reference's own reuse audit.</p>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>State ownership</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>Data</th><th>Kind</th><th>Owner</th><th>Note</th></tr>
+    <tr><td>Topping list (+ joined products)</td><td>server cache</td><td><code>['admin','toppings']</code></td><td><code>staleTime 60s</code>; RSC-prefetched</td></tr>
+    <tr><td>Auth user / role</td><td>global client</td><td>Zustand <code>useAuthStore</code></td><td>guards + Xóa visibility</td></tr>
+    <tr><td>Modal open + edit target</td><td>local</td><td><code>useState&lt;Topping|null&gt;</code></td><td>mode is derived, not stored</td></tr>
+    <tr><td>Delete-confirm target</td><td>local</td><td><code>useState&lt;Topping|null&gt;</code></td><td>a different dialog from edit</td></tr>
+    <tr><td>Form values</td><td>local</td><td>RHF + Zod</td><td>never lifted to Zustand; reset on open</td></tr>
+    <tr><td>Search text / status filter</td><td>local</td><td><code>useState</code></td><td>client-side only — no URL params</td></tr>
+  </table></div>
+  <div class="golden">
+    <p><b>The shared query key is deliberate.</b> <code>['admin','toppings']</code> is also read by
+    the topping picker inside the product form on <code>/admin/products</code>. A write here
+    invalidates that picker too — which is exactly what we want. <b>Do not invent a second key.</b></p>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>BE contract</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Route</th><th>Auth</th><th>Task</th><th>Behavior</th></tr>
+    <tr><td>1</td><td><code>GET /toppings</code></td><td><b>public</b></td><td><span class="t c">C-3</span></td><td><b>Available only.</b> Redis <code>toppings:list</code>, 5-min TTL</td></tr>
+    <tr><td>2</td><td><code>GET /toppings/all</code></td><td>manager+</td><td><span class="t o">AD-TOP-1</span></td><td>This page. Includes <code>is_available=0</code>; <b>products joined server-side</b>. Uncached</td></tr>
+    <tr><td>3</td><td><code>POST /toppings</code></td><td>manager+</td><td><span class="t o">AD-TOP-1</span></td><td>Create; honours <code>is_available</code>; <code>409 DUPLICATE</code></td></tr>
+    <tr><td>4</td><td><code>PATCH /toppings/:id</code></td><td>manager+</td><td><span class="t o">AD-TOP-1</span></td><td>All 3 columns in <b>one</b> statement; 404 / 409</td></tr>
+    <tr><td>5</td><td><code>DELETE /toppings/:id</code></td><td><b>admin only</b></td><td><span class="t o">AD-TOP-1</span></td><td>Soft delete + junction purge, one tx → <code>204</code></td></tr>
+  </table></div>
+
+  <h3>Schema depended on</h3>
+  <div class="schema">
+    <div class="tbl"><div class="tname">toppings</div><ul>
+      <li><b>id</b> CHAR(36) PK</li><li><b>name</b> VARCHAR(100)</li>
+      <li><b>price</b> DECIMAL(10,0) DEFAULT 0</li><li><b>is_available</b> TINYINT(1)</li>
+      <li>std + <b>deleted_at</b></li></ul></div>
+    <div class="tbl"><div class="tname">product_toppings</div><ul>
+      <li><b>product_id</b> FK CASCADE</li><li><b>topping_id</b> FK CASCADE</li>
+      <li>composite PK</li></ul></div>
+    <div class="tbl"><div class="tname">products <span style="opacity:.6">(read)</span></div><ul>
+      <li><b>id</b> · <b>name</b></li><li>joined for the chips column</li></ul></div>
+  </div>
+  <p>Full column specs live in <a href="../../DB_SCHEMA.md"><code>DB_SCHEMA.md §4.1</code></a> —
+  not repeated here.</p>
+
+  <h3>Cache map — the invalidation AC</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Write</th><th>DEL keys</th></tr>
+    <tr><td><code>POST</code> / <code>PATCH</code> / <code>DELETE /toppings*</code></td>
+        <td><code>toppings:list</code> · <code>products:list</code> · <b>every <code>product:&lt;id&gt;</code> joined to that topping</b></td></tr>
+  </table></div>
+  <div class="flag">
+    <p><b>The third target is the fix.</b> The reference Del'd only the two list keys, so customer
+    product-detail served a stale topping price for up to 5 minutes. The joined ids come free from
+    the junction lookup the write already performs.</p>
+  </div>
+
+  <h3>Wire shape — <code>GET /toppings/all</code></h3>
+  <pre class="diagram">{ "data": [
+  { "id": "t3c4…36", "name": "Chả quế", "price": 8000, "is_available": true,
+    "products": [ { "id": "ccc-01", "name": "Bánh Cuốn Thịt" },
+                  { "id": "ccc-07", "name": "Bánh Cuốn Tôm" } ] },
+  { "id": "t5e6…36", "name": "Rau", "price": 0, "is_available": false,
+    "products": [] }
+] }</pre>
+  <p>DB field names throughout — <code>price</code> / <code>is_available</code>, never the
+  reference's invented <code>extraPrice</code> / <code>isAvailable</code>. Writes return the
+  <b>full object</b>, not a thin <code>{id}</code>.</p>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Dataflow</h2></div>
+  <h3>Read path — one query, four branches</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">rsc</span><b>page.tsx</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">prefetch</span><b>/toppings/all</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">join</span><b>+ products</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">hydrate</span><b>TanStack</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">render</span><b>table</b></div>
+  </div>
+  <div class="table-wrap"><table>
+    <tr><th>Branch</th><th>Condition</th><th>Renders</th></tr>
+    <tr><td><code>loading</code></td><td>pending, no cache</td><td>skeleton rows</td></tr>
+    <tr><td><code>error</code></td><td>rejected</td><td>error panel + Thử lại — <b>not</b> an empty state</td></tr>
+    <tr><td><code>empty</code></td><td>resolved, length 0</td><td><code>EmptyState</code></td></tr>
+    <tr><td><code>ready</code></td><td>resolved, rows</td><td>the table</td></tr>
+  </table></div>
+
+  <h3>Write path — pessimistic, then fan out</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">modal</span><b>save</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">gin</span><b>manager+</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">tx</span><b>MySQL</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">redis</span><b>3× DEL</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">cache</span><b>write full obj</b></div>
+  </div>
+  <p>No optimistic update — optimistic is cart-only per
+  <a href="../../FE_STATE.md"><code>FE_STATE.md §5</code></a>. The returned full object is written
+  straight into the list cache, so the row updates with no refetch flash.</p>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors — the acceptance criteria</h2></div>
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">01</span><span class="bt">Guarded entry</span><p>Non-manager never renders the page; logged-out redirects to login.</p></div>
+    <div class="bcard"><span class="bn">02</span><span class="bt">Five columns</span><p>Tên · Áp dụng cho SP · Giá thêm · Trạng thái · actions. Sorted by name.</p></div>
+    <div class="bcard"><span class="bn">03</span><span class="bt">Derived count</span><p>Badge reads <code>data.length</code>; shows <code>0</code> only in the <code>empty</code> branch, never while loading.</p></div>
+    <div class="bcard"><span class="bn">04</span><span class="bt">Price by value</span><p><code>0</code> → “Miễn phí”; else <code>+8.000đ</code> via the one shared <code>formatVND()</code>. Never “+0đ”.</p></div>
+    <div class="bcard"><span class="bn">05</span><span class="bt">Status badge</span><p>“Có sẵn” (success) / “Hết” (muted).</p></div>
+    <div class="bcard"><span class="bn">06</span><span class="bt">Product chips</span><p>From server-joined <code>products[]</code>; empty → “Chưa gắn sản phẩm”. <b>Read-only.</b></p></div>
+    <div class="bcard"><span class="bn">07</span><span class="bt">Long names truncate</span><p>Tooltip carries the full name; table scrolls in its own box, page never does.</p></div>
+    <div class="bcard"><span class="bn">08</span><span class="bt">Client-side filter</span><p>Name search + status chips. No refetch, no URL params, no pagination in v1.</p></div>
+    <div class="bcard"><span class="bn">09</span><span class="bt">Add mode</span><p>Empty form, title “Thêm topping”, toggle defaults to Có sẵn.</p></div>
+    <div class="bcard"><span class="bn">10</span><span class="bt">Edit mode</span><p>Same modal, pre-filled, title “Sửa topping”. <b>Resets on every open.</b></p></div>
+    <div class="bcard"><span class="bn">11</span><span class="bt">Inline validation</span><p>Name required; <code>price ≥ 0</code> with <code>0</code> explicitly valid.</p></div>
+    <div class="bcard"><span class="bn">12</span><span class="bt">Duplicate name</span><p><code>409</code> → field error “Tên topping đã tồn tại”; modal stays open.</p></div>
+    <div class="bcard"><span class="bn">13</span><span class="bt">Save closes cleanly</span><p>Returned object written to cache; row appears/updates with no flash.</p></div>
+    <div class="bcard"><span class="bn">14</span><span class="bt">Real delete dialog</span><p>States the linked count from the row's own <code>products[]</code>. Admin-only button.</p></div>
+    <div class="bcard"><span class="bn">15</span><span class="bt">Idempotent delete</span><p>Row's Xóa disables while in flight — a double-click can't fire twice.</p></div>
+    <div class="bcard"><span class="bn">16</span><span class="bt">Surfaces refresh</span><p>Menu, POS, product-detail update on next fetch; past orders never change (snapshot).</p></div>
+  </div>
+</section>
+
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Reference defects designed out</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Finding (reference)</th><th>Countermeasure</th></tr>
+    <tr><td>①</td><td>Entire product list pulled, uncached, N+1 per product — to render one column</td><td><code>GET /toppings/all</code> joins products server-side</td></tr>
+    <tr><td>②</td><td>That query has no loading gate → every row flashes “Chưa gắn sản phẩm”</td><td>Only one query remains — the flash cannot exist</td></tr>
+    <tr><td>③</td><td>Loading = bare <code>&lt;p&gt;Đang tải…&lt;/p&gt;</code>; layout jumps. No <code>loading.tsx</code></td><td>Table-shaped skeleton at both tiers</td></tr>
+    <tr><td>④</td><td>Delete pending state never read — double-clicks re-fire</td><td>Per-row pending disables that row's Xóa</td></tr>
+    <tr><td>⑤</td><td>Writes never Del <code>product:&lt;id&gt;</code> → 5-min stale price on product detail</td><td>Cache map Dels every joined <code>product:&lt;id&gt;</code></td></tr>
+    <tr><td>⑥</td><td>FE maps a <code>409</code> the BE <b>can never send</b> — duplicates insert silently</td><td>Real <code>UNIQUE(name)</code> + <code>409</code> makes the branch live</td></tr>
+    <tr><td>⑦</td><td>RHF modals retain stale values — “the #1 modal bug in this project”</td><td>Reset on every open, asserted by behavior 10</td></tr>
+    <tr><td>⑧</td><td>Delete confirm is a JS <code>confirm()</code>, count computed client-side</td><td>Real dialog; count from the row's joined <code>products[]</code></td></tr>
+    <tr><td>⑨</td><td>Create hardcodes <code>is_available=1</code> — the toggle silently does nothing</td><td>Create honours the field</td></tr>
+    <tr><td>⑩</td><td>Soft delete orphans <code>product_toppings</code> rows forever</td><td>Junction purged in the same tx</td></tr>
+    <tr><td>⑪</td><td>Availability written by raw <code>ExecContext</code> outside sqlc</td><td>One sqlc statement sets all three columns</td></tr>
+    <tr><td>⑫</td><td><code>AuthGuard</code> renders <code>null</code> — blank admin shell on slow links</td><td>Shell-level; carried as ⚠️-3, not page-local</td></tr>
+  </table></div>
+</section>
+
+<section id="s8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Task mapping</h2></div>
+  <div class="strip">
+    <span class="snode">C-1 schema+seed</span><span class="sarrow">→</span>
+    <span class="snode">C-3 public read</span><span class="sarrow">→</span>
+    <span class="snode oph">AD-TOP-1 BE CRUD</span><span class="sarrow">→</span>
+    <span class="snode oph">AD-TOP-2 FE page</span><span class="sarrow">→</span>
+    <span class="snode tph">AD-TOP-3 linking (other page)</span>
+  </div>
+  <div class="table-wrap"><table>
+    <tr><th>Row</th><th>Slice</th><th>Receipt</th></tr>
+    <tr><td>C-1</td><td>Both tables + the ₫0 nhân seed set</td><td>migrate up/down + seed counts</td></tr>
+    <tr><td>C-3</td><td><code>GET /toppings</code> public, available-only</td><td>curl: an <code>is_available=0</code> row is absent</td></tr>
+    <tr><td><b>AD-TOP-1</b></td><td>Endpoints 2–5 + the cache fan-out</td><td>curl round-trip; 409; 403; Redis keys gone</td></tr>
+    <tr><td><b>AD-TOP-2</b></td><td>The FE page, behaviors 1–16</td><td>screenshots incl. empty + error branches</td></tr>
+    <tr><td>AD-TOP-3</td><td><b>Not this page</b> — the picker on <code>/admin/products</code></td><td>cross-linked, not re-derived</td></tr>
+  </table></div>
+  <p>The AD phase is not yet open in <a href="../../TASKS.md"><code>TASKS.md</code></a>; AD-TOP-1/T2 are
+  rows to register when it is. F-29 itself produces only this plan set.</p>
+</section>
+
+<section id="s9">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Decisions, flags &amp; verify plan</h2></div>
+  <h3>✅ Decided</h3>
+  <ul class="plain">
+    <li>Topping CRUD stays <b>inside the products domain</b> — shared cache-invalidation logic.</li>
+    <li><b>Role split:</b> read public · create/update manager+ · <b>delete admin-only</b>.</li>
+    <li><b>No pagination or server-side search in v1</b> — client-side, matching the menu plan.</li>
+    <li><b>“Áp dụng cho sản phẩm” is read-only here</b> — linking stays on <code>/admin/products</code>.</li>
+    <li><b>Delete unlinks rather than blocks</b> — the dialog states impact instead of refusing.</li>
+    <li>Query key <code>['admin','toppings']</code> is <b>shared on purpose</b> with the product picker.</li>
+    <li>Wire fields use <b>DB names</b> — never <code>extraPrice</code> / <code>isAvailable</code>.</li>
+  </ul>
+
+  <div class="flag">
+    <p><b>⚠️ 1 — <code>UNIQUE(name)</code> is a schema addition this plan does not own.</b>
+    <code>DB_SCHEMA.md §4.1</code> carries no unique key today, and adding one pulls in the §4.4
+    soft-delete×UNIQUE rule (rename to <code>&lt;name&gt;#deleted-&lt;id&gt;</code>, as
+    <code>staff.username</code> does). <b>DB_SCHEMA.md must be amended in C-1</b> — the 409 is
+    unimplementable until it is.</p>
+    <p><b>⚠️ 2 — <code>GET /toppings</code> changes meaning.</b> Making it available-only is a
+    contract change; any future reader wanting the full list must use <code>/toppings/all</code>.</p>
+    <p><b>⚠️ 3 — the blank <code>AuthGuard</code> window</b> is a shell-level gap every admin page
+    inherits. Belongs to the admin-shell task; recorded so it isn't lost.</p>
+  </div>
+
+  <h3>💡 Suggestions (deferred)</h3>
+  <ul class="plain">
+    <li><b>Bulk status toggle</b> — with 23+ toppings, marking a batch “Hết” is one-by-one work today.</li>
+    <li><b>Stock-driven availability</b> — toppings map to ingredients that <code>/admin/ingredients</code>
+      (F-21) already tracks; auto-flipping <code>is_available</code> at zero would remove the manual toggle.</li>
+  </ul>
+
+  <h3>Verify plan</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Task</th><th>Receipt</th></tr>
+    <tr><td>C-1</td><td>migrate up/down clean; seed has the ₫0 nhân set + ≥ 2 paid toppings</td></tr>
+    <tr><td>C-3</td><td>curl <code>GET /toppings</code> — an <code>is_available=0</code> topping is absent</td></tr>
+    <tr><td>AD-TOP-1</td><td>create → 201 full object · dup → 409 · patch → 200 · unknown id → 404 · manager delete → 403 · admin delete → 204 · <code>redis-cli EXISTS</code> shows all three key sets gone</td></tr>
+    <tr><td>AD-TOP-2</td><td>screenshots: ready table · add · edit pre-filled · dup-name error · delete dialog · empty · error</td></tr>
+    <tr><td>F-29</td><td>all four files render both themes, no horizontal page scroll</td></tr>
+  </table></div>
+</section>
+
+<footer>
+  Written 2026-07-19 by the engineer-in-charge (F-29), from
+  <code>reference/docs/system/08_pages/admin/admin_toppings/</code> (8 files) and
+  <code>reference/docs/fe/wireframes/admin_main/admin_main_topping/</code> (7 files).
+  Snapshot of <a href="admin_toppings_PLAN.md"><code>admin_toppings_PLAN.md</code></a>,
+  <b>which wins on any conflict</b>. Rules live in the docs named in its §2.
+</footer>
+
+</div>
+</body>
+</html>

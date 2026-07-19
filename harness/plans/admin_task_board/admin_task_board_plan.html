@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin task board — the plan, visualised (F-22)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBE9E7; --violet: #6B4FBB; --violet-soft: #EDE8FA;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2837B; --red-soft: #3A1714; --violet: #A992F0; --violet-soft: #241C3D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2837B; --red-soft: #3A1714; --violet: #A992F0; --violet-soft: #241C3D;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBE9E7; --violet: #6B4FBB; --violet-soft: #EDE8FA;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 940px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.35rem; font-weight: 600; margin: 0; }
+  h3 { font-size: 1.02rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 72ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .topnav { display: flex; flex-wrap: wrap; gap: 8px; margin: 32px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line); }
+  .topnav a { font-family: var(--mono); font-size: 0.74rem; text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: var(--surface); }
+  .topnav a:hover { border-color: var(--accent); }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 72ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 72ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .danger { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 72ch; }
+  .danger p { margin: 0 0 8px; } .danger p:last-child { margin: 0; }
+  .chip { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 999px; padding: 2px 9px; white-space: nowrap; display: inline-block; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.red { color: var(--red); background: var(--red-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .chip.violet { color: var(--violet); background: var(--violet-soft); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 13px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 9px 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, .danger code, pre code, li code { border: none; background: transparent; padding: 0; }
+  pre.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; overflow-x: auto; font-family: var(--mono); font-size: 0.8rem; line-height: 1.65; margin: 16px 0; }
+  pre.diagram .c { color: var(--muted); }
+  pre.diagram .ok { color: var(--done); font-weight: 700; }
+  pre.diagram .warn { color: var(--amber); font-weight: 700; }
+  pre.diagram .bad { color: var(--red); font-weight: 700; }
+  pre.diagram .hi { color: var(--accent); font-weight: 700; }
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin: 16px 0; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+  .bcard .n { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard p { margin: 4px 0 0; font-size: 0.86rem; }
+  .strip { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 16px 0; }
+  .snode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; font-family: var(--mono); font-size: 0.76rem; }
+  .snode b { display: block; color: var(--accent); font-size: 0.68rem; letter-spacing: 0.06em; }
+  .sarrow { color: var(--muted); font-family: var(--mono); }
+  ul.plain { margin: 0 0 14px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 72ch; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · page plan · 2026-07-19</div>
+  <h1>Admin task board — the plan</h1>
+  <p class="lede">A picture of <code>admin_task_board_PLAN.md</code>: what
+  <code>/admin/staff/task-board</code> is, the contract behind it, and the thirteen
+  reference defects it removes on the way in.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">route</span><span class="v">/admin/staff/task-board</span></div>
+    <div class="fact"><span class="k">auth</span><span class="v">manager+</span></div>
+    <div class="fact"><span class="k">endpoints</span><span class="v">5 · 3 read 2 write</span></div>
+    <div class="fact"><span class="k">behaviors</span><span class="v">18</span></div>
+    <div class="fact"><span class="k">defects out</span><span class="v">13</span></div>
+    <div class="fact"><span class="k">task</span><span class="v">F-22</span></div>
+  </div>
+  <nav class="topnav">
+    <a href="#s1">01 anatomy</a>
+    <a href="#s2">02 components</a>
+    <a href="#s3">03 state</a>
+    <a href="#s4">04 BE contract</a>
+    <a href="#s5">05 status model</a>
+    <a href="#s6">06 behaviors</a>
+    <a href="#s7">07 defects out</a>
+    <a href="#s8">08 task mapping</a>
+    <a href="#s9">09 decisions</a>
+  </nav>
+</header>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy</h2></div>
+  <pre class="diagram">┌──────────────────────────────────────────────────────────────────┐
+│ <span class="hi">①</span> Nhân viên / Bảng công việc                  [+ Giao việc]   │  header
+├──────────────────────────────────────────────────────────────────┤
+│ <span class="hi">②</span> [📅 19/06/2026 ▾] [vai trò ▾] [trạng thái ▾] [tìm…]        │  filter bar
+├──────────────────────────────────────────────────────────────────┤
+│ <span class="hi">③</span> ┌Tổng việc┐ ┌Đang làm┐ ┌Hoàn thành┐ ┌Quá hạn┐             │  KPI row
+│    │   18    │ │   4    │ │    9     │ │   2   │                 │
+├──────────────────────────────────────────────────────────────────┤
+│ <span class="hi">④</span> ▸ chef01    chef     5 việc  2 xong  40%  <span class="bad">! quá hạn</span>        │
+│    ▾ cash02    cashier  4 việc  3 xong  75%    [Giao việc]       │  staff table
+│ <span class="hi">⑤</span>   · Kiểm kê nguyên liệu  [cao]  21:00  [đang làm ▾]        │  ← lazy expand
+│      · Lau quầy thu ngân    [vừa]  18:00  [hoàn thành ▾]         │
+│    ▸ manager   manager  2 việc  1 xong  50%                      │
+│ <span class="hi">⑥</span> ▸ chef02    chef     0 việc   —      —                     │  ← zero-task staff
+├──────────────────────────────────────────────────────────────────┤
+│ <span class="hi">⑦</span> (empty-day / empty-filter — two different states)          │
+└──────────────────────────────────────────────────────────────────┘</pre>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Zone</th><th>Component</th><th>Data source</th></tr></thead>
+    <tbody>
+      <tr><td>①</td><td>Header</td><td><code>TaskBoardHeader</code></td><td>— (CTA opens the modal)</td></tr>
+      <tr><td>②</td><td>Filters</td><td><code>TaskBoardFilterBar</code></td><td><code>filters</code> in page state</td></tr>
+      <tr><td>③</td><td>KPIs</td><td><code>TaskBoardKpiRow</code> — 4 cards</td><td><code>metrics</code> from the stats query</td></tr>
+      <tr><td>④</td><td>Staff table</td><td><code>StaffTaskTable</code></td><td><code>staffStats[]</code>, client-filtered</td></tr>
+      <tr><td>⑤</td><td>Expanded row</td><td><code>ExpandedTaskList</code></td><td>lazy query, keyed by staff + date</td></tr>
+      <tr><td>⑥</td><td>Zero-task row</td><td><code>StaffTaskTable</code></td><td>LEFT JOIN — every active staff appears</td></tr>
+      <tr><td>⑦</td><td>Empty states</td><td>two named branches</td><td>see §06 behaviors 15</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="golden">
+    <p><strong>The core loop.</strong> Pick a date → read the KPIs → scan the staff table →
+    expand a row → assign work. Everything else is in service of those five beats.</p>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Component tree</h2></div>
+  <pre class="diagram">fe/src/app/(dashboard)/admin/staff/task-board/
+├── page.tsx                  <span class="c">coordinator — owns all UI state, both queries</span>   <span class="hi">AD-3</span>
+├── loading.tsx               <span class="c">route skeleton mirroring the real layout</span>       <span class="hi">AD-3</span>  <span class="ok">NEW</span>
+└── components/
+    ├── TaskBoardHeader.tsx      <span class="c">breadcrumb + "Giao việc" CTA</span>              <span class="hi">AD-3</span>
+    ├── TaskBoardFilterBar.tsx   <span class="c">date · role · status · search</span>             <span class="hi">AD-3</span>
+    ├── TaskBoardKpiRow.tsx      <span class="c">4× KPICard, skeleton-aware</span>                <span class="hi">AD-3</span>
+    ├── StaffTaskTable.tsx       <span class="c">rows + expand chevron + per-row assign</span>    <span class="hi">AD-3</span>
+    ├── ExpandedTaskList.tsx     <span class="c">tasks + status control + retry on error</span>   <span class="hi">AD-4</span>
+    └── CreateTaskModal.tsx      <span class="c">RHF + Zod, conditionally mounted</span>          <span class="hi">AD-4</span>
+
+fe/src/features/admin/tasks.api.ts   <span class="c">getTaskStats · getStaffTasks · createTask · updateTaskStatus</span>
+fe/src/types/task.ts                 <span class="c">Task · StaffTaskStat · TaskBoardFilters · TaskStatus</span></pre>
+
+  <div class="golden">
+    <p><strong>No Zustand store.</strong> Zustand is for cross-page client state
+    (<code>FE_STATE.md §1</code>). Everything here is either server state in the Query cache or
+    single-page UI state in <code>page.tsx</code>. The reference reached the same conclusion —
+    adopted deliberately, not inherited.</p>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>State ownership</h2></div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Data</th><th>Kind</th><th>Owner</th></tr></thead>
+    <tbody>
+      <tr><td><code>filters</code> — date, role, status, search</td><td><span class="chip plan">page UI</span></td><td><code>page.tsx useState</code></td></tr>
+      <tr><td><code>expandedStaffId</code></td><td><span class="chip plan">page UI</span></td><td><code>page.tsx useState</code> — one value ⇒ one row open</td></tr>
+      <tr><td><code>modalOpen</code> + <code>defaultStaffId</code></td><td><span class="chip plan">page UI</span></td><td><code>page.tsx useState</code> — modal mounts conditionally so the form resets</td></tr>
+      <tr><td>Day metrics + staff rows</td><td><span class="chip violet">server</span></td><td>Query <code>['admin','tasks','stats', date]</code></td></tr>
+      <tr><td>One staff member's tasks</td><td><span class="chip violet">server</span></td><td>Query <code>['admin','tasks', staffId, date]</code> — lazy</td></tr>
+      <tr><td>Staff dropdown list</td><td><span class="chip violet">server</span></td><td>Query <code>['admin','staff']</code> — modal-local</td></tr>
+      <tr><td>Create-form fields</td><td><span class="chip amber">local form</span></td><td>RHF inside <code>CreateTaskModal</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The broadcast bus is the cache, not props</h3>
+  <pre class="diagram">   CreateTaskModal                                page.tsx
+        │  POST 201                                    │
+        │                                              │
+        ├─ invalidate ['admin','tasks','stats', <span class="hi">both dates</span>] ──┐
+        ├─ invalidate ['admin','tasks', staffId, date]  ──┤
+        │                                                 ▼
+        │                                        <span class="ok">every subscriber refetches itself</span>
+        │                                        KPI row · staff table · expanded list
+        └─ <span class="c">no callback, no prop, no store write carries data back up the tree</span></pre>
+
+  <h3>Server filter vs client filter</h3>
+  <pre class="diagram">  <span class="hi">date</span>    ──▶ re-keys BOTH queries      ──▶ <span class="warn">network</span>
+  <span class="hi">role</span>    ─┐
+  <span class="hi">status</span>  ─┼─▶ useMemo over staffStats[] ──▶ <span class="ok">no network, instant</span>
+  <span class="hi">search</span>  ─┘</pre>
+  <p>This split is <em>why</em> <code>byStatus</code> must ride in the stats DTO: the status
+  filter runs client-side, so it can only work if the per-status counts are already on hand.</p>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>BE contract</h2></div>
+
+  <h3>Endpoints — 5 (3 read · 2 write)</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Route</th><th>Task</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><code>GET /admin/tasks/stats?date=</code></td><td><span class="chip plan">AD-1</span></td><td>Day rollup: <code>metrics</code> + <code>staffStats[]</code> (LEFT JOIN — zero-task staff included)</td></tr>
+      <tr><td>2</td><td><code>GET /admin/tasks?staffId=&amp;date=</code></td><td><span class="chip plan">AD-1</span></td><td>One member's tasks, ordered priority then <code>due_at</code></td></tr>
+      <tr><td>3</td><td><code>POST /admin/tasks</code></td><td><span class="chip plan">AD-2</span></td><td>Create; <code>assigned_by</code> from JWT; <strong>201</strong></td></tr>
+      <tr><td>4</td><td><code>PATCH /admin/tasks/:id/status</code></td><td><span class="chip plan">AD-2</span></td><td><span class="chip done">new</span> Advance status through the §05 machine; stamps <code>completed_at</code></td></tr>
+      <tr><td>5</td><td><code>GET /staff?limit=100</code></td><td><span class="chip amber">staff domain</span></td><td>Modal dropdown only — contract owned elsewhere, linked not re-derived</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Deferred by decision:</strong> <code>PATCH /admin/tasks/:id</code> (edit) and
+  <code>DELETE /admin/tasks/:id</code>. The reference's "edit" silently inserts a duplicate row;
+  we ship neither rather than half of one. <code>deleted_at</code> exists from day one so the
+  delete path is a pure additive follow-up.</p>
+
+  <h3>Schema — <code>staff_tasks</code></h3>
+  <pre class="diagram">┌─ staff_tasks ────────────────────────────────────────────────────┐
+│ id             CHAR(36) PK                                       │
+│ assigned_to    CHAR(36) FK→staff   <span class="c">index (assigned_to, due_at)</span>    │
+│ assigned_by    CHAR(36) FK→staff   <span class="c">from the JWT, never the body</span>   │
+│ title          VARCHAR(200)                                      │
+│ description    TEXT NULL                                         │
+│ priority       ENUM(high, medium, low)                           │
+│ status         ENUM(<span class="ok">pending, in_progress, completed, cancelled</span>)  │
+│                     <span class="bad">↑ 4 values — 'overdue' is NOT here</span>            │
+│ due_at         DATETIME            <span class="c">DATE(due_at) is the day key</span>    │
+│ due_time_start TIME NULL           <span class="c">optional display window</span>        │
+│ due_time_end   TIME NULL                                         │
+│ notes          TEXT NULL                                         │
+│ completed_at   DATETIME NULL       <span class="c">stamped on → completed</span>         │
+│ created_at · updated_at · deleted_at                             │
+└──────────────────────────────────────────────────────────────────┘
+  <span class="c">Full column spec promoted into DB_SCHEMA.md §4.7 by this task.</span></pre>
+
+  <h3>Cache map</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Key</th><th>staleTime</th><th>Refetch</th><th>Invalidated by</th></tr></thead>
+    <tbody>
+      <tr><td><code>['admin','tasks','stats', date]</code></td><td>30 s</td><td>every 60 s</td><td>create · status change</td></tr>
+      <tr><td><code>['admin','tasks', staffId, date]</code></td><td>15 s</td><td>on expand (lazy)</td><td>create · status change</td></tr>
+      <tr><td><code>['admin','staff']</code></td><td>5 min</td><td>on modal open</td><td>staff-domain writes</td></tr>
+    </tbody>
+  </table></div>
+  <div class="golden">
+    <p><strong>No Redis — by rule, not by omission.</strong> <code>ARCHITECTURE.md §4</code>
+    scopes Redis to the catalog cache and auth rate-limiting. Task reads are low-volume,
+    manager-only, and must never be stale against a write the same manager just made.</p>
+  </div>
+
+  <h3>Wire shapes</h3>
+  <pre class="diagram"><span class="c">1 · GET /admin/tasks/stats?date=2026-07-19 → 200</span>
+{ "data": {
+    "metrics": { "totalTasks": 18, "pendingTasks": 5, "inProgressTasks": 4,
+                 "completedTasks": 9, "overdueTasks": 2 },
+    "staffStats": [
+      { "staffId": "8f1c…", "staffName": "chef01", "role": "chef",
+        "assignedCount": 5, "completionRate": 40,
+        <span class="ok">"byStatus": { "pending": 2, "inProgress": 1, "completed": 2, "cancelled": 0 },</span>
+        <span class="ok">"overdueCount": 1,</span> "hasOverdue": true } ] } }
+        <span class="c">↑ new vs the reference — this is what makes the status filter real</span>
+        <span class="bad">✗ qualityScore — deleted by decision, it was completionRate/20</span>
+
+<span class="c">2 · GET /admin/tasks?staffId=8f1c…&amp;date=2026-07-19 → 200</span>
+{ "data": [ { "id": "3a7e…", "staffId": "8f1c…", "name": "Kiểm kê nguyên liệu",
+    "description": "Đếm tồn kho tủ lạnh 2", "priority": "high", "status": "in_progress",
+    <span class="ok">"isOverdue": false,</span> "dueDate": "2026-07-19", "dueAt": "2026-07-19T21:00:00Z",
+    "dueTimeStart": null, "dueTimeEnd": null, "notes": "Báo lại quản lý sau khi xong",
+    "completedAt": null, "assignedBy": "b2d0…" } ] }
+    <span class="c">nullable columns serialize as real null, never "" (F-16 wire rule)</span>
+
+<span class="c">3 · POST /admin/tasks → 201</span>          <span class="c">4 · PATCH /admin/tasks/:id/status → 200</span>
+{ "staffId": "8f1c…",                    { "status": "completed" }
+  "name": "Kiểm kê nguyên liệu",
+  "priority": "high",                    <span class="c">both return the full task object</span>
+  "dueAt": "2026-07-19T21:00:00Z", … }</pre>
+
+  <h3>Errors — the standard envelope</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Trigger</th><th>Status</th><th>Code</th></tr></thead>
+    <tbody>
+      <tr><td>Missing <code>staffId</code>; bad date / priority / <code>dueAt</code>; name outside 1–200</td><td>400</td><td><code>VALIDATION_FAILED</code></td></tr>
+      <tr><td><code>staffId</code> is not an existing <strong>active</strong> staff member</td><td><span class="chip done">422</span></td><td><code>VALIDATION_FAILED</code></td></tr>
+      <tr><td>Task id unknown or soft-deleted</td><td>404</td><td><code>NOT_FOUND</code></td></tr>
+      <tr><td>Illegal status transition</td><td>409</td><td><code>CONFLICT</code></td></tr>
+      <tr><td>Caller below <code>manager</code></td><td>403</td><td><code>FORBIDDEN</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>The reference returns <strong>500</strong> for a bad <code>staffId</code> — it lets the FK
+  constraint reject the insert and maps the driver error to <code>INTERNAL</code>. That is
+  caller error reported as server error; we pre-check the staff row instead.</p>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>The status model — this plan's central correction</h2></div>
+
+  <div class="danger">
+    <p><strong>What the reference does.</strong> <code>staff_tasks.status</code> is written once
+    as <code>pending</code> and never changes. There is no UPDATE query anywhere in the codebase,
+    no route that advances status, and no job that flips overdue rows. Yet the stats queries,
+    the KPI row, the completion percentages and the overdue highlight are all built on the three
+    values that are unreachable.</p>
+    <p><strong>Consequence on a live database:</strong> "Hoàn thành" = 0, "Đang thực hiện" = 0,
+    "Quá hạn" = 0, every completion rate 0 %, the overdue badge never appears — permanently.
+    The board cannot show progress.</p>
+  </div>
+
+  <pre class="diagram">                 ┌──────────────► cancelled ◄──────────┐
+                 │                                      │
+   (create) → pending ──────► in_progress ──────► completed
+                 │                                  │
+                 └──────────────────────────────────┘   <span class="c">direct complete allowed</span>
+
+   <span class="ok">STORED</span>    pending · in_progress · completed · cancelled        <span class="c">4 values</span>
+   <span class="warn">DERIVED</span>   overdue = status IN ('pending','in_progress')
+                       AND due_at &lt; NOW()
+                       <span class="hi">↑ computed in the read query</span>
+                       <span class="c">no job · no write · cannot drift · correct the instant a deadline passes</span></pre>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>From → To</th><th></th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td><code>pending</code> → <code>in_progress</code> / <code>completed</code> / <code>cancelled</code></td><td><span class="chip done">allow</span></td><td>direct complete is fine for short tasks</td></tr>
+      <tr><td><code>in_progress</code> → <code>completed</code> / <code>cancelled</code> / <code>pending</code></td><td><span class="chip done">allow</span></td><td>back to pending = "un-start"</td></tr>
+      <tr><td><code>completed</code> → <code>in_progress</code> / <code>pending</code></td><td><span class="chip done">allow</span></td><td>correcting a mis-click; clears <code>completed_at</code></td></tr>
+      <tr><td><code>completed</code> → <code>cancelled</code></td><td><span class="chip red">409</span></td><td>cancelling what is already done is meaningless</td></tr>
+      <tr><td><code>cancelled</code> → anything</td><td><span class="chip red">409</span></td><td>terminal; assign a new task instead</td></tr>
+      <tr><td>any → itself</td><td><span class="chip amber">200 no-op</span></td><td>idempotent, so a double-click is harmless</td></tr>
+    </tbody>
+  </table></div>
+  <p>Transition validation lives in the <strong>service</strong> layer — handlers shape,
+  services decide (<code>BE_STATE.md</code>).</p>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors — the acceptance criteria</h2></div>
+  <div class="bgrid">
+    <div class="bcard"><span class="n">01</span><p>Entering loads today's date by default.</p></div>
+    <div class="bcard"><span class="n">02</span><p>Changing the date re-keys both queries; KPIs and table refetch.</p></div>
+    <div class="bcard"><span class="n">03</span><p>The four KPIs show <strong>real</strong> counts — including non-zero completed / in-progress / overdue.</p></div>
+    <div class="bcard"><span class="n">04</span><p>The table lists <strong>every active staff member</strong>, including zero-task ones.</p></div>
+    <div class="bcard"><span class="n">05</span><p>Clicking a row expands it and lazily fetches that member's tasks.</p></div>
+    <div class="bcard"><span class="n">06</span><p>Expanding a second row collapses the first.</p></div>
+    <div class="bcard"><span class="n">07</span><p>An expanded row shows name · description · priority · time · status · notes.</p></div>
+    <div class="bcard"><span class="n">08</span><p>Changing a status calls endpoint 4 and refreshes both keys.</p></div>
+    <div class="bcard"><span class="n">09</span><p>An illegal transition surfaces the 409 as a toast; the control reverts.</p></div>
+    <div class="bcard"><span class="n">10</span><p>Header CTA opens the modal with no staff pre-selected; the row button pre-selects that member.</p></div>
+    <div class="bcard"><span class="n">11</span><p>Submitting POSTs, closes on 201, toasts, and refreshes KPIs + row counts + the open list.</p></div>
+    <div class="bcard"><span class="n">12</span><p>Creating for <strong>another date</strong> still refreshes the visible KPIs.</p></div>
+    <div class="bcard"><span class="n">13</span><p>A bad <code>staffId</code> yields a 422 with a field message, never a 500 toast.</p></div>
+    <div class="bcard"><span class="n">14</span><p>Role / status / search filter client-side with no refetch — and the status filter genuinely works for all four values.</p></div>
+    <div class="bcard"><span class="n">15</span><p>Empty day and filtered-to-zero show <strong>different</strong> messages and actions.</p></div>
+    <div class="bcard"><span class="n">16</span><p>An expanded-row load error shows an inline retry that refetches in place.</p></div>
+    <div class="bcard"><span class="n">17</span><p>Stats auto-refresh every 60 s while mounted.</p></div>
+    <div class="bcard"><span class="n">18</span><p>A non-manager gets 403 from every endpoint and an access-denied state.</p></div>
+  </div>
+
+  <h3>The five named render branches</h3>
+  <pre class="diagram">  stats query ──┬─ in flight ────────────────▶ <span class="warn">loading</span>       KPI + table skeletons
+                ├─ failed ───────────────────▶ <span class="bad">error</span>         panel + retry
+                └─ loaded ──┬─ 0 tasks today ─▶ <span class="hi">empty-day</span>     "Chưa có công việc nào cho ngày này" + CTA
+                            ├─ filter → 0 ────▶ <span class="hi">empty-filter</span>  "Không có nhân viên khớp bộ lọc" + Xoá bộ lọc
+                            └─ rows &gt; 0 ──────▶ <span class="ok">ready</span>         the table
+
+  <span class="c">empty-day and empty-filter are separate branches with different copy and different
+  actions. The reference shows one string for both — so a mis-set filter looks like an empty day.</span></pre>
+</section>
+
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Reference defects designed out</h2></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>#</th><th></th><th>Reference finding</th><th>Countermeasure</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><span class="chip red">high</span></td><td><code>status</code> write-once <code>pending</code> — no UPDATE, no route, no job</td><td>Endpoint 4 + the §05 transition machine</td></tr>
+      <tr><td>2</td><td><span class="chip red">high</span></td><td><code>overdue</code> stored as a value nothing ever sets</td><td>Not stored — derived read-side; no sweeper job</td></tr>
+      <tr><td>3</td><td><span class="chip amber">med</span></td><td><code>qualityScore = completionRate/20</code> presented as an independent metric</td><td>Dropped from the DTO and the UI</td></tr>
+      <tr><td>4</td><td><span class="chip amber">low</span></td><td>Invalid <code>assigned_to</code> → FK reject → 500</td><td>Pre-validate active staff → 422</td></tr>
+      <tr><td>5</td><td><span class="chip amber">low</span></td><td>Create invalidates only <code>task.dueDate</code>; KPIs go stale</td><td>Invalidate both dates</td></tr>
+      <tr><td>6</td><td><span class="chip amber">low</span></td><td>Status filter offers 4 values, only <code>overdue</code> wired — and always false</td><td><code>byStatus</code> counts; all four filter for real</td></tr>
+      <tr><td>7</td><td><span class="chip amber">low</span></td><td>Sibling "edit" calls create → duplicate row</td><td>No edit until a real <code>PATCH</code> exists</td></tr>
+      <tr><td>8</td><td><span class="chip amber">low</span></td><td><code>description</code> stored, round-trips, never rendered</td><td>Rendered in the expanded row</td></tr>
+      <tr><td>9</td><td><span class="chip amber">low</span></td><td><code>dueTime</code> mandatory at create but display reads the <em>optional</em> window → can show "—"</td><td>Display the <code>due_at</code> clock; the window is genuinely optional</td></tr>
+      <tr><td>10</td><td><span class="chip amber">low</span></td><td>No segment <code>loading.tsx</code>; KPI loading is the literal string <code>'…'</code>; the table region unmounts during load</td><td>Segment <code>loading.tsx</code> + skeletons everywhere</td></tr>
+      <tr><td>11</td><td><span class="chip amber">low</span></td><td>One empty-state string for both empty cases</td><td>Two branches, two messages, two actions</td></tr>
+      <tr><td>12</td><td><span class="chip amber">low</span></td><td>Expanded-row error has no retry</td><td>Inline retry button</td></tr>
+      <tr><td>13</td><td><span class="chip amber">low</span></td><td>Modal staff select submittable while still empty</td><td>Disabled + "Đang tải…" until resolved</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="s8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Task mapping</h2></div>
+  <div class="strip">
+    <div class="snode"><b>AD-0</b>migration</div><span class="sarrow">→</span>
+    <div class="snode"><b>AD-1</b>BE reads</div><span class="sarrow">→</span>
+    <div class="snode"><b>AD-2</b>BE writes</div><span class="sarrow">→</span>
+    <div class="snode"><b>AD-3</b>FE read half</div><span class="sarrow">→</span>
+    <div class="snode"><b>AD-4</b>FE write half</div>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Row</th><th>Slice</th><th>Receipt</th></tr></thead>
+    <tbody>
+      <tr><td>AD-0</td><td><code>staff_tasks</code> migration + sqlc queries; promote the table into <code>DB_SCHEMA.md</code></td><td>migration up→down→up</td></tr>
+      <tr><td>AD-1</td><td>Endpoints 1 + 2, incl. derived <code>isOverdue</code> / <code>byStatus</code></td><td>curl: populated day, empty day, bad date</td></tr>
+      <tr><td>AD-2</td><td>Endpoints 3 + 4, transition machine, 422 staff pre-check</td><td>curl: 201, each transition, 409, 422</td></tr>
+      <tr><td>AD-3</td><td>Route + skeletons + KPIs + table + expand</td><td>screenshot per render branch</td></tr>
+      <tr><td>AD-4</td><td>Modal + status control + invalidation</td><td>screenshot: create → KPIs move</td></tr>
+    </tbody>
+  </table></div>
+  <p>These five rows are registered when the AD phase opens. This plan is the F-22 deliverable,
+  not the implementation — <code>OVERALL_PLAN.md</code> owns phase sequencing,
+  <code>TASKS.md</code> owns status.</p>
+</section>
+
+<section id="s9">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Decisions, flags &amp; verify plan</h2></div>
+
+  <h3>Decided</h3>
+  <ul class="plain">
+    <li><code>overdue</code> is derived, never stored — 4-value stored enum.</li>
+    <li><code>qualityScore</code> does not ship. A real metric needs a real captured signal, not a rescaled percentage.</li>
+    <li>No Redis for the task domain — <code>ARCHITECTURE.md §4</code> applied.</li>
+    <li>v1 ships create + status-change; edit and delete deferred rather than half-shipped.</li>
+    <li>Neutral F-7 tokens — admin surface, not the customer dark/orange shell.</li>
+    <li>This plan owns the <code>/admin/tasks</code> contract; the sibling <code>admin_todo_list</code> plan links to it.</li>
+  </ul>
+
+  <div class="flag">
+    <p><strong>⚠️ FLAG — task-id collision.</strong> Two <code>TASKS.md</code> rows both claim
+    <strong>F-20</strong>, and two both claim <strong>F-24</strong> — parallel sessions sharing
+    one working tree, the same failure as the three-way <strong>F-10</strong> collision in
+    <code>STATE.md</code> Session 7. This plan took <strong>F-22</strong> to stay clear; someone
+    must renumber the duplicates.</p>
+  </div>
+
+  <div class="flag">
+    <p><strong>💡 SUGGESTION — the assignee has no surface.</strong> Both pages reading
+    <code>staff_tasks</code> are <code>manager+</code> gated, so a manager can assign work the
+    staff member cannot see in the system. A product gap, not a bug — out of scope here, but it
+    wants a ruling before the AD phase closes. Cheapest fix: <code>GET /me/tasks</code> plus a
+    panel on the staff surface.</p>
+  </div>
+
+  <div class="flag">
+    <p><strong>❓ CLARIFY — who marks a task done?</strong> Behavior 08 lets a <em>manager</em>
+    move a status. If staff should mark their own work complete, endpoint 4's auth widens to
+    "manager+ <em>or</em> the assignee" — and that needs the surface above. Defaulting to
+    <code>manager+</code> only until the owner rules.</p>
+  </div>
+
+  <h3>Verify plan</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Task</th><th>Receipt</th></tr></thead>
+    <tbody>
+      <tr><td>AD-0</td><td><code>goose up → down → up</code> clean; <code>staff_tasks</code> reads "full" in <code>DB_SCHEMA.md</code></td></tr>
+      <tr><td>AD-1</td><td>curl: populated day · empty day · bad date 400 · non-manager 403; a task past <code>due_at</code> shows <code>isOverdue: true</code> <strong>with no job running</strong></td></tr>
+      <tr><td>AD-2</td><td>curl: create 201 · each legal transition 200 · <code>completed</code>→<code>cancelled</code> 409 · unknown staff 422 · unknown id 404</td></tr>
+      <tr><td>AD-3</td><td>screenshots of each render branch</td></tr>
+      <tr><td>AD-4</td><td>screenshot: create for <strong>tomorrow</strong> while viewing <strong>today</strong> → today's KPIs still refresh</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer>
+  Written 2026-07-19 for task F-22, from
+  <code>reference/docs/system/08_pages/admin/admin_task_board/</code> (7 docs).
+  Snapshot of <code>admin_task_board_PLAN.md</code>, which wins on any conflict.
+  Rules live in the docs named in that plan's §2 — linked, never restated.
+</footer>
+
+</div>
+</body>
+</html>
