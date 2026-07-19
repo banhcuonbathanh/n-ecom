@@ -19,6 +19,24 @@
 
 ## Log (newest on top)
 
+### F-15 amendment — cart-store §04 (nhân · canh · combos + how Zustand works) · 2026-07-19
+**AC:** owner asked to "add visual and explain what happen when client add select nhân/canh, add combos product, how zustand work" → a dedicated section on `how-it-works.html` with visuals, faithful to PLAN.md (page owns nothing), no structural drift.
+**Receipt:**
+```
+$ grep -nE 'href="#(map|load|add|cart|state|order|redis)"|sec-num">[0-9]' how-it-works.html   # topnav 01–07 + sec-nums match, new #cart=04
+  ...01 map · 02 load · 03 add · 04 cart · 05 state · 06 order · 07 redis
+$ echo sections $(grep -c '<section' …) / $(grep -c '</section>' …)   # 7 / 7
+$ echo svg $(grep -c '<svg' …) / $(grep -c '</svg>' …)                # 8 / 8  (+1 new anatomy diagram)
+$ echo div $(grep -o '<div' … | wc -l) / $(grep -o '</div>' … | wc -l) # 159 / 159 balanced
+$ grep -nE '§0[0-9]' how-it-works.html   # all cross-refs resolve: §07 redis, §06 orders, §02/§03 valid — no stale §04/§05/§06
+# headless-Chrome render → screenshot (dark theme):
+#   scratchpad/how-it-works-s04.png (full) + s04-body.png (crop)
+#   confirms: nhân pills (single vs multi + "min 1 🔒" lock), canh stepper, canh-gate flow,
+#   Zustand anatomy SVG (STATE/ACTIONS/SELECTORS · writers→set() · subscribers←selector · persist→localStorage),
+#   5-step write-cycle, both callouts — no layout breakage.
+```
+**Verdict:** AC met — content-only amendment to an inventoried file (Hard Rule 6 n/a: file purpose unchanged), committed straight to `main`.
+
 <!-- TEMPLATE:
 
 ### <TASK-ID> — <title> · YYYY-MM-DD

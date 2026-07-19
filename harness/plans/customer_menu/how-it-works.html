@@ -207,6 +207,19 @@
   .warn { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 18px 0; max-width: 76ch; font-size: 0.9rem; }
   .warn b { color: var(--red); }
   ul.plain { margin: 0 0 14px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+
+  /* ---- nhân pills + canh stepper + surface mock (section 04) ---- */
+  .mock { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 12px 14px; margin: 12px 0; max-width: 66ch; }
+  .mock .mt { font-family: var(--sans); font-weight: 600; font-size: 0.92rem; margin-bottom: 2px; }
+  .mock .md { font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; }
+  .mock .lid { margin: 8px 0 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px; align-items: center; }
+  .pill { font-family: var(--mono); font-size: 0.74rem; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; background: var(--surface); color: var(--muted); white-space: nowrap; }
+  .pill.on { border-color: var(--amber); background: var(--amber-soft); color: var(--amber); font-weight: 700; }
+  .pill.lock { opacity: 0.8; }
+  .stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; font-family: var(--mono); font-size: 0.8rem; vertical-align: middle; }
+  .stepper b { padding: 3px 9px; min-width: 22px; text-align: center; }
+  .stepper span { padding: 3px 11px; background: var(--amber-soft); color: var(--amber); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -245,9 +258,10 @@
   <a href="#map">01 big picture</a>
   <a href="#load">02 first load + loading strategy</a>
   <a href="#add">03 add to cart</a>
-  <a href="#state">04 state across components/pages</a>
-  <a href="#order">05 POST /orders → BE → DB</a>
-  <a href="#redis">06 redis life</a>
+  <a href="#cart">04 nhân · canh · combos + zustand</a>
+  <a href="#state">05 state across components/pages</a>
+  <a href="#order">06 POST /orders → BE → DB</a>
+  <a href="#redis">07 redis life</a>
 </nav>
 
 <!-- ================================================================ -->
@@ -418,7 +432,7 @@
       <span class="note">The skeleton mirrors the real layout — a deliberate upgrade over the reference's centered spinner.</span></div></li>
     <li><span class="n">3</span><div class="body"><span class="actor rsc who">next server</span> prefetches <b>all three catalog queries in parallel</b>: <code>GET /products</code>, <code>GET /categories</code>, <code>GET /combos</code>.</div></li>
     <li><span class="n">4</span><div class="body"><span class="actor api who">gin api</span> handles each read: service asks <span class="actor redis">redis</span> for <code>products:list</code> / <code>categories:list</code> / <code>combos:list</code>.
-      <span class="note"><b>Warm (normal case):</b> Redis hit → JSON straight back, MySQL untouched. <b>Cold:</b> miss → <span class="actor db">mysql</span> SELECT → Redis SET with 5-min TTL → JSON back. Redis down? <b>Fail-open</b>: serve from MySQL anyway (§06).</span></div></li>
+      <span class="note"><b>Warm (normal case):</b> Redis hit → JSON straight back, MySQL untouched. <b>Cold:</b> miss → <span class="actor db">mysql</span> SELECT → Redis SET with 5-min TTL → JSON back. Redis down? <b>Fail-open</b>: serve from MySQL anyway (§07).</span></div></li>
     <li><span class="n">5</span><div class="body"><span class="actor rsc who">next server</span> renders the page HTML and serializes the three query results into a <code>HydrationBoundary</code>.</div></li>
     <li><span class="n">6</span><div class="body"><span class="actor client who">browser</span> hydrates: client components mount and their <code>useProducts()</code> / <code>useCategories()</code> / <code>useCombos()</code> hooks find the cache <b>already full</b>.
       <span class="note"><b>Zero-spinner first paint.</b> Identical query keys (from <code>keys.ts</code>) are what make the RSC prefetch and the client hooks hit the same cache entries.</span></div></li>
@@ -476,7 +490,7 @@ focus   refetch-on-focus stays ON → a menu left open on a table tablet
   fold + fixed aspect-ratio boxes so cards never reflow.</p>
 
   <p><b>Tier 3 — mutation</b> doesn't exist for the cart (next section) and shows up exactly once on
-  this page: the pessimistic <code>POST /orders</code> in §05.</p>
+  this page: the pessimistic <code>POST /orders</code> in §06.</p>
 </section>
 
 <!-- ================================================================ -->
@@ -555,8 +569,150 @@ focus   refetch-on-focus stays ON → a menu left open on a table tablet
 </section>
 
 <!-- ================================================================ -->
+<section id="cart">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Inside the cart store — nhân · canh · combos, and how Zustand actually works</h2></div>
+
+  <p>§03 showed the fan-out; this section opens the box. The three things a guest builds — a
+  <b>nhân</b> choice, a <b>canh</b> bowl, a <b>combo</b> — all land as rows in <em>one</em> Zustand
+  store, and that store's three mechanics (<code>set()</code>, selector subscriptions,
+  <code>persist</code>) explain every re-render §03 waved at.</p>
+
+  <h3>1 · Nhân — the ₫0 topping that becomes the line id</h3>
+  <p>Nhân (fillings) are not a separate field — they <b>are</b> the ₫0 toppings joined into each
+  product (PLAN §3.4). The pill widget behaves differently by surface:</p>
+
+  <div class="mock">
+    <div class="mt">Bánh cuốn trứng — product card</div>
+    <div class="md">single-select · first option pre-selected · plain <code>useState</code> inside the card</div>
+    <div class="pills"><span class="pill on">Mộc nhĩ ✓</span><span class="pill">Nhân thịt</span><span class="pill">Chay</span></div>
+    <div class="lid"><span class="seg kind">product</span><span class="seg pid">_p12…36</span><span class="seg vart">_t2</span><span class="eq">→</span><span style="font-size:.82rem">exactly one nhân id in the tail</span></div>
+  </div>
+  <div class="mock">
+    <div class="mt">Suất đầy đủ — combo card</div>
+    <div class="md">multi-select · "Nhân thịt" default · the last on-pill can't be deselected</div>
+    <div class="pills"><span class="pill on">Nhân thịt ✓</span><span class="pill on">Mộc nhĩ ✓</span><span class="pill">Chay</span><span class="pill lock">min 1 🔒</span></div>
+    <div class="lid"><span class="seg kind">combo</span><span class="seg pid">_cb1…36</span><span class="seg vart">_t1t2</span><span class="eq">→</span><span style="font-size:.82rem">ids <b>sorted</b> so t2+t1 and t1+t2 collapse to one row</span></div>
+  </div>
+  <p>The selection lives as <code>useState</code> <em>on the card</em> until you tap add — nobody else
+  needs it yet (FE_STATE §1). On add, the card bakes it into the line id and calls
+  <code>addItem</code>. Because the variant is <em>in the id</em>, dedup is free: same nhân →
+  <code>qty +1</code>; different nhân → a new row. No comparison logic ever runs in the store.</p>
+
+  <div class="golden"><p><b>Why sorted ids matter:</b> picking Nhân thịt-then-Mộc nhĩ must equal picking
+  them the other way around. Sorting the id tail (<code>_t1t2</code>) makes the two strings identical,
+  so they merge into one row instead of splitting the tray.</p></div>
+
+  <h3>2 · Canh — a stepper, never a card</h3>
+  <p>Soup is filtered out of every list and out of search (<code>isSoupName</code>, PLAN §4.4-4) — a
+  guest can only pick canh from the stepper in <code>OrderSummary</code>, bound to the two real canh
+  products:</p>
+  <div class="mock">
+    <div class="mt">Canh — in the OrderSummary panel</div>
+    <div class="md">two rows bound to the two real soup products · writes <code>canh_*</code> lines to the <em>same</em> store</div>
+    <div class="pills" style="gap:18px">
+      <span style="font-size:.82rem">Canh có rau &nbsp;<span class="stepper"><span>–</span><b>2</b><span>+</span></span></span>
+      <span style="font-size:.82rem">Canh không rau &nbsp;<span class="stepper"><span>–</span><b>0</b><span>+</span></span></span>
+    </div>
+    <div class="lid"><span class="seg kind">canh</span><span class="seg pid">_p_canh_rau</span><span class="seg vart">_rau</span><span class="eq">→</span><span style="font-size:.82rem">its own line kind — from the stepper, not a card</span></div>
+  </div>
+  <div class="dflow">
+    <div class="drow"><div class="dq">tap "Thanh toán" with <b>zero</b> canh bowls?</div><span class="dyes">yes →</span><span class="dres r">gate fires: error toast + auto-open the cart list + scroll-and-shake the canh box</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">at least one canh bowl?</div><span class="dyes">→</span><span class="dres g">proceed → TableConfirmModal → POST /orders (§06)</span></div>
+  </div>
+  <p class="cap">The pill still <em>fires</em> even while dimmed — the canh gate is a guardrail, not a disabled button (PLAN §4.4-5).</p>
+
+  <h3>3 · Combo — one visible row, many wire items</h3>
+  <p>A combo card's multi-select nhân produces a single combo line
+  (<code>combo_&lt;id&gt;_&lt;sortedNhânIds&gt;</code>) shown as <em>one</em> row with a "Chi tiết"
+  expander. The combo payload is <b>ids-only</b> (PLAN §3.1-3): <code>ComboSection</code> joins names
+  and prices from the already-cached products query — never a second copy. What that one row unfolds
+  into downstream is the §06 four-shape pipeline; inside the store it stays a single deduped line.</p>
+
+  <h3>4 · How Zustand actually works — one store, outside React</h3>
+  <p>The cart store is created <b>once</b> by <code>create()&lt;persist&gt;</code> as a module-global
+  object. It lives <em>outside</em> the React tree — no <code>&lt;Provider&gt;</code>, no context. A
+  component reaches it by importing the hook and passing a <b>selector</b>; that is the entire wiring.</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 400" role="img" aria-label="Zustand cart store anatomy: writers call actions, subscribers read via selectors, persist writes a partialized slice to localStorage">
+    <!-- the store -->
+    <rect x="330" y="40" width="270" height="300" rx="12" class="abox" style="stroke:var(--amber);stroke-width:2"/>
+    <text x="465" y="61" class="tb tamber" text-anchor="middle">cart store · create()&lt;persist&gt;</text>
+    <rect x="346" y="74" width="238" height="72" rx="7" class="region"/>
+    <text x="356" y="90" class="t2 tamber" style="font-weight:700">STATE — the one source</text>
+    <text x="356" y="106" class="t2">lines[] · tableId · tableName</text>
+    <text x="356" y="122" class="t2">activeOrderId · orderNote</text>
+    <text x="356" y="139" class="t2 tred">lines[] = session-only ↓</text>
+    <rect x="346" y="154" width="238" height="78" rx="7" class="abox api" style="stroke:var(--amber)"/>
+    <text x="356" y="170" class="t2 tamber" style="font-weight:700">ACTIONS — only writers, each set()</text>
+    <text x="356" y="186" class="t2">addItem · setQty · removeItem</text>
+    <text x="356" y="202" class="t2">setNote · setActiveOrderId</text>
+    <text x="356" y="218" class="t2">clearCart (keeps identity fields)</text>
+    <rect x="346" y="240" width="238" height="54" rx="7" class="txbox"/>
+    <text x="356" y="256" class="t2 tgreen" style="font-weight:700">SELECTORS — derive on read</text>
+    <text x="356" y="272" class="t2">total() · itemCount()</text>
+    <text x="356" y="288" class="t2">recomputed each call → never stale</text>
+    <!-- writers left -->
+    <text x="123" y="58" class="t1 tamber" text-anchor="middle" style="font-weight:700">writers → call set()</text>
+    <rect x="24" y="72" width="205" height="42" rx="8" class="abox client"/>
+    <text x="126" y="89" class="t2" text-anchor="middle">ProductCard — tap add</text>
+    <text x="126" y="105" class="t2" text-anchor="middle">addItem(line)</text>
+    <rect x="24" y="128" width="205" height="42" rx="8" class="abox client"/>
+    <text x="126" y="145" class="t2" text-anchor="middle">OrderSummary canh stepper</text>
+    <text x="126" y="161" class="t2" text-anchor="middle">addItem / setQty(canh_*)</text>
+    <rect x="24" y="184" width="205" height="42" rx="8" class="abox client"/>
+    <text x="126" y="201" class="t2" text-anchor="middle">note field → setNote(text)</text>
+    <text x="126" y="217" class="t2" text-anchor="middle">(modal reads it back at POST)</text>
+    <line x1="229" y1="93" x2="344" y2="150" class="flowo" marker-end="url(#mo)"/>
+    <line x1="229" y1="149" x2="344" y2="178" class="flowo" marker-end="url(#mo)"/>
+    <line x1="229" y1="205" x2="344" y2="198" class="flowo" marker-end="url(#mo)"/>
+    <!-- subscribers right -->
+    <text x="800" y="58" class="t1 taccent" text-anchor="middle" style="font-weight:700">subscribers ← selector</text>
+    <rect x="700" y="72" width="200" height="42" rx="8" class="abox client"/>
+    <text x="800" y="89" class="t2" text-anchor="middle">CartBottomBar</text>
+    <text x="800" y="105" class="t2" text-anchor="middle">s =&gt; s.itemCount()</text>
+    <rect x="700" y="128" width="200" height="42" rx="8" class="abox client"/>
+    <text x="800" y="145" class="t2" text-anchor="middle">OrderSummary</text>
+    <text x="800" y="161" class="t2" text-anchor="middle">s =&gt; s.lines · total()</text>
+    <rect x="700" y="184" width="200" height="42" rx="8" class="abox client"/>
+    <text x="800" y="201" class="t2" text-anchor="middle">the card's own stepper</text>
+    <text x="800" y="217" class="t2" text-anchor="middle">s =&gt; s.lines.find(id)</text>
+    <line x1="600" y1="150" x2="698" y2="93" class="flowa" marker-end="url(#ma)"/>
+    <line x1="600" y1="172" x2="698" y2="149" class="flowa" marker-end="url(#ma)"/>
+    <line x1="600" y1="200" x2="698" y2="205" class="flowa" marker-end="url(#ma)"/>
+    <text x="649" y="252" class="t2 taccent" text-anchor="middle">re-renders only if THIS</text>
+    <text x="649" y="266" class="t2 taccent" text-anchor="middle">selector's slice changed</text>
+    <!-- persist bottom -->
+    <rect x="330" y="356" width="270" height="34" rx="7" class="delbox" opacity="0.9"/>
+    <text x="465" y="377" class="t2 tred" text-anchor="middle" style="font-weight:700">persist · partialize → localStorage</text>
+    <line x1="465" y1="294" x2="465" y2="354" class="resp" marker-end="url(#mm)"/>
+    <text x="612" y="332" class="t2">keeps only orderNote,</text>
+    <text x="612" y="346" class="t2">activeOrderId, tableId, tableName</text>
+    <text x="612" y="360" class="t2 tred">lines[] dropped (session-only)</text>
+  </svg></div>
+  <p class="cap">One store, three doors: actions write through <code>set()</code>, subscribers read through a selector, <code>persist</code> mirrors a four-field slice to localStorage. No provider is anywhere in the picture.</p>
+
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> — a component subscribes with a <b>selector</b>: <code>useCartStore(s =&gt; s.itemCount())</code>. Zustand remembers <em>that slice</em> for <em>that component</em>.</div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor client who">browser</span> — an action runs <code>set()</code> with an <b>immutable</b> update (a new <code>lines</code> array, never a mutation). Zustand swaps the state object.
+      <span class="note">Actions are the <em>only</em> writers. A component never assigns to the store — it calls an action, which calls <code>set()</code>.</span></div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor client who">browser</span> — Zustand re-runs each subscriber's selector against the new state and <b>shallow-compares</b> the result with the previous one.</div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor client who">browser</span> — a component re-renders <b>only if its own selected slice changed</b>. Add a bánh row and the <code>itemCount()</code> badge + <code>total()</code> update; a different card's stepper — whose slice is untouched — does <em>not</em> re-render.
+      <span class="note">This selective subscription is exactly why "one writer, three readers" in §03 is free: surfaces that didn't change stay still.</span></div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor client who">browser</span> — <code>persist</code> writes the <code>partialize</code>d slice to localStorage on every change; a reload rehydrates <code>{orderNote, activeOrderId, tableId, tableName}</code> only — the tray starts empty by design (§03).</div></li>
+  </ol>
+
+  <div class="golden">
+    <p><b>The mechanism in one line:</b> nhân / canh / combo choices all become <em>line ids</em> in one
+    Zustand store; <code>set()</code> swaps state immutably, per-component <b>selectors</b> decide who
+    re-renders, and <code>persist</code>+<code>partialize</code> keep only your table identity across
+    reloads — derived money (<code>total()</code>) is never stored, so it can never drift.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
 <section id="state">
-  <div class="sec-head"><span class="sec-num">04</span><h2>State across components and pages — two hubs, nothing else</h2></div>
+  <div class="sec-head"><span class="sec-num">05</span><h2>State across components and pages — two hubs, nothing else</h2></div>
 
   <p>Distant components never talk to each other directly — no prop drilling, no context providers,
   no event buses. Everything shared flows through exactly two hubs:</p>
@@ -662,7 +818,7 @@ focus   refetch-on-focus stays ON → a menu left open on a table tablet
 
 <!-- ================================================================ -->
 <section id="order">
-  <div class="sec-head"><span class="sec-num">05</span><h2>Confirm — <code>POST /orders</code> through every layer</h2></div>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Confirm — <code>POST /orders</code> through every layer</h2></div>
 
   <p>Guest taps "Thanh toán" (canh gate passed), then confirms in <code>TableConfirmModal</code>.
   This is the page's first and only server write — <b>pessimistic</b> (FE rule 4): nothing on
@@ -746,7 +902,7 @@ focus   refetch-on-focus stays ON → a menu left open on a table tablet
 
 <!-- ================================================================ -->
 <section id="redis">
-  <div class="sec-head"><span class="sec-num">06</span><h2>Redis life — cache-aside, invalidation, fail-open</h2></div>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Redis life — cache-aside, invalidation, fail-open</h2></div>
 
   <p>Redis touches this page in exactly one pattern — <b>cache-aside, inside services only</b>
   (handlers and repositories never see it). Three scenarios cover everything:</p>

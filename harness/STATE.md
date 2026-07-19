@@ -29,6 +29,18 @@
 
 ## Checkpoint log
 
+### 2026-07-19 — Session 14 (F-15 amendment): cart-store §04 (nhân/canh/combo + Zustand)
+- Done: owner asked to visualize + explain what happens when a client selects nhân,
+  picks canh, adds a combo, and "how zustand work" → new §04 **"Inside the cart
+  store"** in `harness/plans/customer_menu/how-it-works.html`: nhân single-vs-multi
+  pill mockups (line-id tail), canh stepper + canh-gate flow, combo ids-only note,
+  and the Zustand mechanism — a store-anatomy SVG (STATE/ACTIONS/SELECTORS ·
+  writers→set() · subscribers←selector · persist→partialize→localStorage) + a
+  5-step write-cycle (set→shallow-compare→selective re-render). Sections renumbered
+  04→07, topnav + 2 cross-refs updated. Re-draws PLAN.md §3.4/§4.2/§4.4 facts only —
+  owns nothing. Content-only (Hard Rule 6 n/a); screenshot receipt in VERIFICATION.md.
+  Committed straight to `main`.
+
 ### 2026-07-18 — Session 13 (F-15 amendment): runtime-walkthrough visual
 - Done: owner asked for one combined visual of how the menu page actually works →
   new `harness/plans/customer_menu/how-it-works.html`: numbered end-to-end sequences
