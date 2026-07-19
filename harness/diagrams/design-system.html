@@ -443,6 +443,23 @@
   .menu-card .mc-sold { position: absolute; inset: 0; border-radius: 12px; background: color-mix(in srgb, var(--ds-surface) 66%, transparent); display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-weight: 800; letter-spacing: 0.18em; color: var(--ds-ink); }
   .price-vnd { font-family: var(--sans); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ds-primary); }
 
+  /* combo dish list — combo_items joined to names/prices by ComboSection (ids-only over the wire) */
+  .menu-card .mc-combo { margin: 1px 0 2px; }
+  .menu-card .mc-combo-h { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ds-muted); margin: 0 0 4px; }
+  .menu-card .mc-combo-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; font-size: 0.8rem; color: var(--ds-ink); }
+  .menu-card .mc-combo-items li { display: flex; align-items: baseline; gap: 7px; }
+  .menu-card .mc-combo-items .ci-q { flex: none; font-family: var(--mono); font-weight: 700; color: var(--ds-primary); font-variant-numeric: tabular-nums; }
+  .menu-card .mc-detail { align-self: flex-start; margin-top: 2px; }
+
+  /* anatomy — numbered part markers + matching legend that names each component */
+  .mc-anatomy { display: flex; flex-wrap: wrap; gap: 26px; align-items: flex-start; }
+  .anno { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--ds-primary); color: #fff; font-family: var(--mono); font-size: 0.62rem; font-weight: 800; line-height: 1; vertical-align: middle; margin-left: 5px; flex: none; }
+  .anno-abs { position: absolute; z-index: 3; margin: 0; box-shadow: 0 0 0 2px var(--ds-surface); }
+  .mc-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.83rem; max-width: 420px; }
+  .mc-legend li { display: flex; gap: 9px; align-items: baseline; line-height: 1.4; }
+  .mc-legend .ln { flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--ds-primary); color: #fff; font-family: var(--mono); font-size: 0.62rem; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; position: relative; top: 2px; }
+  .mc-legend code { font-family: var(--mono); font-size: 0.77rem; color: var(--ds-primary); }
+
   /* canh (soup) stepper block — the only place soup is chosen (B4) */
   .canh-box { background: var(--ds-surface-2); border: 1px solid var(--ds-border); border-radius: 10px; padding: 12px 14px; width: 360px; max-width: 100%; }
   .canh-box .cb-h { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ds-muted); margin: 0 0 8px; }
@@ -1127,10 +1144,19 @@
               <button class="opt-pill on">Nhân thịt</button>
               <button class="opt-pill on">mộc nhĩ</button>
             </div>
+            <div class="mc-combo">
+              <p class="mc-combo-h">Gồm 4 món</p>
+              <ul class="mc-combo-items">
+                <li><span class="ci-q">2×</span> Bánh cuốn trứng</li>
+                <li><span class="ci-q">1×</span> Chả quế</li>
+                <li><span class="ci-q">1×</span> Nem chua rán</li>
+              </ul>
+            </div>
             <div class="mc-foot">
               <span class="price-vnd">103.000 đ</span>
               <span class="stepper" role="group" aria-label="Số lượng"><button aria-label="Bớt">−</button><span class="qty">1</span><button aria-label="Thêm">+</button></span>
             </div>
+            <a class="btn btn-ghost btn-sm mc-detail" href="../plans/customer_menu/plan.html">Chi tiết →</a>
           </div>
           <button class="mc-heart" aria-label="Yêu thích" aria-pressed="false">♡</button>
         </div>
@@ -1147,7 +1173,43 @@
           <div class="mc-sold" aria-label="Hết hàng">HẾT</div>
         </div>
       </div>
-      <p class="demo-note">One card renders every menu row: product (single nhân), combo (multi nhân + "SUẤT" tag), and 86'd ("HẾT" overlay, muted, stepper locked). Price via <code>formatVND()</code> ("30.000 đ"). Heart toggles favourites (<code>stopPropagation</code>); add fires a fly-to-cart. Whole card links to detail; controls stop propagation. Soup is <em>never</em> a card here (B4).</p>
+      <p class="demo-note">One card renders every menu row: product (single nhân), combo (multi nhân + "SUẤT" tag, lists its <code>combo_items</code> + a "Chi tiết" link to the detail page), and 86'd ("HẾT" overlay, muted, stepper locked). Combo dishes arrive ids-only over the wire — <code>ComboSection</code> joins names/prices client-side. Price via <code>formatVND()</code> ("30.000 đ"). Heart toggles favourites (<code>stopPropagation</code>); add fires a fly-to-cart. Whole card links to detail; controls stop propagation. Soup is <em>never</em> a card here (B4).</p>
+    </div>
+
+    <h3>Menu card — anatomy (name of each component)</h3>
+    <div class="demo">
+      <div class="mc-anatomy">
+        <div class="menu-card">
+          <div class="mc-img" style="position:relative;">🥟<span class="anno anno-abs" style="top:4px; left:4px;">1</span></div>
+          <div class="mc-body">
+            <h4>Bánh cuốn trứng<span class="anno">3</span></h4>
+            <div class="opt-pills">
+              <button class="opt-pill on">nhân thịt</button>
+              <button class="opt-pill">mộc nhĩ</button>
+            </div>
+            <div class="mc-foot">
+              <span class="price-vnd">30.000 đ<span class="anno">4</span></span>
+              <span style="display:inline-flex; align-items:center;"><span class="stepper" role="group" aria-label="Số lượng"><button aria-label="Bớt">−</button><span class="qty">2</span><button aria-label="Thêm">+</button></span><span class="anno">7</span></span>
+            </div>
+          </div>
+          <button class="mc-heart on" aria-label="Bỏ yêu thích" aria-pressed="true">♥</button>
+          <span class="anno anno-abs" style="top:34px; right:11px;">5</span>
+          <span class="anno anno-abs" style="top:44px; right:-9px;">6</span>
+          <span class="anno anno-abs" style="top:12px; left:88px;">2</span>
+        </div>
+
+        <ol class="mc-legend">
+          <li><span class="ln">1</span><span><code>.mc-img</code> — 68px square thumbnail (emoji/photo); greyed via <code>.menu-card.sold</code> when 86'd.</span></li>
+          <li><span class="ln">2</span><span><code>.mc-body</code> — content column (name, pills, footer); <code>min-width:0</code> so long names clamp instead of overflow.</span></li>
+          <li><span class="ln">3</span><span><code>h4</code> — dish name; combos append the <code>.badge.badge-primary</code> "SUẤT" tag inline.</span></li>
+          <li><span class="ln">4</span><span><code>.price-vnd</code> — VND price, tabular figures via <code>formatVND()</code> ("30.000 đ").</span></li>
+          <li><span class="ln">5</span><span><code>.mc-heart</code> — absolute favourite toggle; <code>.on</code> = sale-red filled, <code>stopPropagation</code> so it never triggers the card link.</span></li>
+          <li><span class="ln">6</span><span><code>.opt-pills</code> / <code>.opt-pill</code> — inline nhân picker (single-select product, multi-select combo); never a modal (B3).</span></li>
+          <li><span class="ln">7</span><span><code>.stepper</code> — quantity control; <code>disabled</code> both buttons when sold out.</span></li>
+          <li><span class="ln">8</span><span><code>.mc-sold</code> — full-card "HẾT" overlay (not shown here); mutes the card + locks the stepper.</span></li>
+        </ol>
+      </div>
+      <p class="demo-note">Same markup as the three cards above — each numbered marker maps to the CSS class that owns that part. The whole card is <code>.menu-card</code> (<code>position:relative</code>), the anchor for the absolute <code>.mc-heart</code> ⑦ and <code>.mc-sold</code> ⑧.</p>
     </div>
 
     <h3>Canh stepper + table pill — soup gate &amp; the bound table</h3>

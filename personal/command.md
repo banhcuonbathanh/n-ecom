@@ -16,3 +16,8 @@ open -a "Google Chrome" harness/diagrams/task-F-14.html
 
 open -a "Google Chrome" harness/plans/customer_menu/plan.html
 
+
+
+open -a "Google Chrome" harness/plans/customer_menu/how-it-works.html
+
+open -a "Google Chrome" harness/plans/customer_menu/customer_menu_mockup-1.html

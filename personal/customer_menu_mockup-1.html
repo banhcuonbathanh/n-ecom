@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quán Bánh Cuốn — menu page mockup</title>
+<style>
+  /* ============================================================
+     Customer menu page — high-fidelity mockup (F-15, task C-4 preview)
+     Structure & tokens from harness/diagrams/design-system.html
+     (the F-15 restaurant components), re-mapped to the reference's
+     owner-locked dark + warm-orange customer shell.
+     Price · nhân pills · stepper kept as the owner's reference image.
+     ============================================================ */
+  :root {
+    /* dark + orange re-map of the --ds-* system */
+    --ground:  #0b0f17;
+    --card:    #1b2230;
+    --card-2:  #202838;
+    --thumb:   #262f41;
+    --panel:   #161d29;
+    --line:    #2a3344;
+    --line-2:  #222b3a;
+    --primary: #f97316;   /* --ds-primary re-map */
+    --primary-h:#fb8a34;
+    --primary-soft: rgba(249,115,22,.14);
+    --accent-l:#fdba74;
+    --on-primary:#ffffff;
+    --warn:    #fb923c;
+    --text:    #e5e7eb;
+    --muted:   #8b95a7;
+    --muted-2: #6b7688;
+    --ontab:   #cbd2dd;
+    --ok:      #34d399;
+    --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans); color: var(--text);
+    background:
+      radial-gradient(1200px 700px at 50% -12%, #1a1206 0%, transparent 55%),
+      radial-gradient(900px 600px at 88% 12%, #0f131c 0%, transparent 60%),
+      #06080e;
+    min-height: 100vh; -webkit-font-smoothing: antialiased; line-height: 1.4;
+  }
+
+  /* ---- showcase shell ------------------------------------------ */
+  .stage { max-width: 1120px; margin: 0 auto; padding: 44px 20px 90px; display: grid; gap: 30px; justify-items: center; }
+  .stage-head { text-align: center; max-width: 660px; }
+  .kicker { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--primary); font-weight: 700; margin: 0 0 12px; }
+  .stage-head h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(28px, 5vw, 42px); margin: 0 0 14px; color: #fff; text-wrap: balance; line-height: 1.08; }
+  .stage-head p { color: var(--muted); font-size: 15px; margin: 0 auto; max-width: 58ch; }
+  .stage-head b { color: var(--text); font-weight: 600; }
+  .stage-head .meta { margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .chip { font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: rgba(255,255,255,.02); }
+  .chip b { color: var(--text); font-weight: 700; }
+
+  /* ---- phone frame --------------------------------------------- */
+  .phone { width: 390px; max-width: 100%; background: var(--ground); border-radius: 46px; padding: 12px; border: 1px solid #232b3a; box-shadow: 0 22px 60px -14px rgba(0,0,0,.75), 0 0 0 10px #0a0d14, 0 0 0 11px #1c2332; position: relative; }
+  .screen { background: var(--ground); border-radius: 34px; overflow: hidden; height: 844px; position: relative; display: flex; flex-direction: column; }
+  .statusbar { height: 44px; flex: 0 0 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 13px; font-weight: 600; color: #fff; position: relative; z-index: 40; }
+  .statusbar .notch { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 110px; height: 26px; background: #06080e; border-radius: 16px; }
+  .statusbar .icons { font-size: 12px; letter-spacing: 1px; }
+  .scroll { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; position: relative; }
+  .scroll::-webkit-scrollbar { width: 0; }
+
+  /* ---- 1 · header banner --------------------------------------- */
+  .banner { height: 196px; position: relative; overflow: hidden; }
+  .banner .photo { position: absolute; inset: 0; background:
+      radial-gradient(120% 90% at 22% 18%, #f9a24a 0%, transparent 46%),
+      radial-gradient(120% 100% at 84% 22%, #d9641a 0%, transparent 52%),
+      radial-gradient(140% 120% at 60% 105%, #2a1608 0%, transparent 60%),
+      linear-gradient(160deg, #7a3b12 0%, #43220d 60%, #24130a 100%); }
+  .banner .steam { position: absolute; inset: 0; opacity: .45; mix-blend-mode: screen; filter: blur(5px); background:
+      radial-gradient(38px 88px at 34% 46%, rgba(255,255,255,.32), transparent 70%),
+      radial-gradient(32px 78px at 50% 34%, rgba(255,255,255,.26), transparent 70%),
+      radial-gradient(28px 66px at 64% 50%, rgba(255,255,255,.2), transparent 70%); }
+  .banner .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,11,18,.45) 0%, rgba(8,11,18,.15) 45%, rgba(8,11,18,.92) 100%); }
+  .banner .title { position: absolute; top: 30px; left: 0; right: 0; text-align: center; z-index: 2; padding: 0 20px; }
+  .banner .title .eyebrow { font-size: 10.5px; letter-spacing: .3em; text-transform: uppercase; color: #ffd9b0; font-weight: 700; opacity: .92; margin-bottom: 6px; }
+  .banner .title h2 { font-family: var(--serif); font-weight: 700; color: #fff; font-size: 27px; margin: 0; line-height: 1.1; text-shadow: 0 2px 14px rgba(0,0,0,.65); }
+
+  /* ---- 2 · search ---------------------------------------------- */
+  .search { padding: 14px 16px 8px; background: var(--ground); }
+  .search .box { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; color: var(--muted); }
+  .search .box input { border: 0; background: transparent; color: var(--text); font-size: 14px; width: 100%; outline: none; font-family: var(--sans); }
+  .search .box input::placeholder { color: var(--muted); }
+
+  /* ---- 3 · sticky category nav --------------------------------- */
+  .catnav { position: sticky; top: 0; z-index: 6; background: rgba(11,15,23,.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--panel); box-shadow: 0 6px 14px -8px rgba(0,0,0,.6); }
+  .catnav .tabs { display: flex; gap: 20px; overflow-x: auto; padding: 9px 16px; scrollbar-width: none; }
+  .catnav .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: 0 0 auto; border: 0; background: transparent; cursor: pointer; color: var(--muted); font-size: 14px; font-weight: 600; padding: 6px 0 8px; position: relative; white-space: nowrap; font-family: var(--sans); border-bottom: 2px solid transparent; transition: color .25s ease, border-color .25s ease, text-shadow .25s ease; }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); text-shadow: 0 0 12px rgba(249,115,22,.55); }
+
+  /* ---- section labels ------------------------------------------ */
+  section.menu-sec { padding: 16px 16px 4px; scroll-margin-top: 52px; }
+  .sec-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin: 4px 0 14px; display: flex; align-items: center; gap: 8px; }
+  .sec-label .n { margin-left: auto; letter-spacing: .5px; color: var(--muted-2); font-weight: 600; }
+
+  /* ---- 4 · favourites rail ------------------------------------- */
+  .rail-sec { padding: 14px 0 2px; }
+  .rail-sec .sec-label { padding: 0 16px; }
+  .rail { display: flex; gap: 12px; overflow-x: auto; padding: 2px 16px 8px; scrollbar-width: none; }
+  .rail::-webkit-scrollbar { display: none; }
+  .fav-card { flex: 0 0 132px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 8px; }
+  .fav-card .thumb { height: 92px; border-radius: 10px; background: var(--thumb); position: relative; display: grid; place-items: center; font-size: 40px; }
+  .fav-card .thumb .heart { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 999px; background: rgba(11,15,23,.78); display: grid; place-items: center; font-size: 12px; color: var(--primary); }
+  .fav-card .n { font-size: 13px; font-weight: 600; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fav-card .p { font-size: 13px; color: var(--primary); font-weight: 700; margin-top: 3px; font-variant-numeric: tabular-nums; }
+
+  /* ============================================================
+     MENU CARD — design-system .menu-card structure, orange re-map.
+     Price · circular stepper · nhân pills kept as the owner image.
+     ============================================================ */
+  .card { position: relative; display: flex; gap: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 13px; margin-bottom: 13px; transition: border-color .18s, transform .18s; }
+  .card:hover { border-color: #384358; }
+  .card .thumb { flex: none; width: 92px; height: 92px; border-radius: 13px; background: radial-gradient(120% 120% at 30% 20%, #33261a 0%, var(--thumb) 60%); display: grid; place-items: center; font-size: 46px; line-height: 1; }
+  .card .heart { position: absolute; top: 11px; right: 11px; width: 30px; height: 30px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); display: grid; place-items: center; font-size: 14px; color: var(--muted); cursor: pointer; z-index: 3; padding: 0; transition: color .15s, transform .15s; }
+  .card .heart:hover { transform: scale(1.08); }
+  .card .heart.on { color: var(--primary); }
+  .card.soldout .thumb, .card.soldout .body { filter: grayscale(.5); opacity: .5; }
+  .card.soldout::after { content: "HẾT"; position: absolute; inset: 0; border-radius: 16px; background: rgba(11,15,23,.55); display: grid; place-items: center; color: var(--text); font-weight: 800; font-size: 17px; letter-spacing: .2em; pointer-events: none; }
+
+  .card .body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .card .body .n { font-size: 15.5px; font-weight: 700; line-height: 1.25; padding-right: 28px; }
+  .tag { display: inline-block; vertical-align: middle; font-size: 9.5px; font-weight: 800; letter-spacing: .6px; color: var(--primary); background: var(--primary-soft); border: 1px solid var(--primary); border-radius: 5px; padding: 1px 6px; margin-left: 4px; }
+  .card .body .d { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+
+  /* footer: big orange price (left) + circular stepper (right) — as image */
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
+  .price { font-size: 19px; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; letter-spacing: .2px; }
+  .price .cur { font-size: 13px; font-weight: 700; }
+
+  .stepper { display: flex; align-items: center; gap: 10px; }
+  .stepper button { width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--line); background: var(--card-2); color: var(--text); font-size: 19px; cursor: pointer; display: grid; place-items: center; line-height: 1; font-family: var(--sans); transition: background .15s, transform .12s; }
+  .stepper button:hover { background: #2b3448; }
+  .stepper button:active { transform: scale(.92); }
+  .stepper button.plus { background: var(--primary); border-color: var(--primary); color: var(--on-primary); box-shadow: 0 3px 10px -2px rgba(249,115,22,.5); }
+  .stepper button.plus:hover { background: var(--primary-h); }
+  .stepper button:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+  .stepper .q { min-width: 20px; text-align: center; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+  /* nhân pills — full-width stacked, as the owner image */
+  .nhan { display: flex; flex-direction: column; gap: 7px; margin-top: 3px; }
+  .pill { width: 100%; text-align: center; font-size: 13px; padding: 9px 12px; border-radius: 12px; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--muted); font-family: var(--sans); font-weight: 700; transition: all .15s; user-select: none; }
+  .pill:hover { border-color: var(--primary); color: var(--text); }
+  .pill.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); box-shadow: 0 3px 12px -3px rgba(249,115,22,.5); }
+  .nhan.inline { flex-direction: row; flex-wrap: wrap; }
+  .nhan.inline .pill { width: auto; padding: 6px 14px; border-radius: 999px; }
+
+  /* combo item list */
+  .combo-items { list-style: none; margin: 2px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--muted); }
+  .combo-items li { display: flex; gap: 5px; }
+  .combo-items .q { color: var(--primary); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* custom suat */
+  .suat-empty { border: 1px dashed var(--line); border-radius: 16px; padding: 20px; text-align: center; color: var(--muted); font-size: 12.5px; background: rgba(255,255,255,.012); }
+  .suat-empty .add { margin-top: 12px; display: inline-flex; gap: 6px; align-items: center; color: var(--primary); font-weight: 700; font-size: 13px; cursor: pointer; padding: 8px 16px; border: 1px solid var(--primary); border-radius: 999px; }
+
+  /* ---- 8 · order summary --------------------------------------- */
+  .summary { margin: 12px 16px 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .summary .s-head { display: flex; align-items: center; gap: 8px; padding: 15px 16px; border-bottom: 1px solid var(--line-2); }
+  .summary .s-head h3 { font-size: 15px; font-weight: 700; margin: 0; }
+  .table-pill { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; color: var(--ontab); background: var(--card); border: 1px solid var(--line); padding: 5px 12px; border-radius: 999px; }
+  .table-pill .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--primary); box-shadow: 0 0 6px rgba(249,115,22,.9); }
+
+  .grp-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; color: var(--muted-2); padding: 12px 16px 2px; }
+  .lines { padding: 0 16px; }
+  .line { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line-2); }
+  .line:last-child { border-bottom: 0; }
+  .line .info { flex: 1 1 auto; min-width: 0; }
+  .line .info .n { font-size: 13.5px; font-weight: 600; }
+  .line .info .m { font-size: 11px; color: var(--primary); margin-top: 2px; }
+  .line .info .m.plain { color: var(--muted); }
+  .line .info .expand { font-size: 11px; color: var(--muted); margin-top: 3px; cursor: pointer; }
+  .mini-step { display: flex; align-items: center; gap: 8px; }
+  .mini-step button { width: 28px; height: 28px; border-radius: 999px; border: 1px solid var(--line); background: var(--card-2); color: var(--text); cursor: pointer; font-size: 15px; display: grid; place-items: center; line-height: 1; }
+  .mini-step button.plus { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+  .mini-step .q { min-width: 16px; text-align: center; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .line .lt { font-size: 13px; font-weight: 700; min-width: 60px; text-align: right; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .line .lt.free { color: var(--muted-2); }
+  .subrow { display: flex; justify-content: space-between; padding: 9px 0 2px; font-size: 12px; color: var(--muted); }
+  .subrow b { color: var(--text); font-variant-numeric: tabular-nums; }
+
+  .canh-block { margin: 12px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; }
+  .canh-block .ch { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 8px; }
+  .canh-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
+  .canh-row + .canh-row { border-top: 1px dashed var(--line); }
+  .canh-row .n { flex: 1 1 auto; font-size: 13px; }
+  .canh-row .lt { font-size: 12px; color: var(--muted-2); min-width: 40px; text-align: right; }
+
+  .rollup { margin: 0 16px 14px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .rollup .rh { display: flex; align-items: center; padding: 10px 13px; background: var(--card); font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--muted); cursor: pointer; }
+  .rollup .rh .chev { margin-left: auto; color: var(--muted); }
+  .rollup .rbody { padding: 4px 13px 10px; }
+  .rollup table { width: 100%; border-collapse: collapse; }
+  .rollup thead td { font-size: 9.5px; font-weight: 700; letter-spacing: .4px; color: var(--muted-2); padding: 6px 0 4px; }
+  .rollup tbody td { font-size: 11px; font-weight: 600; padding: 5px 0; color: var(--muted); border-top: 1px solid var(--line-2); }
+  .rollup td.mon { color: var(--text); }
+  .rollup td.nhn { color: var(--primary); }
+  .rollup td.sl { text-align: center; color: var(--text); font-variant-numeric: tabular-nums; }
+
+  .note-wrap { margin: 0 16px 14px; }
+  .note-wrap label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .note-wrap label .saved { margin-left: auto; color: var(--ok); font-size: 10px; letter-spacing: .3px; opacity: 0; transition: opacity .2s; }
+  .note-wrap label .saved.on { opacity: 1; }
+  .note-wrap textarea { width: 100%; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; color: var(--text); font-size: 13px; font-family: var(--sans); resize: none; outline: none; }
+  .note-wrap textarea::placeholder { color: var(--muted-2); }
+  .note-wrap textarea:focus { border-color: var(--primary); }
+
+  .s-total { display: flex; align-items: center; justify-content: space-between; padding: 15px 16px; border-top: 1px solid var(--line); }
+  .s-total .lab { font-size: 14px; font-weight: 700; color: var(--text); }
+  .s-total .val { font-size: 20px; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
+
+  .scroll-pad { height: 188px; }
+
+  /* ============================================================
+     9 · FLOATING ACTION CLUSTER — 3 buttons + cart indicator
+     Thanh toán (primary) · Gọi nhân viên · Chat với nhân viên
+     ============================================================ */
+  .bottom-scrim { position: absolute; left: 0; right: 0; bottom: 64px; height: 150px; z-index: 8; pointer-events: none; background: linear-gradient(180deg, transparent 0%, rgba(11,15,23,.55) 40%, var(--ground) 100%); }
+
+  /* the two service buttons — float above the checkout bar, right-aligned */
+  .service-fabs { position: absolute; right: 14px; bottom: 130px; z-index: 10; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .fab { display: inline-flex; align-items: center; gap: 9px; height: 44px; padding: 0 16px 0 13px; border-radius: 999px; cursor: pointer; border: 1px solid var(--line); background: rgba(27,34,48,.86); backdrop-filter: blur(10px); color: var(--text); font-family: var(--sans); font-weight: 700; font-size: 13.5px; box-shadow: 0 8px 22px -6px rgba(0,0,0,.6); transition: transform .15s, border-color .15s, background .15s; }
+  .fab:hover { transform: translateY(-2px); border-color: var(--primary); }
+  .fab .ic { width: 26px; height: 26px; border-radius: 999px; background: var(--primary-soft); display: grid; place-items: center; font-size: 15px; color: var(--primary); }
+  .fab.chat .ping { width: 8px; height: 8px; border-radius: 999px; background: var(--ok); margin-left: 2px; box-shadow: 0 0 0 0 rgba(52,211,153,.6); animation: pingdot 1.8s ease-out infinite; }
+  @keyframes pingdot { 0% { box-shadow: 0 0 0 0 rgba(52,211,153,.5); } 100% { box-shadow: 0 0 0 8px rgba(52,211,153,0); } }
+
+  /* checkout bar — cart indicator + primary Thanh toán */
+  .checkout-bar { position: absolute; left: 0; right: 0; bottom: 74px; z-index: 11; display: flex; gap: 11px; padding: 0 14px; }
+  .cart-pill { display: flex; align-items: center; gap: 9px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 0 15px; height: 52px; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,.45); }
+  .cart-pill .ci { font-size: 19px; }
+  .cart-pill .badge { background: var(--primary); color: var(--on-primary); font-weight: 800; font-size: 12px; min-width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center; padding: 0 6px; font-variant-numeric: tabular-nums; }
+  .pay-pill { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(180deg, var(--primary-h), var(--primary)); color: var(--on-primary); font-weight: 800; font-size: 15px; border-radius: 999px; height: 52px; cursor: pointer; border: 0; box-shadow: 0 8px 22px -4px rgba(249,115,22,.55); font-family: var(--sans); transition: filter .15s, transform .12s; }
+  .pay-pill:hover { filter: brightness(1.06); }
+  .pay-pill:active { transform: scale(.985); }
+  .pay-pill .amt { font-variant-numeric: tabular-nums; opacity: .95; }
+  .pay-pill .sep { width: 1px; height: 18px; background: rgba(255,255,255,.35); }
+
+  /* ---- 10 · bottom nav ----------------------------------------- */
+  .bottomnav { flex: 0 0 64px; display: flex; border-top: 1px solid var(--line); background: var(--ground); z-index: 12; }
+  .bottomnav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--muted); font-size: 10px; text-decoration: none; font-weight: 400; position: relative; }
+  .bottomnav a .i { font-size: 19px; }
+  .bottomnav a.active { color: var(--primary); font-weight: 600; }
+  .bottomnav a.active::before { content: ""; position: absolute; top: 0; width: 34px; height: 3px; border-radius: 0 0 3px 3px; background: var(--primary); }
+
+  /* toast */
+  .toast { position: absolute; left: 50%; bottom: 200px; transform: translateX(-50%) translateY(10px); background: #fff; color: #1a0e04; font-weight: 700; font-size: 13px; padding: 10px 16px; border-radius: 999px; z-index: 50; opacity: 0; transition: all .25s; pointer-events: none; box-shadow: 0 12px 30px rgba(0,0,0,.4); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* legend + footnote */
+  .legend { max-width: 740px; width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 12px; }
+  .legend .item { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 13px 15px; }
+  .legend .item .num { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-weight: 700; font-size: 12px; border: 1px solid var(--primary); margin-bottom: 8px; }
+  .legend .item h4 { margin: 0 0 4px; font-size: 13.5px; color: var(--text); }
+  .legend .item p { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.45; }
+  .footnote { max-width: 660px; text-align: center; color: var(--muted-2); font-size: 12px; line-height: 1.65; }
+  .footnote code { color: var(--primary); font-family: ui-monospace, monospace; font-size: 11.5px; }
+
+  @media (max-width: 520px) { .stage { padding: 24px 8px 60px; } .phone { border-radius: 36px; padding: 8px; box-shadow: 0 18px 44px -14px rgba(0,0,0,.7); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <header class="stage-head">
+    <p class="kicker">Customer surface · task C-4 preview</p>
+    <h1>How the menu page looks</h1>
+    <p>A faithful mockup of <b>/menu</b> — the dine-in bánh cuốn page — rebuilt on the F-7 design-system components (re-mapped to the owner-locked dark + warm-orange shell). Real seed catalog; the cart shows the canonical worked example. Tap tabs, pills, steppers and the floating buttons — they respond.</p>
+    <div class="meta">
+      <span class="chip">Bàn <b>04</b></span>
+      <span class="chip">Tổng <b>103.000 đ</b></span>
+      <span class="chip">Giỏ <b>13 món</b></span>
+      <span class="chip">Nguồn <b>QR</b></span>
+    </div>
+  </header>
+
+  <div class="phone">
+    <div class="screen">
+      <div class="statusbar"><span>9:41</span><span class="notch"></span><span class="icons">● ● ● ◍ ▮</span></div>
+
+      <div class="scroll" id="scroll">
+        <!-- 1 · header banner -->
+        <div class="banner">
+          <div class="photo"></div><div class="steam"></div><div class="scrim"></div>
+          <div class="title"><div class="eyebrow">Bánh cuốn nóng · dine-in</div><h2>Quán Bánh Cuốn</h2></div>
+        </div>
+
+        <!-- 2 · search -->
+        <div class="search">
+          <div class="box">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="searchInput" placeholder="Tìm món nhanh..." aria-label="Tìm món" />
+          </div>
+        </div>
+
+        <!-- 3 · sticky category nav -->
+        <nav class="catnav">
+          <div class="tabs" id="tabs">
+            <button class="tab active" data-target="sec-all">Tất cả</button>
+            <button class="tab" data-target="sec-suat">SUẤT</button>
+            <button class="tab" data-target="sec-custom">SUẤT TỰ TẠO</button>
+            <button class="tab" data-target="sec-trung">TRỨNG</button>
+            <button class="tab" data-target="sec-banhcuon">BÁNH CUỐN</button>
+            <button class="tab" data-target="sec-gio">GIÒ</button>
+          </div>
+        </nav>
+        <div id="sec-all"></div>
+
+        <!-- 4 · favourites rail -->
+        <div class="rail-sec">
+          <div class="sec-label">♥ Yêu thích <span class="n">của bàn này</span></div>
+          <div class="rail">
+            <div class="fav-card"><div class="thumb">🍱<span class="heart">♥</span></div><div class="n">Suất Giò</div><div class="p">25.000 đ</div></div>
+            <div class="fav-card"><div class="thumb">🍳<span class="heart">♥</span></div><div class="n">Bánh Trứng Tái</div><div class="p">9.000 đ</div></div>
+            <div class="fav-card"><div class="thumb">🍱<span class="heart">♥</span></div><div class="n">Suất Đầy Đủ</div><div class="p">30.000 đ</div></div>
+          </div>
+        </div>
+
+        <!-- 5 · SUẤT combos -->
+        <section class="menu-sec" id="sec-suat">
+          <div class="sec-label">SUẤT <span class="n">combo · 5 suất</span></div>
+
+          <div class="card">
+            <button class="heart on" aria-label="Bỏ yêu thích">♥</button>
+            <div class="thumb">🍱</div>
+            <div class="body">
+              <div class="n">Suất Đầy Đủ Trứng Chín <span class="tag">SUẤT</span></div>
+              <ul class="combo-items"><li><span class="q">1×</span>Trứng chín</li><li><span class="q">3×</span>Bánh cuốn</li><li><span class="q">1×</span>Giò</li><li><span class="q">1×</span>Canh</li></ul>
+              <div class="foot"><div class="price">30.000<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus">−</button><span class="q">1</span><button class="plus">+</button></div></div>
+              <div class="nhan" data-multi="1"><span class="pill on">Nhân thịt</span><span class="pill on">Nhân thịt mộc nhĩ</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <button class="heart" aria-label="Yêu thích">♥</button>
+            <div class="thumb">🍱</div>
+            <div class="body">
+              <div class="n">Suất Giò <span class="tag">SUẤT</span></div>
+              <ul class="combo-items"><li><span class="q">1×</span>Giò</li><li><span class="q">4×</span>Bánh cuốn</li><li><span class="q">1×</span>Canh</li></ul>
+              <div class="foot"><div class="price">25.000<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus">−</button><span class="q">2</span><button class="plus">+</button></div></div>
+              <div class="nhan" data-multi="1"><span class="pill on">Nhân thịt</span><span class="pill">Nhân thịt mộc nhĩ</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <button class="heart" aria-label="Yêu thích">♥</button>
+            <div class="thumb">🍱</div>
+            <div class="body">
+              <div class="n">Suất Trứng Tái <span class="tag">SUẤT</span></div>
+              <ul class="combo-items"><li><span class="q">1×</span>Trứng tái</li><li><span class="q">4×</span>Bánh cuốn</li><li><span class="q">1×</span>Canh</li></ul>
+              <div class="foot"><div class="price">25.000<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus">−</button><span class="q">0</span><button class="plus">+</button></div></div>
+              <div class="nhan" data-multi="1"><span class="pill on">Nhân thịt</span><span class="pill">Nhân thịt mộc nhĩ</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6 · SUẤT TỰ TẠO -->
+        <section class="menu-sec" id="sec-custom">
+          <div class="sec-label">SUẤT TỰ TẠO <span class="n">lưu trên máy này</span></div>
+          <div class="suat-empty">Tự chọn bánh + nhân + canh thành một suất riêng, thêm nhanh chỉ một chạm.<div class="add">＋ Tạo suất mới</div></div>
+        </section>
+
+        <!-- 7a · TRỨNG -->
+        <section class="menu-sec" id="sec-trung">
+          <div class="sec-label">TRỨNG <span class="n">3 món</span></div>
+
+          <div class="card">
+            <button class="heart" aria-label="Yêu thích">♥</button>
+            <div class="thumb">🍳</div>
+            <div class="body">
+              <div class="n">Bánh Trứng Tái</div>
+              <div class="d">Bánh trứng tái, lòng đào mềm mịn</div>
+              <div class="foot"><div class="price">9.000<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus">−</button><span class="q">0</span><button class="plus">+</button></div></div>
+              <div class="nhan inline"><span class="pill on">Nhân thịt</span><span class="pill">Nhân thịt mộc nhĩ</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <button class="heart" aria-label="Yêu thích">♥</button>
+            <div class="thumb">🍳</div>
+            <div class="body">
+              <div class="n">Bánh Trứng Chín</div>
+              <div class="d">Bánh trứng chín kỹ, đậm vị</div>
+              <div class="foot"><div class="price">9.000<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus">−</button><span class="q">0</span><button class="plus">+</button></div></div>
+              <div class="nhan inline"><span class="pill on">Nhân thịt</span><span class="pill">Nhân thịt mộc nhĩ</span></div>
+            </div>
+          </div>
+
+          <div class="card soldout">
+            <button class="heart" aria-label="Yêu thích">♥</button>
+            <div class="thumb">🍳</div>
+            <div class="body">
+              <div class="n">Bánh Trứng Vàng</div>
+              <div class="d">Bánh trứng vàng óng, béo ngậy</div>
+              <div class="foot"><div class="price">9.000<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus" disabled>−</button><span class="q">0</span><button class="plus" disabled>+</button></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7b · BÁNH CUỐN -->
+        <section class="menu-sec" id="sec-banhcuon">
+          <div class="sec-label">BÁNH CUỐN <span class="n">3 món</span></div>
+
+          <div class="card">
+            <button class="heart on" aria-label="Bỏ yêu thích">♥</button>
+            <div class="thumb">🫓</div>
+            <div class="body">
+              <div class="n">Bánh Cuốn Thịt</div>
+              <div class="d">Bánh cuốn nhân thịt heo xay</div>
+              <div class="foot"><div class="price">4.000<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus">−</button><span class="q">0</span><button class="plus">+</button></div></div>
+              <div class="nhan inline"><span class="pill on">Nhân thịt</span><span class="pill">Nhân thịt mộc nhĩ</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <button class="heart" aria-label="Yêu thích">♥</button>
+            <div class="thumb">🫓</div>
+            <div class="body">
+              <div class="n">Bánh Cuốn Mộc Nhĩ</div>
+              <div class="d">Bánh cuốn nhân mộc nhĩ giòn</div>
+              <div class="foot"><div class="price">4.000<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus">−</button><span class="q">0</span><button class="plus">+</button></div></div>
+              <div class="nhan inline"><span class="pill on">Nhân thịt</span><span class="pill">Nhân thịt mộc nhĩ</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <button class="heart" aria-label="Yêu thích">♥</button>
+            <div class="thumb">🥬</div>
+            <div class="body">
+              <div class="n">Bánh Chay</div>
+              <div class="d">Bánh cuốn không nhân, chấm nước mắm</div>
+              <div class="foot"><div class="price">2.500<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus">−</button><span class="q">2</span><button class="plus">+</button></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7c · GIÒ -->
+        <section class="menu-sec" id="sec-gio">
+          <div class="sec-label">GIÒ <span class="n">1 món</span></div>
+          <div class="card">
+            <button class="heart" aria-label="Yêu thích">♥</button>
+            <div class="thumb">🍥</div>
+            <div class="body">
+              <div class="n">Giò</div>
+              <div class="d">Giò nhỏ 5 phút, cắt khoanh</div>
+              <div class="foot"><div class="price">9.000<span class="cur"> đ</span></div>
+                <div class="stepper"><button class="minus">−</button><span class="q">0</span><button class="plus">+</button></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8 · order summary -->
+        <div class="summary">
+          <div class="s-head"><h3>Tóm tắt đơn hàng</h3><span class="table-pill"><span class="dot"></span>Bàn 04</span></div>
+
+          <div class="grp-label">COMBO</div>
+          <div class="lines">
+            <div class="line"><div class="info"><div class="n">Suất Đầy Đủ Trứng Chín</div><div class="m">Nhân thịt mộc nhĩ</div><div class="expand">⌄ Chi tiết</div></div><div class="mini-step"><button class="minus">−</button><span class="q">1</span><button class="plus">+</button></div><div class="lt">30.000</div></div>
+            <div class="line"><div class="info"><div class="n">Suất Giò</div><div class="m">Nhân thịt</div><div class="expand">⌄ Chi tiết</div></div><div class="mini-step"><button class="minus">−</button><span class="q">2</span><button class="plus">+</button></div><div class="lt">50.000</div></div>
+            <div class="subrow"><span>Tạm tính combo</span><b>80.000 đ</b></div>
+          </div>
+
+          <div class="grp-label">MÓN LẺ</div>
+          <div class="lines">
+            <div class="line"><div class="info"><div class="n">Bánh Trứng Vàng</div><div class="m">Nhân thịt</div></div><div class="mini-step"><button class="minus">−</button><span class="q">2</span><button class="plus">+</button></div><div class="lt">18.000</div></div>
+            <div class="line"><div class="info"><div class="n">Bánh Chay</div><div class="m plain">không nhân</div></div><div class="mini-step"><button class="minus">−</button><span class="q">2</span><button class="plus">+</button></div><div class="lt">5.000</div></div>
+            <div class="subrow"><span>Tạm tính món lẻ</span><b>23.000 đ</b></div>
+          </div>
+
+          <div class="canh-block">
+            <div class="ch">CANH</div>
+            <div class="canh-row"><div class="n">Bát có rau</div><div class="mini-step"><button class="minus">−</button><span class="q">4</span><button class="plus">+</button></div><div class="lt">0 đ</div></div>
+            <div class="canh-row"><div class="n">Bát không rau</div><div class="mini-step"><button class="minus">−</button><span class="q">2</span><button class="plus">+</button></div><div class="lt">0 đ</div></div>
+          </div>
+
+          <div class="rollup">
+            <div class="rh" id="rollHead">TỔNG SỐ MÓN (7 loại) <span class="chev">⌄ Hiện</span></div>
+            <div class="rbody" id="rollBody" hidden>
+              <table>
+                <thead><tr><td>MÓN</td><td>NHÂN</td><td style="text-align:center">SL</td></tr></thead>
+                <tbody>
+                  <tr><td class="mon">Bánh Trứng Chín</td><td class="nhn">Thịt · Mộc nhĩ</td><td class="sl">1</td></tr>
+                  <tr><td class="mon">Bánh Cuốn</td><td class="nhn">Thịt · Mộc nhĩ</td><td class="sl">11</td></tr>
+                  <tr><td class="mon">Bánh Trứng Vàng</td><td class="nhn">Thịt</td><td class="sl">2</td></tr>
+                  <tr><td class="mon">Bánh Chay</td><td>—</td><td class="sl">2</td></tr>
+                  <tr><td class="mon">Giò</td><td>—</td><td class="sl">3</td></tr>
+                  <tr><td class="mon">Canh có rau</td><td>—</td><td class="sl">7</td></tr>
+                  <tr><td class="mon">Canh không rau</td><td>—</td><td class="sl">2</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="note-wrap">
+            <label for="note">GHI CHÚ <span class="saved" id="saved">✓ Đã lưu</span></label>
+            <textarea id="note" rows="2" placeholder="Ghi chú cho đơn hàng..."></textarea>
+          </div>
+
+          <div class="s-total"><span class="lab">Tổng cộng · 13 món</span><span class="val">103.000 đ</span></div>
+        </div>
+
+        <div class="scroll-pad"></div>
+      </div>
+
+      <!-- 9 · floating action cluster -->
+      <div class="bottom-scrim"></div>
+      <div class="service-fabs">
+        <button class="fab" id="callBtn"><span class="ic">🔔</span>Gọi nhân viên</button>
+        <button class="fab chat" id="chatBtn"><span class="ic">💬</span>Chat với nhân viên<span class="ping"></span></button>
+      </div>
+      <div class="checkout-bar">
+        <div class="cart-pill" id="cartPill" title="Cuộn tới đơn của bạn"><span class="ci">🛒</span><span class="badge">13</span></div>
+        <button class="pay-pill" id="payBtn"><span>Thanh toán</span><span class="sep"></span><span class="amt">103.000 đ</span></button>
+      </div>
+
+      <!-- 10 · bottom nav -->
+      <nav class="bottomnav">
+        <a class="active"><span class="i">🍴</span>Menu</a>
+        <a><span class="i">🧾</span>Đơn Hàng</a>
+        <a><span class="i">♡</span>Yêu Thích</a>
+        <a><span class="i">📍</span>Theo Dõi</a>
+        <a><span class="i">⚙️</span>Cài Đặt</a>
+      </nav>
+
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="item"><span class="num">1</span><h4>Header banner</h4><p>196px ảnh + scrim gradient, tên quán serif "Quán Bánh Cuốn". Một banner duy nhất.</p></div>
+    <div class="item"><span class="num">3</span><h4>Thanh danh mục dính</h4><p>Anchor scroll-spy — phần tử sticky duy nhất. Tab đang xem = chữ cam + gạch chân.</p></div>
+    <div class="item"><span class="num">5</span><h4>Thẻ món · SUẤT</h4><p>Giá cam lớn, stepper tròn, nhân "Nhân thịt / Nhân thịt mộc nhĩ" — combo chọn-nhiều (≥ 1), món chọn-một.</p></div>
+    <div class="item"><span class="num">8</span><h4>Tóm tắt đơn hàng</h4><p>Canh chỉ chọn ở stepper (có rau / không rau), bảng "Tổng số món", ghi chú → cart.orderNote.</p></div>
+    <div class="item"><span class="num">9</span><h4>3 nút nổi</h4><p>Thanh toán (chính) · Gọi nhân viên · Chat với nhân viên — kèm badge giỏ 13.</p></div>
+    <div class="item"><span class="num">10</span><h4>Thanh điều hướng</h4><p>Menu · Đơn Hàng · Yêu Thích · Theo Dõi · Cài Đặt — chrome của customer shell.</p></div>
+  </div>
+
+  <p class="footnote">
+    Mockup of <code>/menu</code> · task <code>C-4</code> (chưa build). Cấu trúc &amp; token từ <code>design-system.html</code> (F-7), re-map sang shell tối + cam. Dữ liệu từ MENU_CATALOG chuẩn · ví dụ mẫu Bàn 04 · 103.000 đ · badge 13. Nhân = topping ₫0 (<code>Nhân thịt</code> / <code>Nhân thịt mộc nhĩ</code>). Ảnh món dùng emoji (CSP chặn ảnh ngoài).
+  </p>
+</div>
+
+<script>
+(function () {
+  var scroll = document.getElementById('scroll');
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 1700); }
+
+  tabs.forEach(function (t) { t.addEventListener('click', function () { var el = document.getElementById(t.dataset.target); if (el) scroll.scrollTo({ top: Math.max(0, el.offsetTop - 8), behavior: 'smooth' }); }); });
+  var sections = tabs.map(function (t) { return document.getElementById(t.dataset.target); });
+  scroll.addEventListener('scroll', function () {
+    var y = scroll.scrollTop + 72, idx = 0;
+    for (var i = 0; i < sections.length; i++) if (sections[i] && sections[i].offsetTop <= y) idx = i;
+    tabs.forEach(function (t, i) { t.classList.toggle('active', i === idx); });
+  }, { passive: true });
+
+  document.querySelectorAll('.nhan').forEach(function (grp) {
+    var multi = grp.dataset.multi === '1';
+    grp.querySelectorAll('.pill').forEach(function (p) {
+      p.addEventListener('click', function () {
+        if (multi) {
+          if (p.classList.contains('on') && grp.querySelectorAll('.pill.on').length === 1) { showToast('Suất phải có ít nhất 1 nhân'); return; }
+          p.classList.toggle('on');
+        } else { grp.querySelectorAll('.pill').forEach(function (x) { x.classList.remove('on'); }); p.classList.add('on'); }
+      });
+    });
+  });
+
+  document.querySelectorAll('.card .stepper').forEach(function (st) {
+    var q = st.querySelector('.q'), minus = st.querySelector('.minus'), plus = st.querySelector('.plus');
+    if (minus) minus.addEventListener('click', function () { if (!minus.disabled) q.textContent = Math.max(0, (+q.textContent) - 1); });
+    if (plus) plus.addEventListener('click', function () { if (plus.disabled) return; q.textContent = (+q.textContent) + 1; showToast('Đã thêm ' + st.closest('.card').querySelector('.n').textContent.replace('SUẤT','').trim()); });
+  });
+  document.querySelectorAll('.summary .mini-step').forEach(function (st) {
+    var q = st.querySelector('.q');
+    st.querySelector('.minus').addEventListener('click', function () { q.textContent = Math.max(0, (+q.textContent) - 1); });
+    st.querySelector('.plus').addEventListener('click', function () { q.textContent = (+q.textContent) + 1; });
+  });
+
+  document.querySelectorAll('.card .heart').forEach(function (h) { h.addEventListener('click', function (e) { e.stopPropagation(); h.classList.toggle('on'); }); });
+
+  var input = document.getElementById('searchInput');
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase(), cards = document.querySelectorAll('.menu-sec .card');
+    document.querySelectorAll('.menu-sec').forEach(function (s) { s.style.display = ''; });
+    if (q.length < 2) { cards.forEach(function (c) { c.style.display = ''; }); return; }
+    cards.forEach(function (c) { var n = c.querySelector('.n').textContent.toLowerCase(); c.style.display = n.indexOf(q) > -1 ? '' : 'none'; });
+  });
+
+  var rollHead = document.getElementById('rollHead'), rollBody = document.getElementById('rollBody');
+  rollHead.addEventListener('click', function () { var open = !rollBody.hidden; rollBody.hidden = open; rollHead.querySelector('.chev').textContent = open ? '⌄ Hiện' : '⌃ Ẩn'; });
+
+  var note = document.getElementById('note'), saved = document.getElementById('saved'), noteTimer;
+  note.addEventListener('input', function () { saved.classList.remove('on'); clearTimeout(noteTimer); noteTimer = setTimeout(function () { saved.classList.add('on'); }, 500); });
+
+  document.getElementById('cartPill').addEventListener('click', function () { scroll.scrollTo({ top: document.querySelector('.summary').offsetTop - 8, behavior: 'smooth' }); });
+  document.getElementById('payBtn').addEventListener('click', function () { showToast('Xác nhận đơn Bàn 04 · gửi tới bếp'); });
+  document.getElementById('callBtn').addEventListener('click', function () { showToast('🔔 Đã gọi nhân viên tới Bàn 04'); });
+  document.getElementById('chatBtn').addEventListener('click', function () { showToast('💬 Đang mở chat với nhân viên...'); });
+})();
+</script>
+</body>
+</html>
