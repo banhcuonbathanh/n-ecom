@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-21 — Admin ingredients page plan · ecom-core</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBEAE7; --violet: #6B4CC4; --violet-soft: #EDE8FA;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F0857A; --red-soft: #3A1C18; --violet: #A992F0; --violet-soft: #241C3D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F0857A; --red-soft: #3A1C18; --violet: #A992F0; --violet-soft: #241C3D;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBEAE7; --violet: #6B4CC4; --violet-soft: #EDE8FA;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+         font-family: var(--body); line-height: 1.6; font-size: 16px; overflow-x: hidden; }
+  .page { max-width: 1040px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1, h2, h3 { font-family: var(--sans); line-height: 1.2; text-wrap: balance; }
+  h1 { font-size: 2rem; margin: 8px 0 12px; }
+  h2 { font-size: 1.3rem; margin: 0; }
+  h3 { font-size: 1rem; margin: 22px 0 8px; }
+  a { color: var(--accent); }
+  .back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+             text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 68ch; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--accent-soft);
+         border-radius: 4px; padding: 1px 5px; }
+
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+          padding: 8px 12px; font-size: 0.82rem; }
+  .fact .k { color: var(--muted); font-family: var(--mono); font-size: 0.72rem;
+             text-transform: uppercase; letter-spacing: 0.08em; display: block; }
+  .fact .v { font-weight: 600; }
+
+  nav.topnav { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 8px; }
+  nav.topnav a { font-family: var(--mono); font-size: 0.75rem; text-decoration: none;
+                 color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+                 padding: 5px 12px; background: var(--surface); }
+  nav.topnav a:hover { border-color: var(--accent); color: var(--accent); }
+
+  section { margin-top: 44px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px;
+              border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px;
+                background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; min-width: 560px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line);
+           vertical-align: top; }
+  th { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+       letter-spacing: 0.07em; color: var(--muted); }
+  tr:last-child td { border-bottom: none; }
+
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.5;
+                background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+                padding: 16px; overflow-x: auto; }
+
+  .golden { background: var(--accent-soft); border-left: 4px solid var(--accent);
+            border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+  .flag { background: var(--amber-soft); border-left: 4px solid var(--amber);
+          border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+  .danger { background: var(--red-soft); border-left: 4px solid var(--red);
+            border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+
+  .chip { display: inline-block; font-family: var(--mono); font-size: 0.68rem;
+          padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+  .chip.done { background: var(--done-soft); color: var(--done); }
+  .chip.plan { background: var(--accent-soft); color: var(--accent); }
+  .chip.amber { background: var(--amber-soft); color: var(--amber); }
+  .chip.red { background: var(--red-soft); color: var(--red); }
+
+  .strip { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin: 16px 0; }
+  .snode { flex: 1 1 150px; background: var(--surface); border: 1px solid var(--line);
+           border-radius: 10px; padding: 12px; font-size: 0.8rem; }
+  .snode b { display: block; font-family: var(--mono); font-size: 0.72rem;
+             color: var(--accent); margin-bottom: 4px; }
+
+  ul.checks { list-style: none; padding: 0; }
+  ul.checks li { background: var(--surface); border: 1px solid var(--line);
+                 border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;
+                 font-size: 0.88rem; }
+  ul.checks li::before { content: "☐ "; font-family: var(--mono); color: var(--muted); }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line);
+           font-size: 0.82rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <a class="back" href="build-plan.html">← build-plan.html</a>
+    <div class="eyebrow" style="margin-top:14px">ecom-core · restaurant platform · task plan · 2026-07-19</div>
+    <h1>F-21 — Admin ingredients page-plan set</h1>
+    <p class="lede">Produce the four-document plan set for <code>/admin/ingredients</code>
+      ("Kho nguyên liệu") — the admin surface's inventory master and the only page allowed
+      to move stock. This is a <strong>planning</strong> task: it writes documents, not code.</p>
+
+    <div class="facts">
+      <div class="fact"><span class="k">Task</span><span class="v">F-21</span></div>
+      <div class="fact"><span class="k">Status</span><span class="v"><span class="chip plan">🔄 in progress</span></span></div>
+      <div class="fact"><span class="k">Deps</span><span class="v">F-16 · F-9 · F-7</span></div>
+      <div class="fact"><span class="k">Phase</span><span class="v">F (plans an AD-phase page)</span></div>
+      <div class="fact"><span class="k">Source</span><span class="v">reference/…/admin/admin_ingredients</span></div>
+      <div class="fact"><span class="k">Output</span><span class="v">4 docs · 0 code files</span></div>
+    </div>
+  </header>
+
+  <nav class="topnav">
+    <a href="#s1">01 Objective</a>
+    <a href="#s2">02 Scope contract</a>
+    <a href="#s3">03 The page</a>
+    <a href="#s4">04 Key decisions</a>
+    <a href="#s5">05 Defects designed out</a>
+    <a href="#s6">06 Flags for the boss</a>
+    <a href="#s7">07 Steps</a>
+    <a href="#s8">08 Receipt checklist</a>
+  </nav>
+
+  <section id="s1">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Objective</h2></div>
+    <p>Reconcile the reference implementation of <code>/admin/ingredients</code> against our
+      harness rules and emit a build-ready plan set per
+      <a href="../plans/PAGE_PLAN_GUIDE.md">PAGE_PLAN_GUIDE.md</a>. The reference BE doc is a
+      trace of the <em>old system's actual code</em> — including five flaws its own authors
+      flagged. The value of this task is the reconciliation, not the transcription.</p>
+
+    <div class="golden">
+      <strong>Why this page matters.</strong> <code>stock_movements</code> is an append-only
+      ledger and <code>ingredients.current_stock</code> is its running total. If those two ever
+      disagree, inventory is fiction. The reference let them disagree in three separate ways.
+      This plan closes all three.
+    </div>
+  </section>
+
+  <section id="s2">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Scope contract — exact files</h2></div>
+    <div class="table-wrap"><table>
+      <tr><th>File</th><th>Action</th><th>Why</th></tr>
+      <tr><td><code>harness/plans/admin_ingredients/admin_ingredients_PLAN.md</code></td><td>create</td><td>The canonical plan — source of truth for the other three</td></tr>
+      <tr><td><code>harness/plans/admin_ingredients/admin_ingredients_plan.html</code></td><td>create</td><td>Visual: the plan (anatomy, contract, behaviors, tasks)</td></tr>
+      <tr><td><code>harness/plans/admin_ingredients/admin_ingredients_how-it-works.html</code></td><td>create</td><td>Visual: the runtime (tx, concurrency, branches)</td></tr>
+      <tr><td><code>harness/plans/admin_ingredients/admin_ingredients_mockup-1.html</code></td><td>create</td><td>Visual: the UI on neutral F-7 tokens</td></tr>
+      <tr><td><code>harness/diagrams/task-F-21.html</code></td><td>create</td><td>This page (owner rule 2026-07-17)</td></tr>
+      <tr><td><code>harness/TASKS.md</code></td><td>edit</td><td>Register the F-21 row</td></tr>
+      <tr><td><code>harness/CONTEXT_MAP.md</code></td><td>edit</td><td>Hard Rule 6 — a row per new doc</td></tr>
+      <tr><td><code>harness/README.md</code></td><td>edit</td><td>Hard Rule 6 — a row per new doc</td></tr>
+      <tr><td><code>harness/VERIFICATION.md</code></td><td>edit</td><td>Receipt</td></tr>
+      <tr><td><code>harness/STATE.md</code></td><td>edit</td><td>Checkpoint</td></tr>
+    </table></div>
+    <p style="font-size:0.86rem;color:var(--muted)">No file outside this list gets touched.
+      In particular <code>DB_SCHEMA.md</code> is <strong>not</strong> edited — this plan
+      <em>requests</em> a schema amendment (§06 F-1) rather than making one, because
+      DB_SCHEMA owns tables.</p>
+  </section>
+
+  <section id="s3">
+    <div class="sec-head"><span class="sec-num">03</span><h2>The page at a glance</h2></div>
+    <pre class="diagram">┌──────────────────────────────────────────────────────────────────────┐
+│ admin shell (manager+ only)                                          │
+├──────────────────────────────────────────────────────────────────────┤
+│ Kho nguyên liệu   🔍[Tìm nguyên liệu…]        [+ Thêm nguyên liệu]   │
+├──────────────────────────────────────────────────────────────────────┤
+│ Nguyên liệu   Đơn vị  Tồn kho  Tối thiểu  Hạn dùng  Trạng thái  ⋯    │
+│ Bột gạo       kg      25.500   10.000     2026-10-10 [in_stock]      │
+│ Thịt heo xay  kg       8.000   10.000     2026-07-21 [expiring_soon] │
+│ Mộc nhĩ       kg       2.300    2.000     2026-11-16 [in_stock]      │
+│ Nước mắm      lít      4.000    5.000     2027-06-01 [low_stock]     │
+│ Hành lá       kg       0.000    1.000     2026-07-22 [out_of_stock]  │
+└──────────────────────────────────────────────────────────────────────┘
+   row actions: [Nhập/Xuất] [✎] [🗑 admin only]
+
+   ┌─IngredientFormModal──────┐   ┌─StockMoveModal───────────────┐
+   │ metadata only — NO stock │   │ Loại: Nhập(+)/Xuất(−)/Điều   │
+   │ field (stock has exactly │   │ Số lượng (kg) · Ghi chú      │
+   │ one door: movements)     │   │ → POST /admin/stock-movements│
+   └──────────────────────────┘   └──────────────────────────────┘</pre>
+
+    <div class="strip">
+      <div class="snode"><b>8 endpoints</b>All manager+; <strong>DELETE is admin-only</strong> via a nested sub-group.</div>
+      <div class="snode"><b>0 cache</b>Inventory is on the "never cached" list — no Redis. TanStack Query only.</div>
+      <div class="snode"><b>2 write doors</b>Metadata via PATCH; stock <em>only</em> via movements, always in a tx.</div>
+      <div class="snode"><b>5 branches</b>loading · error · empty · no-match · ready — never conflated.</div>
+    </div>
+  </section>
+
+  <section id="s4">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Key decisions taken</h2></div>
+    <div class="table-wrap"><table>
+      <tr><th>#</th><th>Decision</th><th>Grounded in</th></tr>
+      <tr><td>D-1</td><td>Wire uses <strong>DB names, snake_case</strong> (<code>current_stock</code>, <code>min_stock</code>) — the reference's <code>quantity</code>/<code>warningThreshold</code> renames are dropped. Success responses unwrapped.</td><td>DB_SCHEMA §6 ruling 6 · FE_STATE §9 rule 10</td></tr>
+      <tr><td>D-2</td><td><code>current_stock</code> moves only through movements, only inside a tx. It is not an accepted PATCH key.</td><td>DB_SCHEMA §4.6 · BE_STATE tx policy</td></tr>
+      <tr><td>D-3</td><td><code>cost_per_unit</code> <strong>is exposed</strong> here — every endpoint on this page is manager+ gated, which is the exact condition ruling 7 set.</td><td>DB_SCHEMA §6 ruling 7</td></tr>
+      <tr><td>D-4</td><td>Decimal quantities cross the wire as <strong>strings</strong>, not JS numbers.</td><td><code>DECIMAL(10,3)</code>; float drift on stock counts</td></tr>
+      <tr><td>D-5</td><td>Pessimistic mutations — no optimistic stock UI. A rejected over-draw must never flash as success.</td><td>FE_STATE loading tiers</td></tr>
+      <tr><td>D-6</td><td>The 🔮 STOR forecast (<code>avg_daily_usage</code>, run-out dates) is <strong>deferred to <code>/admin/storage</code></strong>, which owns it.</td><td>reference admin_storage.md</td></tr>
+      <tr><td>D-7</td><td>💡 The movement-history drawer is an <strong>optional slice</strong> — recommended (it makes the ledger auditable for the first time) but cuttable without touching the core loop.</td><td>this plan</td></tr>
+    </table></div>
+  </section>
+
+  <section id="s5">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Reference defects designed out</h2></div>
+    <div class="danger">
+      <strong>The big one (D-1).</strong> The reference inserted the movement row and then
+      issued a <em>separate</em> UPDATE on <code>current_stock</code> — no transaction. It also
+      wrote <code>initial_stock</code> straight into <code>current_stock</code> at create time
+      with no movement row at all. Both mean the ledger and the count can disagree, and the
+      second one guarantees they disagree from day one. Our version runs one tx with the
+      ingredient row locked, and creates an opening <code>'in'</code> movement.
+      The invariant <code>Σ movements == current_stock</code> becomes testable.
+    </div>
+    <div class="table-wrap"><table>
+      <tr><th>#</th><th>Reference finding</th><th>Countermeasure</th></tr>
+      <tr><td>D-1</td><td>Non-transactional stock update; no opening movement</td><td>One locked tx on both paths</td></tr>
+      <tr><td>D-2</td><td><code>current_stock</code> reachable as a plain update field</td><td>Rejected key — stock has one door</td></tr>
+      <tr><td>D-3</td><td>🗑 shown to managers, BE 403s them</td><td>Button gated on <code>role === 'admin'</code></td></tr>
+      <tr><td>D-4</td><td>Delete had no in-use guard → MySQL 1451 → 500</td><td>Service checks <code>product_ingredients</code> → clean 422. <strong>Load-bearing</strong>: the FK is CASCADE, so without the guard a delete silently destroys recipe rows</td></tr>
+      <tr><td>D-5</td><td><code>created_by</code> scanned but dropped from JSON</td><td>Serialized + <code>created_by_name</code> joined</td></tr>
+      <tr><td>D-6</td><td>loading / empty / search-miss conflated</td><td>Five named branches, own copy + CTA each</td></tr>
+      <tr><td>D-7</td><td>409 toast for an error the BE could never emit (no UNIQUE on name)</td><td>Either the amendment lands and 409 is real, or the toast is cut — no UI for imaginary errors</td></tr>
+      <tr><td>D-8</td><td><code>StockMoveModal</code> inlined in <code>page.tsx</code></td><td>Own file — the over-draw rule needs a testable home</td></tr>
+      <tr><td>D-9</td><td><code>cost_per_unit</code> silently withheld</td><td>Deliberately exposed (D-3), not accidentally invisible</td></tr>
+    </table></div>
+  </section>
+
+  <section id="s6">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Flags for the boss</h2></div>
+
+    <div class="flag">
+      <strong>⚠️ F-1 — schema amendment requested.</strong> Add <code>UNIQUE(name)</code> to
+      <code>ingredients</code>, with the soft-delete rename rule from <code>DB_SCHEMA.md §4.4</code>
+      (<code>name → "&lt;name&gt;#deleted-&lt;id&gt;"</code>). <code>DB_SCHEMA.md</code> owns tables, so this
+      plan <em>requests</em> rather than declares it. Until it is ratified, the 409
+      duplicate-name path does not exist and the reference's duplicate toast must be cut.
+    </div>
+
+    <div class="flag">
+      <strong>⚠️ F-2 — over-draw default is flippable.</strong> Ruling 8 rejects a below-zero
+      <code>out</code> with <code>VALIDATION_FAILED</code> and says "lock in when AD opens". This
+      plan builds the reject. If real kitchen practice is "count later, log now", say so before
+      AD-INV-4 and it becomes a clamp + warning instead.
+    </div>
+
+    <div class="flag">
+      <strong>⚠️ F-3 — admin palette still unresolved.</strong> The live admin shell used
+      orange/dark while our design tokens are neutral. This plan's mockup uses the neutral F-7
+      tokens per PAGE_PLAN_GUIDE §7. Same open question as the other admin plans — one answer
+      should cover all of them.
+    </div>
+
+    <div class="flag">
+      <strong>❓ C-1 — batch vs ingredient dating.</strong> The schema carries one
+      <code>import_date</code> per ingredient row, so re-importing overwrites it and silently
+      moves <code>expiry_date</code> for stock that is physically older. Real batch tracking
+      would need per-movement dating. Out of scope here, but it should be ruled on before
+      <code>/admin/storage</code> designs expiry reporting.
+    </div>
+  </section>
+
+  <section id="s7">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Steps</h2></div>
+    <div class="strip">
+      <div class="snode"><b>1 · digest</b>Read the reference FE view + BE trace, DB_SCHEMA §4.6 + rulings 6/7/8.</div>
+      <div class="snode"><b>2 · reconcile</b>Every reference choice → adopt or reject with a reason.</div>
+      <div class="snode"><b>3 · PLAN.md</b>The 9 sections incl. wire shapes + canonical seed data.</div>
+      <div class="snode"><b>4 · 3 HTML</b>plan · how-it-works · mockup — built in parallel by sub-agents from the .md.</div>
+      <div class="snode"><b>5 · register</b>CONTEXT_MAP + README rows (Hard Rule 6).</div>
+      <div class="snode"><b>6 · verify</b>Render check → receipt → STATE + TASKS → commit.</div>
+    </div>
+    <p style="font-size:0.86rem;color:var(--muted)">Sub-agents were used for step 4 only. They
+      render the <code>.md</code>; they do not decide anything. Every fact in the three HTML
+      files must already exist in <code>admin_ingredients_PLAN.md</code>.</p>
+  </section>
+
+  <section id="s8">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Receipt checklist</h2></div>
+    <ul class="checks">
+      <li>All four files exist under <code>harness/plans/admin_ingredients/</code>, each prefixed with the page slug.</li>
+      <li>Each HTML footer states that <code>admin_ingredients_PLAN.md</code> wins on conflict.</li>
+      <li>Every HTML renders in both themes (prefers-color-scheme <em>and</em> the data-theme toggle).</li>
+      <li>No horizontal page scroll; wide tables/diagrams scroll inside their own box.</li>
+      <li>Mockup uses the neutral F-7 tokens — not the customer dark/orange shell.</li>
+      <li>All docs use the §9 canonical seed data; numbers agree across every file.</li>
+      <li>The 20 behaviors in §4.4 are numbered and map to the AD-INV receipt rows.</li>
+      <li>Every reference decision is adopted or rejected <em>with a reason</em> (§3.4 / §6).</li>
+      <li>No rule is restated — the §2 alignment table links its owning doc instead.</li>
+      <li><code>CONTEXT_MAP.md</code> + <code>README.md</code> carry a row for each new file.</li>
+      <li>Receipt logged in <code>harness/VERIFICATION.md</code>; <code>STATE.md</code> + <code>TASKS.md</code> updated.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Written 2026-07-19 for task F-21 · plan snapshot.
+    On any conflict <code>harness/TASKS.md</code> (status) and
+    <code>harness/plans/admin_ingredients/admin_ingredients_PLAN.md</code> (content) win.
+  </footer>
+
+</div>
+</body>
+</html>
