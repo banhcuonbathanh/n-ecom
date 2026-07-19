@@ -67,9 +67,11 @@
 | `harness/diagrams/devops.html` | Visual companion to DEVOPS.md | nothing — snapshot; DEVOPS.md wins |
 | `harness/diagrams/task-F-13.html` | Per-task visual plan page for F-13 | nothing — plan snapshot; TASKS.md/DEVOPS.md win |
 | `harness/diagrams/task-F-14.html` | Per-task visual plan page for F-14 (docs alignment sweep; records the no-folder-moves decision) | nothing — plan snapshot; TASKS.md/CONTEXT_MAP.md win |
+| `harness/plans/PAGE_PLAN_GUIDE.md` | How to build a page-plan set (the 4-doc recipe distilled from customer_menu/F-15): naming, per-doc structure, shared HTML skeleton, build order, registration + quality checklist | page-plan *format & process* only — page rules stay in their owning docs |
 | `harness/plans/customer_menu/PLAN.md` | Consolidated FE+BE build plan for the customer menu page (F-15, from `reference/…/customer/customer_menu`) | menu-page scope, FE/BE contract slice, behavior spec, TASKS.md row mapping (rules stay in their owning docs; TASKS.md owns status) |
 | `harness/plans/customer_menu/plan.html` | Visual companion to the menu-page plan (page anatomy, component tree, BE contract, dataflow) | nothing — snapshot; the folder's PLAN.md wins |
 | `harness/plans/customer_menu/how-it-works.html` | Runtime walkthrough visual: end-to-end sequences (first load / 3-tier loading, add-to-cart, state hubs, POST /orders through Gin→MySQL, Redis cache-aside) | nothing — snapshot; the folder's PLAN.md wins |
+| `harness/plans/customer_menu/customer_menu_mockup-1.html` | Mockup #1 — interactive high-fidelity render of the `/menu` page (C-4 preview): design-system components on the dark/orange shell, real seed catalog, worked example, 3 floating action buttons | nothing — snapshot; the folder's PLAN.md + `design-system.html` win |
 | `harness/diagrams/task-F-15.html` | Per-task visual plan page for F-15 (customer-menu build plan) | nothing — plan snapshot; TASKS.md + `harness/plans/customer_menu/PLAN.md` win |
 | `harness/DB_SCHEMA.md` | Canonical DB design (F-16, adopted from `reference/docs/system/02_spec/object`) | schema conventions, field-name law, every table/column spec, mismatch-flag rulings (migrations implement it; once code exists, code wins per rule 5) |
 | `harness/diagrams/task-F-16.html` | Per-task visual plan page for F-16 (DB schema adoption) | nothing — plan snapshot; TASKS.md/DB_SCHEMA.md win |

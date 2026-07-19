@@ -58,6 +58,8 @@
 
 | File | Mirrors | Summary |
 |---|---|---|
+| [plans/PAGE_PLAN_GUIDE.md](plans/PAGE_PLAN_GUIDE.md) | — (recipe) | How to build a page-plan set for any new page: the 4 docs (`_PLAN.md` + `_plan.html` + `_how-it-works.html` + `_mockup-N.html`), naming law, per-doc section outlines, the shared both-theme HTML skeleton, build order, and the registration + quality checklist. Distilled from customer_menu (F-15). |
 | [plans/customer_menu/PLAN.md](plans/customer_menu/PLAN.md) | — (F-15 deliverable) | Customer menu page plan: BE contract (endpoints, schema slice, cache map), FE plan (file map, state ownership, 12 behaviors), defects designed out, TASKS.md row mapping, decisions/flags. |
 | [plans/customer_menu/plan.html](plans/customer_menu/plan.html) | the folder's PLAN.md | Visual: phone-frame page anatomy (reference dark/orange), component tree, BE contract + dataflow, behavior grid, task mapping. |
 | [plans/customer_menu/how-it-works.html](plans/customer_menu/how-it-works.html) | the folder's PLAN.md | Runtime walkthrough: numbered end-to-end sequences — first load (3-tier loading), add-to-cart (zero network), the two state hubs, POST /orders through every layer, Redis cache-aside/invalidation. |
+| [plans/customer_menu/customer_menu_mockup-1.html](plans/customer_menu/customer_menu_mockup-1.html) | the folder's PLAN.md + design-system.html | Mockup #1 — interactive high-fidelity render of the `/menu` page (C-4 preview): design-system components re-mapped to the dark/orange shell, real seed catalog, worked example (Bàn 04 · 103.000 đ · badge 13), 3 floating action buttons (Thanh toán · Gọi nhân viên · Chat). Standalone HTML. |
