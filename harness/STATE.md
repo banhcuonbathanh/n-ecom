@@ -23,11 +23,74 @@
   💡 VN-first copy + 💡 no public staff register (OVERALL_PLAN.md §9). ⚠ `personal/
   command.md` tracked in git despite the Session-0b personal-stays-out decision
   (owner committed it in `dda8ccc` — say "untrack it" to fix).
+  🚨 **NEW (F-19) — order deep-link gap:** `/order/:id` was merged into `/orders`, which
+  picks its order from `activeOrderId` in the *persisted client store*; a shared link,
+  a QR re-scan on a second phone, a private tab or a cleared store then cannot reach a
+  live order. Fix recommended: `/orders?id=<uuid>`. **Decide before the `/orders` FE row
+  opens** (`plans/customer_order_detail/customer_order_detail_SUPPLEMENT.md` §1).
+  ⚠ quantity stepper `PATCH /orders/items/:id/quantity` dropped by omission (same file §2).
   Deferred: payment gateways (→ P phase), AI.
 
 ---
 
 ## Checkpoint log
+
+### 2026-07-20 — Session 15 (F-27/F-28): admin_products + admin_combos page plans — **PARTIAL**
+- Done: both canonical `.md` plans written — `harness/plans/admin_products/
+  admin_products_PLAN.md` (F-27) and `harness/plans/admin_combos/admin_combos_PLAN.md`
+  (F-28). Products digested by me directly from the 8-doc reference corpus; combos by
+  1 Explore agent. Both follow PAGE_PLAN_GUIDE §3's 8-section structure.
+- **NOT done — F-27/F-28 stay 🔄:** the 6 HTML companions (`_plan`, `_how-it-works`,
+  `_mockup-1` × 2 pages). Two builder agents were launched and **both failed on an
+  API session limit**; no HTML was written. No receipts logged, no Hard-Rule-6 index
+  rows added yet. Next session: render the 6 HTML from the two `.md` files (they are
+  complete and stable), then CONTEXT_MAP + README rows + VERIFICATION receipts.
+- Decisions: admin writes are pessimistic (FE rule 4) · delete = admin+, rest manager+
+  · admin list reads stay uncached · `GET /combos/all` is **new** (ref had no
+  manager-only combo read) · combo management read carries a **server-side join**
+  (`product_name`, `unit_price`, `retail_total`, `product_deleted`) while the customer
+  `GET /combos` stays ids-only — deliberate, documented divergence · combo item writes
+  go in **one transaction** (ref swallowed item errors) · **product writes now also DEL
+  `combos:list`** (new cross-invalidation rule, added to both plans).
+- Drift fixed / found: ⚠ **task-id collision** — a parallel session registered F-17 =
+  admin_overview while this session was running; my rows renumbered **F-17→F-27,
+  F-18→F-28** (ids through F-26 are taken). ⚠ **`is_active` vs `is_available`** on
+  combos: DB_SCHEMA §4.1 says `is_available`, customer_menu PLAN §3.5 ships
+  `is_active` on the same endpoint — ruled **`is_active`**, DB_SCHEMA to be corrected
+  in AD-C1. ⚠ **worked-example mismatch**: customer_menu illustrates "Suất đầy đủ" at
+  55.000 but the seed catalog has Suất Đầy Đủ Trứng Chín/Tái at 30.000 and no 55.000
+  combo — combos plan uses the seed-faithful numbers; menu plan needs correcting.
+- 🚨 **RISK for owner (blocks AD-C4):** on our own seed data every suất is priced
+  *exactly* at its retail sum, so `Tiết kiệm` is 0 on every row and the combos page's
+  headline "savings" feature renders as a column of `—`. Decide: seed a genuinely
+  discounted combo (plan's default — worked example uses 28.000 vs 30.000 retail), or
+  drop the savings column. See `admin_combos_PLAN.md §7`.
+- Next: finish the 6 HTML companions for F-27/F-28, then indexes + receipts.
+
+
+### 2026-07-19 — Session 15 (F-19): order detail — merged away, supplement instead
+- Done: F-19 ✅ — owner asked for an order-detail page plan. Digested the 8-doc reference
+  corpus (1 Explore agent, code-traced), drafted the full 4-doc set, then **discarded it**:
+  the sibling `customer_orders_tracking` plan merges `/order/:id` away *and* already
+  specifies the detail view completely (~90 % overlap — `PAGE_PLAN_GUIDE §10` says
+  cross-link, don't re-derive). Delivered `plans/customer_order_detail/`:
+  `_SUPPLEMENT.md` (126 lines, owns only the three unhomed items) + a `_PLAN.md` stub
+  saying there is no plan here. **No HTML companions, deliberately.** Hard-Rule-6 rows in
+  CONTEXT_MAP + README; receipt in VERIFICATION.md.
+- Decisions (both owner-ruled mid-task, before any HTML was rendered): **`/order/:id` is
+  merged away** — order detail is a view inside `/orders`, homed in the orders-tracking
+  plan · **F-19 ships a short supplement, not a page-plan set.**
+- Drift fixed: `customer_menu_PLAN.md` §1 + §4.2 still routed the post-order handoff to
+  the deleted route → dated supersession notes, redirect now `/orders` (Hard Rule 5).
+- ⚠ Open for owner: 🚨 **deep-link gap** — `/orders` selects its order from
+  `activeOrderId` in the *persisted client store*, so a shared link / QR re-scan on a
+  second phone / private tab / cleared store **cannot reach a live order at all**.
+  Recommendation `/orders?id=<uuid>` (URL wins over store; `table_id` 403 already guards
+  a guessed id). **Decide before the `/orders` FE row opens.** · ⚠ quantity stepper
+  (`PATCH /orders/items/:id/quantity`) dropped by omission, not by ruling.
+- ⚠ Process: parallel sessions collided on task ids again (two F-17 rows mid-session,
+  since renumbered F-27/F-28 by the sibling). Left alone — other sessions' in-flight rows.
+- Next: unchanged — F-2 (dev stack skeleton).
 
 ### 2026-07-19 — Session 15 (F-24): customer-favourites 4-doc page-plan set
 - Done: **F-24 ✅** — `harness/plans/customer_favourites/` holds the 4 slug-prefixed docs

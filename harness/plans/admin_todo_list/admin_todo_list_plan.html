@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin to-do list — FE + BE build plan (F-20)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4; --violet: #6B4FBB; --violet-soft: #EDE8F9;
+    --surface-2: #F3F4F6;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E58278; --red-soft: #3A1D19; --violet: #B39DEB; --violet-soft: #241C3D;
+      --surface-2: #1C2431;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E58278; --red-soft: #3A1D19; --violet: #B39DEB; --violet-soft: #241C3D;
+    --surface-2: #1C2431;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4; --violet: #6B4FBB; --violet-soft: #EDE8F9;
+    --surface-2: #F3F4F6;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; display: inline-block; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .chip.red { color: var(--red); background: var(--red-soft); }
+  .chip.violet { color: var(--violet); background: var(--violet-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .danger { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .danger p { margin: 0 0 8px; } .danger p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, .danger code, .bcard code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.c { color: var(--accent); background: var(--accent-soft); }
+  .t.tt { color: var(--amber); background: var(--amber-soft); }
+  .t.o { color: var(--done); background: var(--done-soft); }
+  .t.new { color: var(--violet); background: var(--violet-soft); }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); margin: 14px 0; }
+  .snode { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-top: 3px solid var(--accent); }
+  .snode.tph { border-top-color: var(--amber); }
+  .snode.oph { border-top-color: var(--done); }
+  .snode.nph { border-top-color: var(--violet); }
+  .sarrow { color: var(--muted); font-size: 0.8rem; }
+
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+
+  /* ---- admin wireframe kit — uses THEME tokens (admin surface = neutral F-7) ---- */
+  .wire-wrap { overflow-x: auto; }
+  .wire { min-width: 620px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; font-size: 12.5px; }
+  .wire * { box-sizing: border-box; }
+  .w-sec { position: relative; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .w-sec:last-child { border-bottom: none; }
+  .w-n { position: absolute; top: 8px; right: 8px; z-index: 2; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .w-h { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+  .w-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .w-title b { font-family: var(--sans); font-size: 15px; }
+  .w-btn { background: var(--accent); color: var(--surface); border-radius: 6px; padding: 6px 12px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .w-btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  .w-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .w-field { background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; font-size: 11.5px; color: var(--muted); }
+  .w-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .w-kpi { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+  .w-kpi .kl { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .w-kpi .kv { font-family: var(--sans); font-size: 22px; font-weight: 700; line-height: 1.1; }
+  .w-kpi.ok .kv { color: var(--done); } .w-kpi.warn .kv { color: var(--amber); } .w-kpi.bad .kv { color: var(--red); }
+  table.w-t { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  table.w-t th { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  table.w-t td { padding: 7px 8px; border-bottom: 1px solid var(--line); }
+  table.w-t tr:last-child td { border-bottom: none; }
+  .w-badge { font-family: var(--mono); font-size: 9.5px; font-weight: 700; border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+  .w-badge.pend { color: var(--muted); background: var(--surface-2); }
+  .w-badge.prog { color: var(--accent); background: var(--accent-soft); }
+  .w-badge.done { color: var(--done); background: var(--done-soft); }
+  .w-badge.over { color: var(--red); background: var(--red-soft); }
+  .w-rate.hi { color: var(--done); font-weight: 700; } .w-rate.mid { color: var(--amber); font-weight: 700; } .w-rate.lo { color: var(--red); font-weight: 700; }
+  .w-bar { height: 9px; border-radius: 4px; background: var(--surface-2); }
+  .w-modal { border: 1px solid var(--accent); border-radius: 10px; background: var(--surface); box-shadow: 0 12px 28px rgba(0,0,0,.18); overflow: hidden; max-width: 420px; }
+  .w-mhead { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); font-family: var(--sans); font-weight: 600; font-size: 13px; }
+  .w-mbody { padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; }
+  .w-lbl { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 3px; }
+  .w-in { background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: 11.5px; color: var(--ink); }
+  .w-mfoot { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); background: var(--surface-2); }
+  .anatomy { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .callouts { flex: 1; min-width: 280px; }
+  .callouts ol { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 0.86rem; }
+  .callouts li { display: flex; gap: 10px; }
+  .co-n { flex: none; width: 19px; height: 19px; margin-top: 3px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .callouts b { font-family: var(--mono); font-size: 0.8rem; }
+
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .pane { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  .pane h4 { font-family: var(--sans); font-size: 0.92rem; margin: 0 0 8px; }
+  .pane.ownd { border-left: 3px solid var(--violet); }
+  .pane.brwd { border-left: 3px solid var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · consolidated page plan · 2026-07-19</div>
+  <h1>Admin to-do list — FE + BE build plan</h1>
+  <p class="lede">The manager's <b>plan-the-shift</b> screen at <code>/admin/todo-list</code>:
+  read the day's rollup, drill into one person, and — the part no other page owns —
+  <b>author tasks</b>. Manager-only, pull-only, no Redis.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-20</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_todo_list_PLAN.md">admin_todo_list_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">reference corpus</span><span class="v">…/admin/admin_todo_list/ · 10 docs</span></div>
+    <div class="fact"><span class="k">ships across</span><span class="v">AD-3 · AD-4 · AD-5</span></div>
+  </div>
+  <div class="golden">
+    <p><b>The one thing to understand about this plan:</b> this page is the sibling of
+    <code>/admin/staff/task-board</code> (F-22) and <b>shares its entire data layer</b>. The
+    <code>staff_tasks</code> table, endpoints 1–3 + 5, the status machine and the cache map are
+    <b>owned by</b> <a href="../admin_task_board/admin_task_board_PLAN.md">admin_task_board_PLAN.md</a>
+    and <a href="../../DB_SCHEMA.md">DB_SCHEMA.md §4.7</a>.</p>
+    <p>This plan <b>links them and re-derives nothing.</b> It owns four things: the two-view
+    shell, the filter bar, the authoring modal, and the one new endpoint authoring requires —
+    <code>PATCH /admin/tasks/:id</code>.</p>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#anatomy">01 anatomy</a>
+  <a href="#components">02 components</a>
+  <a href="#state">03 state</a>
+  <a href="#be">04 be contract</a>
+  <a href="#dataflow">05 dataflow</a>
+  <a href="#behaviors">06 behaviors</a>
+  <a href="#defects">07 defects out</a>
+  <a href="#tasks">08 tasks</a>
+  <a href="#decisions">09 decisions</a>
+</nav>
+
+<section id="anatomy">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy — two mutually exclusive views</h2></div>
+  <p><span class="chip plan">admin surface</span>&nbsp; This wireframe uses the <b>neutral F-7
+  design-system tokens</b> and follows the page theme — the customer dark/orange shell does
+  <em>not</em> apply to admin screens (<a href="../PAGE_PLAN_GUIDE.md">PAGE_PLAN_GUIDE §7</a>).
+  Worked example: <b>2026-07-19</b>, seeded to match the sibling board.</p>
+
+  <h3>View A — the landing state (<code>staffId == null</code>)</h3>
+  <div class="anatomy">
+    <div class="wire-wrap" style="flex:none;max-width:100%">
+      <div class="wire">
+        <div class="w-sec">
+          <span class="w-n">1</span>
+          <div class="w-title"><b>Danh sách Công Việc</b><span class="w-btn">+ Tạo công việc</span></div>
+        </div>
+        <div class="w-sec">
+          <span class="w-n">2</span>
+          <p class="w-h">filter bar — no date range (§3.4)</p>
+          <div class="w-filters">
+            <span class="w-field">Nhân viên: Tất cả ▾</span>
+            <span class="w-field">Ngày: 2026-07-19</span>
+            <span class="w-field">Trạng thái: Tất cả ▾</span>
+            <span class="w-btn ghost">Xóa lọc</span>
+          </div>
+        </div>
+        <div class="w-sec">
+          <span class="w-n">3</span>
+          <p class="w-h">KPI rollup — 4 cards</p>
+          <div class="w-kpis">
+            <div class="w-kpi"><span class="kl">Tổng</span><div class="kv">18</div></div>
+            <div class="w-kpi ok"><span class="kl">Hoàn thành</span><div class="kv">9</div></div>
+            <div class="w-kpi warn"><span class="kl">Đang làm</span><div class="kv">4</div></div>
+            <div class="w-kpi bad"><span class="kl">Quá hạn</span><div class="kv">2</div></div>
+          </div>
+        </div>
+        <div class="w-sec">
+          <span class="w-n">4</span>
+          <p class="w-h">per-staff board — click a row to drill in</p>
+          <table class="w-t">
+            <tr><th>Nhân viên</th><th>Được giao</th><th>Xong</th><th>Tỉ lệ</th><th>Quá hạn</th></tr>
+            <tr><td>chef01 · <span style="color:var(--muted)">chef</span></td><td>5</td><td>2</td><td class="w-rate lo">40%</td><td><span class="w-badge over">1 quá hạn</span></td></tr>
+            <tr><td>cashier01 · <span style="color:var(--muted)">cashier</span></td><td>7</td><td>6</td><td class="w-rate mid">86%</td><td>—</td></tr>
+            <tr><td>server02 · <span style="color:var(--muted)">staff</span></td><td>0</td><td>0</td><td class="w-rate lo">0%</td><td>—</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <ol>
+        <li><span class="co-n">1</span><span><b>TodoPageHeader</b> — the create button renders only for
+        <code>manager+</code>. FE chrome only; the BE <code>AtLeast("manager")</code> is the real gate.</span></li>
+        <li><span class="co-n">2</span><span><b>TodoFilterBar</b> — staff · date · status.
+        The reference's <code>Từ ngày / Đến ngày</code> range and its 90-day guard are
+        <b>removed</b>: the server is <code>WHERE DATE(due_at)=?</code>, single-day by design.</span></li>
+        <li><span class="co-n">3</span><span><b>KPI cards</b> from <code>metrics</code>.
+        💡 §09 suggests making these clickable filters rather than a static readout.</span></li>
+        <li><span class="co-n">4</span><span><b>Per-staff board</b> from <code>staffStats[]</code>.
+        Every active staff member appears even with zero tasks (LEFT JOIN). Clicking a row sets
+        <code>filters.staffId</code> → View B. Rate colours: ≥80% green · 50–79% amber · &lt;50% red.
+        <code>qualityScore</code> is <b>absent by decision</b> — invented data (F-22 §3.4).</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>View B — a staff member selected (<code>staffId != null</code>)</h3>
+  <div class="anatomy">
+    <div class="wire-wrap" style="flex:none;max-width:100%">
+      <div class="wire">
+        <div class="w-sec">
+          <span class="w-n">5</span>
+          <p class="w-h">task list · chef01 · 2026-07-19 — priority high→low, then due_at</p>
+          <table class="w-t">
+            <tr><th>Tên</th><th>Ưu tiên</th><th>Khung giờ</th><th>Trạng thái</th><th>Hành động</th></tr>
+            <tr>
+              <td><b>Vệ sinh khu bếp</b><br><span style="color:var(--muted)">Lau bếp + thay dầu</span></td>
+              <td>🔴 Cao</td><td>08:00 – 09:00</td><td><span class="w-badge over">quá hạn</span></td><td>✏️</td>
+            </tr>
+            <tr>
+              <td><b>Kiểm kê nguyên liệu</b><br><span style="color:var(--muted)">Đếm tồn kho tủ lạnh 2</span></td>
+              <td>🔴 Cao</td><td>21:00</td><td><span class="w-badge prog">đang làm</span></td><td>✏️</td>
+            </tr>
+            <tr>
+              <td><b>Chuẩn bị nước chấm</b></td>
+              <td>🟡 TB</td><td>—</td><td><span class="w-badge done">hoàn thành</span></td><td>✏️</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="callouts">
+      <ol>
+        <li><span class="co-n">5</span><span><b>TodoTaskTable</b> (md+) / <b>TodoTaskCard</b> (&lt;md).
+        Header is <b>"Hành động"</b>, not the abbreviated "HĐ" the reference doc drew.
+        <code>description</code> renders as a subtitle — the reference stored it and never showed it.
+        <code>quá hạn</code> is <b>server-derived</b> (<code>isOverdue</code>), never a stored status.</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>Overlay — <code>TaskFormModal</code> (the page's reason to exist)</h3>
+  <div class="anatomy">
+    <div class="w-modal">
+      <div class="w-mhead"><span>Sửa công việc</span><span style="color:var(--muted)">✕</span></div>
+      <div class="w-mbody">
+        <div><span class="w-lbl">Tên công việc *</span><div class="w-in">Kiểm kê nguyên liệu tủ 2</div></div>
+        <div><span class="w-lbl">Giao cho *</span><div class="w-in">chef01 ▾ <span style="color:var(--muted)">· khoá khi sửa</span></div></div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1"><span class="w-lbl">Ưu tiên *</span><div class="w-in">🟡 Trung bình ▾</div></div>
+          <div style="flex:1"><span class="w-lbl">Hạn *</span><div class="w-in">2026-07-19 14:00</div></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1"><span class="w-lbl">Bắt đầu (tuỳ chọn)</span><div class="w-in">—</div></div>
+          <div style="flex:1"><span class="w-lbl">Kết thúc (tuỳ chọn)</span><div class="w-in">—</div></div>
+        </div>
+        <div><span class="w-lbl">Mô tả</span><div class="w-in">Đếm tồn kho tủ lạnh 2</div></div>
+        <div><span class="w-lbl">Ghi chú <span style="color:var(--violet)">← nay có ô nhập</span></span><div class="w-in">Báo lại quản lý sau khi xong</div></div>
+      </div>
+      <div class="w-mfoot"><span class="w-btn ghost">Hủy</span><span class="w-btn">Cập nhật</span></div>
+    </div>
+    <div class="callouts">
+      <ol>
+        <li><span class="co-n">6</span><span><b>Create mode</b> → <code>POST /admin/tasks</code>.
+        <b>Edit mode</b> → <code>PATCH /admin/tasks/:id</code> <span class="t new">NEW</span>.
+        In the reference <em>both</em> called <code>POST</code> — every edit silently inserted a
+        duplicate (🔴 Bug 1). See §07.</span></li>
+        <li><span class="co-n">7</span><span><b>Ghi chú / <code>notes</code> now has an input.</b>
+        The reference carried <code>notes</code> in the Zod schema and the payload but rendered no
+        field, so it was permanently <code>undefined</code>.</span></li>
+        <li><span class="co-n">8</span><span><b>"Giao cho" is locked in edit mode</b> —
+        <code>assignedTo</code> is not patchable (§09 decision 2). Re-assignment is a different
+        intent from correcting fields.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="components">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Component tree — file map with owning task</h2></div>
+<pre class="diagram">fe/src/app/(dashboard)/admin/todo-list/
+├── page.tsx                    thin server shell → &lt;TodoPageClient/&gt;          <span class="t c">AD-4</span>
+├── loading.tsx                 route skeleton                    <span class="t new">NEW</span> <span class="t c">AD-4</span>
+└── components/
+    ├── TodoPageClient.tsx      owns filters · modal state · A/B switch        <span class="t c">AD-4</span>
+    ├── TodoFilterBar.tsx       staff · date · status (no range)              <span class="t c">AD-4</span>
+    ├── TodoStatsBoard.tsx      VIEW A — KPI cards + per-staff table          <span class="t c">AD-4</span>
+    ├── TodoTaskTable.tsx       VIEW B, md+                                    <span class="t c">AD-4</span>
+    ├── TodoTaskCard.tsx        VIEW B, &lt;md                                    <span class="t c">AD-4</span>
+    ├── TaskFormModal.tsx       create + edit, branches on mode               <span class="t tt">AD-5</span>
+    ├── TodoStatsSkeleton.tsx   mirrors the card+table layout      <span class="t new">NEW</span> <span class="t c">AD-4</span>
+    └── TodoTasksSkeleton.tsx   mirrors the table layout           <span class="t new">NEW</span> <span class="t c">AD-4</span>
+
+fe/src/hooks/useAdminTasks.ts   ← SHARED with task-board, not duplicated
+    useTaskStats · useStaffTasks · useCreateTask · useUpdateTask   <span class="t new">NEW</span> <span class="t tt">AD-5</span>
+
+be/  (endpoint 6 only — 1–3,5 ship with F-22)
+├── internal/handler/task_handler.go     UpdateTask                           <span class="t o">AD-3</span>
+├── internal/service/task_service.go     UpdateTask + validation              <span class="t o">AD-3</span>
+├── internal/repository/task_repo.go     UpdateStaffTask                      <span class="t o">AD-3</span>
+└── query/tasks.sql                      UpdateStaffTask (partial COALESCE)   <span class="t o">AD-3</span></pre>
+  <div class="golden">
+    <p><b>Shared, not duplicated.</b> <code>useAdminTasks.ts</code> and <code>TaskStatusBadge</code>
+    are the same modules the task-board uses. Per <a href="../../FE_STATE.md">FE_STATE.md §9</a>
+    there is <b>one query-key factory</b> — this page must not invent a second key shape for the
+    same data.</p>
+  </div>
+</section>
+
+<section id="state">
+  <div class="sec-head"><span class="sec-num">03</span><h2>State ownership</h2></div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Data</th><th>Kind</th><th>Owner</th></tr>
+      <tr><td><code>filters</code> (staffId · date · status)</td><td>UI state</td><td><code>TodoPageClient</code> <code>useState</code> — <b>not the URL</b> in v1 (⚠️ FLAG 2)</td></tr>
+      <tr><td><code>modalOpen</code> · <code>editTask</code></td><td>UI state</td><td><code>TodoPageClient</code> <code>useState</code></td></tr>
+      <tr><td>Task stats for a date</td><td>Server cache</td><td>TanStack <code>['admin','tasks','stats',date]</code></td></tr>
+      <tr><td>One staff member's tasks</td><td>Server cache</td><td>TanStack <code>['admin','tasks',staffId,date]</code></td></tr>
+      <tr><td>Staff list</td><td>Server cache</td><td>TanStack <code>['admin','staff']</code></td></tr>
+      <tr><td>Form field values</td><td>Form state</td><td>RHF + Zod inside <code>TaskFormModal</code></td></tr>
+      <tr><td>Selected staff</td><td><b>Derived</b></td><td><code>filters.staffId</code> — the A/B switch reads it; never stored twice</td></tr>
+    </table>
+  </div>
+  <p><b>No Zustand.</b> Nothing on this page crosses a route boundary, so there is no store —
+  <a href="../../FE_STATE.md">FE_STATE.md §1</a>'s decision flow lands on component state.</p>
+  <div class="flag">
+    <p><b>⚠️ FLAG 2 — filters are component state, not URL state.</b>
+    <a href="../../FE_STATE.md">FE_STATE.md</a> gives the URL ownership of filter/page/search on
+    <em>customer</em> surfaces. Kept local here because an admin day-view is not shared or
+    deep-linked. If the owner wants shareable filtered views ("look at chef01's overdue list"),
+    promote <code>?staffId=&amp;date=&amp;status=</code> to the URL — a contained change inside
+    <code>TodoPageClient</code>.</p>
+  </div>
+</section>
+
+<section id="be">
+  <div class="sec-head"><span class="sec-num">04</span><h2>BE contract — four borrowed, one owned</h2></div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>#</th><th>Route</th><th>Auth</th><th>Task</th><th>Owned by</th><th>Used for</th></tr>
+      <tr><td>1</td><td><code>GET /admin/tasks/stats?date=</code></td><td>manager+</td><td>AD-1</td><td>F-22</td><td>View A — KPIs + per-staff table</td></tr>
+      <tr><td>2</td><td><code>GET /admin/tasks?staffId=&amp;date=</code></td><td>manager+</td><td>AD-1</td><td>F-22</td><td>View B — one staff member's day</td></tr>
+      <tr><td>3</td><td><code>POST /admin/tasks</code></td><td>manager+</td><td>AD-2</td><td>F-22</td><td>Modal, <code>create</code> mode</td></tr>
+      <tr><td>5</td><td><code>GET /staff?limit=100</code></td><td>manager+</td><td>—</td><td>staff domain</td><td>Assignee dropdown + stat names</td></tr>
+      <tr style="background:var(--violet-soft)"><td><b>6</b></td><td><code><b>PATCH /admin/tasks/:id</b></code> <span class="t new">NEW</span></td><td><b>manager+</b></td><td><b>AD-3</b></td><td><b>← this plan</b></td><td><b>Modal, <code>edit</code> mode</b></td></tr>
+    </table>
+  </div>
+  <p style="margin-top:12px"><span class="chip amber">note</span>&nbsp; Endpoint <b>4</b>
+  (<code>PATCH /admin/tasks/:id/status</code>) exists in the contract but this page never calls it —
+  status advancement is the task-board's verb. Numbered here only to match the sibling plan.</p>
+
+  <h3>Why endpoint 6 lands with <em>this</em> page</h3>
+  <div class="danger">
+    <p>F-22 deferred field-editing as "a pure additive follow-up" — correct for a board that only
+    advances status. But this page's modal <b>is create and edit</b>.</p>
+    <p>The reference shipped that edit button wired to <code>POST</code>, so every edit
+    <b>silently inserted a duplicate</b> — with no delete button to undo it. Shipping the button
+    without the endpoint reproduces the bug; shipping the page without the button leaves it a
+    create-only form the sibling board already outclasses. <b>So the endpoint lands with the page
+    that needs it.</b></p>
+  </div>
+
+  <div class="split">
+    <div class="pane ownd">
+      <h4>Endpoint 6 spec — owned here</h4>
+      <ul class="plain">
+        <li><b>Body</b> — partial: <code>name? description? priority? dueAt? dueTimeStart? dueTimeEnd? notes?</code>; absent = unchanged</li>
+        <li><b>Not settable</b> — <code>status</code> (endpoint 4 owns it) · <code>assignedBy</code> (JWT, immutable) · <code>assignedTo</code> (ruling below)</li>
+        <li><b>Validation</b> — same tier-1 as create; empty body → <code>422 VALIDATION_FAILED</code></li>
+        <li><b>Missing / soft-deleted</b> → <code>404 NOT_FOUND</code></li>
+        <li><b>Response</b> — <code>200</code> + full updated task</li>
+        <li><b>Side effects</b> — <code>updated_at</code> only; <b>no</b> <code>completed_at</code> write</li>
+      </ul>
+    </div>
+    <div class="pane brwd">
+      <h4>Schema — adds nothing</h4>
+      <p style="font-size:.86rem;color:var(--muted);margin:0 0 8px"><code>staff_tasks</code> was
+      <b>already promoted</b> into <a href="../../DB_SCHEMA.md">DB_SCHEMA.md §4.7</a> by F-22.
+      Endpoint 6 writes only existing columns.</p>
+      <div class="schema">
+        <div class="tbl">
+          <div class="tname">staff_tasks · written by PATCH</div>
+          <ul>
+            <li><b>title</b> VARCHAR(200)</li>
+            <li><b>description</b> TEXT NULL</li>
+            <li><b>priority</b> ENUM</li>
+            <li><b>due_at</b> DATETIME</li>
+            <li><b>due_time_start/end</b> TIME NULL</li>
+            <li><b>notes</b> TEXT NULL</li>
+            <li><b>updated_at</b> DATETIME</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Ruling — <code>assignedTo</code> is not patchable</h3>
+  <p>Re-assigning a task is a different intent from correcting its fields, and it silently moves a
+  row between two people's boards. v1 = <b>cancel + re-create</b>. Revisit if the owner asks for
+  hand-off. <em>Simplicity first — recorded so it is a decision, not an omission.</em></p>
+
+  <h3>Still deferred — <code>DELETE /admin/tasks/:id</code></h3>
+  <div class="golden">
+    <p>The <code>deleted_at</code> column exists from day one (F-22 §3.2), so soft delete stays a
+    pure additive follow-up. Not shipped because nothing in this page's flow requires it once edit
+    works correctly — the reference only needed a delete to clean up the duplicates its broken
+    edit created. <b>Fix the cause, not the symptom.</b></p>
+  </div>
+
+  <h3>Cache map — one row added</h3>
+  <p>Server cache: <b>none</b>. <a href="../../ARCHITECTURE.md">ARCHITECTURE.md §4</a> scopes Redis
+  to the catalog cache and auth rate-limiting; task reads are low-volume, manager-only, and must
+  never be stale against a write the same manager just made. Client keys/staleTimes are
+  <a href="../admin_task_board/admin_task_board_PLAN.md">F-22 §3.3</a>. This plan adds:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Write</th><th>Invalidates</th></tr>
+      <tr><td><code>PATCH /admin/tasks/:id</code></td><td><code>['admin','tasks',staffId,date]</code> <b>and</b> <code>['admin','tasks','stats',date]</code> — for <b>both</b> the task's old <code>dueDate</code> and the currently-filtered date</td></tr>
+    </table>
+  </div>
+  <p style="margin-top:10px"><b>Both dates, always.</b> F-22 designed this rule out of the
+  reference for create; editing makes it sharper — a patch that <em>moves</em> a task's due date
+  changes the KPI rollup on two different days. Invalidating only the new date leaves yesterday's
+  board stale.</p>
+</section>
+
+<section id="dataflow">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Dataflow — read path, the A/B switch, the write handoff</h2></div>
+
+  <h3>Read — first load lands on View A</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">mount</span><b>TodoPageClient</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">parallel</span><b>stats + staff</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">gin</span><b>manager+ gate</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">sqlc</span><b>MySQL</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">render</span><b>View A</b></div>
+  </div>
+  <p>The tasks query does <b>not</b> fire — it is <code>enabled: !!staffId</code> and
+  <code>staffId</code> starts <code>null</code>. Interaction-gated by design.</p>
+
+  <h3>The A/B switch — one <code>setFilters</code> call</h3>
+<pre class="diagram">click a per-staff row in VIEW A
+   └─→ setFilters(f =&gt; ({ ...f, staffId: stat.staffId }))
+         ├─→ staffId != null ........ VIEW B replaces VIEW A
+         ├─→ useStaffTasks enabled ... GET /admin/tasks?staffId=&amp;date=  (first fetch)
+         └─→ filter bar dropdown ..... reflects the selection (derived, not a second copy)
+
+clear the staff selection
+   └─→ staffId == null ............... back to VIEW A (stats already cached)</pre>
+
+  <h3>Write — create vs edit take different verbs</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">modal</span><b>submit</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">mode</span><b>create?</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">201</span><b>POST /admin/tasks</b></div>
+  </div>
+  <div class="flow">
+    <div class="fnode"><span class="fk">modal</span><b>submit</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">mode</span><b>edit?</b></div><span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--violet)"><span class="fk">200</span><b>PATCH /admin/tasks/:id</b></div>
+  </div>
+  <p>On success: close the modal → invalidate <b>both</b> keys for <b>both</b> dates → stats and
+  list refetch in the background. <code>isFetching</code>, not <code>isLoading</code> — the
+  skeleton must not flash. <b>No optimistic update:</b> per
+  <a href="../../FE_STATE.md">FE_STATE.md</a>, optimistic is cart-only.</p>
+
+  <h3>Cross-page — the rows outlive the page</h3>
+<pre class="diagram">/admin/todo-list  ──writes──→  staff_tasks (MySQL)  ←──reads──  /admin/staff/task-board
+                                     │
+                              handoff is SERVER-SIDE, PULL-ONLY
+                              no shared client state · no SSE/WS · no Redis</pre>
+</section>
+
+<section id="behaviors">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors — these become the acceptance criteria</h2></div>
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">B1</span><span class="bt">Lands on View A</span><p>No staff selected → stats board. The tasks query does <b>not</b> fire (<code>enabled: !!staffId</code>).</p></div>
+    <div class="bcard"><span class="bn">B2</span><span class="bt">Drill-down flips the view</span><p>Clicking a per-staff row sets <code>filters.staffId</code> → View B → tasks query fires for the first time; the dropdown reflects it.</p></div>
+    <div class="bcard"><span class="bn">B3</span><span class="bt">Clearing returns to View A</span><p>Deselecting the staff member restores the stats board.</p></div>
+    <div class="bcard"><span class="bn">B4</span><span class="bt">Create round-trip</span><p><b>+ Tạo công việc</b> (manager+ only) opens <code>create</code> mode; submit <code>POST</code>s, closes on 201, KPIs and list refresh with no reload.</p></div>
+    <div class="bcard" style="border-color:var(--violet)"><span class="bn">B5</span><span class="bt">Edit updates in place</span><p>✏️ opens <code>edit</code> mode pre-filled; submit <code>PATCH</code>es endpoint 6 and updates the row — <b>the list length does not change.</b> The reference's 🔴 Bug 1, inverted into an AC.</p></div>
+    <div class="bcard"><span class="bn">B6</span><span class="bt">Moving a due date updates both days</span><p>Editing a task to another date refreshes the KPI rollup on <b>both</b> the old and the new date.</p></div>
+    <div class="bcard"><span class="bn">B7</span><span class="bt">Status filter actually filters</span><p>Narrows the visible list, <b>including <code>in_progress</code></b>. Every option changes what renders.</p></div>
+    <div class="bcard"><span class="bn">B8</span><span class="bt">Date change refetches both views</span><p>Changing the date drives stats and list to that day.</p></div>
+    <div class="bcard"><span class="bn">B9</span><span class="bt">RBAC holds on both sides</span><p>Non-manager is blocked by <code>RoleGuard</code>; affordances absent; a forged call gets <code>403</code>.</p></div>
+    <div class="bcard"><span class="bn">B10</span><span class="bt">Every branch is distinct</span><p>Each loading / empty / error branch in §4.3 is reachable and visually different from the others.</p></div>
+    <div class="bcard"><span class="bn">B11</span><span class="bt">description + notes persist</span><p>Both are entered in the modal, stored, and rendered back. In the reference <code>notes</code> was permanently <code>undefined</code>.</p></div>
+    <div class="bcard"><span class="bn">B12</span><span class="bt">404 surfaces inline</span><p>A <code>PATCH</code> against a deleted task shows an inline modal error, not a blank.</p></div>
+  </div>
+
+  <h3>Loading strategy — named branches (the reference conflated all three)</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>View</th><th>isLoading</th><th>isError</th><th>empty</th><th>success</th></tr>
+      <tr><td>A — stats</td><td><code>TodoStatsSkeleton</code><br>4 cards + rows</td><td>error panel + <b>Thử lại</b></td><td>"Chưa có công việc nào cho ngày này" + CTA</td><td>cards + table</td></tr>
+      <tr><td>B — tasks</td><td><code>TodoTasksSkeleton</code><br>table rows</td><td>error panel + <b>Thử lại</b></td><td>"Không có công việc nào cho bộ lọc này" — <b>one string, both viewports</b></td><td>table / cards</td></tr>
+      <tr><td>dropdown</td><td>disabled + "Đang tải…"</td><td>disabled + "Không tải được nhân viên"</td><td>—</td><td>populated</td></tr>
+    </table>
+  </div>
+  <p style="margin-top:10px">Route tier: <code>loading.tsx</code> added (the reference had none →
+  blank flash on navigation). Background refetches use <code>isFetching</code>, never
+  <code>isLoading</code>.</p>
+</section>
+
+<section id="defects">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Reference defects designed out</h2></div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>#</th><th>Finding (reference)</th><th>Sev</th><th>Countermeasure</th></tr>
+      <tr><td>1</td><td>"Edit" calls <code>POST</code> → <b>duplicate row</b>, no delete to undo</td><td><span class="chip red">🔴</span></td><td>Endpoint 6 <code>PATCH</code> + modal branches on mode (§04, B5)</td></tr>
+      <tr><td>2</td><td>Status filter never sent — control does nothing</td><td><span class="chip amber">🟠</span></td><td>Client-side filter over data already in hand (B7)</td></tr>
+      <tr><td>3</td><td>Date-range inputs + 90-day guard, server is single-day</td><td><span class="chip amber">🟠</span></td><td>Range removed; one date picker matching the real contract</td></tr>
+      <tr><td>4</td><td>Bad <code>staffId</code> on create → <code>500</code></td><td><span class="chip amber">🟡</span></td><td>Pre-validate staff exists + active → <code>422 VALIDATION_FAILED</code> (F-22)</td></tr>
+      <tr><td>5</td><td><code>in_progress</code> missing from the filter though shown in KPIs</td><td><span class="chip amber">🟠</span></td><td>All 5 options offered</td></tr>
+      <tr><td>6</td><td><code>notes</code> in schema + payload, <b>no input rendered</b></td><td><span class="chip amber">🟠</span></td><td>Field rendered; value persisted and displayed (B11)</td></tr>
+      <tr><td>7</td><td><code>qualityScore</code> returned, rendered nowhere; derived as <code>rate/20</code></td><td><span class="chip amber">🟡</span></td><td>Dropped from the contract entirely — invented data (F-22)</td></tr>
+      <tr><td>8</td><td>Failed stats fetch → <b>blank page section</b>, no message</td><td><span class="chip amber">🟠</span></td><td>Named error branch + retry</td></tr>
+      <tr><td>9</td><td>Failed tasks fetch → renders the <b>empty</b> state (lies)</td><td><span class="chip amber">🟠</span></td><td>Error ≠ empty; separate branches</td></tr>
+      <tr><td>10</td><td>One 7-row skeleton for both views → layout shift</td><td><span class="chip amber">🟡</span></td><td>Per-view skeletons mirroring each layout</td></tr>
+      <tr><td>11</td><td>No <code>loading.tsx</code> → blank flash on navigation</td><td><span class="chip amber">🟡</span></td><td>Route-level skeleton added</td></tr>
+      <tr><td>12</td><td>Mobile and desktop show <b>different</b> empty-state copy</td><td><span class="chip amber">🟡</span></td><td>One string for one condition</td></tr>
+      <tr><td>13</td><td>Staff dropdown empty while loading, looks like "no staff"</td><td><span class="chip amber">🟡</span></td><td>Disabled + "Đang tải…"</td></tr>
+      <tr><td>14</td><td><code>dueTimeStart/End</code> typed non-optional but empty at runtime</td><td><span class="chip amber">🟡</span></td><td>Real <code>null</code> + optional types (F-16 wire rule)</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="tasks">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Task mapping + build order</h2></div>
+  <div class="strip">
+    <span class="snode">AD-1<br><span style="font-weight:400;font-size:.7rem">reads (F-22)</span></span><span class="sarrow">→</span>
+    <span class="snode">AD-2<br><span style="font-weight:400;font-size:.7rem">create+status (F-22)</span></span><span class="sarrow">→</span>
+    <span class="snode nph">AD-3<br><span style="font-weight:400;font-size:.7rem">PATCH :id</span></span><span class="sarrow">→</span>
+    <span class="snode tph">AD-4<br><span style="font-weight:400;font-size:.7rem">FE shell + views</span></span><span class="sarrow">→</span>
+    <span class="snode tph">AD-5<br><span style="font-weight:400;font-size:.7rem">modal wiring</span></span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>TASKS.md row</th><th>Slice</th><th>Receipt</th></tr>
+      <tr><td>AD-1</td><td>Endpoints 1–2 + <code>staff_tasks</code> migration</td><td><em>F-22 — shared, not rebuilt here</em></td></tr>
+      <tr><td>AD-2</td><td>Endpoints 3–4</td><td><em>F-22 — shared</em></td></tr>
+      <tr style="background:var(--violet-soft)"><td><b>AD-3</b></td><td><b>Endpoint 6 <code>PATCH /admin/tasks/:id</code></b> + sqlc query + service validation</td><td>curl: patch one field → 200 changed; empty body → 422; unknown id → 404</td></tr>
+      <tr><td><b>AD-4</b></td><td>FE shell, filter bar, View A/B switch, skeletons</td><td>screenshot: View A, View B, each loading/empty/error branch</td></tr>
+      <tr><td><b>AD-5</b></td><td>FE <code>TaskFormModal</code> create + edit wired to 3 and 6</td><td>screenshot: edit changes a row in place, <b>list length unchanged</b> (B5)</td></tr>
+    </table>
+  </div>
+  <p style="margin-top:12px">Rows AD-3…AD-5 are <b>not yet in <a href="../../TASKS.md">TASKS.md</a></b> —
+  they belong to the AD phase, which opens after Phase F. Registered when AD opens, per the sizing
+  rule (1–2 files + 1 AC each).</p>
+</section>
+
+<section id="decisions">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Decisions, flags &amp; verify plan</h2></div>
+
+  <h3>✅ Decided</h3>
+  <ol class="plain" style="padding-left:20px">
+    <li><b>Endpoint 6 ships with this page</b> — F-22 deferred it; authoring is this page's purpose and the button is unshippable without it.</li>
+    <li><b><code>assignedTo</code> is not patchable</b> — re-assignment is a separate intent; v1 = cancel + re-create.</li>
+    <li><b><code>DELETE</code> stays deferred</b> — it existed in the reference's backlog only to clean up duplicates that endpoint 6 now prevents.</li>
+    <li><b>Date range removed, not implemented</b> — matches the real single-day server contract.</li>
+    <li><b>Status filtering is client-side</b> — the day's rows are already loaded; a server round-trip would add a param to two endpoints for zero benefit at this data volume.</li>
+    <li><b>Hooks and <code>TaskStatusBadge</code> are shared</b> with the task-board, not copied.</li>
+  </ol>
+
+  <div class="flag">
+    <p><b>⚠️ FLAG 1 — this page and <code>admin_task_board</code> are ~80% the same page.</b></p>
+    <p>Both are manager+, read the same four endpoints, render the same KPI rollup and the same
+    per-staff drill-down. The <b>only</b> capability unique to <code>/admin/todo-list</code> is
+    <b>task authoring</b>; the only one unique to <code>/admin/staff/task-board</code> is
+    <b>status advancement</b>. Two pages, one dataset, split by verb.</p>
+    <p><b>Options — (a)</b> ship both as planned, two entry points split by verb ·
+    <b>(b)</b> merge into one <code>/admin/tasks</code> screen with both verbs ·
+    <b>(c)</b> demote one to a link.</p>
+    <p><b>Recommendation: (b)</b> — one screen, both verbs, half the FE surface, and no "which page
+    do I open?" for the manager. Both plans build the identical contract, so this is a
+    <b>FE-only decision that can wait until AD opens</b> — no work is blocked and nothing is wasted
+    either way. Owner ruling requested before AD-4.</p>
+  </div>
+
+  <div class="flag">
+    <p><b>⚠️ FLAG 2 — filters are component state, not URL state.</b> See §03.</p>
+  </div>
+
+  <div class="golden">
+    <p><b>💡 SUGGESTION — the KPI cards should link, not just count.</b> Clicking "Quá hạn 2" to
+    filter the board to overdue staff is one <code>setFilters</code> call and turns a static
+    readout into navigation. Deferred to AD-4; noted so it is not lost.</p>
+  </div>
+
+  <div class="flag">
+    <p><b>❓ CLARIFY — is <code>overdue</code> a filterable status?</b> It is <em>derived</em>, not
+    stored (F-22 ruling), so filtering by it means <code>isOverdue == true</code>, not
+    <code>status == 'overdue'</code>. The UI should present all 5 chips uniformly; B7 assumes yes.
+    Flagged because it is a contract subtlety a future implementer could get wrong.</p>
+  </div>
+
+  <h3>Verify plan</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Task</th><th>Receipt → <a href="../../VERIFICATION.md">VERIFICATION.md</a></th></tr>
+      <tr><td>AD-3</td><td>curl transcript: <code>PATCH</code> one field → 200 with changed value + fresh <code>updatedAt</code>; empty body → 422; unknown/soft-deleted id → 404; non-manager JWT → 403</td></tr>
+      <tr><td>AD-4</td><td>Screenshots: View A, View B, and each named branch (loading · empty · error) in both themes</td></tr>
+      <tr><td>AD-5</td><td>Screenshot pair proving B5: a task row before/after an edit — <b>values change, row count does not</b></td></tr>
+      <tr><td>This plan (F-20)</td><td>Both HTML companions render in light + dark with no horizontal page scroll</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>
+  Written by the engineer-in-charge, 2026-07-19, from
+  <code>reference/docs/system/08_pages/admin/admin_todo_list/</code> (10 docs) reconciled against
+  the harness. The shared task contract is owned by
+  <a href="../admin_task_board/admin_task_board_PLAN.md">admin_task_board_PLAN.md</a> and
+  <a href="../../DB_SCHEMA.md">DB_SCHEMA.md §4.7</a> — linked, never restated.
+  <b>Snapshot of <a href="admin_todo_list_PLAN.md">admin_todo_list_PLAN.md</a>, which wins on any
+  conflict.</b>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin ingredients — how it works · ecom-core</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBEAE7; --violet: #6B4CC4; --violet-soft: #EDE8FA;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F0857A; --red-soft: #3A1C18; --violet: #A992F0; --violet-soft: #241C3D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F0857A; --red-soft: #3A1C18; --violet: #A992F0; --violet-soft: #241C3D;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBEAE7; --violet: #6B4CC4; --violet-soft: #EDE8FA;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+         font-family: var(--body); line-height: 1.6; font-size: 16px; overflow-x: hidden; }
+  .page { max-width: 1060px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1, h2, h3 { font-family: var(--sans); line-height: 1.2; text-wrap: balance; }
+  h1 { font-size: 2rem; margin: 8px 0 12px; }
+  h2 { font-size: 1.3rem; margin: 0; }
+  h3 { font-size: 1rem; margin: 26px 0 8px; }
+  a { color: var(--accent); }
+  .back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+             text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 68ch; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--accent-soft);
+         border-radius: 4px; padding: 1px 5px; }
+  p { max-width: 74ch; }
+
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+          padding: 8px 12px; font-size: 0.82rem; }
+  .fact .k { color: var(--muted); font-family: var(--mono); font-size: 0.72rem;
+             text-transform: uppercase; letter-spacing: 0.08em; display: block; }
+  .fact .v { font-weight: 600; }
+
+  nav.topnav { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 8px; }
+  nav.topnav a { font-family: var(--mono); font-size: 0.75rem; text-decoration: none;
+                 color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+                 padding: 5px 12px; background: var(--surface); }
+  nav.topnav a:hover { border-color: var(--accent); color: var(--accent); }
+
+  section { margin-top: 48px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px;
+              border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px;
+                background: var(--surface); margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; min-width: 560px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line);
+           vertical-align: top; }
+  th { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+       letter-spacing: 0.07em; color: var(--muted); }
+  tr:last-child td { border-bottom: none; }
+
+  .svg-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px;
+              background: var(--surface); padding: 14px; margin: 16px 0; }
+  .svg-wrap svg { display: block; max-width: 100%; height: auto; }
+  svg text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+  svg text.lane { font-size: 11px; font-weight: 700; fill: var(--accent); }
+  svg text.note { fill: var(--muted); font-size: 10px; }
+  svg text.err { fill: var(--red); }
+  svg text.ok { fill: var(--done); }
+  svg line.lifeline { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 3; }
+  svg rect.box { fill: var(--surface); stroke: var(--line); }
+  svg rect.act { fill: var(--accent-soft); stroke: var(--accent); }
+  svg rect.errb { fill: var(--red-soft); stroke: var(--red); }
+  svg rect.okb { fill: var(--done-soft); stroke: var(--done); }
+  svg rect.txb { fill: var(--violet-soft); stroke: var(--violet); }
+  svg path.arr, svg line.arr { stroke: var(--accent); stroke-width: 1.4; fill: none; }
+  svg line.arrE { stroke: var(--red); stroke-width: 1.4; }
+  svg line.arrG { stroke: var(--done); stroke-width: 1.4; }
+
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.5;
+                background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+                padding: 16px; overflow-x: auto; }
+  pre.sql { font-family: var(--mono); font-size: 0.78rem; line-height: 1.5;
+            background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+            padding: 14px 16px; overflow-x: auto; }
+
+  .golden { background: var(--accent-soft); border-left: 4px solid var(--accent);
+            border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+  .flag { background: var(--amber-soft); border-left: 4px solid var(--amber);
+          border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+  .danger { background: var(--red-soft); border-left: 4px solid var(--red);
+            border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+  .good { background: var(--done-soft); border-left: 4px solid var(--done);
+          border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+           padding: 8px 11px; font-size: 0.78rem; font-family: var(--mono); }
+  .fnode.hi { border-color: var(--accent); background: var(--accent-soft); }
+  .fnode.bad { border-color: var(--red); background: var(--red-soft); }
+  .farrow { color: var(--muted); font-family: var(--mono); }
+
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+         gap: 14px; margin: 16px 0; }
+  .col { background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+         padding: 14px; }
+  .col.bad { border-color: var(--red); }
+  .col.good { border-color: var(--done); }
+  .col h4 { margin: 0 0 8px; font-family: var(--mono); font-size: 0.8rem; }
+  .col.bad h4 { color: var(--red); }
+  .col.good h4 { color: var(--done); }
+
+  .chip { display: inline-block; font-family: var(--mono); font-size: 0.68rem;
+          padding: 2px 8px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
+  .chip.ok { background: var(--done-soft); color: var(--done); }
+  .chip.red { background: var(--red-soft); color: var(--red); }
+  .chip.amber { background: var(--amber-soft); color: var(--amber); }
+
+  footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
+           font-size: 0.82rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+    <div class="eyebrow" style="margin-top:14px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-19</div>
+    <h1>How <code>/admin/ingredients</code> actually works</h1>
+    <p class="lede">Not <em>what we will build</em> — <em>what happens when it runs</em>.
+      Seven numbered sequences, from first paint to the row lock that keeps the ledger and the
+      stock count telling the same story.</p>
+
+    <div class="facts">
+      <div class="fact"><span class="k">Worked example</span><span class="v">xuất 2.500 kg Bột gạo</span></div>
+      <div class="fact"><span class="k">Before</span><span class="v">25.500 kg</span></div>
+      <div class="fact"><span class="k">After</span><span class="v">23.000 kg</span></div>
+      <div class="fact"><span class="k">Invariant</span><span class="v">Σ movements == current_stock</span></div>
+    </div>
+  </header>
+
+  <nav class="topnav">
+    <a href="#s1">01 Big picture</a>
+    <a href="#s2">02 First load</a>
+    <a href="#s3">03 The core action</a>
+    <a href="#s4">04 Inside the tx</a>
+    <a href="#s5">05 Concurrency</a>
+    <a href="#s6">06 Status derivation</a>
+    <a href="#s7">07 No cache</a>
+  </nav>
+
+  <!-- 01 --------------------------------------------------------------- -->
+  <section id="s1">
+    <div class="sec-head"><span class="sec-num">01</span><h2>The big picture</h2></div>
+    <p>Two roles reach this page, three doors write to the database, and exactly one of those
+      doors is allowed to move stock.</p>
+
+    <pre class="diagram">        manager ─┐
+                 ├──▶ authMW ──▶ AtLeast("manager") ──▶ /admin/ingredients
+        admin ───┘                       │
+                                         │  DELETE only:
+                                         └──▶ AtLeast("admin") ──▶ 403 for manager
+
+   ┌──────────────────── three write doors ────────────────────┐
+   │                                                            │
+   │  ① POST /admin/ingredients      create + opening movement  │──┐
+   │  ② PATCH/DELETE …/:id           metadata + soft delete     │  │ tx
+   │  ③ POST /admin/stock-movements  the ONLY stock door        │──┘
+   │                                                            │
+   └────────────────────────────┬───────────────────────────────┘
+                                ▼
+              ┌──────────────────────────────────┐
+              │ ingredients.current_stock        │ ◀── running total
+              │ stock_movements  (append-only)   │ ◀── ledger of record
+              └──────────────────────────────────┘
+                    they must never disagree</pre>
+
+    <div class="golden">
+      <strong>The whole page exists to keep one invariant true:</strong>
+      <code>Σ movements == current_stock</code>. Every design choice below — the transaction,
+      the rejected PATCH key, the opening movement at create time — follows from it. The
+      reference broke this invariant in three separate places.
+    </div>
+  </section>
+
+  <!-- 02 --------------------------------------------------------------- -->
+  <section id="s2">
+    <div class="sec-head"><span class="sec-num">02</span><h2>First load — and the five branches</h2></div>
+
+    <div class="flow">
+      <span class="fnode">GET /admin/ingredients</span><span class="farrow">→</span>
+      <span class="fnode">page.tsx (RSC)</span><span class="farrow">→</span>
+      <span class="fnode hi">prefetch ['admin','ingredients']</span><span class="farrow">→</span>
+      <span class="fnode">dehydrate</span><span class="farrow">→</span>
+      <span class="fnode">HydrationBoundary</span><span class="farrow">→</span>
+      <span class="fnode">IngredientsClient</span>
+    </div>
+
+    <p>Because the query is prefetched on the server and hydrated into the client cache, the
+      first paint is <strong>data, not a spinner</strong>. The <code>loading</code> branch below
+      is what a cold client refetch shows, not what the operator sees on navigation.</p>
+
+    <h3>The branch ladder</h3>
+    <pre class="diagram">query state?
+  │
+  ├── isLoading ──────────────▶ <span style="color:var(--accent)">loading</span>    5 pulsing rows at real row height
+  │
+  ├── isError ────────────────▶ <span style="color:var(--red)">error</span>      card + Thử lại + ApiError.code
+  │
+  └── isSuccess
+        │
+        ├── rows.length === 0 ─▶ <span style="color:var(--muted)">empty</span>      "Chưa có nguyên liệu nào" + [+ Thêm]
+        │
+        └── rows.length > 0
+              │
+              ├── filtered.length === 0 ─▶ <span style="color:var(--amber)">no-match</span>  "Không tìm thấy…" + Xoá tìm kiếm
+              │
+              └── filtered.length > 0 ───▶ <span style="color:var(--done)">ready</span>     the table</pre>
+
+    <div class="danger">
+      <strong>Defect D-6 — the conflation.</strong> The reference collapsed
+      <code>loading</code>, <code>empty</code>, and <code>no-match</code> into one state, so an
+      operator searching for a typo saw the same screen as an operator whose inventory was
+      genuinely empty — and both looked like the page was still loading. These are three
+      different situations needing three different next actions: <em>wait</em>, <em>add your
+      first ingredient</em>, <em>clear the search</em>. Hence five named branches, each with its
+      own copy and its own CTA.
+    </div>
+
+    <p><strong>Note the split.</strong> <code>empty</code> is decided on the <em>server</em>
+      rows; <code>no-match</code> is decided on the <em>filtered</em> rows. Search never
+      touches the network, so a search miss can never be mistaken for an empty inventory.</p>
+  </section>
+
+  <!-- 03 --------------------------------------------------------------- -->
+  <section id="s3">
+    <div class="sec-head"><span class="sec-num">03</span><h2>The core action — posting a stock movement</h2></div>
+    <p>The operator opens <code>StockMoveModal</code> on <strong>Bột gạo</strong>
+      (25.500 kg), picks <em>Xuất (−)</em>, types <strong>2.500</strong>, notes
+      "Hỏng do ẩm", and confirms.</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 900 430" role="img" aria-label="Sequence diagram: posting a stock movement, success path">
+        <!-- lanes -->
+        <text class="lane" x="10" y="16">Operator</text>
+        <text class="lane" x="150" y="16">StockMoveModal</text>
+        <text class="lane" x="320" y="16">Gin handler</text>
+        <text class="lane" x="470" y="16">service</text>
+        <text class="lane" x="600" y="16">repo / tx</text>
+        <text class="lane" x="760" y="16">MySQL</text>
+        <line class="lifeline" x1="45"  y1="26" x2="45"  y2="420"/>
+        <line class="lifeline" x1="205" y1="26" x2="205" y2="420"/>
+        <line class="lifeline" x1="365" y1="26" x2="365" y2="420"/>
+        <line class="lifeline" x1="505" y1="26" x2="505" y2="420"/>
+        <line class="lifeline" x1="645" y1="26" x2="645" y2="420"/>
+        <line class="lifeline" x1="800" y1="26" x2="800" y2="420"/>
+
+        <!-- 1 -->
+        <line class="arr" x1="45" y1="50" x2="200" y2="50" marker-end="url(#ma)"/>
+        <text x="55" y="44">1 · Xác nhận</text>
+        <!-- 2 zod -->
+        <rect class="act" x="150" y="62" width="110" height="26" rx="5"/>
+        <text x="158" y="79">2 · Zod: qty &gt; 0</text>
+        <!-- 3 -->
+        <line class="arr" x1="205" y1="106" x2="360" y2="106" marker-end="url(#ma)"/>
+        <text x="212" y="100">3 · POST movement</text>
+        <!-- 4 -->
+        <line class="arr" x1="365" y1="132" x2="500" y2="132" marker-end="url(#ma)"/>
+        <text x="372" y="126">4 · bind + staffID</text>
+        <!-- 5 validate -->
+        <rect class="act" x="440" y="144" width="140" height="40" rx="5"/>
+        <text x="448" y="160">5 · type ∈ enum?</text>
+        <text x="448" y="176">    stock ≥ qty?</text>
+        <!-- 6 -->
+        <line class="arr" x1="505" y1="202" x2="640" y2="202" marker-end="url(#ma)"/>
+        <text x="512" y="196">6 · CreateMovement</text>
+        <!-- tx block -->
+        <rect class="txb" x="600" y="216" width="270" height="112" rx="6"/>
+        <text x="608" y="232" style="fill:var(--violet);font-weight:700">— BEGIN tx —</text>
+        <text x="608" y="250">7 · SELECT … FOR UPDATE  (row locked)</text>
+        <text x="608" y="268">8 · INSERT stock_movements</text>
+        <text x="608" y="286">9 · UPDATE current_stock 25.500 → 23.000</text>
+        <text x="608" y="304" style="fill:var(--violet);font-weight:700">— COMMIT —</text>
+        <line class="arr" x1="645" y1="322" x2="795" y2="322" marker-end="url(#ma)"/>
+
+        <!-- 10 back -->
+        <line class="arrG" x1="640" y1="352" x2="210" y2="352" marker-end="url(#mg)"/>
+        <text class="ok" x="300" y="346">10 · 201 { resulting_stock: "23.000" }</text>
+        <!-- 11 -->
+        <rect class="okb" x="150" y="366" width="230" height="26" rx="5"/>
+        <text class="ok" x="158" y="383">11 · close + invalidate + toast</text>
+        <!-- 12 -->
+        <line class="arrG" x1="200" y1="410" x2="50" y2="410" marker-end="url(#mg)"/>
+        <text class="ok" x="60" y="404">12 · row shows 23.000 kg</text>
+
+        <defs>
+          <marker id="ma" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--accent)"/></marker>
+          <marker id="mg" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--done)"/></marker>
+          <marker id="mr" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--red)"/></marker>
+        </defs>
+      </svg>
+    </div>
+
+    <h3>The rejection path — an over-draw</h3>
+    <p>Same modal, but the operator types <strong>30.000</strong> against a stock of 25.500.</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 900 210" role="img" aria-label="Sequence diagram: over-draw rejection path">
+        <text class="lane" x="10" y="16">Operator</text>
+        <text class="lane" x="150" y="16">StockMoveModal</text>
+        <text class="lane" x="320" y="16">Gin handler</text>
+        <text class="lane" x="470" y="16">service</text>
+        <text class="lane" x="620" y="16">MySQL</text>
+        <line class="lifeline" x1="45"  y1="26" x2="45"  y2="200"/>
+        <line class="lifeline" x1="205" y1="26" x2="205" y2="200"/>
+        <line class="lifeline" x1="365" y1="26" x2="365" y2="200"/>
+        <line class="lifeline" x1="505" y1="26" x2="505" y2="200"/>
+        <line class="lifeline" x1="665" y1="26" x2="665" y2="200"/>
+
+        <line class="arr" x1="45" y1="48" x2="200" y2="48" marker-end="url(#ma2)"/>
+        <text x="55" y="42">1 · Xuất 30.000</text>
+        <line class="arr" x1="205" y1="74" x2="360" y2="74" marker-end="url(#ma2)"/>
+        <text x="212" y="68">2 · POST (Zod passes — qty &gt; 0)</text>
+        <line class="arr" x1="365" y1="100" x2="500" y2="100" marker-end="url(#ma2)"/>
+        <text x="372" y="94">3 · bind</text>
+
+        <rect class="errb" x="430" y="112" width="220" height="40" rx="5"/>
+        <text class="err" x="438" y="128">4 · 30.000 &gt; 25.500 → REJECT</text>
+        <text class="note" x="438" y="144">no tx opened · MySQL never touched</text>
+
+        <line class="arrE" x1="500" y1="172" x2="210" y2="172" marker-end="url(#mr2)"/>
+        <text class="err" x="235" y="166">5 · 400 VALIDATION_FAILED</text>
+        <line class="arrE" x1="200" y1="196" x2="50" y2="196" marker-end="url(#mr2)"/>
+        <text class="err" x="58" y="190">6 · "Không đủ tồn kho (còn 25.500 kg)"</text>
+
+        <defs>
+          <marker id="ma2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--accent)"/></marker>
+          <marker id="mr2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--red)"/></marker>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="good">
+      <strong>Stock is unchanged, the modal stays open, the input is preserved.</strong> Because
+      mutations are pessimistic, nothing on screen ever showed the movement as having happened.
+      The reference instead clamped silently — <code>GREATEST(0, stock - qty)</code> — which
+      recorded a 30 kg withdrawal against 25.5 kg of stock, landed on zero, and told the
+      operator it worked. The 4.5 kg discrepancy then lived in the data forever.
+    </div>
+    <div class="flag">
+      <strong>⚠ F-2.</strong> This reject is <code>DB_SCHEMA.md §6</code> ruling 8's default and
+      is flippable while AD is open. If real kitchen practice is "count later, log now", it
+      becomes a clamp <em>plus a visible warning</em> — never a silent one.
+    </div>
+  </section>
+
+  <!-- 04 --------------------------------------------------------------- -->
+  <section id="s4">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Inside the transaction</h2></div>
+    <p>This is the section the rest of the plan exists to justify.</p>
+
+    <div class="two">
+      <div class="col bad">
+        <h4>✗ The reference — two statements, no tx</h4>
+        <pre class="sql" style="margin:0">INSERT INTO stock_movements (…)
+VALUES (…);
+-- ← crash / timeout / rollback here
+UPDATE ingredients
+SET current_stock =
+      GREATEST(0, current_stock - ?)
+WHERE id = ?;</pre>
+        <p style="font-size:0.82rem;margin-top:10px">Two independent round-trips. If the process
+          dies between them, the ledger records a withdrawal that never left the count.
+          Under concurrent writes, two reads of the same starting value both write back, and one
+          update is lost. <span class="chip red">their flag #2</span></p>
+      </div>
+      <div class="col good">
+        <h4>✓ Ours — one tx, row locked</h4>
+        <pre class="sql" style="margin:0">BEGIN;
+
+SELECT current_stock
+FROM   ingredients
+WHERE  id = ? AND deleted_at IS NULL
+FOR UPDATE;          -- ← lock
+
+-- service checks: stock ≥ qty
+INSERT INTO stock_movements (…)
+VALUES (…);
+
+UPDATE ingredients
+SET    current_stock = ?,   -- computed
+       updated_at = NOW()
+WHERE  id = ?;
+
+COMMIT;</pre>
+        <p style="font-size:0.82rem;margin-top:10px">Ledger and count commit together or not at
+          all. The lock serializes concurrent writers on the same row.</p>
+      </div>
+    </div>
+
+    <h3>The create path has the same shape</h3>
+    <p>The reference wrote <code>initial_stock</code> straight into <code>current_stock</code>
+      with <em>no movement row at all</em> — so an ingredient created with 5 kg had a ledger sum
+      of 0 and a count of 5 from the moment it existed.</p>
+
+    <pre class="diagram">POST /admin/ingredients { name: "Mộc nhĩ", initial_stock: "5.000", … }
+
+  BEGIN
+    INSERT INTO ingredients (…, current_stock = 0)          ← always starts at zero
+    if initial_stock &gt; 0:
+        INSERT INTO stock_movements (type='in', qty=5.000)  ← the opening movement
+        UPDATE ingredients SET current_stock = 5.000
+  COMMIT
+
+  Σ movements (5.000) == current_stock (5.000)   ✓ true from birth</pre>
+
+    <div class="golden">
+      <strong>Why it matters beyond tidiness.</strong> <code>/admin/storage</code> is planned to
+      report <code>total_imported</code> as <code>SUM(quantity) WHERE type='in'</code>. Under the
+      reference's create path that figure silently excludes every ingredient's opening balance —
+      the report would be wrong and nothing would flag it. Recording the opening movement makes
+      the future report correct by construction rather than by patch.
+    </div>
+
+    <p><strong>And the third door is sealed:</strong> <code>current_stock</code> is not an
+      accepted <code>PATCH</code> key. Sending it returns <code>VALIDATION_FAILED</code> rather
+      than being silently ignored, so a client that tries learns immediately (defect D-2).</p>
+  </section>
+
+  <!-- 05 --------------------------------------------------------------- -->
+  <section id="s5">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Concurrency — two operators, one ingredient</h2></div>
+    <p>The kitchen manager and the storeroom lead both withdraw from <strong>Bột gạo</strong>
+      (25.500 kg) at the same moment: 2.500 kg and 1.000 kg.</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 880 300" role="img" aria-label="Two concurrent out movements serialized by the row lock">
+        <text class="lane" x="10" y="16">Manager (tx A)</text>
+        <text class="lane" x="330" y="16">MySQL — ingredients row</text>
+        <text class="lane" x="670" y="16">Storeroom (tx B)</text>
+        <line class="lifeline" x1="80"  y1="26" x2="80"  y2="290"/>
+        <line class="lifeline" x1="440" y1="26" x2="440" y2="290"/>
+        <line class="lifeline" x1="790" y1="26" x2="790" y2="290"/>
+
+        <line class="arr" x1="80" y1="48" x2="435" y2="48" marker-end="url(#ma3)"/>
+        <text x="92" y="42">1 · BEGIN · SELECT … FOR UPDATE</text>
+        <rect class="txb" x="390" y="58" width="100" height="20" rx="4"/>
+        <text x="398" y="72" style="fill:var(--violet)">LOCK held by A</text>
+
+        <line class="arr" x1="790" y1="96" x2="445" y2="96" marker-end="url(#ma3)"/>
+        <text x="520" y="90">2 · BEGIN · SELECT … FOR UPDATE</text>
+        <rect class="errb" x="500" y="106" width="150" height="20" rx="4"/>
+        <text class="err" x="508" y="120">B blocks — waits for A</text>
+
+        <text x="92" y="150">3 · A: INSERT movement (out 2.500)</text>
+        <text x="92" y="168">4 · A: UPDATE 25.500 → 23.000 · COMMIT</text>
+        <line class="arrG" x1="80" y1="180" x2="435" y2="180" marker-end="url(#mg3)"/>
+        <rect class="okb" x="390" y="190" width="100" height="20" rx="4"/>
+        <text class="ok" x="398" y="204">lock released</text>
+
+        <line class="arrG" x1="445" y1="228" x2="785" y2="228" marker-end="url(#mg3)"/>
+        <text x="520" y="222">5 · B wakes, re-reads <tspan style="font-weight:700">23.000</tspan> (not 25.500)</text>
+        <text x="520" y="252">6 · B: INSERT movement (out 1.000)</text>
+        <text x="520" y="270">7 · B: UPDATE 23.000 → 22.000 · COMMIT</text>
+
+        <defs>
+          <marker id="ma3" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--accent)"/></marker>
+          <marker id="mg3" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="var(--done)"/></marker>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="two">
+      <div class="col bad">
+        <h4>✗ Without the lock (the reference)</h4>
+        <pre class="diagram" style="margin:0;border:none;padding:0">A reads 25.500 ┐
+B reads 25.500 ┘  both see the same
+A writes 23.000
+B writes 24.500   ← overwrites A
+
+ledger:  out 2.500 + out 1.000 = 3.500
+count:   25.500 − 1.000 = 24.500
+truth:   22.000
+
+<span style="color:var(--red)">2.500 kg vanished from the count
+but survives in the ledger.</span></pre>
+      </div>
+      <div class="col good">
+        <h4>✓ With the lock</h4>
+        <pre class="diagram" style="margin:0;border:none;padding:0">A: 25.500 → 23.000
+B: 23.000 → 22.000  (re-read!)
+
+ledger:  out 2.500 + out 1.000 = 3.500
+count:   25.500 − 3.500 = 22.000
+truth:   22.000
+
+<span style="color:var(--done)">Σ movements == current_stock ✓</span></pre>
+      </div>
+    </div>
+
+    <div class="golden">
+      <strong>This is the AD-INV-4 receipt.</strong> Two simultaneous <code>out</code> calls,
+      then assert <code>Σ movements == current_stock</code>. It is the only receipt that proves
+      the transaction is real rather than decorative, so it is <strong>not optional</strong>.
+    </div>
+  </section>
+
+  <!-- 06 --------------------------------------------------------------- -->
+  <section id="s6">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Status derivation at read time</h2></div>
+    <p>Neither <code>expiry_date</code> nor <code>status</code> is a column — both are computed
+      on the way out, per row (<code>DB_SCHEMA.md §1</code>: derived facts get no column).</p>
+
+    <div class="flow">
+      <span class="fnode">row from MySQL</span><span class="farrow">→</span>
+      <span class="fnode hi">expiry_date = import_date + shelf_days</span><span class="farrow">→</span>
+      <span class="fnode hi">status = ladder(stock, min, expiry)</span><span class="farrow">→</span>
+      <span class="fnode">JSON</span><span class="farrow">→</span>
+      <span class="fnode">badge</span>
+    </div>
+
+    <pre class="diagram">for each row, first match wins:
+
+  ① current_stock == 0          ──▶ out_of_stock
+  ② expiry_date &lt; today + 7d    ──▶ expiring_soon
+  ③ current_stock &lt;= min_stock  ──▶ low_stock
+  ④ otherwise                   ──▶ in_stock</pre>
+
+    <p>Two seed rows exist specifically to prove this is a <strong>ladder, not a set</strong>
+      (today = 2026-07-19):</p>
+
+    <div class="table-wrap"><table>
+      <tr><th>Row</th><th>stock</th><th>min</th><th>expiry</th><th>Matches</th><th>Reports</th></tr>
+      <tr><td>Thịt heo xay</td><td>8.000</td><td>10.000</td><td>2026-07-21</td><td>② <em>and</em> ③</td><td><span class="chip amber">expiring_soon</span> — ② outranks ③</td></tr>
+      <tr><td>Hành lá</td><td>0.000</td><td>1.000</td><td>2026-07-22</td><td>① <em>and</em> ② <em>and</em> ③</td><td><span class="chip red">out_of_stock</span> — ① outranks all</td></tr>
+      <tr><td>Nước mắm</td><td>4.000</td><td>5.000</td><td>2027-06-01</td><td>③ only</td><td><span class="chip amber">low_stock</span></td></tr>
+      <tr><td>Bột gạo</td><td>25.500</td><td>10.000</td><td>2026-10-10</td><td>none</td><td><span class="chip ok">in_stock</span></td></tr>
+    </table></div>
+
+    <div class="golden">
+      <strong>The FE renders this value and never recomputes it</strong>
+      (<code>FE_STATE.md §9</code> rule 11). The reference had the BE send a status <em>and</em>
+      the FE re-derive one — two implementations of the same ladder, guaranteed to drift the
+      first time either threshold changed. One source, one ladder.
+    </div>
+  </section>
+
+  <!-- 07 --------------------------------------------------------------- -->
+  <section id="s7">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Why there is no cache here</h2></div>
+    <p>Every other read-heavy surface in this project sits behind Redis. This one deliberately
+      does not.</p>
+
+    <div class="two">
+      <div class="col">
+        <h4>Catalog (customer menu) — cache-aside</h4>
+        <pre class="diagram" style="margin:0;border:none;padding:0">GET /products
+  │
+  ├─ Redis HIT ──▶ return (fast path)
+  │
+  └─ MISS ──▶ MySQL ──▶ SETEX ──▶ return
+
+writes DEL the keys; a stale
+menu for a few seconds is fine.</pre>
+      </div>
+      <div class="col">
+        <h4>Inventory — no server cache at all</h4>
+        <pre class="diagram" style="margin:0;border:none;padding:0">GET /admin/ingredients
+  │
+  └─ MySQL ──▶ return
+
+No Redis client is imported by
+the ingredient service. A stale
+stock figure is a miscount, and
+a miscount is a wrong decision.</pre>
+      </div>
+    </div>
+
+    <p><code>OVERALL_PLAN.md</code> lists inventory under <strong>"never cached"</strong>, and
+      <code>ARCHITECTURE.md §4</code> scopes Redis to catalog + auth rate-limit only. The rule
+      is enforced structurally: only <code>platform/cache</code> may import the Redis client,
+      and the ingredient service does not.</p>
+
+    <h3>The only cache is on the client</h3>
+    <div class="flow">
+      <span class="fnode">mutation 201</span><span class="farrow">→</span>
+      <span class="fnode hi">invalidate ['admin','ingredients']</span><span class="farrow">→</span>
+      <span class="fnode">refetch</span><span class="farrow">→</span>
+      <span class="fnode">fresh stock + recolored badges</span>
+    </div>
+    <div class="table-wrap"><table>
+      <tr><th>Write</th><th>Invalidates</th></tr>
+      <tr><td>POST / PATCH / DELETE <code>/admin/ingredients</code></td><td><code>['admin','ingredients']</code></td></tr>
+      <tr><td>POST <code>/admin/stock-movements</code></td><td><code>['admin','ingredients']</code> + <code>['admin','ingredients',id,'movements']</code></td></tr>
+    </table></div>
+    <p>The <code>staleTime: 60s</code> bound applies only to background refocus refetches —
+      after any write the list is invalidated immediately, so the operator never reads their own
+      stale number. That closes the loop opened in §03 step 11.</p>
+  </section>
+
+  <footer>
+    Written 2026-07-19 for task F-21, from
+    <code>reference/docs/system/08_pages/admin/admin_ingredients/</code>.
+    This page is a <strong>snapshot</strong> of
+    <code>admin_ingredients_PLAN.md</code>, which wins on any conflict.
+    Transaction and error rules live in <code>BE_STATE.md</code>; table specs in
+    <code>DB_SCHEMA.md §4.6</code>.
+  </footer>
+
+</div>
+</body>
+</html>
