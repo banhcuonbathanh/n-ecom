@@ -18,6 +18,12 @@ open -a "Google Chrome" harness/plans/customer_menu/plan.html
 
 
 
-open -a "Google Chrome" harness/plans/customer_menu/how-it-works.html
+
 
 open -a "Google Chrome" harness/plans/customer_menu/customer_menu_mockup-1.html
+
+open -a "Google Chrome" harness/plans/customer_menu/customer_menu_how-it-works.html
+
+open -a "Google Chrome" harness/plans/customer_menu/customer_menu_plan.html
+
+file:///Users/monghoaivu/Desktop/code/ecom-core/harness/plans/customer_menu/customer_menu_how-it-works.html
