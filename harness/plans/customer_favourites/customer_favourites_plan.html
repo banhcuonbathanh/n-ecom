@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer favourites suite — FE + BE build plan (F-17)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; overflow-x: hidden; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* sticky top nav */
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* task tags in the component tree / tables */
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.c { color: var(--accent); background: var(--accent-soft); }
+  .t.tt { color: var(--amber); background: var(--amber-soft); }
+  .t.o { color: var(--done); background: var(--done-soft); }
+  .dead { color: var(--muted); text-decoration: line-through; }
+
+  /* flow diagram */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  /* phase strip */
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); margin: 14px 0; }
+  .snode { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-top: 3px solid var(--accent); }
+  .snode.tph { border-top-color: var(--amber); }
+  .snode.oph { border-top-color: var(--done); }
+  .sarrow { color: var(--muted); font-size: 0.8rem; }
+
+  /* behaviors grid */
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+
+  /* ============ phone mockup — DESIGN PREVIEW, fixed reference palette ============
+     Deliberately does NOT use theme variables: the customer shell's visual source of
+     truth is the reference's dark + orange DESIGN_PROMPT (#0b0f17 / #1b2230 / #f97316
+     / #e5e7eb). It must look the same in this page's light and dark themes. */
+  .anatomy { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .phones { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 8px; max-width: 100%; }
+  .phone { flex: none; width: 390px; max-width: 100%; box-sizing: border-box; background: #0b0f17; color: #e5e7eb; border: 8px solid #232a38; border-radius: 28px; overflow: hidden; font-size: 12.5px; line-height: 1.45; }
+  .phone.narrow { width: 300px; }
+  .phone * { box-sizing: border-box; }
+  .ph-sec { position: relative; padding: 10px 12px; border-bottom: 1px solid #1f2734; }
+  .ph-n { position: absolute; top: 8px; right: 8px; z-index: 2; width: 18px; height: 18px; border-radius: 50%; background: #f97316; color: #0b0f17; font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .ph-h { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8b93a3; margin: 0 0 8px; }
+  .ph-banner { height: 196px; padding: 0; background: radial-gradient(130% 100% at 75% 0%, #57381a 0%, #2c1d0e 45%, #0b0f17 100%); display: flex; align-items: flex-end; }
+  .ph-banner .ph-title { padding: 14px; font-family: Georgia, "Times New Roman", serif; font-size: 26px; font-weight: 600; color: #f4ede3; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
+  .ph-search-box { display: flex; align-items: center; gap: 8px; background: #1b2230; border: 1px solid #2c3546; border-radius: 999px; padding: 7px 12px; color: #8b93a3; }
+  .ph-tabs { display: flex; gap: 14px; overflow: hidden; white-space: nowrap; font-size: 12px; color: #9aa3b2; background: #0e1420; }
+  .ph-tabs span { padding-bottom: 4px; }
+  .ph-tabs .on { color: #f97316; font-weight: 700; border-bottom: 2px solid #f97316; }
+  .ph-rail { display: flex; gap: 8px; overflow: hidden; }
+  .ph-mini { flex: none; width: 84px; background: #1b2230; border-radius: 10px; padding: 6px; }
+  .ph-thumb { height: 44px; border-radius: 6px; background: linear-gradient(135deg, #33405a, #232c3d); margin-bottom: 6px; }
+  .ph-bar { height: 8px; border-radius: 4px; background: #2a3344; }
+  .ph-card { position: relative; background: #1b2230; border-radius: 12px; padding: 8px; display: flex; gap: 8px; margin-bottom: 8px; }
+  .ph-card:last-child { margin-bottom: 0; }
+  .ph-img { flex: none; width: 56px; height: 56px; border-radius: 8px; background: linear-gradient(135deg, #3a4a68, #232c3d); }
+  .ph-card .ph-body { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .ph-price { color: #f97316; font-weight: 700; font-size: 12px; }
+  .ph-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .ph-pill { border: 1px solid #3a4356; border-radius: 999px; padding: 1px 8px; font-size: 10px; color: #c7cdd8; }
+  .ph-pill.on { background: #f97316; border-color: #f97316; color: #0b0f17; font-weight: 700; }
+  .ph-heart { position: absolute; top: 8px; right: 8px; color: #f97316; font-size: 13px; }
+  .ph-step { display: inline-flex; align-items: center; gap: 8px; background: #0e1420; border: 1px solid #2c3546; border-radius: 999px; padding: 1px 8px; font-family: var(--mono); font-size: 11px; }
+  .ph-step b { color: #f97316; }
+  .ph-het { position: absolute; inset: 0; border-radius: 12px; background: rgba(11,15,23,.74); display: flex; align-items: center; justify-content: center; font-weight: 700; letter-spacing: .18em; color: #e5e7eb; }
+  .ph-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 0; border-bottom: 1px dashed #242d3d; font-size: 12px; }
+  .ph-row:last-child { border-bottom: none; }
+  .ph-box { background: #141a26; border: 1px solid #242d3d; border-radius: 10px; padding: 8px 10px; margin-top: 8px; }
+  .ph-box .ph-h { margin-bottom: 4px; }
+  .ph-tablepill { display: inline-block; background: #f97316; color: #0b0f17; font-weight: 700; border-radius: 999px; padding: 2px 10px; font-size: 11px; }
+  .ph-float { display: flex; justify-content: space-between; align-items: center; background: #0e1420; }
+  .ph-fab { position: relative; width: 44px; height: 44px; border-radius: 50%; background: #1b2230; border: 1px solid #2c3546; display: flex; align-items: center; justify-content: center; color: #e5e7eb; font-size: 16px; box-shadow: 0 6px 16px rgba(0,0,0,.5); }
+  .ph-badge { position: absolute; top: -5px; right: -6px; background: #f97316; color: #0b0f17; font-family: var(--mono); font-size: 10px; font-weight: 700; border-radius: 999px; padding: 0 5px; }
+  .ph-pay { background: #f97316; color: #0b0f17; font-weight: 700; border-radius: 999px; padding: 9px 22px; font-size: 13px; box-shadow: 0 6px 16px rgba(249,115,22,.35); }
+  .ph-nav { display: flex; justify-content: space-between; background: #10161f; padding: 8px 10px 10px; font-size: 9.5px; color: #8b93a3; border-bottom: none; }
+  .ph-nav span { text-align: center; }
+  .ph-nav .on { color: #f97316; font-weight: 700; }
+  .ph-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #0e1420; font-size: 13px; }
+  .ph-top .ph-ttl { font-weight: 700; }
+  .ph-ghost { border: 1px solid #f97316; color: #f97316; border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 700; }
+  .ph-input { background: #141a26; border: 1px solid #2c3546; border-radius: 8px; padding: 8px 10px; color: #8b93a3; font-size: 12px; }
+  .ph-cta { display: block; text-align: center; background: #f97316; color: #0b0f17; font-weight: 700; border-radius: 10px; padding: 10px; font-size: 13px; }
+  .ph-cta.off { background: #2a3344; color: #6b7484; }
+  .ph-gap { background: repeating-linear-gradient(45deg, #141a26, #141a26 6px, #0e1420 6px, #0e1420 12px); text-align: center; font-family: var(--mono); font-size: 9.5px; color: #8b93a3; padding: 6px; }
+  .callouts { flex: 1; min-width: 280px; }
+  .callouts ol { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 0.86rem; }
+  .callouts li { display: flex; gap: 10px; }
+  .co-n { flex: none; width: 19px; height: 19px; margin-top: 3px; border-radius: 50%; background: #f97316; color: #0b0f17; font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .callouts b { font-family: var(--mono); font-size: 0.8rem; }
+
+  /* schema boxes */
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · page plan · 2026-07-19</div>
+  <h1>Customer favourites suite — FE + BE build plan</h1>
+  <p class="lede">Three small routes that let a returning guest re-order "the usual" without
+  hunting the menu. The whole suite is <b>BE-read-only</b>: it calls the two cached catalog GETs
+  the menu page already owns, resolves hearted ids into cards, and writes <b>nothing</b> to the
+  backend — favourites and saved sets live in <code>favourites.store.ts</code> (localStorage).</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-17</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="customer_favourites_PLAN.md">customer_favourites_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">routes</span><span class="v">3 · /menu/favourites · /save · /sets</span></div>
+    <div class="fact"><span class="k">be surface added</span><span class="v">0 endpoints · 0 tables · 0 cache keys</span></div>
+    <div class="fact"><span class="k">ships as</span><span class="v">C-6 (v1) · C-7 (deferred)</span></div>
+    <div class="fact"><span class="k">reference corpus</span><span class="v">08_pages/customer/customer_favourites/ · 10 docs</span></div>
+  </div>
+  <div class="golden">
+    <p><b>A bridge, not an endpoint.</b> The guest never <em>creates</em> a favourite here — the
+    heart is toggled on <code>/menu</code> (product card, combo card, favourites rail) and lands in
+    the persisted store. This suite reads that back and turns it into a filled cart.</p>
+    <p><b>Core loop:</b> open Favourites → (auto-prune anything 86'd) → adjust qty / filter →
+    bulk-add or apply a set → cart badge bumps → check out via the <b>menu's</b>
+    TableConfirmModal / <code>/checkout</code>. It consumes heart toggles from <code>/menu</code>
+    and produces a cart for the order pipeline — it owns neither endpoint of that journey.</p>
+    <p><b>Worked example everywhere:</b> 3 favourites — Bánh Cuốn Thịt (Món lẻ, 4.000 đ) ·
+    Bánh Trứng Vàng (Món lẻ, 9.000 đ) · Combo Đầy Đặn (Combo, 42.000 đ) — and 2 saved sets —
+    "📋 Sáng thứ 7" (3 món · 88.000 đ) · "📋 Cả nhà" (5 món · 152.000 đ).</p>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#anatomy">01 anatomy</a>
+  <a href="#components">02 components</a>
+  <a href="#state">03 state</a>
+  <a href="#be">04 be contract</a>
+  <a href="#dataflow">05 dataflow</a>
+  <a href="#behaviors">06 behaviors</a>
+  <a href="#defects">07 defects out</a>
+  <a href="#tasks">08 tasks</a>
+  <a href="#decisions">09 decisions</a>
+</nav>
+
+<section id="anatomy">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Suite anatomy — three routes, one persisted store</h2></div>
+  <p><span class="chip amber">design preview</span>&nbsp; The wireframes below deliberately use the
+  <b>reference's dark + orange palette</b> (<code>#0b0f17</code> bg · <code>#1b2230</code> cards ·
+  <code>#f97316</code> accent · <code>#e5e7eb</code> text) in <em>both</em> themes of this page —
+  the customer shell's visual source of truth pending the ❓ palette question (§09). All three
+  routes sit on the same <code>(customer)</code> shell: the fixed 5-tab <code>ClientBottomNav</code>
+  with <b>"Yêu Thích"</b> active. Numbers are the worked example.</p>
+
+  <div class="anatomy">
+    <div class="phones">
+
+      <div class="phone narrow">
+        <div class="ph-sec ph-top">
+          <span class="ph-n">1</span>
+          <span>←</span><span class="ph-ttl">❤ Yêu Thích</span>
+          <span style="display:flex;gap:8px;align-items:center">
+            <span class="ph-fab" style="width:26px;height:26px;font-size:12px">🛒<span class="ph-badge">3</span></span>
+            <span class="ph-ghost">Lưu bộ</span>
+          </span>
+        </div>
+
+        <div class="ph-sec ph-tabs">
+          <span class="ph-n">2</span>
+          <span class="on">Tất cả (3)</span><span>Món lẻ (2)</span><span>Combo (1)</span>
+        </div>
+
+        <div class="ph-sec">
+          <span class="ph-n">3</span>
+          <p class="ph-h">resolved favourites</p>
+          <div class="ph-card">
+            <div class="ph-img"></div>
+            <div class="ph-body">
+              <div class="ph-pills"><span class="ph-pill">Món lẻ</span></div>
+              <div>Bánh Cuốn Thịt</div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span class="ph-price">4.000 đ</span>
+                <span style="display:flex;gap:6px;align-items:center">
+                  <span class="ph-step">−&nbsp;<b>1</b>&nbsp;+</span><span class="ph-ghost">+ Giỏ</span>
+                </span>
+              </div>
+            </div>
+            <span class="ph-heart">♥</span>
+          </div>
+          <div class="ph-card">
+            <div class="ph-img"></div>
+            <div class="ph-body">
+              <div class="ph-pills"><span class="ph-pill">Món lẻ</span></div>
+              <div>Bánh Trứng Vàng</div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span class="ph-price">9.000 đ</span>
+                <span style="display:flex;gap:6px;align-items:center">
+                  <span class="ph-step">−&nbsp;<b>1</b>&nbsp;+</span><span class="ph-ghost">+ Giỏ</span>
+                </span>
+              </div>
+            </div>
+            <span class="ph-heart">♥</span>
+          </div>
+          <div class="ph-card">
+            <div class="ph-img"></div>
+            <div class="ph-body">
+              <div class="ph-pills"><span class="ph-pill on">Combo</span></div>
+              <div>Combo Đầy Đặn</div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span class="ph-price">42.000 đ</span>
+                <span style="display:flex;gap:6px;align-items:center">
+                  <span class="ph-step">−&nbsp;<b>1</b>&nbsp;+</span><span class="ph-ghost">+ Giỏ</span>
+                </span>
+              </div>
+            </div>
+            <span class="ph-heart">♥</span>
+          </div>
+        </div>
+
+        <div class="ph-sec">
+          <span class="ph-n">4</span>
+          <p class="ph-h">footer — live total + bulk CTA</p>
+          <div class="ph-row"><span>Tổng</span><span class="ph-price">55.000 đ</span></div>
+          <div style="margin-top:8px"><span class="ph-cta">🛒 Thêm tất cả vào giỏ</span></div>
+        </div>
+
+        <div class="ph-sec ph-gap"><span class="ph-n" style="background:#8b93a3">5</span>~72px bottom padding — CTA clears the nav</div>
+
+        <div class="ph-sec ph-nav">
+          <span class="ph-n" style="background:#8b93a3">6</span>
+          <span>Menu</span><span>Đơn Hàng</span><span class="on">Yêu Thích</span><span>Theo Dõi</span><span>Cài Đặt</span>
+        </div>
+      </div>
+
+      <div class="phone narrow">
+        <div class="ph-sec ph-top">
+          <span class="ph-n">7</span>
+          <span>←</span><span class="ph-ttl">Lưu bộ</span><span style="width:26px"></span>
+        </div>
+
+        <div class="ph-sec">
+          <span class="ph-n">8</span>
+          <p class="ph-h">RHF + Zod — name: min 1</p>
+          <div class="ph-input">Tên bộ…</div>
+        </div>
+
+        <div class="ph-sec">
+          <span class="ph-n">9</span>
+          <p class="ph-h">Tóm tắt:</p>
+          <div class="ph-row"><span>Bánh Cuốn Thịt ×1</span><span class="ph-price">4.000 đ</span></div>
+          <div class="ph-row"><span>Bánh Trứng Vàng ×1</span><span class="ph-price">9.000 đ</span></div>
+          <div class="ph-row"><span>Combo Đầy Đặn ×1</span><span class="ph-price">42.000 đ</span></div>
+          <div class="ph-box"><div class="ph-row"><span>Tổng</span><span class="ph-price">55.000 đ</span></div></div>
+        </div>
+
+        <div class="ph-sec">
+          <span class="ph-n">10</span>
+          <p class="ph-h">double gate: isValid AND resolvedItems.length &gt; 0</p>
+          <div style="display:flex;gap:8px">
+            <span class="ph-cta off" style="flex:1">Huỷ</span>
+            <span class="ph-cta" style="flex:1">Lưu</span>
+          </div>
+        </div>
+
+        <div class="ph-sec ph-nav">
+          <span>Menu</span><span>Đơn Hàng</span><span class="on">Yêu Thích</span><span>Theo Dõi</span><span>Cài Đặt</span>
+        </div>
+      </div>
+
+      <div class="phone narrow">
+        <div class="ph-sec ph-top">
+          <span class="ph-n">11</span>
+          <span>←</span><span class="ph-ttl">Bộ đã lưu</span><span style="width:26px"></span>
+        </div>
+
+        <div class="ph-sec">
+          <span class="ph-n">12</span>
+          <p class="ph-h">SetCard ×2</p>
+          <div class="ph-card" style="display:block">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <b>📋 Sáng thứ 7</b><span style="color:#8b93a3;font-size:11px">✏ 🗑</span>
+            </div>
+            <div style="color:#9aa3b2;font-size:11px;margin:4px 0">
+              Bánh Cuốn Thịt ×1 · Bánh Trứng Vàng ×1 · Combo Đầy Đặn ×1
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="ph-price">3 món · 88.000 đ</span><span class="ph-ghost">🛒 Áp dụng</span>
+            </div>
+          </div>
+          <div class="ph-card" style="display:block">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <b>📋 Cả nhà</b><span style="color:#8b93a3;font-size:11px">✏ 🗑</span>
+            </div>
+            <div style="color:#9aa3b2;font-size:11px;margin:4px 0">
+              ≤ 5 component lines, then "…"
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="ph-price">5 món · 152.000 đ</span><span class="ph-ghost">🛒 Áp dụng</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ph-sec ph-gap"><span class="ph-n" style="background:#8b93a3">13</span>empty? gated on sets.length — not on query state</div>
+
+        <div class="ph-sec ph-nav">
+          <span>Menu</span><span>Đơn Hàng</span><span class="on">Yêu Thích</span><span>Theo Dõi</span><span>Cài Đặt</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callouts">
+      <ol>
+        <li><span class="co-n">1</span><span><b>FavouritesTopNav</b> — <code>[←]</code> ·
+          "❤ Yêu Thích" · 🛒 count badge · <code>[Lưu bộ]</code>. Saving is reached
+          <em>only</em> from here (the reference's two inline footer buttons are dropped).</span></li>
+        <li><span class="co-n">2</span><span><b>FavouriteFilterTabs</b> — Tất cả (3) / Món lẻ (2) /
+          Combo (1) with <em>live counts</em>; active = solid orange. Counts are selectors over
+          <code>resolvedItems</code>, never stored. Client-side filter, local tab state.</span></li>
+        <li><span class="co-n">3</span><span><b>FavouriteItemCard</b> — thumb · type badge · name ·
+          price · <b>filled orange heart un-favourites</b> (not add-to-cart, stopPropagation) ·
+          qty stepper (default 1) · <code>[+ Giỏ]</code> adds that one card.</span></li>
+        <li><span class="co-n">4</span><span><b>FavouritesFooter</b> — the live-total row
+          (<span class="chip amber">NEW</span> · C-7) plus the primary
+          <b>"🛒 Thêm tất cả vào giỏ"</b> CTA; the bulk add is <b>additive</b> — an existing cart
+          survives.</span></li>
+        <li><span class="co-n">5</span><span><b>~72px bottom padding</b> — the CTA always clears the
+          fixed <code>ClientBottomNav</code>. The reference shipped it hidden behind the nav; that
+          is a designed-out bug (§07, B8).</span></li>
+        <li><span class="co-n">6</span><span><b>ClientBottomNav</b> — the shared 5-tab customer shell
+          with "Yêu Thích" active; shell chrome, outside this suite's scope contract.</span></li>
+        <li><span class="co-n">7</span><span><b><code>/menu/favourites/save</code></b> — reached from
+          <code>[Lưu bộ]</code>. No params travel: the page re-reads the store on mount.</span></li>
+        <li><span class="co-n">8</span><span><b>Name field</b> — RHF + Zod, <code>name: min 1</code>.
+          Form state lives in RHF, never in the store.</span></li>
+        <li><span class="co-n">9</span><span><b>FavouritesSummaryList</b> — "Tóm tắt:" resolved rows +
+          <b>Tổng 55.000 đ</b>. Same resolve join as the list route, same warm cache.</span></li>
+        <li><span class="co-n">10</span><span><b>Double-gated submit</b> — <code>isValid</code>
+          <em>and</em> <code>resolvedItems.length &gt; 0</code>, so an empty snapshot can never be
+          saved while queries are still flying (ref <code>_loading.md</code> Flag 3).
+          <code>addSet(name)</code> → routes to <code>/menu/favourites/sets</code>.</span></li>
+        <li><span class="co-n">11</span><span><b><code>/menu/favourites/sets</code></b> — "Bộ đã lưu".
+          Sets are persisted, so they survive a browser restart.</span></li>
+        <li><span class="co-n">12</span><span><b>SetCard</b> — 📋 name · ≤ 5 component lines ·
+          "n món · &lt;total&gt;" · <code>🛒 Áp dụng</code> (resolves the snapshot against the live
+          catalog, silently skipping removed items, adds all to cart) · <code>✏</code> renames
+          inline · <code>🗑</code> deletes.</span></li>
+        <li><span class="co-n">13</span><span><b>Empty sets state</b> — gated on
+          <code>sets.length</code>, <em>not</em> on query state; the set-card skeleton lives in
+          <code>sets/loading.tsx</code> so "n món · 0đ" stubs never flash.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="components">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Component tree — FE file map (§4.1) with owning tasks</h2></div>
+  <p>Tags mark which TASKS.md row builds each file:
+  <span class="t c">C-6</span> the v1 favourites suite ·
+  <span class="t tt">C-7</span> deferred, owner-gated NEW features ·
+  <span class="t o">shared</span> already licensed by the menu plan (no new file, no new key).</p>
+  <pre class="diagram">
+fe/src/app/(customer)/menu/favourites/
+├─ page.tsx              <span class="t c">C-6</span>  RSC shell → the hearted list (client island reads the store)
+├─ loading.tsx           <span class="t c">C-6</span>  list-shaped skeleton (filter tabs + card rows) — NOT a bare spinner
+├─ error.tsx             <span class="t c">C-6</span>  segment retry
+├─ save/page.tsx         <span class="t c">C-6</span>  RHF+Zod "name this set" form
+├─ save/loading.tsx      <span class="t c">C-6</span>  form-shaped skeleton
+├─ sets/page.tsx         <span class="t c">C-6</span>  saved-sets list
+└─ sets/loading.tsx      <span class="t c">C-6</span>  set-card skeleton
+
+components/favourites/
+├─ FavouritesTopNav.tsx      <span class="t c">C-6</span>  [←] · "❤ Yêu Thích" · 🛒 count badge · [Lưu bộ]
+├─ FavouriteFilterTabs.tsx   <span class="t c">C-6</span>  Tất cả (n) / Món lẻ (n) / Combo (n) — local tab state
+├─ FavouriteItemCard.tsx     <span class="t c">C-6</span>  thumb · type badge · name · price · filled-heart (un-fav)
+│                                 · qty stepper · [+ Giỏ]
+├─ FavouritesFooter.tsx      <span class="t c">C-6</span>  primary "🛒 Thêm tất cả vào giỏ" CTA
+│                            <span class="t tt">C-7</span>  + live-total row (NEW)
+├─ CanhQuickAdd.tsx          <span class="t tt">C-7</span>  NEW (deferred): "Canh — thêm nhanh" two 0₫ rows (§09)
+├─ FavouritesEmptyState.tsx  <span class="t c">C-6</span>  outline heart + "Chưa có món yêu thích nào" + "Xem Menu"
+├─ SetCard.tsx               <span class="t c">C-6</span>  📋 name · ≤5 component lines · "n món · &lt;total&gt;" · Áp dụng / ✏ / 🗑
+├─ FavouritesSummaryList.tsx <span class="t c">C-6</span>  save page: "Tóm tắt:" resolved rows + Tổng
+└─ SaveSetModal.tsx          <span class="t c">C-6</span>  shared overlay: name input + summary + Huỷ / Lưu
+
+stores/favourites.store.ts   <span class="t o">✓</span>   {items[], sets[], suats[]} — ALL device-local, FE-only
+                                  (licensed in the menu plan §4.1; sets[]/suats[] specified HERE)
+queries/catalog.ts           <span class="t o">✓</span>   useProducts / useCombos — THE SAME hooks the menu uses,
+                                  no new query keys → /menu → favourites within 5 min = cache hit, zero spinner
+lib/favourites-resolve.ts    <span class="t c">C-6</span>  resolveFavourites() + resolveSet() — join store ids → catalog,
+                                  drop-if-absent
+lib/cart-from-favourites.ts  <span class="t c">C-6</span>  buildCartItemsFromFavourites() → feeds the ONE cart store
+                                  (menu plan §4.2)</pre>
+
+  <h3>Not ported / deferred</h3>
+  <ul class="plain">
+    <li><span class="dead">two inline footer buttons</span> ("Lưu thành set" / "Xem set đã lưu") —
+      dropped; saving is reached only via the TopNav <code>[Lưu bộ]</code> (DESIGN_PROMPT decision).</li>
+    <li><b>CanhQuickAdd</b> · <b>live-total row</b> · <b>"Tự tạo suất" builder</b> ·
+      📌 <b>"Ghim lên Menu" pinning</b> — <span class="chip amber">NEW proposals</span> in the
+      DESIGN_PROMPT, not in today's code. Each is a <span class="t tt">C-7</span> row, explicitly
+      out of v1 until the owner rules on the §09 proposals.</li>
+  </ul>
+</section>
+
+<section id="state">
+  <div class="sec-head"><span class="sec-num">03</span><h2>State ownership (§4.2) — instance of FE_STATE §1, no new kinds</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>Data</th><th>Kind</th><th>Owner</th></tr>
+    <tr><td>products / combos</td><td>server</td><td>TanStack Query, <code>staleTime</code> 5 min (<b>shared keys with the menu</b>)</td></tr>
+    <tr><td>filter tab (Tất cả / Món lẻ / Combo)</td><td>local</td><td><code>useState</code> in the list page</td></tr>
+    <tr><td>favourites <code>items[]</code> + saved <code>sets[]</code></td><td>client</td><td><code>favourites</code> store (Zustand, <b>persisted</b> localStorage <code>favourites</code>)</td></tr>
+    <tr><td>set-name form</td><td>form</td><td>RHF + Zod (<code>name: min 1</code>)</td></tr>
+    <tr><td>cart lines (hand-off target)</td><td>client</td><td><code>cart</code> store (menu plan §4.2 — <b>items session-only</b>)</td></tr>
+    <tr><td>save modal open</td><td>local</td><td><code>useState</code></td></tr>
+    <tr><td>guest session</td><td>session</td><td>httpOnly cookie — <b>never exercised here</b> (read-only page)</td></tr>
+  </table></div>
+
+  <h3>Favourites store contract — FE-only shapes, never on the wire</h3>
+  <pre class="diagram">
+type FavouriteItem = { id: string; type: 'product' | 'combo'; qty: number; toppingIds: string[] }
+type FavouriteSet  = { id: string; name: string; items: FavouriteItem[]; createdAt: number }
+
+// store: { items: FavouriteItem[]; sets: FavouriteSet[]; suats: CustomSuat[] }
+//   toggleFav(id, type) · updateQty(id, qty) · removeItem(id)
+//   addSet(name) snapshots items[] → sets[] · renameSet(id, name) · removeSet(id)</pre>
+  <ul class="plain">
+    <li><b>Adopted-with-a-flag:</b> <code>toggleFav</code> stores <code>{qty:1, toppingIds:[]}</code>
+      regardless of what the guest configured on the menu card — the topping/qty selection is
+      <b>dropped at toggle time</b> (ref <code>_crosspage_dataflow.md</code> Flag). Kept for v1
+      (a favourite is "the dish", not "the exact configured line"); qty is editable here afterward.
+      Revisit-flag in §09.</li>
+    <li><code>total()</code> / <code>itemCount()</code> / filtered counts are
+      <b>selectors, never stored</b> (FE rule 11).</li>
+    <li><code>suats[]</code> is reserved now for the deferred "Tự tạo suất" builder
+      (<span class="t tt">C-7</span>) — the slice exists, the feature does not.</li>
+  </ul>
+
+  <h3>The asymmetry that is the point — favourites persisted, cart session-only</h3>
+  <pre class="diagram">
+favourites store  partialize → persist the WHOLE tree            cart store  partialize → identity only
+┌──────────────────────────────────┐                             ┌──────────────────────────────────┐
+│ items[]  ●  persisted            │                             │ items[]      ○  SESSION-ONLY     │
+│ sets[]   ●  persisted            │                             │ orderNote    ●  persisted        │
+│ suats[]  ●  persisted            │                             │ tableId/Name ●  persisted        │
+└──────────────────────────────────┘                             └──────────────────────────────────┘
+        │                                                                       ▲
+        │  browser restart ──► SURVIVES                    browser restart ──► GONE
+        │                                                                       │
+        └───────────── "Áp dụng" / "Thêm tất cả vào giỏ" (additive) ────────────┘
+
+A saved set OUTLIVES the tab; the cart it fills does NOT — re-apply after restart.</pre>
+
+  <h3>How state crosses — two mechanisms, only two</h3>
+  <pre class="diagram">
+1. server data → the Query cache
+   /menu/favourites      ─┐
+   /menu/favourites/save ─┼─→ the SAME useProducts / useCombos (queries/catalog.ts)
+   /menu/favourites/sets ─┘    → identical keys dedupe to ONE fetch and reuse the
+                               menu's warm cache. Combos are ids-only: the combo →
+                               product-name join happens FE-side against the products
+                               cache — never a second copy.
+
+2. favourites / cart → the Zustand stores
+   list  ──┐
+   save  ──┼─→ ONE persisted favourites store ── no params between routes;
+   sets  ──┘                                     each page re-reads on mount
+                     │
+                     └─→ ONE cart store (additive: "add all" / "apply set" APPEND,
+                         they never replace) → /menu TableConfirmModal / /checkout
+
+no prop drilling · no context · nothing travels in the URL between these routes</pre>
+
+  <h3>How state crosses pages</h3>
+  <pre class="diagram">
+/menu heart toggle ──► persisted favourites store ──► this suite reads it back
+                                                            │
+this suite ──► cart store ──► /menu TableConfirmModal / /checkout ──► POST /orders
+                                                       (owned by the menu plan)</pre>
+</section>
+
+<section id="be">
+  <div class="sec-head"><span class="sec-num">04</span><h2>BE contract — the whole story is "there isn't one"</h2></div>
+
+  <div class="golden">
+    <p><b>The single most important alignment: this suite adds no new BE surface.</b></p>
+    <p style="font-family:var(--mono);font-size:1.05rem;font-weight:700;letter-spacing:.02em">
+      2 public GETs &nbsp;·&nbsp; 0 writes &nbsp;·&nbsp; 0 new endpoints &nbsp;·&nbsp;
+      0 new tables &nbsp;·&nbsp; 0 new cache keys &nbsp;·&nbsp; 0 invalidations
+    </p>
+    <p>Every endpoint, cache key, and wire shape it uses is <b>already owned by the menu plan</b>.
+    This plan only <em>points</em> at them: see
+    <a href="../customer_menu/customer_menu_plan.html#be"><code>customer_menu_PLAN.md §3</code></a>
+    for the endpoints, the cache map, and the frozen wire shapes — <b>one shape, one home</b>,
+    not restated here.</p>
+  </div>
+
+  <h3>Endpoints the suite consumes (§3.1 — all under <code>/api/v1</code>)</h3>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Route</th><th>Auth</th><th>Phase/Task</th><th>Behavior</th></tr>
+    <tr><td>1</td><td><code>GET /products</code></td><td>public</td><td><span class="t c">C-2</span> already built</td>
+      <td>Redis <code>products:list</code>, 5-min TTL; only <code>is_available=1</code>, soft-delete
+      filtered; toppings pre-joined. <b>Identical call the menu page makes.</b></td></tr>
+    <tr><td>2</td><td><code>GET /combos</code></td><td>public</td><td><span class="t c">C-3</span> already built</td>
+      <td>Redis <code>combos:list</code>, 5-min TTL; <code>combo_items:[{id,product_id,quantity}]</code>
+      — <b>ids only</b>; FE joins names/prices from the products query.</td></tr>
+  </table></div>
+  <p style="margin-top:10px">There is <b>no favourites endpoint</b> — no <code>POST /favourites</code>,
+  no "save to account". The full trace (menu plan §3.1) proves both routes are bare
+  <code>.GET("")</code> on their groups with no middleware; a <b>token-less guest can open the whole
+  suite</b>.</p>
+
+  <h3>Schema this suite depends on (§3.2)</h3>
+  <p><b>None new.</b> It reads the same catalog tables the menu plan's C-1 migration already covers
+  — full column specs in <code>harness/DB_SCHEMA.md §4.1</code>.</p>
+  <div class="schema">
+    <div class="tbl"><div class="tname">products</div><ul><li>read-only</li><li>(C-1, menu plan)</li></ul></div>
+    <div class="tbl"><div class="tname">toppings</div><ul><li>read-only</li></ul></div>
+    <div class="tbl"><div class="tname">product_toppings</div><ul><li>read-only</li></ul></div>
+    <div class="tbl"><div class="tname">combos</div><ul><li>read-only</li></ul></div>
+    <div class="tbl"><div class="tname">combo_items</div><ul><li>read-only</li></ul></div>
+    <div class="tbl" style="border-style:dashed"><div class="tname" style="opacity:.6">favourites</div>
+      <ul><li><b>DOES NOT EXIST</b></li><li>and this plan</li><li>proposes none (§09)</li></ul></div>
+  </div>
+  <p>Favourites + saved sets are <b>not persisted server-side</b>: there is no <code>favourites</code>
+  table. They live only in the browser's localStorage (<code>favourites.store.ts</code>).</p>
+
+  <h3>Cache map (§3.3) — nothing to invalidate here</h3>
+  <pre class="diagram">
+the suite NEVER writes  ⇒  the suite NEVER invalidates
+
+it piggybacks entirely on the menu's keys:   products:list      combos:list
+                                             (invalidated only by staff catalog
+                                              mutations — menu plan §3.3)
+
+worst-case staleness for a favourite's name / price / AVAILABILITY
+  = 5-min Redis TTL + 5-min TanStack staleTime  ≈  ~10 min end-to-end
+
+cache failures are non-fatal (fail-open to MySQL) — the suite survives a Redis outage</pre>
+
+  <h3>Wire shapes (§3.5)</h3>
+  <p><b>Identical to the menu plan §3.5</b> — the suite consumes <code>GET /products</code> → 200 and
+  <code>GET /combos</code> → 200 in exactly the shapes frozen there (products with pre-joined ₫0
+  toppings; combos with <code>combo_items</code> ids only). <b>Not restated here — one shape, one
+  home.</b> The only favourites-specific data structures are <b>FE-only, never on the wire</b>: the
+  store shapes in §03.</p>
+
+  <h3>Not adopted from the reference (§3.4)</h3>
+  <ul class="plain">
+    <li>❌ <b>No "empty ≡ loading ≡ error" conflation</b> — the reference collapsed all three into one
+      blank EmptyState because <code>resolvedItems</code> is <code>[]</code> while queries are in
+      flight (ref <code>_loading.md</code> Flags 1–2). We design this out: distinct loading / error /
+      empty branches, gated on <code>isPending</code> / <code>isError</code>, not on
+      <code>resolvedItems.length</code>.</li>
+    <li>❌ <b>No footer hidden behind the fixed bottom nav</b> — a real bug in the reference build.
+      Ours reserves ~72px bottom padding (B8).</li>
+    <li>❌ <b>No save-empty-set escape hatch</b> — the reference gated its save button only on the name
+      field (<code>isValid</code>). Ours also gates on <code>resolvedItems.length &gt; 0</code>.</li>
+    <li>❌ <b>No server-side favourites persistence</b> — kept device-local (reference behavior; §09
+      flag on the account-sync option).</li>
+  </ul>
+</section>
+
+<section id="dataflow">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Dataflow — the resolve join, the prune, the cart hand-off</h2></div>
+
+  <h3>Read path — store ids × catalog → cards</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">client</span><b>favourites store</b><br><span style="color:var(--muted);font-size:.76rem">items[] ids · persisted</span></div>
+    <span class="farrow">×</span>
+    <div class="fnode"><span class="fk">query cache</span><b>useProducts<br>useCombos</b><br><span style="color:var(--muted);font-size:.76rem">shared keys · warm from /menu</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">lib</span><b>resolveFavourites()</b><br><span style="color:var(--muted);font-size:.76rem">join · drop-if-absent</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">ui</span><b>resolvedItems</b><br><span style="color:var(--muted);font-size:.76rem">cards + live counts</span></div>
+  </div>
+
+  <pre class="diagram">
+THE RESOLVE JOIN — two hops, because combos carry ids only
+
+favourites.items[]                GET /products (cached)          GET /combos (cached)
+┌───────────────────────────┐     ┌────────────────────────┐      ┌──────────────────────────┐
+│ {id:p_bct, type:product}  │──┬─►│ Bánh Cuốn Thịt  4.000  │      │ Combo Đầy Đặn  42.000    │
+│ {id:p_btv, type:product}  │──┘  │ Bánh Trứng Vàng 9.000  │◄──┐  │ combo_items:[{product_id │
+│ {id:cb_dd, type:combo}    │─────┼────────────────────────┼───┼──┤   …}, …]  ← IDS ONLY     │
+└───────────────────────────┘     └────────────────────────┘   │  └──────────────────────────┘
+                                        hop 2: combo component names       │
+                                        resolve from the PRODUCTS list ────┘
+                                        a missing referenced product renders
+                                        "Món không rõ tên"  (cosmetic, NOT an error)
+
+                                   ▼
+resolvedItems = [ Bánh Cuốn Thịt 4.000 đ · Bánh Trứng Vàng 9.000 đ · Combo Đầy Đặn 42.000 đ ]
+                 Tất cả (3)  ·  Món lẻ (2)  ·  Combo (1)  ·  Tổng 55.000 đ</pre>
+
+  <h3>Auto-prune — the 86'd-dish path</h3>
+  <pre class="diagram">
+useEffect gated on  productsLoaded && combosLoaded      ← the guard: never prune while
+                    ─────────────────────────────         only ONE query has resolved
+        │
+        ├─ id present in the refreshed catalog?  ──► keep
+        └─ id ABSENT?                            ──► drop from items[] AND from every sets[] snapshot
+                                                     │
+                                                     └─ ONE toast, after BOTH queries settle:
+                                                        "Một số món không còn phục vụ đã được
+                                                         xoá khỏi danh sách yêu thích."</pre>
+
+  <h3>Loading strategy (§4.3) — the reference's key defect, fixed</h3>
+  <pre class="diagram">
+Tier 1 · route     each route gets a LAYOUT-SHAPED loading.tsx —
+                   filter-tabs + card rows (list) · form skeleton (save) · set-card rows (sets)
+                   never the reference's bare centered (shop)/loading.tsx spinner
+
+Tier 2 · component four named branches, gated on QUERY STATE, not on resolvedItems (table below)
+
+Tier 3 · mutation  NONE reaches the BE. Un-favourite, qty change, save-set and add-to-cart are all
+                   pure client-store writes (instant; feedback = the card disappearing / the cart
+                   badge bumping / a "✓ Đã thêm" flash). The first server write in the whole
+                   journey is POST /orders — which happens on /menu, not in this suite.</pre>
+
+  <div class="table-wrap"><table>
+    <tr><th>Branch</th><th>When</th><th>UI</th></tr>
+    <tr><td>loading</td><td><code>isPending</code> (no cached data)</td><td>in-place skeleton rows (no layout shift)</td></tr>
+    <tr><td>error</td><td>either catalog query <code>isError</code></td><td>inline "⚠ Kết nối mạng yếu" + Thử lại — <b>not</b> a blank empty state</td></tr>
+    <tr><td>empty</td><td>queries ok <b>and</b> <code>resolvedItems.length === 0</code></td><td><code>FavouritesEmptyState</code> ("Chưa có món yêu thích nào" + Xem Menu)</td></tr>
+    <tr><td>data</td><td>queries ok, items present</td><td>filter tabs + card list</td></tr>
+  </table></div>
+  <p style="margin-top:10px">Because keys are shared with the menu, the common path
+  (<code>/menu → favourites</code> within 5 min) is a <b>cache hit → data branch on first render,
+  zero spinner</b>. The named loading/error branches matter only on a <b>cold direct open</b> of
+  <code>/menu/favourites</code>.</p>
+
+  <h3>Cart hand-off — the only thing this suite produces</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">ui</span><b>Thêm tất cả<br>/ 🛒 Áp dụng</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">lib</span><b>buildCartItemsFrom<br>Favourites()</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">client</span><b>the ONE cart store</b><br><span style="color:var(--muted);font-size:.76rem">additive — existing cart survives</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">out</span><b>/menu TableConfirmModal<br>/ /checkout</b><br><span style="color:var(--muted);font-size:.76rem">POST /orders — menu plan's</span></div>
+  </div>
+  <p><code>🛒 Áp dụng</code> takes the same path, but resolves the <em>snapshot</em> against the live
+  catalog first, silently skipping removed items. Nothing here touches the network.</p>
+</section>
+
+<section id="behaviors">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors spec (§4.4) — the C-6 acceptance criteria</h2></div>
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">B1</span><span class="bt">Read-only, local-first</span>
+      <p>The suite issues only <code>GET /products</code> + <code>GET /combos</code> and
+      <b>zero writes</b>; every action (un-heart, qty, save set, add-to-cart) is a local store
+      mutation. Opening it with <b>no guest token</b> still renders resolved cards.</p></div>
+    <div class="bcard"><span class="bn">B2</span><span class="bt">Resolve + auto-prune</span>
+      <p>Store <code>items[]</code> ids are joined against the catalog; any id absent from the payload
+      is dropped and a <b>single</b> toast fires (after <b>both</b> queries settle). Combo component
+      names resolve from the <b>products</b> list; a missing referenced product shows
+      <b>Món không rõ tên</b> (cosmetic, not an error).</p></div>
+    <div class="bcard"><span class="bn">B3</span><span class="bt">Filter tabs</span>
+      <p><b>Tất cả / Món lẻ / Combo</b>, each with a <b>live count</b>; active = solid orange; filters
+      the list client-side. Counts are selectors over <code>resolvedItems</code>.</p></div>
+    <div class="bcard"><span class="bn">B4</span><span class="bt">Card = remove + re-add control</span>
+      <p>The <b>filled orange heart un-favourites</b> and removes the card (it is <em>not</em>
+      add-to-cart, stopPropagation); a qty stepper (default 1) edits the line;
+      <code>[+ Giỏ]</code> adds <b>that</b> card to the cart.</p></div>
+    <div class="bcard"><span class="bn">B5</span><span class="bt">Bulk add</span>
+      <p>Footer <b>🛒 Thêm tất cả vào giỏ</b> turns every resolved favourite into a
+      <code>CartItem</code> and pushes it <b>additively</b> (existing cart survives). Cart badge
+      updates.</p></div>
+    <div class="bcard"><span class="bn">B6</span><span class="bt">Save a set</span>
+      <p>TopNav <code>[Lưu bộ]</code> → <code>/menu/favourites/save</code>; RHF+Zod
+      (<code>name</code> min 1) <b>and</b> <code>resolvedItems.length &gt; 0</code> gate the submit;
+      <code>addSet(name)</code> snapshots <code>items[]</code> into the <b>persisted</b>
+      <code>sets[]</code> → routes to <code>/menu/favourites/sets</code>.</p></div>
+    <div class="bcard"><span class="bn">B7</span><span class="bt">Apply / manage a set</span>
+      <p><code>SetCard</code> <b>🛒 Áp dụng</b> resolves the snapshot against the live catalog
+      (silently skipping removed items) and adds all to cart; <code>✏</code> renames inline;
+      <code>🗑</code> deletes. Empty sets page → dedicated empty state (gated on
+      <code>sets.length</code>, not query).</p></div>
+    <div class="bcard"><span class="bn">B8</span><span class="bt">Footer clears the shell nav</span>
+      <p>The CTA / live-total row sit <b>above</b> the fixed 5-tab <code>ClientBottomNav</code>
+      (~72px bottom padding) — never hidden behind it (reference bug fixed).</p></div>
+    <div class="bcard"><span class="bn">B9</span><span class="bt">Distinct load / empty / error</span>
+      <p>The three are <b>never conflated</b> (§05): a network failure shows the error branch, not
+      the empty state.</p></div>
+    <div class="bcard"><span class="bn">B10</span><span class="bt">VN-first copy</span>
+      <p>All strings Vietnamese, exactly the reference's ("Yêu Thích", "Thêm tất cả vào giỏ",
+      "Bộ đã lưu", "Nhấn ♥ trên món ăn bất kỳ để thêm", …); <b>one constants file</b>, no i18n
+      framework yet.</p></div>
+    <div class="bcard"><span class="bn">B11</span><span class="bt">Currency</span>
+      <p><code>formatVND()</code> → <b>35.000 đ</b> (dot thousands, lowercase đ, space); zero-price
+      items show <b>0 đ</b>. Same helper as the menu.</p></div>
+    <div class="bcard"><span class="bn">B12</span><span class="bt">Worked example everywhere</span>
+      <p>Docs, seeds and screenshots all use: <b>3 favourites</b> — Bánh Cuốn Thịt (Món lẻ, 4.000 đ) ·
+      Bánh Trứng Vàng (Món lẻ, 9.000 đ) · Combo Đầy Đặn (Combo, 42.000 đ) — and <b>2 saved sets</b> —
+      "📋 Sáng thứ 7" (3 món · 88.000 đ) · "📋 Cả nhà" (5 món · 152.000 đ).</p></div>
+  </div>
+</section>
+
+<section id="defects">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Reference defects designed out (§6)</h2></div>
+  <div class="table-wrap"><table>
+    <tr><th>Ref finding</th><th>Our countermeasure</th></tr>
+    <tr><td>Empty ≡ loading ≡ error — all render the blank EmptyState (<code>_loading.md</code> F1)</td>
+      <td>four named branches gated on <code>isPending</code>/<code>isError</code>, not
+      <code>resolvedItems.length</code> (§05)</td></tr>
+    <tr><td>Footer CTA hidden behind the fixed bottom nav (<code>DESIGN_PROMPT</code> "real bug")</td>
+      <td>~72px bottom padding; AC checks the CTA clears <code>ClientBottomNav</code> (B8)</td></tr>
+    <tr><td>Save button gated only on name → can save an empty set (<code>_loading.md</code> F3)</td>
+      <td>submit also gated on <code>resolvedItems.length &gt; 0</code> (§04 not-adopted, B6)</td></tr>
+    <tr><td><code>SetCard</code> shows "n món · 0đ" stub while loading (<code>_loading.md</code> F5)</td>
+      <td>set-card skeleton in <code>sets/loading.tsx</code>; count + price appear together once resolved</td></tr>
+    <tr><td>Network failure is silent (indistinguishable from empty) (<code>_loading.md</code> F1)</td>
+      <td>explicit error branch + Thử lại (§05)</td></tr>
+    <tr><td>Two redundant footer buttons + 3-way naming</td>
+      <td>one <code>[Lưu bộ]</code> in TopNav; one VN copy constant (§02)</td></tr>
+    <tr><td>toppings/qty dropped at toggle time (<code>_crosspage_dataflow.md</code> Flag)</td>
+      <td>kept for v1 (favourite = the dish) but <b>documented</b> as a §09 decision, not a silent gap</td></tr>
+  </table></div>
+</section>
+
+<section id="tasks">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Task mapping + build order (§5)</h2></div>
+  <p>The suite ships across <em>existing</em> customer-phase FE rows in
+  <a href="../../TASKS.md">TASKS.md</a> — no new phases invented. Its BE contract is
+  <b>already delivered</b> by the menu's C-2/C-3 rows, so it adds <b>no BE row</b>.</p>
+  <div class="strip">
+    <span class="snode oph">C-2 / C-3 BE reads ✓ done</span><span class="sarrow">→</span>
+    <span class="snode tph">T cart store (menu plan)</span><span class="sarrow">→</span>
+    <span class="snode">C-6 FE favourites suite (v1)</span><span class="sarrow">⇢</span>
+    <span class="snode tph">C-7 NEW features · owner-gated</span>
+  </div>
+  <div class="table-wrap"><table>
+    <tr><th>TASKS.md row</th><th>This plan's slice</th><th>Receipt type</th></tr>
+    <tr><td><span class="t o">C-2 / C-3</span> BE catalog reads</td>
+      <td>§04 #1–2 — <b>already built</b>; the suite only consumes</td>
+      <td>(menu plan's curl receipts cover it)</td></tr>
+    <tr><td><span class="t tt">T</span>-phase cart task</td>
+      <td><code>cart.store.ts</code> — the hand-off target (menu plan §4.2)</td>
+      <td>(menu plan's store tests cover it)</td></tr>
+    <tr><td><span class="t c">C-6</span> FE favourites suite — <em>new row, registered when it opens</em></td>
+      <td>§02–§06 v1: list (resolve + prune + filter + heart-remove + qty + <code>[+ Giỏ]</code> +
+      bulk add), save form, sets (apply / rename / delete), 4 loading branches</td>
+      <td>mobile-viewport screenshots per §06 behavior + a resolve/prune round-trip</td></tr>
+    <tr><td><span class="t tt">C-7</span> FE favourites NEW features — <em>deferred, owner-gated</em></td>
+      <td>canh quick-add block · live-total row · "Tự tạo suất" builder (<code>suats[]</code> +
+      per-egg nhân + free-text note) · 📌 Ghim lên Menu pinning</td>
+      <td>screenshots (built only after the owner keeps the §09 proposals)</td></tr>
+  </table></div>
+  <p style="margin-top:12px"><b>Sizing:</b> C-6 keeps the 1-session / 1–2-file / 1-AC rule and may
+  split (list / save+sets) at registration. C-7 is explicitly <b>out of v1</b> until the owner rules
+  on the §09 proposals.</p>
+</section>
+
+<section id="decisions">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Decisions + flags (§7) + verify plan (§8)</h2></div>
+
+  <h3>Decided <span class="chip done">✅</span></h3>
+  <ul class="plain">
+    <li>✅ <b>BE-read-only, a strict subset of the menu contract</b> — no favourites endpoint, no new
+      cache keys, no schema. The plan cross-links the menu plan §3 rather than restating it.</li>
+    <li>✅ <b>Favourites persisted, cart session-only</b> — the deliberate asymmetry (a set outlives
+      the tab; the cart it fills does not). Adopted from the reference.</li>
+    <li>✅ <b>Read-only ⇒ loading/error branches are the whole FE story</b> — the reference's blank
+      states are the one real thing to fix; §05 is this plan's highest-value slice.</li>
+  </ul>
+
+  <h3>Flags <span class="chip amber">⚠️</span></h3>
+  <div class="flag">
+    <p><b>⚠️ FLAG — favourites are device-local, not account-synced.</b> Clearing storage or switching
+    device loses them; there is no "save favourites to my account" (no accounts in v1). If the owner
+    wants cross-device favourites, that needs a <code>favourites</code> table + a
+    <code>POST/GET /favourites</code> pair + auth — a <b>new BE surface</b>, out of this plan's
+    read-only scope. <b>Say so before C-6</b> if account-sync should be in v1.</p>
+  </div>
+  <div class="flag">
+    <p><b>⚠️ FLAG — <code>toggleFav</code> drops toppings/qty.</b> A favourite is always
+    <code>{qty:1, toppingIds:[]}</code>, so re-adding it loses the exact filling the guest picked on
+    the menu. Kept for v1 (simplest, matches the reference); a one-line fix if the owner wants
+    faithful re-add (carry the configured line into the favourite).</p>
+  </div>
+
+  <h3>Suggestion <span class="chip plan">💡</span></h3>
+  <div class="golden">
+    <p><b>💡 SUGGESTION — the DESIGN_PROMPT's NEW features are a genuine upgrade but out of v1
+    scope.</b> Canh quick-add, the live-total row, the <b>"Tự tạo suất" custom-combo builder</b>
+    (<code>suats[]</code> + per-egg nhân pills + a free-text kitchen note, <b>no new DB field</b>),
+    and 📌 <b>"Ghim lên Menu"</b> pinning are all FE-only and would make the hub much stickier.</p>
+    <p>They're captured as the deferred <b>C-7</b> row (§08); recommend building them <b>after</b> the
+    v1 suite ships and the owner eyeballs <code>customer_favourites_mockup-1.html</code>. The store
+    already reserves a <code>suats[]</code> slice for the builder.</p>
+  </div>
+
+  <h3>Open question <span class="chip amber">❓</span></h3>
+  <div class="flag">
+    <p><b>❓ CLARIFY — customer shell palette.</b> Same open question as the menu plan §7: the mockup
+    uses the reference dark/orange shell; if the owner swaps to F-7 harness blue before C-4, this
+    suite inherits that one token change — <b>no rework here</b>.</p>
+  </div>
+
+  <h3>Verify plan (§8 — per-task receipts → <code>harness/VERIFICATION.md</code>)</h3>
+  <ul class="plain">
+    <li><b>This plan (F-17):</b> the folder holds the 4 slug-prefixed docs; the <code>.md</code> is the
+      sole source of truth (each HTML footer says so); both HTML themes render (light + dark, toggle
+      wins); no horizontal page scroll — receipt row dated <b>2026-07-19</b>.</li>
+    <li><b>C-6 (when built):</b> mobile-viewport screenshots per §06 behavior — the resolve+prune
+      round-trip (heart on menu → appears here → 86 the dish → auto-pruned with toast), the four
+      loading branches (cold open, error via offline, empty, data), the footer clearing the bottom
+      nav, and a save→apply set cycle. <b>No curl rows</b> — the suite adds no BE surface (the menu
+      plan's C-2/C-3 curl transcripts already prove the two GETs).</li>
+    <li><b>C-7 (if built):</b> screenshots of the NEW features after the owner keeps the §09
+      proposals.</li>
+  </ul>
+</section>
+
+<footer>
+  <p style="max-width:none">Written by <b>F-17</b> · 2026-07-19 · visual companion to
+  <a href="customer_favourites_PLAN.md"><code>customer_favourites_PLAN.md</code></a> in this folder.
+  This page is a <b>snapshot</b> of that file — <b><code>customer_favourites_PLAN.md</code> wins on
+  any conflict</b> between the two. Digested from the reference corpus
+  <code>reference/docs/system/08_pages/customer/customer_favourites/</code> (10 docs, 2026-07-19),
+  reconciled with the F-15 menu plan (which owns the shared catalog contract — see
+  <a href="../customer_menu/customer_menu_PLAN.md">customer_menu_PLAN.md §3</a>) and the
+  F-5/F-8/F-11/F-12/F-16 rule sets. Task status lives in <a href="../../TASKS.md">TASKS.md</a>.</p>
+</footer>
+
+</div>
+</body>
+</html>

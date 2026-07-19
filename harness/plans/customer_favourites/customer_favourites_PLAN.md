@@ -1,4 +1,4 @@
-# Customer Favourites Suite — Consolidated FE + BE Build Plan (F-17)
+# Customer Favourites Suite — Consolidated FE + BE Build Plan (F-24)
 
 > **TL;DR:** One plan, one folder, for the customer-facing **favourites suite** — three
 > small routes (`/menu/favourites` · `/menu/favourites/save` · `/menu/favourites/sets`)
@@ -329,7 +329,7 @@ registration. C-7 is explicitly **out of v1** until the owner rules on the §7 p
 
 ## 8. Verify plan (per-task receipts, logged in `harness/VERIFICATION.md`)
 
-- **This plan (F-17):** folder holds the 4 slug-prefixed docs; `.md` is the sole source of
+- **This plan (F-24):** folder holds the 4 slug-prefixed docs; `.md` is the sole source of
   truth (each HTML footer says so); both HTML themes render (light + dark, toggle wins);
   no horizontal page scroll — receipt row dated 2026-07-19.
 - **C-6 (when built):** mobile-viewport screenshots per §4.4 behavior — the resolve+prune
@@ -341,7 +341,7 @@ registration. C-7 is explicitly **out of v1** until the owner rules on the §7 p
 
 ---
 
-*Written by F-17 (2026-07-19) from a digest of the reference customer_favourites corpus,
+*Written by F-24 (2026-07-19) from a digest of the reference customer_favourites corpus,
 reconciled with the F-15 menu plan (shared catalog contract) and the F-5/F-8/F-16 rules.
 Task status lives in `TASKS.md`; rules live in the docs in §2; the BE contract lives in the
 menu plan §3; this file owns only the favourites suite's scope, mapping, and FE-only shapes.*

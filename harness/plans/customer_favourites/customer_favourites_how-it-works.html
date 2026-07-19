@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer favourites — how it actually works (runtime walkthrough)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3372B;
+    --red-soft: #F9E7E4;
+    --violet: #6D3BC7;
+    --violet-soft: #EFE8FB;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E8887C; --red-soft: #3A1B17; --violet: #B49AF0; --violet-soft: #2A1E44;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E8887C; --red-soft: #3A1B17; --violet: #B49AF0; --violet-soft: #2A1E44;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3372B; --red-soft: #F9E7E4; --violet: #6D3BC7; --violet-soft: #EFE8FB;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 980px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 76ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 68ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  section { margin-top: 60px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code { border: none; background: transparent; padding: 0; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 76ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* ---- actor chips: one color per system, used everywhere on this page ---- */
+  .actor { display: inline-block; font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 5px; padding: 2px 8px; white-space: nowrap; }
+  .actor.client { color: var(--accent); background: var(--accent-soft); }   /* browser: components, Query cache */
+  .actor.rsc    { color: var(--violet); background: var(--violet-soft); }   /* Next.js server (RSC) */
+  .actor.api    { color: var(--amber); background: var(--amber-soft); }     /* Gin handlers + services / Zustand stores */
+  .actor.redis  { color: var(--red); background: var(--red-soft); }         /* Redis */
+  .actor.db     { color: var(--done); background: var(--done-soft); }       /* MySQL */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; align-items: center; font-size: 0.8rem; color: var(--muted); }
+
+  /* ---- SVG diagrams (hand-drawn, theme-aware via CSS vars) ---- */
+  .svgwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 12px 10px 6px; margin: 14px 0; }
+  .svgwrap svg { display: block; min-width: 860px; width: 100%; height: auto; }
+  .cap { font-size: 0.8rem; color: var(--muted); margin: -6px 0 18px 4px; }
+  svg text { font-family: var(--mono); }
+  svg .t1 { font-size: 11px; fill: var(--ink); }
+  svg .t2 { font-size: 10.5px; fill: var(--muted); }
+  svg .tb { font-size: 12px; font-weight: 700; }
+  svg .tred { fill: var(--red); }  svg .tgreen { fill: var(--done); }
+  svg .tamber { fill: var(--amber); }  svg .taccent { fill: var(--accent); }  svg .tviolet { fill: var(--violet); }
+  svg .lifeline { stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 5; }
+  svg .call { stroke: var(--ink); stroke-width: 1.6; fill: none; }
+  svg .resp { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 6 4; fill: none; }
+  svg .err  { stroke: var(--red); stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+  svg .flowa { stroke: var(--accent); stroke-width: 2; fill: none; }
+  svg .flowo { stroke: var(--amber); stroke-width: 2; fill: none; }
+  svg .flowg { stroke: var(--done); stroke-width: 2; fill: none; }
+  svg .abox { fill: var(--surface); stroke: var(--line); stroke-width: 1.4; }
+  svg .abox.client { stroke: var(--accent); }
+  svg .abox.rsc { stroke: var(--violet); }
+  svg .abox.api { stroke: var(--amber); }
+  svg .abox.redis { stroke: var(--red); }
+  svg .abox.db { stroke: var(--done); }
+  svg .region { fill: var(--amber-soft); stroke: var(--amber); stroke-width: 1; stroke-dasharray: 5 4; opacity: 0.55; }
+  svg .txbox { fill: var(--done-soft); stroke: var(--done); stroke-width: 1.2; stroke-dasharray: 6 4; opacity: 0.5; }
+  svg .delbox { fill: var(--red-soft); stroke: var(--red); stroke-width: 1.3; }
+  svg .ghost { fill: var(--surface); stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 5 4; opacity: 0.75; }
+
+  /* ---- numbered sequence steps ---- */
+  .seq { list-style: none; margin: 14px 0; padding: 0; display: flex; flex-direction: column; }
+  .seq li { position: relative; display: flex; gap: 12px; padding: 0 0 18px 0; }
+  .seq li::before { content: ""; position: absolute; left: 12px; top: 26px; bottom: 0; width: 2px; background: var(--line); }
+  .seq li:last-child::before { display: none; }
+  .seq .n { flex: none; width: 25px; height: 25px; margin-top: 1px; border-radius: 50%; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 0.74rem; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .seq .body { font-size: 0.9rem; max-width: 78ch; }
+  .seq .body .who { margin-right: 6px; }
+  .seq .body .note { display: block; color: var(--muted); font-size: 0.83rem; margin-top: 2px; }
+  .seq.alt .n { background: var(--red); color: #fff; }
+
+  /* ---- big-picture map ---- */
+  .map { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 16px 0; }
+  .zone { border: 1px dashed var(--line); border-radius: 12px; padding: 12px 14px; background: transparent; }
+  .zone > .zt { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .boxes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bx { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 11px; font-size: 0.8rem; min-width: 110px; }
+  .bx b { font-family: var(--mono); font-size: 0.76rem; display: block; }
+  .bx .d { color: var(--muted); font-size: 0.72rem; }
+  .bx.client { border-top: 3px solid var(--accent); }
+  .bx.rsc { border-top: 3px solid var(--violet); }
+  .bx.api { border-top: 3px solid var(--amber); }
+  .bx.redis { border-top: 3px solid var(--red); }
+  .bx.db { border-top: 3px solid var(--done); }
+  .bx.ghost { border-top: 3px dashed var(--muted); opacity: 0.7; }
+  .down { text-align: center; font-family: var(--mono); color: var(--muted); font-size: 0.85rem; margin: -2px 0; }
+
+  /* ---- flow rows ---- */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .fnode.ghost { border-style: dashed; opacity: 0.65; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  /* ---- three-lane summary cards ---- */
+  .lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
+  .lane { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 0.86rem; }
+  .lane .lt { font-family: var(--sans); font-weight: 600; margin-bottom: 4px; }
+  .lane .lp { font-family: var(--mono); font-size: 0.74rem; line-height: 1.7; }
+  .lane p { margin: 6px 0 0; font-size: 0.82rem; color: var(--muted); max-width: none; }
+  .lane.read { border-top: 3px solid var(--accent); }
+  .lane.cart { border-top: 3px solid var(--amber); }
+  .lane.write { border-top: 3px solid var(--done); }
+
+  /* ---- state hub diagram ---- */
+  .hubwrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 16px 0; }
+  .hub { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .hub .hcore { border-radius: 8px; padding: 8px 12px; font-family: var(--mono); font-size: 0.8rem; font-weight: 700; text-align: center; margin-bottom: 10px; }
+  .hub.q .hcore { background: var(--accent-soft); color: var(--accent); }
+  .hub.z .hcore { background: var(--amber-soft); color: var(--amber); }
+  .hub ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
+  .hub li { display: flex; gap: 8px; align-items: baseline; }
+  .hub li .arr { font-family: var(--mono); color: var(--muted); flex: none; }
+  .hub li code { font-size: 0.76rem; }
+  .hub .hnote { margin-top: 10px; font-size: 0.78rem; color: var(--muted); }
+
+  /* ---- decision flowchart (CSS) ---- */
+  .dflow { margin: 16px 0; }
+  .drow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .dq { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: 0.84rem; }
+  .dyes { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+  .dres { font-family: var(--mono); font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; white-space: nowrap; }
+  .dres.q { color: var(--accent); background: var(--accent-soft); }
+  .dres.u { color: var(--violet); background: var(--violet-soft); }
+  .dres.z { color: var(--amber); background: var(--amber-soft); }
+  .dres.g { color: var(--done); background: var(--done-soft); }
+  .dres.r { color: var(--red); background: var(--red-soft); }
+  .dno { margin: 3px 0 3px 26px; font-family: var(--mono); color: var(--muted); font-size: 0.7rem; }
+
+  /* ---- line-id anatomy ---- */
+  .lid { display: flex; align-items: center; flex-wrap: wrap; font-family: var(--mono); font-size: 0.8rem; margin: 10px 0 4px; }
+  .lid .seg { padding: 5px 12px; border: 1px solid var(--line); border-left-width: 0; }
+  .lid .seg:first-child { border-left-width: 1px; border-radius: 8px 0 0 8px; }
+  .lid .seg:last-child { border-radius: 0 8px 8px 0; }
+  .lid .seg.kind { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .lid .seg.pid { background: var(--surface); }
+  .lid .seg.vart { background: var(--amber-soft); color: var(--amber); font-weight: 700; }
+  .lid .eq { padding: 0 10px; color: var(--muted); }
+  .lidnote { font-size: 0.78rem; color: var(--muted); margin: 0 0 10px 4px; }
+
+  /* ---- cache clock bars ---- */
+  .clock { margin: 16px 0; }
+  .cbar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .cbar-label { flex: none; width: 190px; font-family: var(--mono); font-size: 0.72rem; text-align: right; color: var(--muted); }
+  .cbar { flex: 1; display: flex; height: 30px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); font-family: var(--mono); font-size: 0.7rem; font-weight: 700; }
+  .cbar span { display: flex; align-items: center; justify-content: center; }
+  .cbar .fresh { flex: 5; background: var(--done-soft); color: var(--done); }
+  .cbar .stale { flex: 3; background: var(--amber-soft); color: var(--amber); }
+  .cbar .gone { flex: 3; background: var(--red-soft); color: var(--red); }
+  .cscale { display: flex; margin-left: 200px; font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+  .cscale span { flex: 1; } .cscale .s5 { flex: 5; } .cscale .s3 { flex: 3; }
+
+  .warn { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 18px 0; max-width: 76ch; font-size: 0.9rem; }
+  .warn b { color: var(--red); }
+  ul.plain { margin: 0 0 14px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+
+  /* ---- surface mocks + pills (sections 03/04) ---- */
+  .mock { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 12px 14px; margin: 12px 0; max-width: 66ch; }
+  .mock .mt { font-family: var(--sans); font-weight: 600; font-size: 0.92rem; margin-bottom: 2px; }
+  .mock .md { font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; }
+  .mock .lid { margin: 8px 0 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px; align-items: center; }
+  .pill { font-family: var(--mono); font-size: 0.74rem; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; background: var(--surface); color: var(--muted); white-space: nowrap; }
+  .pill.on { border-color: var(--amber); background: var(--amber-soft); color: var(--amber); font-weight: 700; }
+  .pill.lock { opacity: 0.8; }
+  .stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; font-family: var(--mono); font-size: 0.8rem; vertical-align: middle; }
+  .stepper b { padding: 3px 9px; min-width: 22px; text-align: center; }
+  .stepper span { padding: 3px 11px; background: var(--amber-soft); color: var(--amber); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- shared SVG arrowheads for every diagram below -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="mi" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--ink)"/></marker>
+  <marker id="mm" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--muted)"/></marker>
+  <marker id="mr" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--red)"/></marker>
+  <marker id="ma" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--accent)"/></marker>
+  <marker id="mo" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--amber)"/></marker>
+  <marker id="mg" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--done)"/></marker>
+</defs></svg>
+
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-19</div>
+  <h1>Customer favourites — how it actually works</h1>
+  <p class="lede">The three favourite routes traced end to end, drawn: what a warm arrival from
+  <code>/menu</code> looks like versus a cold direct open, how store ids become resolved cards
+  (and how the auto-prune pass decides what to drop), what the persisted Zustand store really
+  does on disk, and why this whole suite makes <b>zero backend writes</b>.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">routes</span><span class="v">3 · one store · no url params</span></div>
+    <div class="fact"><span class="k">be surface</span><span class="v">2 GETs · 0 writes</span></div>
+    <div class="fact"><span class="k">persisted</span><span class="v">localStorage <code>favourites</code></span></div>
+    <div class="fact"><span class="k">worked example</span><span class="v">3 món · 2 bộ đã lưu</span></div>
+    <div class="fact"><span class="k">staleness bound</span><span class="v">≈ 10 min worst case</span></div>
+  </div>
+  <div class="legend">
+    <span>Every step and every diagram uses one color per system:</span>
+    <span class="actor client">browser</span>
+    <span class="actor rsc">next server (RSC)</span>
+    <span class="actor api">gin api / zustand</span>
+    <span class="actor redis">redis</span>
+    <span class="actor db">mysql</span>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#map">01 big picture</a>
+  <a href="#load">02 first load — warm vs cold</a>
+  <a href="#resolve">03 resolve + auto-prune</a>
+  <a href="#store">04 the favourites store</a>
+  <a href="#state">05 state across components/pages</a>
+  <a href="#read">06 the read path (and the missing write path)</a>
+  <a href="#cache">07 cache life</a>
+</nav>
+
+<!-- ================================================================ -->
+<section id="map">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Big picture — the whole machine on one screen</h2></div>
+
+  <p>The favourites suite is a <b>bridge</b>. It does not create favourites (the heart lives on
+  <code>/menu</code>) and it does not place orders (that is <code>/checkout</code> → <code>POST /orders</code>,
+  owned by the menu plan). It <em>reads a persisted list back</em>, resolves it against the shared
+  catalog cache, and hands a filled cart to the order pipeline.</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 285" role="img" aria-label="The favourites suite as a bridge: menu hearts in, one persisted store, three routes, cart store out to the order pipeline">
+    <!-- shared catalog cache -->
+    <rect x="240" y="8" width="200" height="52" rx="9" class="abox client"/>
+    <text x="340" y="28" class="tb taccent" text-anchor="middle">TanStack catalog cache</text>
+    <text x="340" y="45" class="t2" text-anchor="middle">useProducts / useCombos — same keys as /menu</text>
+    <!-- /menu hearts -->
+    <rect x="20" y="110" width="145" height="62" rx="9" class="abox client"/>
+    <text x="92" y="134" class="tb taccent" text-anchor="middle">/menu</text>
+    <text x="92" y="151" class="t2" text-anchor="middle">♥ product card</text>
+    <text x="92" y="166" class="t2" text-anchor="middle">♥ combo · ♥ rail</text>
+    <!-- store -->
+    <rect x="240" y="100" width="200" height="82" rx="9" class="abox api"/>
+    <text x="340" y="122" class="tb tamber" text-anchor="middle">favourites store</text>
+    <text x="340" y="140" class="t2" text-anchor="middle">{ items[], sets[], suats[] }</text>
+    <text x="340" y="156" class="t2" text-anchor="middle">Zustand · persist</text>
+    <text x="340" y="172" class="t2 tamber" text-anchor="middle">localStorage key `favourites`</text>
+    <!-- the three routes -->
+    <rect x="515" y="58" width="190" height="172" rx="10" class="abox client"/>
+    <text x="610" y="80" class="tb taccent" text-anchor="middle">the 3 routes</text>
+    <text x="610" y="106" class="t1" text-anchor="middle">/menu/favourites</text>
+    <text x="610" y="126" class="t2" text-anchor="middle">list · filter · qty · [+ Giỏ]</text>
+    <text x="610" y="152" class="t1" text-anchor="middle">…/favourites/save</text>
+    <text x="610" y="172" class="t2" text-anchor="middle">RHF + Zod name-a-set</text>
+    <text x="610" y="198" class="t1" text-anchor="middle">…/favourites/sets</text>
+    <text x="610" y="218" class="t2" text-anchor="middle">apply · rename · delete</text>
+    <!-- cart store -->
+    <rect x="760" y="100" width="145" height="62" rx="9" class="abox api"/>
+    <text x="832" y="122" class="tb tamber" text-anchor="middle">cart store</text>
+    <text x="832" y="139" class="t2" text-anchor="middle">items[] session-only</text>
+    <text x="832" y="155" class="t2" text-anchor="middle">additive appends</text>
+    <!-- out of scope -->
+    <rect x="700" y="238" width="205" height="38" rx="8" class="ghost"/>
+    <text x="802" y="255" class="tb" text-anchor="middle" fill="var(--muted)">/checkout → POST /orders</text>
+    <text x="802" y="269" class="t2" text-anchor="middle">owned by the menu plan — out of scope</text>
+    <!-- arrows -->
+    <line x1="167" y1="141" x2="232" y2="141" class="flowo" marker-end="url(#mo)"/>
+    <text x="199" y="132" class="t2" text-anchor="middle">toggleFav</text>
+    <line x1="442" y1="141" x2="507" y2="141" class="flowo" marker-end="url(#mo)"/>
+    <text x="474" y="132" class="t2" text-anchor="middle">read</text>
+    <path d="M442,34 C470,34 486,60 508,76" class="flowa" marker-end="url(#ma)"/>
+    <text x="478" y="26" class="t2 taccent">resolve</text>
+    <line x1="707" y1="141" x2="752" y2="141" class="flowo" marker-end="url(#mo)"/>
+    <text x="729" y="132" class="t2" text-anchor="middle">add</text>
+    <line x1="832" y1="164" x2="832" y2="232" class="resp" marker-end="url(#mm)"/>
+    <text x="845" y="200" class="t2">hand-off</text>
+    <!-- no writes banner -->
+    <rect x="20" y="200" width="330" height="34" rx="8" class="delbox"/>
+    <text x="185" y="222" class="tb tred" text-anchor="middle">✕ this suite writes nothing to the backend</text>
+    <text x="185" y="252" class="t2" text-anchor="middle">un-heart · qty · save set · add-to-cart</text>
+    <text x="185" y="266" class="t2" text-anchor="middle">= local store writes, zero network</text>
+  </svg></div>
+  <p class="cap">Hearts flow in from <code>/menu</code>, a cart flows out to the order pipeline. The suite owns neither end of the journey — only the middle.</p>
+
+  <div class="map">
+    <div class="zone">
+      <div class="zt">guest's phone — browser</div>
+      <div class="boxes">
+        <div class="bx client"><b>components</b><span class="d">FavouritesTopNav · FilterTabs · FavouriteItemCard · Footer · SetCard</span></div>
+        <div class="bx client"><b>TanStack Query cache</b><span class="d">products / combos · staleTime 5 min · <em>shared keys with /menu</em></span></div>
+        <div class="bx api"><b>favourites store (persisted)</b><span class="d">items[] · sets[] · suats[] → localStorage <code>favourites</code></span></div>
+        <div class="bx api"><b>cart store (hand-off)</b><span class="d">items[] session-only — the menu plan owns it</span></div>
+        <div class="bx client"><b>httpOnly cookie</b><span class="d">guest JWT — never exercised here (both GETs are public)</span></div>
+      </div>
+    </div>
+    <div class="down">↓ exactly two requests: <code>GET /api/v1/products</code> · <code>GET /api/v1/combos</code> &nbsp;·&nbsp; ↑ nothing goes up</div>
+    <div class="zone">
+      <div class="zt">our servers — all of it already built (menu plan C-2 / C-3)</div>
+      <div class="boxes">
+        <div class="bx rsc"><b>Next.js server</b><span class="d">RSC shell + a layout-shaped <code>loading.tsx</code> per route</span></div>
+        <div class="bx api"><b>Caddy → Gin</b><span class="d">/api/v1 · bare <code>.GET("")</code> · no middleware on either route</span></div>
+        <div class="bx api"><b>services</b><span class="d">cache-aside reads only</span></div>
+        <div class="bx redis"><b>Redis</b><span class="d"><code>products:list</code> · <code>combos:list</code> · 5-min TTL · fail-open</span></div>
+        <div class="bx db"><b>MySQL</b><span class="d">catalog tables — <b>no favourites table exists</b></span></div>
+        <div class="bx ghost"><b>orders + order_items</b><span class="d">reached only from /menu — out of scope here</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lanes">
+    <div class="lane read">
+      <div class="lt">Catalog reads — public, cached twice</div>
+      <div class="lp">island → GET /products · GET /combos<br>→ Gin → Redis (hit? done) → MySQL → Redis SET</div>
+      <p>The exact two calls the menu page already makes, on the exact same query keys. Arriving from <code>/menu</code> within 5 min means the cache is already full: no network, no spinner.</p>
+    </div>
+    <div class="lane cart">
+      <div class="lt">Every guest action — local only</div>
+      <div class="lp">un-heart · qty · save set · rename · delete · add-to-cart<br>network: NONE</div>
+      <p>All of it is a Zustand write. The favourites store persists to localStorage; the cart store does not persist its items. Tier-3 mutation UI never appears — there is nothing to be pending about.</p>
+    </div>
+    <div class="lane write">
+      <div class="lt">The write — somewhere else entirely</div>
+      <div class="lp">/menu TableConfirmModal / /checkout<br>→ POST /orders (menu plan §3)</div>
+      <p>The first server write in the whole journey happens after the guest leaves this suite. Drawn greyed everywhere on this page: we hand off, we don't call it.</p>
+    </div>
+  </div>
+
+  <div class="golden">
+    <p><b>The one-sentence version:</b> favourites is a <em>read-only, local-first bridge</em> —
+    it consumes hearts written on <code>/menu</code>, resolves them through the menu's own cached
+    catalog GETs, and produces a cart for the menu's own order pipeline. It adds no endpoint,
+    no cache key, no table.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section id="load">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — the warm arrival and the cold open</h2></div>
+
+  <p>There are two ways in, and they look completely different at runtime. The common one is warm:
+  the guest was just on <code>/menu</code> and taps <b>[Yêu Thích]</b> in the fixed bottom nav.</p>
+
+  <h3>Warm arrival — the common path, zero spinner</h3>
+  <div class="svgwrap"><svg viewBox="0 0 920 215" role="img" aria-label="Warm arrival sequence: nav tap, hooks hit the shared query cache, no network at all">
+    <rect x="25" y="12" width="130" height="26" rx="7" class="abox client"/><text x="90" y="29" class="tb taccent" text-anchor="middle">list island</text>
+    <rect x="240" y="12" width="160" height="26" rx="7" class="abox client"/><text x="320" y="29" class="tb taccent" text-anchor="middle">query cache</text>
+    <rect x="500" y="12" width="150" height="26" rx="7" class="abox api"/><text x="575" y="29" class="tb tamber" text-anchor="middle">favourites store</text>
+    <rect x="760" y="12" width="130" height="26" rx="7" class="abox api"/><text x="825" y="29" class="tb tamber" text-anchor="middle">gin api</text>
+    <line x1="90" y1="38" x2="90" y2="205" class="lifeline"/>
+    <line x1="320" y1="38" x2="320" y2="205" class="lifeline"/>
+    <line x1="575" y1="38" x2="575" y2="205" class="lifeline"/>
+    <line x1="825" y1="38" x2="825" y2="205" class="lifeline"/>
+    <path d="M90,58 h64 v18 h-64" class="call" marker-end="url(#mi)"/>
+    <text x="164" y="62" class="t1">1 · tap [Yêu Thích] → client-side route change, no document load</text>
+    <line x1="90" y1="102" x2="312" y2="102" class="flowa" marker-end="url(#ma)"/>
+    <text x="201" y="94" class="t1" text-anchor="middle">2 · useProducts() / useCombos()</text>
+    <line x1="320" y1="132" x2="98" y2="132" class="resp" marker-end="url(#mm)"/>
+    <text x="205" y="124" class="t2 tgreen" text-anchor="middle">3 · HIT — same keys, still FRESH (&lt; 5 min)</text>
+    <line x1="90" y1="164" x2="567" y2="164" class="flowo" marker-end="url(#mo)"/>
+    <text x="330" y="156" class="t1" text-anchor="middle">4 · read items[] — 3 favourites, rehydrated from localStorage</text>
+    <line x1="640" y1="102" x2="818" y2="102" class="err" marker-end="url(#mr)"/>
+    <text x="732" y="94" class="t2 tred" text-anchor="middle">✕ no request</text>
+    <text x="90" y="196" class="tb tgreen" text-anchor="middle">5 · DATA branch</text>
+    <text x="320" y="196" class="t2" text-anchor="middle">on the very first render — the loading branch is never entered</text>
+  </svg></div>
+  <p class="cap">Because <code>queries/catalog.ts</code> is <b>shared</b> with the menu, warm arrival is a cache hit. This is why the named loading branch below matters only on a cold direct open.</p>
+
+  <h3>Cold open — someone pastes <code>/menu/favourites</code> straight into the browser</h3>
+  <div class="svgwrap"><svg viewBox="0 0 920 490" role="img" aria-label="Cold-open sequence across browser, Next server, Gin, Redis and MySQL, ending in the four named render branches">
+    <rect x="25" y="12" width="110" height="26" rx="7" class="abox client"/><text x="80" y="29" class="tb taccent" text-anchor="middle">browser</text>
+    <rect x="225" y="12" width="110" height="26" rx="7" class="abox rsc"/><text x="280" y="29" class="tb tviolet" text-anchor="middle">next (RSC)</text>
+    <rect x="445" y="12" width="110" height="26" rx="7" class="abox api"/><text x="500" y="29" class="tb tamber" text-anchor="middle">gin api</text>
+    <rect x="625" y="12" width="110" height="26" rx="7" class="abox redis"/><text x="680" y="29" class="tb tred" text-anchor="middle">redis</text>
+    <rect x="795" y="12" width="110" height="26" rx="7" class="abox db"/><text x="850" y="29" class="tb tgreen" text-anchor="middle">mysql</text>
+    <line x1="80" y1="38" x2="80" y2="470" class="lifeline"/>
+    <line x1="280" y1="38" x2="280" y2="470" class="lifeline"/>
+    <line x1="500" y1="38" x2="500" y2="470" class="lifeline"/>
+    <line x1="680" y1="38" x2="680" y2="470" class="lifeline"/>
+    <line x1="850" y1="38" x2="850" y2="470" class="lifeline"/>
+    <rect x="440" y="268" width="465" height="122" rx="8" class="region"/>
+    <text x="452" y="284" class="t2 tamber" style="font-weight:700">COLD PATH ONLY — first read or TTL expired</text>
+
+    <line x1="80" y1="70" x2="272" y2="70" class="call" marker-end="url(#mi)"/>
+    <text x="176" y="62" class="t1" text-anchor="middle">1 · GET /menu/favourites</text>
+    <line x1="280" y1="102" x2="88" y2="102" class="resp" marker-end="url(#mm)"/>
+    <text x="182" y="94" class="t2" text-anchor="middle">2 · loading.tsx — filter tabs + card rows, NOT a bare spinner</text>
+    <path d="M80,124 h70 v18 h-70" class="call" marker-end="url(#mi)"/>
+    <text x="158" y="130" class="t1">3 · island mounts · store rehydrates · isPending → LOADING branch (skeleton rows in place)</text>
+    <line x1="80" y1="176" x2="492" y2="176" class="flowa" marker-end="url(#ma)"/>
+    <text x="286" y="168" class="t1" text-anchor="middle">4 · GET /products &nbsp;+&nbsp; GET /combos &nbsp;(parallel, public, no auth header needed)</text>
+    <line x1="500" y1="212" x2="672" y2="212" class="call" marker-end="url(#mi)"/>
+    <text x="586" y="204" class="t1" text-anchor="middle">5 · GET products:list / combos:list</text>
+    <line x1="680" y1="246" x2="508" y2="246" class="resp" marker-end="url(#mm)"/>
+    <text x="590" y="238" class="t2 tgreen" text-anchor="middle">6 · WARM (normal): JSON hit ✓ — mysql idle</text>
+    <line x1="680" y1="306" x2="508" y2="306" class="err" marker-end="url(#mr)"/>
+    <text x="594" y="300" class="t2 tred" text-anchor="middle">(nil) — miss</text>
+    <line x1="500" y1="334" x2="842" y2="334" class="call" marker-end="url(#mi)"/>
+    <text x="672" y="326" class="t1" text-anchor="middle">SELECT catalog (is_available=1, soft-delete filtered, toppings joined)</text>
+    <line x1="850" y1="360" x2="508" y2="360" class="resp" marker-end="url(#mm)"/>
+    <text x="676" y="353" class="t2" text-anchor="middle">rows</text>
+    <line x1="500" y1="382" x2="672" y2="382" class="call" marker-end="url(#mi)"/>
+    <text x="588" y="375" class="t1" text-anchor="middle">SET …:list EX 300</text>
+    <line x1="500" y1="414" x2="88" y2="414" class="resp" marker-end="url(#mm)"/>
+    <text x="290" y="406" class="t2" text-anchor="middle">7 · 200 JSON ×2 &nbsp;·&nbsp; on failure → isError, <tspan class="tred">not</tspan> an empty list</text>
+    <path d="M80,438 h70 v18 h-70" class="call" marker-end="url(#mi)"/>
+    <text x="158" y="444" class="t1">8 · resolve store ids → resolvedItems → pick ONE of four named branches (below)</text>
+    <text x="158" y="460" class="t2">error wins over empty; empty is only claimed when both queries actually succeeded</text>
+  </svg></div>
+  <p class="cap">Tier 1 is the route skeleton (step 2); Tier 2 is the four-branch decision (step 8). Tier 3 (mutation UI) never fires — nothing here mutates the server.</p>
+
+  <h3>Tier 2 — four named branches, gated on query state, never on <code>resolvedItems.length</code></h3>
+  <div class="dflow">
+    <div class="drow"><div class="dq">either catalog query <code>isError</code>?</div><span class="dyes">yes →</span><span class="dres r">ERROR — inline "⚠ Kết nối mạng yếu" + Thử lại</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq"><code>isPending</code> and no cached data? (cold open only)</div><span class="dyes">yes →</span><span class="dres z">LOADING — in-place skeleton rows, no layout shift</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">queries ok <b>and</b> <code>resolvedItems.length === 0</code>?</div><span class="dyes">yes →</span><span class="dres q">EMPTY — FavouritesEmptyState + "Xem Menu"</span></div>
+    <div class="dno">no ↓</div>
+    <div class="drow"><div class="dq">otherwise</div><span class="dyes">→</span><span class="dres g">DATA — filter tabs + the card list</span></div>
+  </div>
+
+  <div class="table-wrap"><table>
+    <tr><th>Branch</th><th>Trigger</th><th>What the guest sees</th></tr>
+    <tr><td><b>loading</b></td><td><code>isPending</code>, no cached data</td><td>in-place skeleton rows — no layout shift</td></tr>
+    <tr><td><b>error</b></td><td>either catalog query <code>isError</code></td><td>inline "⚠ Kết nối mạng yếu" + Thử lại — <b>not</b> a blank empty state</td></tr>
+    <tr><td><b>empty</b></td><td>queries ok <b>and</b> zero resolved items</td><td>"Chưa có món yêu thích nào" · "Nhấn ♥ trên món ăn bất kỳ để thêm" + Xem Menu</td></tr>
+    <tr><td><b>data</b></td><td>queries ok, items present</td><td>Tất cả (3) / Món lẻ (2) / Combo (1) + three cards</td></tr>
+    <tr><td colspan="3" style="color:var(--muted)">The <code>/sets</code> page's empty state is gated on <code>sets.length</code>, not on query state — saved sets exist whether or not the catalog answered.</td></tr>
+  </table></div>
+
+  <div class="warn">
+    <b>This is the reference defect we designed out.</b> The old build rendered the blank
+    <code>EmptyState</code> whenever <code>resolvedItems</code> was <code>[]</code> — which is also
+    true while the queries are in flight and true when they failed. Cold-load, genuinely-empty and
+    fetch-failed were <em>pixel-identical</em>. Gating on <code>isPending</code> / <code>isError</code>
+    instead of on array length is the whole fix, and it is the highest-value slice of this plan.
+  </div>
+
+  <p>Worked example, warm path: the store holds three ids; within 5 min of leaving <code>/menu</code>
+  the DATA branch paints immediately with <b>Bánh Cuốn Thịt 4.000 đ</b>, <b>Bánh Trứng Vàng 9.000 đ</b>
+  and <b>Combo Đầy Đặn 42.000 đ</b> — tabs read Tất cả (3) · Món lẻ (2) · Combo (1).</p>
+</section>
+
+<!-- ================================================================ -->
+<section id="resolve">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The resolve + auto-prune pass</h2></div>
+
+  <p>The store holds <b>ids</b>, not dishes. Names, prices and availability come only from the catalog
+  payloads. So every mount runs a join — and anything that no longer joins is a favourite for a dish
+  the kitchen has taken off the menu.</p>
+
+  <div class="flow">
+    <div class="fnode"><span class="fk">store</span><b>items[]</b><br><span style="color:var(--muted);font-size:.74rem">4 ids · qty · toppingIds</span></div>
+    <span class="farrow">×</span>
+    <div class="fnode"><span class="fk">query cache</span><b>products[] + combos[]</b><br><span style="color:var(--muted);font-size:.74rem">available dishes only</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--accent)"><span class="fk">lib/favourites-resolve.ts</span><b>resolvedItems</b><br><span style="color:var(--muted);font-size:.74rem">3 cards — id #4 found nothing</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--red)"><span class="fk">useEffect (guarded)</span><b>removeItem + 1 toast</b></div>
+  </div>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 400" role="img" aria-label="Resolve and auto-prune sequence between the favourites store, the list island, the query cache and the UI">
+    <rect x="25" y="12" width="130" height="26" rx="7" class="abox api"/><text x="90" y="29" class="tb tamber" text-anchor="middle">favourites store</text>
+    <rect x="265" y="12" width="130" height="26" rx="7" class="abox client"/><text x="330" y="29" class="tb taccent" text-anchor="middle">list island</text>
+    <rect x="505" y="12" width="130" height="26" rx="7" class="abox client"/><text x="570" y="29" class="tb taccent" text-anchor="middle">query cache</text>
+    <rect x="765" y="12" width="130" height="26" rx="7" class="abox client"/><text x="830" y="29" class="tb taccent" text-anchor="middle">the screen</text>
+    <line x1="90" y1="38" x2="90" y2="386" class="lifeline"/>
+    <line x1="330" y1="38" x2="330" y2="386" class="lifeline"/>
+    <line x1="570" y1="38" x2="570" y2="386" class="lifeline"/>
+    <line x1="830" y1="38" x2="830" y2="386" class="lifeline"/>
+
+    <line x1="90" y1="72" x2="322" y2="72" class="flowo" marker-end="url(#mo)"/>
+    <text x="206" y="64" class="t1" text-anchor="middle">1 · items[] = 4 ids (3 product-shaped, 1 combo)</text>
+    <line x1="330" y1="106" x2="562" y2="106" class="flowa" marker-end="url(#ma)"/>
+    <text x="446" y="98" class="t1" text-anchor="middle">2 · useProducts() · useCombos()</text>
+    <line x1="570" y1="140" x2="338" y2="140" class="resp" marker-end="url(#mm)"/>
+    <text x="450" y="132" class="t2" text-anchor="middle">3 · products[] · combos[] (combo_items = ids only)</text>
+    <path d="M330,164 h80 v22 h-80" class="call" marker-end="url(#mi)"/>
+    <text x="418" y="170" class="t1">4 · resolveFavourites(): for each id, find it in the payload</text>
+    <text x="418" y="185" class="t2">not found → drop the row (this is the only "86'd" signal that exists)</text>
+    <text x="418" y="199" class="t2">combo component names join from the <tspan style="font-weight:700">products</tspan> list; a missing one shows "Món không rõ tên" (cosmetic)</text>
+
+    <rect x="200" y="216" width="290" height="46" rx="8" class="region"/>
+    <text x="345" y="235" class="t1 tamber" text-anchor="middle" style="font-weight:700">if (productsLoaded &amp;&amp; combosLoaded)</text>
+    <text x="345" y="252" class="t2" text-anchor="middle">the guard — both queries settled, or nothing happens</text>
+
+    <line x1="330" y1="292" x2="98" y2="292" class="flowo" marker-end="url(#mo)"/>
+    <text x="214" y="284" class="t1" text-anchor="middle">5 · removeItem(id) for every unresolved id</text>
+    <line x1="330" y1="330" x2="822" y2="330" class="flowa" marker-end="url(#ma)"/>
+    <text x="576" y="322" class="t1" text-anchor="middle">6 · ONE toast: "Một số món không còn phục vụ đã được xoá khỏi danh sách yêu thích."</text>
+    <line x1="90" y1="356" x2="90" y2="382" class="flowo" marker-end="url(#mo)"/>
+    <text x="103" y="374" class="t2">persist middleware writes the pruned tree back to localStorage — the prune is permanent</text>
+  </svg></div>
+  <p class="cap">Pull-based, not push-based: nothing tells the browser a dish was 86'd. Its <em>absence</em> from the payload is the message.</p>
+
+  <h3>Why the guard exists</h3>
+  <p>Two queries resolve independently. Without <code>productsLoaded &amp;&amp; combosLoaded</code>,
+  the effect could run in the window where one payload has arrived and the other has not — and every
+  id belonging to the missing payload would look "absent":</p>
+
+  <pre class="diagram">
+UNGUARDED (the bug we avoid)
+  t0   mount ─ products: pending      combos: pending
+  t1   products 200 ✓ ────────────▶  effect runs: combos[] is still []
+                                      → "Combo Đầy Đặn" resolves to nothing
+                                      → removeItem('c_7')  ✗ WRONG — and PERSISTED
+  t2   combos 200 ✓                   too late; the favourite is already gone from localStorage
+
+GUARDED (ours)
+  t0   mount ─ both pending           effect body short-circuits
+  t1   products 200 ✓                 productsLoaded=true, combosLoaded=false → still no-op
+  t2   combos 200 ✓                   BOTH true → run once: drop only genuinely-absent ids
+                                      → removeItem('p_88') + ONE toast</pre>
+
+  <div class="golden">
+    <p><b>Why this is worth a guard rather than a retry:</b> the prune writes through the persist
+    middleware, so a wrong prune is <em>not</em> recoverable by refreshing — it has already been
+    committed to disk. The guard is the only thing standing between a slow combos request and a
+    silently emptied favourites list.</p>
+  </div>
+
+  <p>Applying a saved set runs the same join with a softer policy: <code>resolveSet()</code>
+  <b>silently skips</b> items no longer on the menu and adds the rest — no toast, no prune of the
+  stored set. "📋 Sáng thứ 7 — 3 món · 88.000 đ" can add two lines and stay a 3-món set.</p>
+</section>
+
+<!-- ================================================================ -->
+<section id="store">
+  <div class="sec-head"><span class="sec-num">04</span><h2>The favourites store internals</h2></div>
+
+  <h3>The domain model — three slices, none of which ever crosses the wire</h3>
+  <pre class="diagram">
+type FavouriteItem = { id: string; type: 'product' | 'combo'; qty: number; toppingIds: string[] }
+type FavouriteSet  = { id: string; name: string; items: FavouriteItem[]; createdAt: number }
+
+store: {
+  items: FavouriteItem[]     // the hearted list — what /menu/favourites renders
+  sets:  FavouriteSet[]      // named snapshots — what /menu/favourites/sets renders
+  suats: CustomSuat[]        // reserved slice for the deferred "Tự tạo suất" builder (C-7)
+}
+  actions: toggleFav(id, type) · updateQty(id, qty) · removeItem(id)
+           addSet(name)  // snapshots items[] into sets[]
+           renameSet(id, name) · removeSet(id)</pre>
+
+  <div class="table-wrap"><table>
+    <tr><th>Action</th><th>Fired by</th><th>Runtime effect</th></tr>
+    <tr><td><code>toggleFav(id,type)</code></td><td><b>/menu</b> heart, and the filled heart on a card here</td><td>adds <code>{qty:1, toppingIds:[]}</code> or removes. ⚠ the guest's configured toppings/qty are dropped at toggle time — a favourite is "the dish", not "the exact line" (v1 decision)</td></tr>
+    <tr><td><code>updateQty(id,qty)</code></td><td>card stepper</td><td>edits the stored line; re-persists</td></tr>
+    <tr><td><code>removeItem(id)</code></td><td>filled heart (un-favourite) <em>and</em> the auto-prune effect</td><td>card disappears immediately — the only feedback needed</td></tr>
+    <tr><td><code>addSet(name)</code></td><td>save form submit (gated on name min 1 <b>and</b> <code>resolvedItems.length &gt; 0</code>)</td><td>snapshots the current <code>items[]</code> into <code>sets[]</code>, then routes to <code>/menu/favourites/sets</code></td></tr>
+    <tr><td><code>renameSet</code> / <code>removeSet</code></td><td>✏ / 🗑 on a SetCard</td><td>in-place edit of the persisted tree</td></tr>
+    <tr><td style="color:var(--muted)"><code>total()</code> · <code>itemCount()</code> · tab counts</td><td>every surface that shows a number</td><td><b>selectors, never stored</b> (FE rule 11) — derived numbers cannot go stale</td></tr>
+  </table></div>
+
+  <h3>Worked example — what is actually on disk</h3>
+  <div class="mock">
+    <div class="mt">localStorage["favourites"]</div>
+    <div class="md">one JSON string, rewritten on every store change</div>
+    <div class="pills">
+      <span class="pill on">Bánh Cuốn Thịt · 4.000 đ</span>
+      <span class="pill on">Bánh Trứng Vàng · 9.000 đ</span>
+      <span class="pill on">Combo Đầy Đặn · 42.000 đ</span>
+    </div>
+    <div class="pills">
+      <span class="pill lock">📋 Sáng thứ 7 — 3 món · 88.000 đ</span>
+      <span class="pill lock">📋 Cả nhà — 5 món · 152.000 đ</span>
+    </div>
+    <div class="lid">
+      <span class="seg kind">items[]</span><span class="seg pid">3 rows</span><span class="seg kind">sets[]</span><span class="seg pid">2 rows</span><span class="seg vart">suats[]</span><span class="seg pid">[] (reserved)</span>
+    </div>
+    <p class="lidnote">Prices are <em>not</em> stored — every number above is re-derived from the catalog payload at render time, so an ₫-change on the menu shows up here within one cache cycle (§07).</p>
+  </div>
+
+  <h3>How Zustand <code>persist</code> actually works</h3>
+  <div class="svgwrap"><svg viewBox="0 0 920 290" role="img" aria-label="How the Zustand persist middleware moves state between components, the store and localStorage, contrasted with the non-persisted cart items">
+    <rect x="30" y="60" width="180" height="80" rx="10" class="abox client"/>
+    <text x="120" y="88" class="tb taccent" text-anchor="middle">components</text>
+    <text x="120" y="106" class="t2" text-anchor="middle">card · footer · SetCard</text>
+    <text x="120" y="122" class="t2" text-anchor="middle">subscribe via selectors</text>
+
+    <rect x="350" y="52" width="220" height="96" rx="10" class="abox api"/>
+    <text x="460" y="78" class="tb tamber" text-anchor="middle">favourites store</text>
+    <text x="460" y="98" class="t2" text-anchor="middle">set() → new state object</text>
+    <text x="460" y="114" class="t2" text-anchor="middle">persist middleware wraps set()</text>
+    <text x="460" y="132" class="t2 tamber" text-anchor="middle">partialize: the WHOLE tree</text>
+
+    <rect x="710" y="60" width="180" height="80" rx="10" class="abox client"/>
+    <text x="800" y="88" class="tb taccent" text-anchor="middle">localStorage</text>
+    <text x="800" y="106" class="t2" text-anchor="middle">key: `favourites`</text>
+    <text x="800" y="122" class="t2" text-anchor="middle">JSON.stringify(state)</text>
+
+    <line x1="212" y1="82" x2="342" y2="82" class="flowo" marker-end="url(#mo)"/>
+    <text x="277" y="74" class="t2" text-anchor="middle">① action</text>
+    <line x1="342" y1="122" x2="212" y2="122" class="flowa" marker-end="url(#ma)"/>
+    <text x="277" y="140" class="t2" text-anchor="middle">② re-render subscribers</text>
+    <line x1="572" y1="82" x2="702" y2="82" class="flowo" marker-end="url(#mo)"/>
+    <text x="637" y="74" class="t2" text-anchor="middle">③ write-through</text>
+    <line x1="702" y1="122" x2="572" y2="122" class="resp" marker-end="url(#mm)"/>
+    <text x="637" y="140" class="t2" text-anchor="middle">④ rehydrate on boot</text>
+
+    <text x="460" y="176" class="t2" text-anchor="middle">boot order matters: the store rehydrates <tspan style="font-weight:700">before</tspan> the first paint of the island, so items[] is never briefly empty</text>
+
+    <rect x="230" y="200" width="460" height="72" rx="10" class="delbox"/>
+    <text x="460" y="222" class="tb tred" text-anchor="middle">the deliberate asymmetry — the cart store next door</text>
+    <text x="460" y="240" class="t2" text-anchor="middle">cart items[] are <tspan style="font-weight:700">session-only</tspan>: they are not in its partialize set</text>
+    <text x="460" y="258" class="t2" text-anchor="middle">a saved set outlives the tab · the cart it fills does not — re-apply after a restart</text>
+  </svg></div>
+  <p class="cap">Persist is just a write-through wrapper around <code>set()</code> plus a read on boot. There is no sync, no server, no conflict resolution — which is exactly why favourites are device-local.</p>
+
+  <div class="warn">
+    <b>FLAG — device-local, not account-synced.</b> Clearing site data or switching phones loses
+    every favourite and every saved set. Cross-device favourites would need a <code>favourites</code>
+    table + a <code>POST/GET /favourites</code> pair + auth — a new BE surface, outside this
+    read-only plan. Raise it before C-6 if it belongs in v1.
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section id="state">
+  <div class="sec-head"><span class="sec-num">05</span><h2>State across components &amp; pages</h2></div>
+
+  <p>Two mechanisms carry state here, and only two: <b>server data → the Query cache</b> and
+  <b>favourites/cart → the Zustand stores</b>. Nothing travels in the URL between these routes —
+  each page simply re-reads the store on mount.</p>
+
+  <div class="hubwrap">
+    <div class="hub q">
+      <div class="hcore">HUB 1 — TanStack Query cache</div>
+      <ul>
+        <li><span class="arr">→</span><span><code>useProducts()</code> — the list, the save summary, the sets page</span></li>
+        <li><span class="arr">→</span><span><code>useCombos()</code> — combo cards + set component lines</span></li>
+        <li><span class="arr">→</span><span>identical keys to <code>/menu</code>: three routes + the menu dedupe to <b>one</b> fetch</span></li>
+      </ul>
+      <div class="hnote">The combo → product-name join happens FE-side against this same cache. Product data exists once, never a second copy.</div>
+    </div>
+    <div class="hub z">
+      <div class="hcore">HUB 2 — Zustand stores</div>
+      <ul>
+        <li><span class="arr">→</span><span><b>favourites</b> (persisted): <code>items[]</code> · <code>sets[]</code> · <code>suats[]</code></span></li>
+        <li><span class="arr">→</span><span><b>cart</b> (items session-only): the hand-off target</span></li>
+        <li><span class="arr">→</span><span>writes are <b>additive</b> — "Thêm tất cả" / "Áp dụng" append, never replace</span></li>
+      </ul>
+      <div class="hnote">No prop drilling, no context, no params. A route change is not a state transfer — it is a second reader of the same store.</div>
+    </div>
+  </div>
+
+  <h3>The route neighborhood</h3>
+  <div class="svgwrap"><svg viewBox="0 0 920 330" role="img" aria-label="Route neighborhood: menu writes hearts in, three favourite routes share one store, the cart flows out to the order pipeline">
+    <!-- upstream -->
+    <rect x="20" y="120" width="150" height="76" rx="10" class="abox client"/>
+    <text x="95" y="146" class="tb taccent" text-anchor="middle">/menu</text>
+    <text x="95" y="164" class="t2" text-anchor="middle">♥ toggles write in</text>
+    <text x="95" y="180" class="t2" text-anchor="middle">[Yêu Thích] nav tab</text>
+
+    <!-- suite zone -->
+    <rect x="215" y="30" width="400" height="270" rx="14" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="6 5" opacity="0.75"/>
+    <text x="415" y="52" class="t2 taccent" text-anchor="middle" style="font-weight:700">THE SUITE — one persisted store, NO url params between these</text>
+
+    <rect x="245" y="66" width="150" height="56" rx="9" class="abox client"/>
+    <text x="320" y="88" class="t1 taccent" text-anchor="middle" style="font-weight:700">/menu/favourites</text>
+    <text x="320" y="106" class="t2" text-anchor="middle">list · tabs · bulk add</text>
+
+    <rect x="435" y="66" width="150" height="56" rx="9" class="abox client"/>
+    <text x="510" y="88" class="t1 taccent" text-anchor="middle" style="font-weight:700">…/save</text>
+    <text x="510" y="106" class="t2" text-anchor="middle">RHF + Zod · addSet()</text>
+
+    <rect x="340" y="238" width="160" height="52" rx="9" class="abox client"/>
+    <text x="420" y="260" class="t1 taccent" text-anchor="middle" style="font-weight:700">…/sets</text>
+    <text x="420" y="278" class="t2" text-anchor="middle">áp dụng · ✏ · 🗑</text>
+
+    <rect x="330" y="150" width="180" height="56" rx="9" class="abox api"/>
+    <text x="420" y="172" class="tb tamber" text-anchor="middle">favourites store</text>
+    <text x="420" y="190" class="t2" text-anchor="middle">every route re-reads on mount</text>
+
+    <line x1="172" y1="158" x2="326" y2="170" class="flowo" marker-end="url(#mo)"/>
+    <text x="248" y="152" class="t2" text-anchor="middle">toggleFav</text>
+    <line x1="320" y1="124" x2="360" y2="146" class="resp" marker-end="url(#mm)"/>
+    <line x1="510" y1="124" x2="470" y2="146" class="resp" marker-end="url(#mm)"/>
+    <line x1="420" y1="234" x2="420" y2="210" class="resp" marker-end="url(#mm)"/>
+    <line x1="397" y1="94" x2="429" y2="94" class="call" marker-end="url(#mi)"/>
+    <text x="413" y="86" class="t2" text-anchor="middle">[Lưu bộ]</text>
+    <path d="M560,124 C580,180 540,236 506,258" class="call" marker-end="url(#mi)"/>
+    <text x="588" y="186" class="t2">after addSet →</text>
+
+    <!-- downstream -->
+    <rect x="660" y="120" width="150" height="76" rx="10" class="abox api"/>
+    <text x="735" y="146" class="tb tamber" text-anchor="middle">cart store</text>
+    <text x="735" y="164" class="t2" text-anchor="middle">additive appends</text>
+    <text x="735" y="180" class="t2" text-anchor="middle">badge bumps</text>
+    <line x1="512" y1="94" x2="654" y2="130" class="flowo" marker-end="url(#mo)"/>
+    <line x1="504" y1="262" x2="654" y2="188" class="flowo" marker-end="url(#mo)"/>
+    <text x="600" y="112" class="t2">+ Giỏ · Thêm tất cả</text>
+    <text x="592" y="248" class="t2">Áp dụng (skip missing)</text>
+
+    <rect x="660" y="238" width="240" height="62" rx="10" class="ghost"/>
+    <text x="780" y="260" class="tb" text-anchor="middle" fill="var(--muted)">/menu TableConfirmModal · /checkout</text>
+    <text x="780" y="277" class="t2" text-anchor="middle">→ POST /orders — the first server write</text>
+    <text x="780" y="292" class="t2" text-anchor="middle">OWNED BY THE MENU PLAN · out of scope</text>
+    <line x1="735" y1="198" x2="735" y2="232" class="resp" marker-end="url(#mm)"/>
+  </svg></div>
+  <p class="cap">Greyed and dashed = someone else's box. The suite's job ends the moment the cart store has the lines.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>Data</th><th>Kind</th><th>Owner at runtime</th></tr>
+    <tr><td>products / combos</td><td>server</td><td>TanStack Query, staleTime 5 min — <b>shared keys with /menu</b></td></tr>
+    <tr><td>filter tab (Tất cả / Món lẻ / Combo)</td><td>local</td><td><code>useState</code> in the list page — dies on navigation, by design</td></tr>
+    <tr><td>favourites <code>items[]</code> + <code>sets[]</code></td><td>client</td><td>favourites store (persisted, localStorage <code>favourites</code>)</td></tr>
+    <tr><td>set-name form</td><td>form</td><td>RHF + Zod (<code>name: min 1</code>) — plus the <code>resolvedItems.length &gt; 0</code> gate</td></tr>
+    <tr><td>cart lines</td><td>client</td><td>cart store — items session-only (menu plan §4.2)</td></tr>
+    <tr><td>save modal open</td><td>local</td><td><code>useState</code></td></tr>
+    <tr><td>guest session</td><td>session</td><td>httpOnly cookie — <b>never exercised here</b>; a token-less guest renders the whole suite</td></tr>
+  </table></div>
+</section>
+
+<!-- ================================================================ -->
+<section id="read">
+  <div class="sec-head"><span class="sec-num">06</span><h2>The read path through every layer — and the write path that isn't here</h2></div>
+
+  <p>One request, followed all the way down and back. <code>GET /combos</code> is the same trip with
+  a different key.</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 300" role="img" aria-label="GET /products through every layer and back, with the out-of-scope write path drawn greyed below">
+    <rect x="20" y="50" width="125" height="56" rx="9" class="abox client"/>
+    <text x="82" y="72" class="t1 taccent" text-anchor="middle" style="font-weight:700">useProducts()</text>
+    <text x="82" y="89" class="t2" text-anchor="middle">queries/catalog.ts</text>
+
+    <rect x="169" y="50" width="125" height="56" rx="9" class="abox client"/>
+    <text x="231" y="72" class="t1 taccent" text-anchor="middle" style="font-weight:700">fetch + Caddy</text>
+    <text x="231" y="89" class="t2" text-anchor="middle">/api/v1/products</text>
+
+    <rect x="318" y="50" width="125" height="56" rx="9" class="abox api"/>
+    <text x="380" y="72" class="t1 tamber" text-anchor="middle" style="font-weight:700">Gin handler</text>
+    <text x="380" y="89" class="t2" text-anchor="middle">bare .GET("") — public</text>
+
+    <rect x="467" y="50" width="125" height="56" rx="9" class="abox api"/>
+    <text x="529" y="72" class="t1 tamber" text-anchor="middle" style="font-weight:700">service</text>
+    <text x="529" y="89" class="t2" text-anchor="middle">cache-aside</text>
+
+    <rect x="616" y="50" width="125" height="56" rx="9" class="abox redis"/>
+    <text x="678" y="72" class="t1 tred" text-anchor="middle" style="font-weight:700">Redis</text>
+    <text x="678" y="89" class="t2" text-anchor="middle">products:list · EX 300</text>
+
+    <rect x="765" y="50" width="125" height="56" rx="9" class="abox db"/>
+    <text x="827" y="72" class="t1 tgreen" text-anchor="middle" style="font-weight:700">MySQL</text>
+    <text x="827" y="89" class="t2" text-anchor="middle">miss only</text>
+
+    <line x1="147" y1="78" x2="163" y2="78" class="call" marker-end="url(#mi)"/>
+    <line x1="296" y1="78" x2="312" y2="78" class="call" marker-end="url(#mi)"/>
+    <line x1="445" y1="78" x2="461" y2="78" class="call" marker-end="url(#mi)"/>
+    <line x1="594" y1="78" x2="610" y2="78" class="call" marker-end="url(#mi)"/>
+    <line x1="743" y1="78" x2="759" y2="78" class="err" marker-end="url(#mr)"/>
+
+    <path d="M827,110 v28 H82 v-24" class="resp" marker-end="url(#mm)"/>
+    <text x="455" y="132" class="t2" text-anchor="middle">rows → DTO → Redis SET → JSON envelope → Query cache entry → resolvedItems → cards</text>
+
+    <text x="82" y="176" class="t2" text-anchor="middle">is_available=1 only</text>
+    <text x="82" y="190" class="t2" text-anchor="middle">→ 86'd dishes simply</text>
+    <text x="82" y="204" class="t2" text-anchor="middle">never arrive (§03)</text>
+    <text x="678" y="176" class="t2 tred" text-anchor="middle">Redis down → fail-open:</text>
+    <text x="678" y="190" class="t2 tred" text-anchor="middle">skip to MySQL, log, never 500</text>
+
+    <rect x="20" y="222" width="870" height="62" rx="10" class="ghost"/>
+    <text x="455" y="246" class="tb" text-anchor="middle" fill="var(--muted)">✕ THERE IS NO WRITE PATH ON THESE THREE ROUTES</text>
+    <text x="455" y="264" class="t2" text-anchor="middle">no POST /favourites · no favourites table · no cache key to invalidate · no auth to check</text>
+    <text x="455" y="279" class="t2" text-anchor="middle">the menu's POST /orders (one TX, Redis skipped) is the journey's only write — it fires after the guest leaves this suite</text>
+  </svg></div>
+  <p class="cap">Six hops down, one dashed hop back. The bottom band is the whole BE-write story of this suite: it doesn't have one.</p>
+
+  <div class="table-wrap"><table>
+    <tr><th>Hop</th><th>What the data is at this point</th></tr>
+    <tr><td>store <code>items[]</code></td><td>ids only — <code>{id, type, qty:1, toppingIds:[]}</code>. No name, no price, ever.</td></tr>
+    <tr><td>Gin handler</td><td>no params, no body, no auth header — the response is the same for every guest</td></tr>
+    <tr><td>Redis hit</td><td>the serialized list, already toppings-joined; MySQL stays idle</td></tr>
+    <tr><td>Query cache entry</td><td>the payload, shared verbatim with <code>/menu</code> and both sibling routes</td></tr>
+    <tr><td><code>resolvedItems</code></td><td>the join result — 3 cards with live names/prices; unresolved ids already dropped</td></tr>
+    <tr><td>cart line</td><td>a <code>CartItem</code> built by <code>buildCartItemsFromFavourites()</code> — still client-side</td></tr>
+    <tr><td style="color:var(--muted)"><code>POST /orders</code></td><td style="color:var(--muted)">ids + quantities; the server re-snapshots names and prices inside one transaction — <b>menu plan territory</b></td></tr>
+  </table></div>
+
+  <div class="golden">
+    <p><b>Read-only has a real consequence:</b> there is no optimistic update, no rollback, no
+    pending spinner on any button, and no error envelope to render for a guest action. Every failure
+    mode on this page is a <em>read</em> failure — which is why §02's error branch is the entire
+    resilience story.</p>
+  </div>
+</section>
+
+<!-- ================================================================ -->
+<section id="cache">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Cache life — two clocks, one bound, zero invalidations</h2></div>
+
+  <p>The suite piggybacks entirely on the menu's cache keys. It reads them; it never sets them,
+  never deletes them.</p>
+
+  <div class="clock">
+    <div class="cbar-row"><div class="cbar-label">browser · Query staleTime</div>
+      <div class="cbar"><span class="fresh">FRESH — no refetch at all</span><span class="stale">STALE — background refetch, old cards stay visible</span><span class="stale" style="opacity:.65">…</span></div></div>
+    <div class="cbar-row"><div class="cbar-label">server · Redis TTL (EX 300)</div>
+      <div class="cbar"><span class="fresh">CACHED — mysql idle</span><span class="gone">EXPIRED — next read repopulates from mysql</span><span class="gone" style="opacity:.65">…</span></div></div>
+    <div class="cscale"><span class="s5">0 min</span><span class="s3">5 min</span><span class="s3">10 min</span></div>
+  </div>
+  <p class="cap">Same 5-minute number on both sides, on purpose. Stacked worst case: a favourite's name, price or availability can be up to <b>≈ 10 minutes</b> behind the kitchen.</p>
+
+  <pre class="diagram">
+t=0      staff 86's "Bánh Cuốn Thịt"  ─▶  admin write DELs products:list   (server truth: immediate)
+                                          ↳ this suite plays NO part in that fan-out
+t≤5min   a guest's Query cache still holds the old payload
+         → the card is still on screen, still addable          (worst case #1: staleTime window)
+t=5min   staleTime lapses ─▶ background refetch on next mount / tab focus
+         → if Redis had also just re-cached a stale list, add up to one more TTL   (worst case #2)
+t≈10min  the dish is absent from the payload ─▶ resolve drops it
+         ─▶ guarded useEffect fires removeItem + ONE toast (§03) ─▶ persisted
+bounded, self-healing, no reload needed — and no code on these routes had to know about it</pre>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 210" role="img" aria-label="Invalidation is driven only by staff catalog mutations; the favourites suite is a pure reader">
+    <rect x="20" y="70" width="170" height="60" rx="10" class="abox db"/>
+    <text x="105" y="94" class="tb tgreen" text-anchor="middle">staff / admin write</text>
+    <text x="105" y="112" class="t2" text-anchor="middle">product · combo · topping</text>
+
+    <rect x="270" y="70" width="170" height="60" rx="10" class="abox redis"/>
+    <text x="355" y="94" class="tb tred" text-anchor="middle">DEL keys</text>
+    <text x="355" y="112" class="t2" text-anchor="middle">products:list · combos:list</text>
+
+    <rect x="520" y="70" width="170" height="60" rx="10" class="abox api"/>
+    <text x="605" y="94" class="tb tamber" text-anchor="middle">next read = MISS</text>
+    <text x="605" y="112" class="t2" text-anchor="middle">MySQL → re-cache EX 300</text>
+
+    <rect x="750" y="70" width="150" height="60" rx="10" class="abox client"/>
+    <text x="825" y="94" class="tb taccent" text-anchor="middle">favourites</text>
+    <text x="825" y="112" class="t2" text-anchor="middle">notices on next refetch</text>
+
+    <line x1="192" y1="100" x2="262" y2="100" class="flowg" marker-end="url(#mg)"/>
+    <line x1="442" y1="100" x2="512" y2="100" class="flowo" marker-end="url(#mo)"/>
+    <line x1="692" y1="100" x2="742" y2="100" class="flowa" marker-end="url(#ma)"/>
+
+    <text x="460" y="40" class="t1 taccent" text-anchor="middle" style="font-weight:700">invalidation is a one-way street — it always starts on the staff side</text>
+    <path d="M750,140 C640,178 420,178 300,140" class="err" marker-end="url(#mr)"/>
+    <text x="525" y="176" class="t2 tred" text-anchor="middle">✕ this suite never invalidates, never writes a key, never queues a refetch of anyone else's data</text>
+  </svg></div>
+
+  <ul class="plain">
+    <li><b>TTL 5 min</b> on both catalog keys — even a missed DEL heals itself within one TTL.</li>
+    <li><b>Fail-open:</b> Redis down → the service skips to MySQL, logs, and still answers 200. The suite survives a Redis outage with no visible difference beyond latency.</li>
+    <li><b>No invalidation from here</b> — the suite has nothing to invalidate <em>with</em>. Every one of its writes stops at localStorage.</li>
+    <li><b>Refetch-on-focus</b> keeps a favourites page left open on a phone self-healing: an 86'd favourite is pruned the next time the tab is focused and the data comes back changed.</li>
+    <li>The staleness bound is the honest answer to "why did my favourite disappear a few minutes after it was 86'd?" — <b>≈ 10 min</b>, bounded, never unbounded.</li>
+  </ul>
+</section>
+
+<footer>
+  Runtime companion to <a href="customer_favourites_PLAN.md">customer_favourites_PLAN.md</a> (F-17,
+  this folder) — this page is a <b>snapshot</b> of that plan, re-drawn as end-to-end sequences; it
+  owns nothing itself, and where the two disagree <b>the PLAN.md wins</b>. Worked example throughout:
+  3 favourites (Bánh Cuốn Thịt 4.000 đ · Bánh Trứng Vàng 9.000 đ · Combo Đầy Đặn 42.000 đ) and
+  2 saved sets (📋 Sáng thứ 7 — 3 món · 88.000 đ · 📋 Cả nhà — 5 món · 152.000 đ).
+</footer>
+
+</div>
+</body>
+</html>

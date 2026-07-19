@@ -29,6 +29,28 @@
 
 ## Checkpoint log
 
+### 2026-07-19 — Session 15 (F-24): customer-favourites 4-doc page-plan set
+- Done: **F-24 ✅** — `harness/plans/customer_favourites/` holds the 4 slug-prefixed docs
+  (`_PLAN.md` canonical + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`).
+  Receipt in VERIFICATION.md 2026-07-19. CONTEXT_MAP + README rows added (Hard Rule 6).
+- Decisions (do not re-litigate): the favourites suite is **BE-read-only** — 2 cached
+  catalog GETs, zero writes, no schema, no cache invalidation; its contract is a strict
+  subset of the menu plan's, so the plan **cross-links F-15 §3** instead of re-deriving.
+  Favourites persist (localStorage tree), the cart they fill does not (session-only) —
+  deliberate asymmetry. `toggleFav` drops toppings/qty (v1, flagged). The DESIGN_PROMPT's
+  new features (canh quick-add, live total, "Tự tạo suất" builder, 📌 Ghim lên Menu) are
+  **deferred C-7**, owner-gated — badged `💡 ĐỀ XUẤT` in the mockup, not v1.
+- Drift fixed / found: **⚠ TASKS.md id collisions from parallel sessions** — F-17 was
+  claimed twice (admin_products + this row) so this task was renumbered **F-17 → F-24**;
+  **F-18 (admin_combos vs customer_orders_tracking) and F-20 (admin_training vs
+  admin_todo_list) are STILL duplicated — owner/next session must reconcile.**
+  ⚠ Blanket `git add -A` is unsafe with concurrent sessions: this session's PLAN.md was
+  swept into another session's checkpoint (`0cb37d8`). Suggest Hard Rule 3 gain
+  "stage explicit paths" — owner to rule.
+- Loose end: `harness/diagrams/task-F-24.html` (per-task page, owner rule 2026-07-17) not
+  written — the 3 render agents hit the account session limit (resets 22:40 Asia/Saigon).
+- Next: write `task-F-24.html`; reconcile the duplicate F-18/F-20 ids; then F-2 unchanged.
+
 ### 2026-07-19 — Session 14 (F-15 amendment): cart-store §04 (nhân/canh/combo + Zustand)
 - Done: owner asked to visualize + explain what happens when a client selects nhân,
   picks canh, adds a combo, and "how zustand work" → new §04 **"Inside the cart

@@ -1,0 +1,840 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Favourites — High-Fidelity Mockup (F-17 / C-6)</title>
+<style>
+  /* ============================================================
+     PAGE CHROME (outside the phone) — hard-coded neutral, theme-proof
+     ============================================================ */
+  :root{
+    --ink:#11151c; --sub:#5c6675; --line2:#e3e9f2; --paper:#f6f8fb; --white:#ffffff;
+    --wire:#eef2f7;
+    /* --- customer shell palette (locked, menu plan §7) --- */
+    --bg:#0b0f17; --card:#1b2230; --raised:#222b3a; --line:#2a3344;
+    --text:#e5e7eb; --muted:#8b95a7; --accent:#f97316; --accent-soft:rgba(249,115,22,.14);
+    --serif:ui-serif,Georgia,"Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --navh:72px;                 /* fixed bottom nav height — CTA must clear this */
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;overflow-x:hidden}
+  body{background:var(--paper);color:var(--ink);font:14px/1.55 var(--sans);
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:30px 22px 70px}
+
+  header.top .kicker{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  header.top h1{margin:9px 0 6px;font:700 26px/1.15 var(--serif)}
+  header.top .lede{color:var(--sub);max-width:74ch;margin:0}
+  header.top .lede code{background:var(--wire);padding:1px 5px;border-radius:4px;font-size:.9em}
+  .srcline{margin-top:10px;font-size:12.5px;color:var(--sub)}
+  .srcline b{color:var(--ink)}
+  .srcline a{color:#2b59d9;font-weight:600}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 20px;margin:18px 0 24px;padding:12px 16px;
+    background:var(--white);border:1px solid var(--line2);border-radius:10px}
+  .legend .li{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--sub)}
+  .sw{width:24px;height:14px;border-radius:3px;border:1px solid #c9d2df}
+  .sw.dark{background:#0b0f17;border-color:#0b0f17}
+  .sw.acc{background:#f97316;border-color:#f97316}
+  .c7key{display:inline-block;background:#fff2e6;color:#9a5b06;border:1px solid #f2d19a;
+    border-radius:5px;padding:2px 6px;font:700 10px/1.3 ui-monospace,monospace;white-space:nowrap}
+
+  .stage{display:flex;justify-content:center;gap:34px;flex-wrap:wrap;align-items:flex-start}
+  .phonecol{display:flex;flex-direction:column;gap:10px;align-items:center}
+  .phonecap{font:600 12px/1 ui-monospace,monospace;color:var(--sub)}
+
+  /* ============================================================
+     PHONE SHELL — 390px, dark customer shell, all colors hard-coded
+     ============================================================ */
+  .phone{width:390px;max-width:100%;height:820px;position:relative;
+    background:var(--bg);color:var(--text);font-family:var(--sans);
+    border:1px solid var(--line);border-radius:30px;overflow:hidden;
+    box-shadow:0 18px 44px -16px rgba(15,22,38,.5),0 0 0 8px #05070c;
+    display:flex;flex-direction:column}
+
+  /* top nav */
+  .topnav{position:sticky;top:0;z-index:20;flex:0 0 auto;display:flex;align-items:center;gap:12px;
+    padding:16px 16px 12px;background:rgba(11,15,23,.95);border-bottom:1px solid var(--line)}
+  .icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);
+    background:var(--card);color:var(--text);font-size:18px;line-height:1;
+    display:grid;place-items:center;cursor:pointer;font-family:var(--sans)}
+  .topnav h1{flex:1;margin:0;text-align:center;font-family:var(--serif);font-size:22px;
+    font-weight:600;letter-spacing:.3px;color:var(--text)}
+  .topnav h1 .hrt{color:var(--accent)}
+  .cartbtn{position:relative}
+  .cartbtn .badge{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;
+    background:var(--accent);color:#1a1206;font:800 11px/19px var(--sans);border-radius:999px;
+    text-align:center;font-variant-numeric:tabular-nums;border:2px solid var(--bg)}
+
+  /* segmented tabs */
+  .seg{position:sticky;top:65px;z-index:15;flex:0 0 auto;display:flex;gap:2px;padding:8px 12px 0;
+    background:var(--bg);border-bottom:1px solid var(--line)}
+  .seg button{flex:1;background:none;border:none;cursor:pointer;padding:10px 4px 12px;
+    color:var(--muted);font:600 13.5px/1.2 var(--sans);position:relative;letter-spacing:.2px}
+  .seg button.active{color:var(--accent)}
+  .seg button.active::after{content:"";position:absolute;left:14%;right:14%;bottom:-1px;height:2.5px;
+    background:var(--accent);border-radius:3px}
+
+  /* scroll body */
+  .screen{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;position:relative}
+  .screen::-webkit-scrollbar{width:0}
+  .view{display:none;padding:14px 14px 0}
+  .view.active{display:block}
+  /* B8 — every view clears the fixed nav (72px) + its own sticky footer */
+  #view-fav{padding-bottom:calc(var(--navh) + 132px)}
+  #view-sets{padding-bottom:calc(var(--navh) + 24px)}
+  #view-build{padding-bottom:calc(var(--navh) + 108px)}
+
+  /* the C-7 proposal badge */
+  .c7{display:inline-flex;align-items:center;gap:4px;vertical-align:middle;
+    background:var(--accent-soft);color:#f0a561;border:1px dashed rgba(249,115,22,.55);
+    border-radius:6px;padding:2px 7px;font:700 9.5px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;
+    letter-spacing:.03em;white-space:nowrap}
+  .c7box{border:1px dashed rgba(249,115,22,.4);border-radius:13px;padding:10px 11px 11px;
+    background:rgba(249,115,22,.035);margin-top:16px}
+  .c7box>.c7hd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+
+  /* toast */
+  .toast{display:flex;gap:9px;align-items:flex-start;background:var(--raised);
+    border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;
+    padding:11px 12px;margin-bottom:14px;font-size:12px;color:var(--muted);line-height:1.45}
+  .toast b{color:var(--text)}
+  .toast .x{margin-left:auto;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;
+    background:none;border:none;padding:0}
+
+  /* filter chips */
+  .chips{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:var(--card);color:var(--muted);padding:7px 13px;
+    border-radius:999px;font:600 12.5px/1.2 var(--sans);cursor:pointer;font-variant-numeric:tabular-nums}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#1a1206}
+
+  /* favourite card */
+  .fcard{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;
+    margin-bottom:11px;position:relative}
+  .thumb{width:72px;height:72px;border-radius:12px;display:grid;place-items:center;font-size:32px;
+    background:linear-gradient(160deg,#2a3446,#1a2230);border:1px solid var(--line)}
+  .fcard .meta{min-width:0}
+  .tagpill{display:inline-block;font:700 10.5px/1.5 var(--sans);letter-spacing:.4px;
+    text-transform:uppercase;color:var(--muted);background:var(--raised);border:1px solid var(--line);
+    padding:2px 7px;border-radius:6px;margin-bottom:5px}
+  .tagpill.combo{color:#fcd9b8;background:rgba(249,115,22,.12);border-color:rgba(249,115,22,.3)}
+  .fcard .name{font-weight:700;font-size:15px;line-height:1.2;margin:0 0 3px;color:var(--text)}
+  .fcard .sub{font-size:11.5px;color:var(--muted);line-height:1.35;margin:0}
+  .fcard .price{color:var(--accent);font-weight:800;font-size:14px;margin-top:4px;
+    font-variant-numeric:tabular-nums}
+  .fcard .price span{color:var(--muted);font-weight:500;font-size:11px}
+  .fcard .right{display:flex;flex-direction:column;align-items:flex-end;gap:12px;justify-self:end}
+  .heart{background:none;border:none;cursor:pointer;font-size:21px;line-height:1;color:var(--accent);
+    padding:0}
+
+  /* stepper */
+  .stepper{display:flex;align-items:center;gap:9px}
+  .stepper button{width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;line-height:1;
+    display:grid;place-items:center;font-weight:700;font-family:var(--sans)}
+  .stepper .minus{background:var(--card);border:1px solid var(--line);color:var(--text)}
+  .stepper .plus{background:var(--accent);border:1px solid var(--accent);color:#1a1206}
+  .stepper .qty{min-width:16px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;
+    color:var(--text)}
+
+  /* canh quick-add */
+  .grp-h{font:800 11px/1.4 var(--sans);letter-spacing:1.2px;text-transform:uppercase;
+    color:var(--muted);margin:16px 2px 8px}
+  .c7box .grp-h{margin:0}
+  .canh-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px 12px;
+    margin-bottom:8px}
+  .canh-row:last-child{margin-bottom:0}
+  .canh-row .cl{display:flex;align-items:center;gap:9px;font-weight:600;font-size:14px}
+  .canh-row .cl .ce{font-size:21px;line-height:1}
+  .canh-row .cl .cp{color:var(--muted);font-weight:500;font-size:12px;font-variant-numeric:tabular-nums}
+  .add-btn{background:var(--accent-soft);color:var(--accent);border:1px solid rgba(249,115,22,.4);
+    border-radius:9px;padding:8px 15px;font:700 13px/1.2 var(--sans);cursor:pointer;white-space:nowrap}
+  .add-btn.done{background:var(--accent);color:#1a1206;border-color:var(--accent)}
+
+  /* view A footer (sits ABOVE the fixed nav — the reference bug, designed out) */
+  .listfoot{position:absolute;left:0;right:0;bottom:var(--navh);z-index:12;
+    background:linear-gradient(rgba(11,15,23,0),var(--bg) 28%);padding:20px 14px 12px}
+  .fav-total{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:2px 4px 11px;font-size:13.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .fav-total b{color:var(--accent);font-weight:800;font-size:17px}
+  .cta-full{width:100%;background:var(--accent);color:#1a1206;border:none;border-radius:12px;
+    padding:14px;font:800 15px/1.2 var(--sans);cursor:pointer}
+
+  /* set cards */
+  .setcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;
+    margin-bottom:12px}
+  .setcard .st-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .setcard h3{margin:0;font-size:15.5px;font-weight:700;color:var(--text)}
+  .pinwrap{display:flex;align-items:center;gap:6px}
+  .pinbtn{background:none;border:1px solid var(--line);border-radius:8px;cursor:pointer;
+    color:var(--muted);font:600 12px/1.2 var(--sans);padding:6px 9px;white-space:nowrap}
+  .pinbtn.on{color:#1a1206;background:var(--accent);border-color:var(--accent);font-weight:700}
+  .setcard ul{list-style:none;margin:9px 0 8px;padding:0}
+  .setcard li{font-size:12.5px;color:var(--muted);padding:2px 0}
+  .setcard li b{color:var(--text);font-weight:600}
+  .setcard .summ{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .setcard .summ b{color:var(--accent);font-weight:800}
+  .setcard .acts{display:flex;gap:8px;margin-top:12px}
+  .btn{border:none;border-radius:10px;cursor:pointer;font:700 13.5px/1.2 var(--sans)}
+  .btn-o{background:var(--accent);color:#1a1206;padding:10px 14px;flex:1}
+  .btn-ghost{background:var(--card);border:1px solid var(--line);color:var(--text);padding:10px 12px}
+
+  /* builder */
+  .intro{font-size:12.5px;color:var(--muted);margin:2px 2px 12px;line-height:1.45}
+  .brow{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card);
+    border:1px solid var(--line);border-radius:11px;padding:11px 12px}
+  .brow .bn{font-weight:600;font-size:14px;color:var(--text)}
+  .brow .bp{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .brow-wrap{margin-bottom:8px}
+  .brow-wrap.open .brow{border-radius:11px 11px 0 0;border-bottom-color:transparent}
+  .opts{display:none;flex-direction:column;gap:9px;border:1px solid var(--line);border-top:none;
+    border-radius:0 0 11px 11px;background:rgba(15,20,30,.55);padding:10px 12px}
+  .brow-wrap.open .opts{display:flex}
+  .opt-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .opt-lab{font:800 10px/1.4 var(--sans);letter-spacing:.5px;text-transform:uppercase;
+    color:var(--muted);width:50px;flex:0 0 auto}
+  .note-in{flex:1;min-width:130px;background:var(--bg);border:1px solid var(--line);border-radius:8px;
+    color:var(--text);padding:7px 10px;font:400 12px/1.3 var(--sans)}
+  .note-in::placeholder{color:#5f6b7e}
+  .pills{display:flex;gap:8px;margin:4px 0 6px;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:var(--card);color:var(--muted);padding:7px 12px;
+    border-radius:999px;font:600 12px/1.2 var(--sans);cursor:pointer}
+  .pill.on{background:var(--accent);border-color:var(--accent);color:#1a1206}
+  .pill.sm{padding:5px 10px;font-size:11.5px}
+  .hint{font-size:11px;color:var(--muted);margin:2px 2px 0;line-height:1.45}
+
+  /* builder sticky summary bar */
+  .sumbar{position:absolute;left:0;right:0;bottom:var(--navh);z-index:12;display:none;
+    align-items:center;gap:12px;background:rgba(20,26,38,.97);border-top:1px solid var(--line);
+    padding:12px 14px}
+  .sumbar.show{display:flex}
+  .sumbar .tot{flex:1;min-width:0}
+  .sumbar .tot .n{font-size:11.5px;color:var(--muted)}
+  .sumbar .tot .v{font-size:19px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+  .sumbar .save{background:var(--accent);color:#1a1206;border:none;border-radius:11px;padding:12px 18px;
+    font:800 14px/1.2 var(--sans);cursor:pointer}
+  .sumbar .save:disabled{opacity:.4;cursor:not-allowed}
+
+  /* empty state */
+  .empty{display:none;text-align:center;padding:64px 24px;color:var(--muted)}
+  .empty.show{display:block}
+  .empty .big{font-size:46px;opacity:.5;line-height:1}
+  .empty h4{color:var(--text);font-size:15px;margin:14px 0 4px}
+  .empty p{font-size:12.5px;margin:0 0 18px;line-height:1.5}
+  .empty .btn-o{flex:none;padding:11px 22px}
+
+  /* bottom nav — fixed inside the frame */
+  .botnav{position:absolute;left:0;right:0;bottom:0;z-index:30;height:var(--navh);display:flex;
+    background:rgba(11,15,23,.98);border-top:1px solid var(--line)}
+  .botnav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    color:var(--muted);font:600 10px/1.2 var(--sans);text-decoration:none;position:relative}
+  .botnav a .ic{font-size:19px;line-height:1}
+  .botnav a.on{color:var(--accent)}
+  .botnav a.on::before{content:"";position:absolute;top:0;width:26px;height:2.5px;
+    background:var(--accent);border-radius:3px}
+
+  /* modal */
+  .overlay{position:absolute;inset:0;z-index:50;background:rgba(4,6,11,.74);display:none;
+    align-items:center;justify-content:center;padding:22px}
+  .overlay.open{display:flex}
+  .modal{width:100%;background:#161d29;border:1px solid var(--line);border-radius:18px;padding:18px}
+  .modal h2{margin:0 0 14px;font-size:17px;font-weight:700;color:var(--text)}
+  .modal label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+  .modal input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line);
+    border-radius:10px;color:var(--text);padding:11px 12px;font:400 14px/1.3 var(--sans);
+    margin-bottom:14px}
+  .msum{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:11px 12px;
+    margin-bottom:12px}
+  .msum .lab{font-size:11.5px;color:var(--muted);margin-bottom:6px}
+  .msum ul{margin:0;padding:0;list-style:none}
+  .msum li{font-size:12.5px;padding:2px 0;color:var(--text)}
+  .msum .t{margin-top:7px;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .msum .t b{color:var(--accent)}
+  .mpin{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text);margin-bottom:16px;
+    cursor:pointer}
+  .mpin input{width:17px;height:17px;accent-color:var(--accent)}
+  .modal .mrow{display:flex;gap:10px}
+  .modal .mrow .btn{flex:1;padding:12px}
+
+  /* side notes column */
+  .notes{max-width:400px;min-width:280px;flex:1}
+  .notes h2{font:700 15px/1.2 var(--serif);margin:2px 0 10px;padding-bottom:6px;
+    border-bottom:2px solid var(--accent);display:inline-block}
+  .panel{background:var(--white);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;
+    margin-bottom:14px}
+  .panel h3{margin:0 0 9px;font:700 13.5px/1.2 var(--serif)}
+  .panel ul{margin:0;padding-left:18px}
+  .panel li{margin:5px 0;color:#39424f;font-size:12.8px}
+  .panel li code{background:var(--wire);padding:1px 5px;border-radius:4px;font-size:.9em}
+  .flag{background:#fff8ee;border:1px solid #f2d19a;border-radius:10px;padding:12px 14px;
+    font-size:12.5px;color:#5c4a33}
+  .flag b{color:#9a5b06}
+  footer.pg{margin-top:40px;padding-top:16px;border-top:1px solid var(--line2);color:var(--sub);
+    font-size:12px;line-height:1.6}
+  footer.pg a{color:#2b59d9}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="kicker">F-17 · Customer Favourites · Mockup #1 · 2026-07-19</div>
+    <h1>What <span style="color:var(--accent)">/menu/favourites</span> will look like</h1>
+    <p class="lede">A <b>high-fidelity, interactive MOCKUP</b> (not the build) of the favourites hub —
+      the C-6 preview the owner asked to eyeball before implementation. Everything here is clickable:
+      the segmented tabs switch views, the filter chips filter, the hearts remove cards, the steppers
+      recompute the live total, and the builder prices itself. Colors are the locked customer shell
+      (<code>#0b0f17</code> + <code>#f97316</code>) hard-coded, so this page looks the same in a light
+      or dark viewer theme.</p>
+    <p class="srcline">Snapshot of <b>customer_favourites_PLAN.md</b> §4.4 (behaviors) · §4.1 (file map) ·
+      §5 (C-6 / C-7 split), visuals per the reference <b>DESIGN_PROMPT.md</b> ·
+      <a href="../../diagrams/build-plan.html">← build-plan.html</a></p>
+  </header>
+
+  <div class="legend">
+    <span class="li"><span class="sw dark"></span> customer shell <code>#0b0f17</code></span>
+    <span class="li"><span class="sw acc"></span> accent <code>#f97316</code> — the only bright color</span>
+    <span class="li"><span class="c7key">💡 ĐỀ XUẤT / C-7</span>
+      = <b>proposal, NOT v1</b> — deferred, owner-gated (PLAN §5 / §7). Everything unbadged is C-6 v1 scope.</span>
+  </div>
+
+  <div class="stage">
+    <!-- ================= PHONE ================= -->
+    <div class="phonecol">
+      <div class="phonecap">iPhone 390px · dine-in guest · tab "Yêu Thích" active</div>
+      <div class="phone">
+
+        <!-- TOP NAV -->
+        <header class="topnav">
+          <button class="icon-btn" aria-label="Quay lại">‹</button>
+          <h1><span class="hrt">❤</span> Yêu Thích</h1>
+          <button class="icon-btn cartbtn" aria-label="Giỏ hàng">🛒<span class="badge" id="cartBadge">2</span></button>
+        </header>
+
+        <!-- SEGMENTED TABS -->
+        <nav class="seg" role="tablist">
+          <button class="active" data-view="fav" role="tab">Yêu thích</button>
+          <button data-view="sets" role="tab">Bộ đã lưu</button>
+          <button data-view="build" role="tab">Tự tạo suất</button>
+        </nav>
+
+        <div class="screen" id="screen">
+
+          <!-- ============ VIEW A — YÊU THÍCH ============ -->
+          <section class="view active" id="view-fav">
+            <div class="toast" id="pruneToast">
+              <span>ℹ️</span>
+              <div>Một số món không còn phục vụ đã được <b>xoá</b> khỏi danh sách yêu thích.</div>
+              <button class="x" aria-label="Đóng" onclick="this.closest('.toast').remove()">×</button>
+            </div>
+
+            <div class="chips" id="favChips">
+              <button class="chip active" data-filter="all">Tất cả (3)</button>
+              <button class="chip" data-filter="mon">Món lẻ (2)</button>
+              <button class="chip" data-filter="combo">Combo (1)</button>
+            </div>
+
+            <div id="favList"></div>
+
+            <!-- empty state -->
+            <div class="empty" id="favEmpty">
+              <div class="big">♡</div>
+              <h4>Chưa có món yêu thích nào</h4>
+              <p>Chạm ♡ trên món ở trang Menu để lưu vào đây</p>
+              <button class="btn btn-o" onclick="resetFavs()">Xem Menu</button>
+            </div>
+
+            <!-- canh quick-add — C-7 PROPOSAL -->
+            <div class="c7box" id="canhBox">
+              <div class="c7hd">
+                <div class="grp-h">Canh — thêm nhanh</div>
+                <span class="c7">💡 ĐỀ XUẤT / C-7</span>
+              </div>
+              <div class="canh-row">
+                <div class="cl"><span class="ce">🥣</span><span>Canh có rau</span><span class="cp">· 0 đ</span></div>
+                <button class="add-btn" onclick="quickAdd(this)">＋ Thêm</button>
+              </div>
+              <div class="canh-row">
+                <div class="cl"><span class="ce">🍲</span><span>Canh không rau</span><span class="cp">· 0 đ</span></div>
+                <button class="add-btn" onclick="quickAdd(this)">＋ Thêm</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============ VIEW B — BỘ ĐÃ LƯU ============ -->
+          <section class="view" id="view-sets">
+            <div class="setcard">
+              <div class="st-top">
+                <h3>📋 Sáng thứ 7</h3>
+                <div class="pinwrap">
+                  <span class="c7">💡 ĐỀ XUẤT / C-7</span>
+                  <button class="pinbtn" onclick="togglePin(this)">📌 Ghim lên Menu</button>
+                </div>
+              </div>
+              <ul>
+                <li>▸ <b>Bánh cuốn</b> × 1</li>
+                <li>▸ <b>Bánh trứng vàng</b> × 1</li>
+                <li>▸ <b>Canh có rau</b> × 1</li>
+              </ul>
+              <div class="summ">3 món · <b>88.000 đ</b></div>
+              <div class="acts">
+                <button class="btn btn-o">🛒 Áp dụng</button>
+                <button class="btn btn-ghost" aria-label="Đổi tên">✏</button>
+                <button class="btn btn-ghost" aria-label="Xoá">🗑</button>
+              </div>
+            </div>
+
+            <div class="setcard">
+              <div class="st-top">
+                <h3>📋 Cả nhà</h3>
+                <div class="pinwrap">
+                  <span class="c7">💡 ĐỀ XUẤT / C-7</span>
+                  <button class="pinbtn on" onclick="togglePin(this)">📌 Đã ghim</button>
+                </div>
+              </div>
+              <ul>
+                <li>▸ <b>Bánh cuốn thịt</b> × 2</li>
+                <li>▸ <b>Bánh cuốn mộc nhĩ</b> × 1</li>
+                <li>▸ <b>Bánh trứng chín</b> × 1</li>
+                <li>▸ <b>Giò</b> × 1</li>
+                <li>▸ <b>Canh có rau</b> × 2</li>
+                <li style="opacity:.75">+2 món nữa</li>
+              </ul>
+              <div class="summ">5 món · <b>152.000 đ</b></div>
+              <div class="acts">
+                <button class="btn btn-o">🛒 Áp dụng</button>
+                <button class="btn btn-ghost" aria-label="Đổi tên">✏</button>
+                <button class="btn btn-ghost" aria-label="Xoá">🗑</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============ VIEW C — TỰ TẠO SUẤT (whole view = C-7) ============ -->
+          <section class="view" id="view-build">
+            <div class="c7box" style="margin-top:2px">
+              <div class="c7hd">
+                <div class="grp-h">Tự tạo suất</div>
+                <span class="c7">💡 ĐỀ XUẤT / C-7</span>
+              </div>
+              <p class="intro" style="margin:0">Tự chọn thành phần cho suất của riêng bạn</p>
+            </div>
+
+            <div id="buildGroups"></div>
+
+            <div class="grp-h">Nhân mặc định (bánh cuốn)</div>
+            <div class="pills" id="nhanDefault">
+              <button class="pill on" data-nhan="thit">Nhân thịt</button>
+              <button class="pill" data-nhan="mocnhi">Nhân thịt mộc nhĩ</button>
+            </div>
+            <p class="hint">Riêng <b style="color:#e5e7eb">trứng</b> chọn nhân &amp; thêm ghi chú ở từng món bên dưới.</p>
+            <p class="hint" style="margin-top:8px">Suất tự tạo sẽ xuất hiện trong Yêu thích; bật 📌 để ghim lên Menu.</p>
+          </section>
+
+        </div><!-- /screen -->
+
+        <!-- FOOTER (view A) — sits ABOVE the fixed bottom nav (PLAN §4.4-8) -->
+        <div class="listfoot" id="listFoot">
+          <div class="fav-total">
+            <span><span id="favCount">4</span> món <span class="c7">💡 ĐỀ XUẤT / C-7</span></span>
+            <span>Tổng: <b id="favTotal">59.000 đ</b></span>
+          </div>
+          <button class="cta-full">🛒 Thêm tất cả vào giỏ</button>
+        </div>
+
+        <!-- SUMMARY BAR (view C) -->
+        <div class="sumbar" id="sumBar">
+          <div class="tot">
+            <div class="n"><span id="buildCount">0</span> món</div>
+            <div class="v" id="buildTotal">0 đ</div>
+          </div>
+          <button class="save" id="saveSuat" disabled onclick="openModal()">Lưu suất này</button>
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <nav class="botnav">
+          <a href="#" onclick="return false"><span class="ic">🍽</span>Menu</a>
+          <a href="#" onclick="return false"><span class="ic">🧾</span>Đơn Hàng</a>
+          <a href="#" class="on" onclick="return false"><span class="ic">❤</span>Yêu Thích</a>
+          <a href="#" onclick="return false"><span class="ic">📍</span>Theo Dõi</a>
+          <a href="#" onclick="return false"><span class="ic">⚙</span>Cài Đặt</a>
+        </nav>
+
+        <!-- SAVE-AS-SET MODAL -->
+        <div class="overlay" id="overlay">
+          <div class="modal" role="dialog" aria-modal="true">
+            <h2>💾 Lưu thành set mới</h2>
+            <label for="setName">Đặt tên cho set này:</label>
+            <input type="text" id="setName" placeholder="vd: Set cuối tuần...">
+            <div class="msum">
+              <div class="lab">Tóm tắt:</div>
+              <ul id="modalSummary"><li style="color:#8b95a7">Chưa chọn thành phần nào</li></ul>
+              <div class="t">Tổng: <b id="modalTotal">0 đ</b></div>
+            </div>
+            <label class="mpin">
+              <input type="checkbox">
+              <span>📌 Ghim lên Menu để chọn nhanh</span>
+              <span class="c7" style="margin-left:auto">💡 ĐỀ XUẤT / C-7</span>
+            </label>
+            <div class="mrow">
+              <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
+              <button class="btn btn-o" onclick="closeModal()">💾 Lưu set này</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /phone -->
+    </div>
+
+    <!-- ================= SIDE NOTES ================= -->
+    <div class="notes">
+      <h2>What you are looking at</h2>
+
+      <div class="panel">
+        <h3>C-6 (v1) — everything without a badge</h3>
+        <ul>
+          <li><b>Resolve + auto-prune</b> → the dismissible toast at first paint (§4.4-2).</li>
+          <li><b>Filter chips</b> with live counts, active = solid orange (§4.4-3).</li>
+          <li><b>Card = the remove control</b>: the filled orange ♥ un-favourites and removes the
+            card; the stepper edits the line (§4.4-4).</li>
+          <li><b>Bulk add</b>: <code>🛒 Thêm tất cả vào giỏ</code>, additive (§4.4-5).</li>
+          <li><b>Bộ đã lưu</b>: apply / rename / delete (§4.4-7).</li>
+          <li><b>Empty state</b> — remove all three cards to see it; "Xem Menu" restores the seed here.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>C-7 (deferred) — everything badged <span class="c7key">💡 ĐỀ XUẤT / C-7</span></h3>
+        <ul>
+          <li>Canh quick-add block (two 0 đ rows, <code>✓ Đã thêm</code> flash).</li>
+          <li>The live-total row above the CTA.</li>
+          <li>The whole <b>"Tự tạo suất"</b> builder (<code>suats[]</code> + per-egg nhân + free-text note).</li>
+          <li>📌 <b>Ghim lên Menu</b> pinning (set cards + the save modal checkbox).</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>Reference bug fixed here</h3>
+        <ul>
+          <li>The footer / CTA reserves <code>72px</code> of bottom padding and sits <b>above</b> the
+            fixed 5-tab nav — never behind it (§4.4-8, §6). Scroll view A to the bottom to check.</li>
+          <li>Currency is always <code>35.000 đ</code>; zero-price canh shows <code>0 đ</code> (§4.4-11).</li>
+        </ul>
+      </div>
+
+      <div class="flag">
+        <b>⚠️ FLAG — this is a mockup, not the build.</b> No data layer, no store, no queries: the
+        three loading/error/empty branches of §4.3 are <i>not</i> exercised here (only the empty
+        branch is reachable, by clearing the list). C-7 features are rendered so the owner can
+        rule on the §7 proposals — <b>silence = they stay out of v1</b>.
+      </div>
+    </div>
+  </div>
+
+  <footer class="pg">
+    High-fidelity mockup #1 for the F-17 customer-favourites plan · a <b>snapshot</b> of
+    <b>harness/plans/customer_favourites/customer_favourites_PLAN.md</b>, which <b>wins on any
+    conflict</b> — if this page and the plan disagree, the plan is right and this file is stale.
+    Self-contained: no libraries, no external fonts, images or network calls. ·
+    <a href="../../diagrams/build-plan.html">← build-plan.html</a>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- currency: 35.000 đ ---------- */
+  function vnd(n){
+    return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,".") + " đ";
+  }
+
+  /* ================= VIEW SWITCHING ================= */
+  var segBtns = document.querySelectorAll(".seg button");
+  var listFoot = document.getElementById("listFoot");
+  var sumBar   = document.getElementById("sumBar");
+  var screenEl = document.getElementById("screen");
+
+  segBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      segBtns.forEach(function(x){ x.classList.remove("active"); });
+      b.classList.add("active");
+      var v = b.getAttribute("data-view");
+      document.querySelectorAll(".view").forEach(function(s){ s.classList.remove("active"); });
+      document.getElementById("view-" + v).classList.add("active");
+      listFoot.style.display = (v === "fav") ? "block" : "none";
+      sumBar.classList.toggle("show", v === "build");
+      screenEl.scrollTop = 0;
+    });
+  });
+
+  /* ================= CART BADGE ================= */
+  var cart = 2;
+  var badge = document.getElementById("cartBadge");
+  function bumpCart(){ cart += 1; badge.textContent = cart; }
+
+  /* ================= VIEW A — FAVOURITES ================= */
+  var favs = [
+    { id:"p1", name:"Bánh Cuốn Thịt",  type:"mon",   price:4000,  emoji:"🫓", sub:"Nhân thịt", qty:2 },
+    { id:"p2", name:"Bánh Trứng Vàng", type:"mon",   price:9000,  emoji:"🥚", sub:"Nhân thịt", qty:1 },
+    { id:"c1", name:"Combo Đầy Đặn",   type:"combo", price:42000, emoji:"🍱",
+      sub:"1 bánh trứng + 3 bánh cuốn + 1 giò + canh", qty:1 }
+  ];
+  var SEED = JSON.parse(JSON.stringify(favs));
+  var filter = "all";
+
+  var favList  = document.getElementById("favList");
+  var favEmpty = document.getElementById("favEmpty");
+  var canhBox  = document.getElementById("canhBox");
+  var chipsBox = document.getElementById("favChips");
+
+  function renderFavs(){
+    favList.innerHTML = "";
+    favs.filter(function(f){ return filter === "all" || f.type === filter; })
+        .forEach(function(f){
+      var card = document.createElement("div");
+      card.className = "fcard";
+      var badgeCls = f.type === "combo" ? "tagpill combo" : "tagpill";
+      var label    = f.type === "combo" ? "Combo" : "Món lẻ";
+      card.innerHTML =
+        '<div class="thumb">' + f.emoji + '</div>' +
+        '<div class="meta">' +
+          '<span class="' + badgeCls + '">' + label + '</span>' +
+          '<p class="name">' + f.name + '</p>' +
+          '<p class="sub">' + f.sub + '</p>' +
+          '<div class="price">' + vnd(f.price) + '<span> /phần</span></div>' +
+        '</div>' +
+        '<div class="right">' +
+          '<button class="heart" aria-label="Bỏ yêu thích" data-rm="' + f.id + '">♥</button>' +
+          '<div class="stepper">' +
+            '<button class="minus" data-step="-1" data-id="' + f.id + '">–</button>' +
+            '<span class="qty">' + f.qty + '</span>' +
+            '<button class="plus" data-step="1" data-id="' + f.id + '">+</button>' +
+          '</div>' +
+        '</div>';
+      favList.appendChild(card);
+    });
+
+    // chips: live counts + active state
+    var nAll   = favs.length;
+    var nMon   = favs.filter(function(f){ return f.type === "mon"; }).length;
+    var nCombo = favs.filter(function(f){ return f.type === "combo"; }).length;
+    var counts = { all:nAll, mon:nMon, combo:nCombo };
+    var labels = { all:"Tất cả", mon:"Món lẻ", combo:"Combo" };
+    chipsBox.querySelectorAll(".chip").forEach(function(c){
+      var k = c.getAttribute("data-filter");
+      c.textContent = labels[k] + " (" + counts[k] + ")";
+      c.classList.toggle("active", k === filter);
+    });
+
+    // empty branch
+    var isEmpty = favs.length === 0;
+    favEmpty.classList.toggle("show", isEmpty);
+    chipsBox.style.display = isEmpty ? "none" : "flex";
+    canhBox.style.display  = isEmpty ? "none" : "block";
+    listFoot.style.display = (isEmpty || !document.getElementById("view-fav").classList.contains("active"))
+      ? "none" : "block";
+
+    // live total (C-7)
+    var count = favs.reduce(function(s,f){ return s + f.qty; }, 0);
+    var total = favs.reduce(function(s,f){ return s + f.qty * f.price; }, 0);
+    document.getElementById("favCount").textContent = count;
+    document.getElementById("favTotal").textContent = vnd(total);
+  }
+
+  favList.addEventListener("click", function(e){
+    var rm = e.target.closest("[data-rm]");
+    if (rm){
+      favs = favs.filter(function(f){ return f.id !== rm.getAttribute("data-rm"); });
+      renderFavs();
+      return;
+    }
+    var st = e.target.closest("[data-step]");
+    if (st){
+      var id  = st.getAttribute("data-id");
+      var d   = parseInt(st.getAttribute("data-step"), 10);
+      favs.forEach(function(f){
+        if (f.id === id) f.qty = Math.max(1, f.qty + d);
+      });
+      renderFavs();
+    }
+  });
+
+  chipsBox.addEventListener("click", function(e){
+    var c = e.target.closest(".chip");
+    if (!c) return;
+    filter = c.getAttribute("data-filter");
+    renderFavs();
+  });
+
+  window.resetFavs = function(){
+    favs = JSON.parse(JSON.stringify(SEED));
+    filter = "all";
+    renderFavs();
+  };
+
+  /* canh quick-add (C-7) */
+  window.quickAdd = function(btn){
+    if (btn.classList.contains("done")) return;
+    bumpCart();
+    btn.classList.add("done");
+    btn.textContent = "✓ Đã thêm";
+    setTimeout(function(){
+      btn.classList.remove("done");
+      btn.textContent = "＋ Thêm";
+    }, 1000);
+  };
+
+  /* ================= VIEW B — pin toggle (C-7) ================= */
+  window.togglePin = function(btn){
+    var on = btn.classList.toggle("on");
+    btn.textContent = on ? "📌 Đã ghim" : "📌 Ghim lên Menu";
+  };
+
+  /* ================= VIEW C — BUILDER (C-7) ================= */
+  var GROUPS = [
+    { h:"BÁNH CUỐN", items:[
+      { id:"b1", name:"Bánh Cuốn Thịt",    price:4000 },
+      { id:"b2", name:"Bánh Cuốn Mộc Nhĩ", price:4000 },
+      { id:"b3", name:"Bánh Chay",         price:2500 }
+    ]},
+    { h:"TRỨNG", items:[
+      { id:"t1", name:"Bánh Trứng Tái",  price:9000, egg:true },
+      { id:"t2", name:"Bánh Trứng Chín", price:9000, egg:true },
+      { id:"t3", name:"Bánh Trứng Vàng", price:9000, egg:true }
+    ]},
+    { h:"GIÒ", items:[
+      { id:"g1", name:"Giò", price:9000 }
+    ]},
+    { h:"CANH", items:[
+      { id:"s1", name:"Bát canh có rau",    price:0 },
+      { id:"s2", name:"Bát canh không rau", price:0 }
+    ]}
+  ];
+
+  var bq = {};      // id -> qty
+  var eggNhan = {}; // id -> "Nhân thịt" | "Nhân mộc nhĩ"
+  var host = document.getElementById("buildGroups");
+
+  GROUPS.forEach(function(g){
+    var h = document.createElement("div");
+    h.className = "grp-h";
+    h.textContent = g.h;
+    host.appendChild(h);
+
+    g.items.forEach(function(it){
+      bq[it.id] = 0;
+      if (it.egg) eggNhan[it.id] = "Nhân thịt";
+      var wrap = document.createElement("div");
+      wrap.className = "brow-wrap";
+      wrap.id = "wrap-" + it.id;
+      var opts = it.egg
+        ? '<div class="opts">' +
+            '<div class="opt-line">' +
+              '<span class="opt-lab">Nhân</span>' +
+              '<button class="pill sm on" data-egg="' + it.id + '" data-val="Nhân thịt">Nhân thịt</button>' +
+              '<button class="pill sm" data-egg="' + it.id + '" data-val="Nhân mộc nhĩ">Nhân mộc nhĩ</button>' +
+            '</div>' +
+            '<div class="opt-line">' +
+              '<span class="opt-lab">Ghi chú</span>' +
+              '<input class="note-in" type="text" placeholder="vd: nhân để ngoài bánh, ít hành...">' +
+            '</div>' +
+          '</div>'
+        : '';
+      wrap.innerHTML =
+        '<div class="brow">' +
+          '<div class="bl">' +
+            '<div class="bn">' + it.name + '</div>' +
+            '<div class="bp">' + vnd(it.price) + '</div>' +
+          '</div>' +
+          '<div class="stepper">' +
+            '<button class="minus" data-bstep="-1" data-id="' + it.id + '">–</button>' +
+            '<span class="qty" id="q-' + it.id + '">0</span>' +
+            '<button class="plus" data-bstep="1" data-id="' + it.id + '">+</button>' +
+          '</div>' +
+        '</div>' + opts;
+      host.appendChild(wrap);
+    });
+  });
+
+  function priceOf(id){
+    var p = 0;
+    GROUPS.forEach(function(g){
+      g.items.forEach(function(it){ if (it.id === id) p = it.price; });
+    });
+    return p;
+  }
+  function nameOf(id){
+    var n = "";
+    GROUPS.forEach(function(g){
+      g.items.forEach(function(it){ if (it.id === id) n = it.name; });
+    });
+    return n;
+  }
+
+  function renderBuild(){
+    var count = 0, total = 0;
+    Object.keys(bq).forEach(function(id){
+      count += bq[id];
+      total += bq[id] * priceOf(id);
+      var q = document.getElementById("q-" + id);
+      if (q) q.textContent = bq[id];
+      var w = document.getElementById("wrap-" + id);
+      if (w && w.querySelector(".opts")) w.classList.toggle("open", bq[id] > 0);
+    });
+    document.getElementById("buildCount").textContent = count;
+    document.getElementById("buildTotal").textContent = vnd(total);
+    document.getElementById("saveSuat").disabled = count === 0;
+  }
+
+  host.addEventListener("click", function(e){
+    var st = e.target.closest("[data-bstep]");
+    if (st){
+      var id = st.getAttribute("data-id");
+      bq[id] = Math.max(0, bq[id] + parseInt(st.getAttribute("data-bstep"), 10));
+      renderBuild();
+      return;
+    }
+    var eg = e.target.closest("[data-egg]");
+    if (eg){
+      var eid = eg.getAttribute("data-egg");
+      eggNhan[eid] = eg.getAttribute("data-val");
+      host.querySelectorAll('[data-egg="' + eid + '"]').forEach(function(p){
+        p.classList.toggle("on", p === eg);
+      });
+    }
+  });
+
+  /* default nhân pill group — multi-toggle, at least one stays on */
+  var nd = document.getElementById("nhanDefault");
+  nd.addEventListener("click", function(e){
+    var p = e.target.closest(".pill");
+    if (!p) return;
+    var on = nd.querySelectorAll(".pill.on").length;
+    if (p.classList.contains("on") && on === 1) return; // keep at least one
+    p.classList.toggle("on");
+  });
+
+  /* ================= MODAL ================= */
+  var overlay = document.getElementById("overlay");
+  window.openModal = function(){
+    var ul = document.getElementById("modalSummary");
+    var total = 0, rows = "";
+    Object.keys(bq).forEach(function(id){
+      if (bq[id] > 0){
+        total += bq[id] * priceOf(id);
+        var extra = eggNhan[id] ? " · " + eggNhan[id] : "";
+        rows += "<li>▸ " + nameOf(id) + " × " + bq[id] + extra + "</li>";
+      }
+    });
+    ul.innerHTML = rows || '<li style="color:#8b95a7">Chưa chọn thành phần nào</li>';
+    document.getElementById("modalTotal").textContent = vnd(total);
+    overlay.classList.add("open");
+  };
+  window.closeModal = function(){ overlay.classList.remove("open"); };
+  overlay.addEventListener("click", function(e){
+    if (e.target === overlay) closeModal();
+  });
+
+  /* ================= FIRST PAINT ================= */
+  renderFavs();
+  renderBuild();
+})();
+</script>

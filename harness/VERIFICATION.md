@@ -19,6 +19,50 @@
 
 ## Log (newest on top)
 
+### F-24 — Customer-favourites page-plan set (4 docs, one folder) · 2026-07-19
+**AC:** Folder holds the 4 prefixed docs; `.md` is sole source of truth (each HTML footer says so); read-only 2-GET BE contract cross-links the menu plan (no re-derive); reference's empty≡loading≡error conflation designed out with named branches; DESIGN_PROMPT NEW features captured as flagged/deferred rows; both HTML themes render; indexes updated per Hard Rule 6
+**Receipt:**
+```
+$ ls harness/plans/customer_favourites/
+customer_favourites_PLAN.md              23831   # canonical, 8 sections, slug-prefixed
+customer_favourites_plan.html            61147
+customer_favourites_how-it-works.html    68190
+customer_favourites_mockup-1.html        40185
+
+$ python3 tagcheck.py <the 3 html>
+customer_favourites_plan.html          UNCLOSED: none  MISMATCH: 0  SIZE: 61147
+    prefers-color-scheme | data-theme | overflow-x:auto x3 | self-contained | sections:9 | PLAN.md-wins
+customer_favourites_how-it-works.html  UNCLOSED: none  MISMATCH: 0  SIZE: 68190
+    prefers-color-scheme | data-theme | overflow-x:auto x3 | self-contained | sections:7 | PLAN.md-wins
+customer_favourites_mockup-1.html      UNCLOSED: none  MISMATCH: 0  SIZE: 40185
+    NO-pcs | NO-data-theme | overflow-x:auto x0 | self-contained | sections:3 | PLAN.md-wins
+EXIT=0
+```
+Mockup deliberately carries **no** theme tokens — per PAGE_PLAN_GUIDE §7 it hard-codes the
+locked customer shell (`#0b0f17` / `#1b2230` / `#f97316`) so it renders identically in the
+viewer's light and dark theme. Phone is `width:390px; max-width:100%` → no page-level
+sideways scroll. Section counts match the guide: plan.html 9 (§5), how-it-works 7 (§6).
+
+```
+$ node --check <js extracted from mockup>      # 11001 chars
+JS SYNTAX OK
+$ grep -c 'ĐỀ XUẤT' mockup            8       # deferred C-7 proposals badged as proposals
+$ grep -nE '--navh|padding-bottom' mockup
+--navh:72px;  /* fixed bottom nav height — CTA must clear this */
+#view-fav{padding-bottom:calc(var(--navh) + 132px)}   # B8: the reference's hidden-footer
+#view-sets{padding-bottom:calc(var(--navh) + 24px)}   #      bug designed out, per view
+#view-build{padding-bottom:calc(var(--navh) + 108px)}
+```
+Worked example is consistent across all 4 docs and JS-generated in the mockup from seed
+data: Bánh Cuốn Thịt 4.000 ×2 + Bánh Trứng Vàng 9.000 ×1 + Combo Đầy Đặn 42.000 ×1
+= **4 món · 59.000 đ**; sets 📋 Sáng thứ 7 (3 món · 88.000 đ) · 📋 Cả nhà (5 món · 152.000 đ).
+`plan.html` carries the loading-branch fix (`isPending`/`isError` ×3 each) and the
+zero-write BE emphasis; `how-it-works.html` has 9 inline SVG sequence diagrams.
+Index rows added: CONTEXT_MAP §Doc inventory ×4 + harness/README §plans/ ×4 (Hard Rule 6).
+**Not done (carried):** `harness/diagrams/task-F-24.html` (owner rule 2026-07-17, per-task
+plan page) — the three render agents hit the account session limit; noted in STATE.md.
+**Verdict:** AC met for the 4-doc set — marked ✅ in TASKS.md. Task-page rule outstanding.
+
 ### F-15 amendment — cart-store §04 (nhân · canh · combos + how Zustand works) · 2026-07-19
 **AC:** owner asked to "add visual and explain what happen when client add select nhân/canh, add combos product, how zustand work" → a dedicated section on `how-it-works.html` with visuals, faithful to PLAN.md (page owns nothing), no structural drift.
 **Receipt:**
