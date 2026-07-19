@@ -370,9 +370,15 @@ all **snapshots frozen at order time**:
   either way.)
 - **Snapshots, not lookups** — the ₫0 topping is frozen into `toppings_snapshot` at
   order time; if its price or availability changes tomorrow, this order is unaffected
-  (§2: *never assume topping price is 0 in code* — snapshot the real value). There are
-  only 2 nhân toppings in the seed; the canh choice is a separate **product** (Canh có
-  rau / không rau), not a topping (`MENU_CATALOG.md §2`).
+  (§2: *never assume topping price is 0 in code* — snapshot the real value).
+- **Two ₫0 add-ons, two different tables — the trap.** This menu lets the customer pick
+  *nhân* (thịt / mộc nhĩ) **and** whether the canh comes with *rau mùi tàu* — both free.
+  But only nhân is a **topping** (rides `toppings` → `toppings_snapshot`, seed has just 2).
+  *Rau mùi tàu* is **not** a topping: the canh choice is modelled as two separate
+  **products** — *Canh có rau* (`ccc-08`, "canh kèm rau mùi tàu") and *Canh không rau*
+  (`ccc-09`) — so row E above is a `product_id` sub-item, never a `toppings_snapshot`
+  entry (`MENU_CATALOG.md §2`). Reaching for a "rau mùi tàu" topping is the mistake the
+  seed deliberately designs out.
 
 **`total_amount` recompute** (`recalculateTotalAmount`, run in-tx after the inserts —
 header contributes nothing):
