@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin ingredients — page plan · ecom-core</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBEAE7; --violet: #6B4CC4; --violet-soft: #EDE8FA;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F0857A; --red-soft: #3A1C18; --violet: #A992F0; --violet-soft: #241C3D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F0857A; --red-soft: #3A1C18; --violet: #A992F0; --violet-soft: #241C3D;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBEAE7; --violet: #6B4CC4; --violet-soft: #EDE8FA;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+         font-family: var(--body); line-height: 1.6; font-size: 16px; overflow-x: hidden; }
+  .page { max-width: 1060px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1, h2, h3 { font-family: var(--sans); line-height: 1.2; text-wrap: balance; }
+  h1 { font-size: 2rem; margin: 8px 0 12px; }
+  h2 { font-size: 1.3rem; margin: 0; }
+  h3 { font-size: 1rem; margin: 24px 0 8px; }
+  a { color: var(--accent); }
+  .back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+             text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 68ch; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--accent-soft);
+         border-radius: 4px; padding: 1px 5px; }
+  p { max-width: 74ch; }
+
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+          padding: 8px 12px; font-size: 0.82rem; }
+  .fact .k { color: var(--muted); font-family: var(--mono); font-size: 0.72rem;
+             text-transform: uppercase; letter-spacing: 0.08em; display: block; }
+  .fact .v { font-weight: 600; }
+
+  nav.topnav { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 8px; }
+  nav.topnav a { font-family: var(--mono); font-size: 0.75rem; text-decoration: none;
+                 color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+                 padding: 5px 12px; background: var(--surface); }
+  nav.topnav a:hover { border-color: var(--accent); color: var(--accent); }
+
+  section { margin-top: 46px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px;
+              border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px;
+                background: var(--surface); margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; min-width: 580px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line);
+           vertical-align: top; }
+  th { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+       letter-spacing: 0.07em; color: var(--muted); }
+  tr:last-child td { border-bottom: none; }
+  td.num { font-family: var(--mono); text-align: right; white-space: nowrap; }
+
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.5;
+                background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+                padding: 16px; overflow-x: auto; }
+  pre.code { font-family: var(--mono); font-size: 0.78rem; line-height: 1.5;
+             background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+             padding: 14px 16px; overflow-x: auto; }
+
+  .golden { background: var(--accent-soft); border-left: 4px solid var(--accent);
+            border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+  .flag { background: var(--amber-soft); border-left: 4px solid var(--amber);
+          border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+  .danger { background: var(--red-soft); border-left: 4px solid var(--red);
+            border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; }
+
+  .chip { display: inline-block; font-family: var(--mono); font-size: 0.68rem;
+          padding: 2px 8px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
+  .chip.ok { background: var(--done-soft); color: var(--done); }
+  .chip.plan { background: var(--accent-soft); color: var(--accent); }
+  .chip.amber { background: var(--amber-soft); color: var(--amber); }
+  .chip.red { background: var(--red-soft); color: var(--red); }
+  .chip.violet { background: var(--violet-soft); color: var(--violet); }
+
+  .strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .snode { flex: 1 1 160px; background: var(--surface); border: 1px solid var(--line);
+           border-radius: 10px; padding: 12px; font-size: 0.8rem; }
+  .snode b { display: block; font-family: var(--mono); font-size: 0.72rem;
+             color: var(--accent); margin-bottom: 4px; }
+
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+           gap: 10px; margin: 16px 0; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+           padding: 12px 14px; font-size: 0.83rem; }
+  .bcard .n { font-family: var(--mono); font-size: 0.7rem; color: var(--accent);
+              font-weight: 700; display: block; margin-bottom: 4px; }
+
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+  .tbl { flex: 1 1 260px; background: var(--surface); border: 1px solid var(--line);
+         border-radius: 10px; overflow: hidden; }
+  .tbl h4 { margin: 0; padding: 8px 12px; background: var(--accent-soft);
+            font-family: var(--mono); font-size: 0.78rem; color: var(--accent); }
+  .tbl ul { margin: 0; padding: 10px 12px 12px 26px; font-size: 0.79rem;
+            font-family: var(--mono); }
+  .tbl li { margin-bottom: 2px; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+           padding: 8px 11px; font-size: 0.78rem; font-family: var(--mono); }
+  .farrow { color: var(--muted); font-family: var(--mono); }
+
+  footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
+           font-size: 0.82rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+    <div class="eyebrow" style="margin-top:14px">ecom-core · restaurant platform · page plan · 2026-07-19</div>
+    <h1>Kho nguyên liệu — <code>/admin/ingredients</code></h1>
+    <p class="lede">The admin surface's inventory master: a searchable ingredient table with
+      CRUD plus a stock-movement modal. It is the <strong>only</strong> page allowed to move
+      stock, and <code>stock_movements</code> is the ledger of record.</p>
+
+    <div class="facts">
+      <div class="fact"><span class="k">Task</span><span class="v">F-21</span></div>
+      <div class="fact"><span class="k">Phase</span><span class="v">AD (admin suite)</span></div>
+      <div class="fact"><span class="k">Auth</span><span class="v">manager+ · DELETE admin-only</span></div>
+      <div class="fact"><span class="k">Endpoints</span><span class="v">8</span></div>
+      <div class="fact"><span class="k">Behaviors</span><span class="v">20</span></div>
+      <div class="fact"><span class="k">Server cache</span><span class="v">none — never cached</span></div>
+      <div class="fact"><span class="k">Palette</span><span class="v">neutral F-7 tokens</span></div>
+    </div>
+  </header>
+
+  <nav class="topnav">
+    <a href="#s1">01 Anatomy</a>
+    <a href="#s2">02 Component tree</a>
+    <a href="#s3">03 State</a>
+    <a href="#s4">04 BE contract</a>
+    <a href="#s5">05 Dataflow</a>
+    <a href="#s6">06 Behaviors</a>
+    <a href="#s7">07 Defects</a>
+    <a href="#s8">08 Tasks</a>
+    <a href="#s9">09 Decisions</a>
+  </nav>
+
+  <!-- 01 ------------------------------------------------------------- -->
+  <section id="s1">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy</h2></div>
+    <p>A desktop admin table page — not a phone frame. Everything serves one loop:
+      <em>see stock → correct stock</em>.</p>
+
+    <pre class="diagram">┌────────────────────────────────────────────────────────────────────────────┐
+│ admin shell · top tab-nav                            (manager+ only)   ①    │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Kho nguyên liệu        🔍[Tìm nguyên liệu…]         [+ Thêm nguyên liệu] ②  │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Nguyên liệu   Đơn vị  Tồn kho  Tối thiểu  Hạn dùng   Giá/ĐV  Trạng thái  ③  │
+│ ────────────────────────────────────────────────────────────────────────── │
+│ Bột gạo       kg      25.500   10.000    2026-10-10  18.000  [in_stock]    │
+│ Thịt heo xay  kg       8.000   10.000    2026-07-21 145.000  [expiring] ④  │
+│ Mộc nhĩ       kg       2.300    2.000    2026-11-16  95.000  [in_stock]    │
+│ Nước mắm      lít      4.000    5.000    2027-06-01  60.000  [low_stock]   │
+│ Hành lá       kg       0.000    1.000    2026-07-22  25.000  [out_of_st.]  │
+│                                        row actions → [Nhập/Xuất] [✎] [🗑] ⑤ │
+└────────────────────────────────────────────────────────────────────────────┘
+
+Overlays:
+┌─IngredientFormModal──────────────┐  ┌─StockMoveModal─────────────────────┐
+│ Tên · Đơn vị · Ngày nhập ·       │  │ Điều chỉnh kho — Bột gạo           │
+│ Số ngày lưu · Tồn tối thiểu ·    │  │ Tồn hiện tại: 25.500 kg        ⑦   │
+│ Giá/ĐV                       ⑥   │  │ Loại: [Nhập (+) ▾]                 │
+│ (add mode also: Tồn ban đầu)     │  │ Số lượng (kg): [ 2.500 ]           │
+│ edit mode has NO stock field     │  │ Ghi chú: [ Hỏng do ẩm ]            │
+│                   [Huỷ] [Lưu]    │  │              [Huỷ] [✓ Xác nhận]    │
+└──────────────────────────────────┘  └────────────────────────────────────┘</pre>
+
+    <div class="table-wrap"><table>
+      <tr><th>#</th><th>Zone</th><th>Note</th></tr>
+      <tr><td>①</td><td>Admin shell</td><td><code>manager</code> + <code>admin</code> only. chef/cashier/staff never reach the route.</td></tr>
+      <tr><td>②</td><td>Header + search + add</td><td>Search filters <strong>client-side</strong> by name — no URL param, no server round-trip.</td></tr>
+      <tr><td>③</td><td>Table head</td><td>Sorted <code>name ASC</code>. <code>expiry_date</code> and <code>status</code> are derived server-side, no columns.</td></tr>
+      <tr><td>④</td><td>Status badge</td><td>Rendered from the BE <code>status</code> value. The FE never re-derives it (FE_STATE §9 rule 11).</td></tr>
+      <tr><td>⑤</td><td>Row actions</td><td>🗑 renders <strong>only for <code>admin</code></strong> — managers never see a button that would 403.</td></tr>
+      <tr><td>⑥</td><td>Form modal</td><td>Metadata only. Edit mode has no stock field: stock has exactly one door.</td></tr>
+      <tr><td>⑦</td><td>Stock modal</td><td>Shows current stock as context so the operator can sanity-check before submitting.</td></tr>
+    </table></div>
+  </section>
+
+  <!-- 02 ------------------------------------------------------------- -->
+  <section id="s2">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Component tree</h2></div>
+    <pre class="diagram">fe/src/app/(dashboard)/admin/ingredients/
+├── page.tsx                        RSC shell: prefetch + HydrationBoundary   <span style="color:var(--accent)">[AD-INV-6]</span>
+└── _components/
+    ├── IngredientsClient.tsx       'use client' — search + which modal is open <span style="color:var(--accent)">[AD-INV-6]</span>
+    ├── StoragePageHeader.tsx       title · search · [+ Thêm nguyên liệu]       <span style="color:var(--accent)">[AD-INV-6]</span>
+    ├── IngredientTable.tsx         rows · status badges · row actions          <span style="color:var(--accent)">[AD-INV-6]</span>
+    ├── IngredientStatusBadge.tsx   status enum → token colors (pure)           <span style="color:var(--accent)">[AD-INV-6]</span>
+    ├── IngredientFormModal.tsx     RHF+Zod · add/edit (dynamic import)         <span style="color:var(--violet)">[AD-INV-7]</span>
+    ├── StockMoveModal.tsx          RHF+Zod · Nhập/Xuất/Điều chỉnh              <span style="color:var(--violet)">[AD-INV-7]</span>
+    └── MovementHistoryDrawer.tsx   💡 optional slice                           <span style="color:var(--muted)">[AD-INV-5]</span>
+
+fe/src/lib/api/
+└── admin-ingredients.api.ts        6 typed calls                              <span style="color:var(--accent)">[AD-INV-6]</span>
+
+fe/src/lib/queries/
+└── admin-ingredients.keys.ts       query-key factory                          <span style="color:var(--accent)">[AD-INV-6]</span></pre>
+
+    <div class="golden">
+      <strong>One deliberate difference from the reference:</strong> <code>StockMoveModal</code>
+      is its own file, not inlined in <code>page.tsx</code>. It carries a Zod schema and a
+      cross-field over-draw rule — that logic needs a testable home (defect D-8).
+    </div>
+  </section>
+
+  <!-- 03 ------------------------------------------------------------- -->
+  <section id="s3">
+    <div class="sec-head"><span class="sec-num">03</span><h2>State ownership</h2></div>
+    <div class="table-wrap"><table>
+      <tr><th>Data</th><th>Kind</th><th>Owner</th></tr>
+      <tr><td>Ingredient list</td><td>server cache</td><td>TanStack Query <code>['admin','ingredients']</code>, <code>staleTime: 60s</code></td></tr>
+      <tr><td>Movement tail</td><td>server cache</td><td><code>['admin','ingredients',id,'movements']</code></td></tr>
+      <tr><td>Search text</td><td>ephemeral UI</td><td><code>useState</code> in <code>IngredientsClient</code></td></tr>
+      <tr><td>Open modal + target row</td><td>ephemeral UI</td><td><code>useState</code> in <code>IngredientsClient</code></td></tr>
+      <tr><td>Form fields</td><td>form state</td><td>RHF inside each modal</td></tr>
+      <tr><td>Caller's role (gates 🗑)</td><td>session</td><td>auth context (FE_STATE §1)</td></tr>
+    </table></div>
+
+    <p><strong>Why search is local, not a URL param.</strong> The list is one unpaged fetch of a
+      small table, and the server never sees the filter. Putting it in the URL would create a
+      ghost parameter that looks like server state but isn't — the same call the menu plan made.</p>
+  </section>
+
+  <!-- 04 ------------------------------------------------------------- -->
+  <section id="s4">
+    <div class="sec-head"><span class="sec-num">04</span><h2>BE contract</h2></div>
+
+    <h3>The eight endpoints</h3>
+    <p>All under <code>/api/v1/admin</code>, all behind <code>authMW</code> +
+      <code>AtLeast("manager")</code>. One exception, and it matters:</p>
+
+    <div class="table-wrap"><table>
+      <tr><th>#</th><th>Route</th><th>Auth</th><th>Task</th><th>Behavior</th></tr>
+      <tr><td>1</td><td><code>GET /admin/ingredients</code></td><td><span class="chip ok">manager+</span></td><td>AD-INV-2</td><td>All non-deleted, <code>name ASC</code>; each row carries derived <code>expiry_date</code> + <code>status</code></td></tr>
+      <tr><td>2</td><td><code>GET …/low-stock</code></td><td><span class="chip ok">manager+</span></td><td>AD-INV-2</td><td><code>current_stock &lt;= min_stock * 1.2</code>, most-critical first. <strong>Consumed by /admin/summary, not this page</strong></td></tr>
+      <tr><td>3</td><td><code>GET …/:id</code></td><td><span class="chip ok">manager+</span></td><td>AD-INV-2</td><td>Single row or 404</td></tr>
+      <tr><td>4</td><td><code>POST /admin/ingredients</code></td><td><span class="chip ok">manager+</span></td><td>AD-INV-3</td><td>Creates the row <strong>and</strong> its opening <code>'in'</code> movement — one tx</td></tr>
+      <tr><td>5</td><td><code>PATCH …/:id</code></td><td><span class="chip ok">manager+</span></td><td>AD-INV-3</td><td>Metadata only — <strong>cannot touch <code>current_stock</code></strong></td></tr>
+      <tr><td>6</td><td><code>DELETE …/:id</code></td><td><span class="chip red">admin only</span></td><td>AD-INV-3</td><td>Soft delete; 422 when a recipe references it</td></tr>
+      <tr><td>7</td><td><code>POST /admin/stock-movements</code></td><td><span class="chip ok">manager+</span></td><td>AD-INV-4</td><td>Appends a movement <strong>and</strong> updates stock in one locked tx</td></tr>
+      <tr><td>8</td><td><code>GET …/:id/movements</code></td><td><span class="chip ok">manager+</span></td><td>AD-INV-5</td><td>Ledger tail, newest first, <code>LIMIT 50</code></td></tr>
+    </table></div>
+
+    <h3>Schema depended on</h3>
+    <p>Full column specs live in <code>DB_SCHEMA.md §4.6</code> — not repeated here.</p>
+    <div class="schema">
+      <div class="tbl"><h4>ingredients</h4><ul>
+        <li>id CHAR(36) PK</li><li>name VARCHAR(150)</li><li>unit VARCHAR(30)</li>
+        <li>import_date DATE</li><li>shelf_days INT</li>
+        <li>current_stock DEC(10,3) ⚠</li><li>min_stock DEC(10,3)</li>
+        <li>cost_per_unit DEC(10,0)</li><li>+ timestamps, deleted_at</li>
+      </ul></div>
+      <div class="tbl"><h4>stock_movements <span style="font-size:0.7rem">(ledger)</span></h4><ul>
+        <li>id CHAR(36) PK</li><li>ingredient_id FK</li>
+        <li>type ENUM(in,out,adjustment)</li><li>quantity DEC(10,3) &gt; 0</li>
+        <li>note TEXT NULL</li><li>created_by FK→staff</li><li>created_at</li>
+        <li style="color:var(--red)">no UPDATE · no DELETE</li>
+      </ul></div>
+      <div class="tbl"><h4>product_ingredients</h4><ul>
+        <li>product_id FK</li><li>ingredient_id FK</li>
+        <li>qty_used DEC(10,3)</li>
+        <li style="color:var(--muted)">read-only here —</li>
+        <li style="color:var(--muted)">only the delete guard</li>
+        <li style="color:var(--muted)">consults it</li>
+      </ul></div>
+    </div>
+
+    <div class="danger">
+      ⚠ <strong><code>current_stock</code> is derived via movements and never written
+      directly.</strong> Only endpoints 4 and 7 move it, and only inside a transaction.
+      Everything in this plan follows from that one rule.
+    </div>
+
+    <h3>Status derivation — the precedence ladder</h3>
+    <p>Computed by the BE on the way out. First match wins:</p>
+    <pre class="diagram">  current_stock == 0 ?            ──yes──▶  out_of_stock     ← Hành lá (0.000)
+        │ no
+  expiry_date &lt; today + 7d ?      ──yes──▶  expiring_soon    ← Thịt heo xay (2026-07-21)
+        │ no
+  current_stock &lt;= min_stock ?    ──yes──▶  low_stock        ← Nước mắm (4.000 ≤ 5.000)
+        │ no
+        ▼
+     in_stock                                                 ← Bột gạo, Mộc nhĩ</pre>
+    <p>Two seed rows exist to prove the ladder: <strong>Thịt heo xay</strong> is both low
+      (8 ≤ 10) and expiring — it reports <code>expiring_soon</code>.
+      <strong>Hành lá</strong> is both empty and expiring — it reports
+      <code>out_of_stock</code>. Precedence, not a set.</p>
+
+    <h3>Wire shapes</h3>
+    <p>Success is unwrapped; only errors ride the envelope. Field spellings are frozen by curl
+      receipts at AD-INV-2/3/4 (gate 8).</p>
+
+    <p><code>GET /admin/ingredients</code> → 200 — decimals are <strong>strings</strong>,
+      money is a bare VND integer:</p>
+    <pre class="code">[ { "id": "ing1…36", "name": "Bột gạo", "unit": "kg",
+    "import_date": "2026-07-12", "shelf_days": 90,
+    "expiry_date": "2026-10-10",
+    "current_stock": "25.500", "min_stock": "10.000",
+    "cost_per_unit": 18000, "status": "in_stock",
+    "created_at": "2026-07-12T08:00:00Z", "updated_at": "2026-07-19T09:14:02Z" } ]</pre>
+
+    <p><code>POST /admin/stock-movements</code> → 201 — <code>quantity</code> always positive,
+      direction lives in <code>type</code>:</p>
+    <pre class="code">→ { "ingredient_id": "ing1…36", "type": "out",
+    "quantity": "2.500", "note": "Hỏng do ẩm" }
+
+← { "id": "mv1…36", "ingredient_id": "ing1…36", "type": "out",
+    "quantity": "2.500", "note": "Hỏng do ẩm",
+    "created_by": "stf1…36", "created_at": "2026-07-19T09:14:02Z",
+    "resulting_stock": "23.000" }</pre>
+    <p><code>resulting_stock</code> is the value the transaction actually committed — it lets
+      the FE confirm the new figure without a refetch race.</p>
+
+    <h3>Errors</h3>
+    <div class="table-wrap"><table>
+      <tr><th>HTTP</th><th>code</th><th>When</th></tr>
+      <tr><td>400</td><td><code>VALIDATION_FAILED</code></td><td>bad bind/date, <code>quantity &lt;= 0</code>, bad <code>type</code>, or <code>current_stock</code> sent in a PATCH</td></tr>
+      <tr><td>400</td><td><code>VALIDATION_FAILED</code></td><td><code>out</code> would drive stock below zero — <code>details</code> carries <code>current_stock</code> + <code>requested</code></td></tr>
+      <tr><td>404</td><td><code>INGREDIENT_NOT_FOUND</code></td><td>unknown or soft-deleted id</td></tr>
+      <tr><td>409</td><td><code>INGREDIENT_NAME_TAKEN</code></td><td>duplicate name <span class="chip amber">needs the UNIQUE amendment</span></td></tr>
+      <tr><td>422</td><td><code>INGREDIENT_IN_USE</code></td><td>DELETE while a recipe references it</td></tr>
+      <tr><td>403</td><td><code>FORBIDDEN</code></td><td>manager calling DELETE; non-manager calling anything</td></tr>
+      <tr><td>401</td><td><code>UNAUTHENTICATED</code></td><td>missing/invalid JWT</td></tr>
+    </table></div>
+  </section>
+
+  <!-- 05 ------------------------------------------------------------- -->
+  <section id="s5">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Dataflow</h2></div>
+
+    <h3>Read path</h3>
+    <div class="flow">
+      <span class="fnode">page.tsx (RSC)</span><span class="farrow">→</span>
+      <span class="fnode">prefetch ['admin','ingredients']</span><span class="farrow">→</span>
+      <span class="fnode">HydrationBoundary</span><span class="farrow">→</span>
+      <span class="fnode">IngredientsClient</span><span class="farrow">→</span>
+      <span class="fnode">client filter (search)</span><span class="farrow">→</span>
+      <span class="fnode">IngredientTable</span>
+    </div>
+    <p>First paint is data, not a spinner — the list is prefetched server-side and hydrated.</p>
+
+    <h3>Write path — a stock movement</h3>
+    <div class="flow">
+      <span class="fnode">StockMoveModal</span><span class="farrow">→</span>
+      <span class="fnode">POST /admin/stock-movements</span><span class="farrow">→</span>
+      <span class="fnode">Gin handler</span><span class="farrow">→</span>
+      <span class="fnode">service (validate type + over-draw)</span><span class="farrow">→</span>
+      <span class="fnode" style="border-color:var(--accent)">tx: lock row → INSERT ledger → UPDATE stock → COMMIT</span><span class="farrow">→</span>
+      <span class="fnode">201 + resulting_stock</span><span class="farrow">→</span>
+      <span class="fnode">invalidate</span>
+    </div>
+
+    <h3>Cache map</h3>
+    <div class="golden">
+      <strong>Nothing here is cached server-side.</strong> <code>OVERALL_PLAN.md</code> lists
+      inventory under "never cached", and <code>ARCHITECTURE.md §4</code> scopes Redis to
+      catalog + auth rate-limit only. No <code>platform/cache</code> import belongs in the
+      ingredient service. FE invalidation is the entire cache story:
+    </div>
+    <div class="table-wrap"><table>
+      <tr><th>Write</th><th>Invalidates</th></tr>
+      <tr><td>POST / PATCH / DELETE <code>/admin/ingredients</code></td><td><code>['admin','ingredients']</code></td></tr>
+      <tr><td>POST <code>/admin/stock-movements</code></td><td><code>['admin','ingredients']</code> + <code>['admin','ingredients',id,'movements']</code></td></tr>
+    </table></div>
+
+    <h3>Loading — five named branches</h3>
+    <div class="table-wrap"><table>
+      <tr><th>Branch</th><th>Render</th></tr>
+      <tr><td><code>loading</code></td><td>5 pulsing skeleton rows at the real row height</td></tr>
+      <tr><td><code>error</code></td><td>error card + Thử lại, <code>ApiError.code</code> in a details line</td></tr>
+      <tr><td><code>empty</code></td><td>"Chưa có nguyên liệu nào" + primary [+ Thêm] CTA</td></tr>
+      <tr><td><code>no-match</code></td><td>"Không tìm thấy nguyên liệu nào" + Xoá tìm kiếm</td></tr>
+      <tr><td><code>ready</code></td><td>the table</td></tr>
+    </table></div>
+    <p>Mutations are <strong>pessimistic</strong> — no optimistic stock UI. Stock is
+      money-adjacent and the server is the arbiter; a rejected over-draw must never flash as
+      success.</p>
+  </section>
+
+  <!-- 06 ------------------------------------------------------------- -->
+  <section id="s6">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors — the acceptance criteria</h2></div>
+    <div class="bgrid">
+      <div class="bcard"><span class="n">01</span>Page loads with the list already rendered from RSC hydration.</div>
+      <div class="bcard"><span class="n">02</span>Rows sort <code>name ASC</code>; each shows name, unit, stock, min, expiry, status badge.</div>
+      <div class="bcard"><span class="n">03</span>Search filters client-side by name, diacritic-insensitive.</div>
+      <div class="bcard"><span class="n">04</span>A search matching nothing shows <code>no-match</code> — distinct from <code>empty</code>.</div>
+      <div class="bcard"><span class="n">05</span>[+ Thêm nguyên liệu] opens the form modal in add mode.</div>
+      <div class="bcard"><span class="n">06</span>Add posts <code>POST</code>; on 201 modal closes, list invalidates, toast "Đã thêm nguyên liệu".</div>
+      <div class="bcard"><span class="n">07</span>Duplicate name → 409 inline "Nguyên liệu này đã tồn tại"; modal stays open, input preserved.</div>
+      <div class="bcard"><span class="n">08</span>Row ✎ opens the same modal in edit mode, pre-filled; submits <code>PATCH</code>.</div>
+      <div class="bcard"><span class="n">09</span>The edit form exposes <strong>no stock field</strong>.</div>
+      <div class="bcard"><span class="n">10</span>Row 🗑 renders <strong>only for <code>admin</code></strong>; managers never see it.</div>
+      <div class="bcard"><span class="n">11</span>Delete confirms, then <code>DELETE</code>; on 204 list invalidates + toast.</div>
+      <div class="bcard"><span class="n">12</span>Deleting an in-use ingredient → 422 "…đang được sử dụng trong công thức"; row stays.</div>
+      <div class="bcard"><span class="n">13</span>Row [Nhập/Xuất] opens <code>StockMoveModal</code> showing current stock as context.</div>
+      <div class="bcard"><span class="n">14</span>Modal takes type, a positive quantity in the ingredient's unit, and an optional note.</div>
+      <div class="bcard"><span class="n">15</span>Quantity ≤ 0 is blocked client-side by Zod before any request.</div>
+      <div class="bcard"><span class="n">16</span>An <code>out</code> &gt; stock is server-rejected → "Không đủ tồn kho (còn 23.000 kg)"; <strong>stock unchanged</strong>.</div>
+      <div class="bcard"><span class="n">17</span>On 201 modal closes, list invalidates, row shows <code>resulting_stock</code>; toast names the delta.</div>
+      <div class="bcard"><span class="n">18</span>A movement never edits or deletes an earlier one — corrections are new <code>adjustment</code> rows.</div>
+      <div class="bcard"><span class="n">19</span>Status badges recolor after any movement, from the refetched server value.</div>
+      <div class="bcard"><span class="n">20</span>All six actions are keyboard reachable; modals trap focus and close on Esc.</div>
+    </div>
+  </section>
+
+  <!-- 07 ------------------------------------------------------------- -->
+  <section id="s7">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Reference defects designed out</h2></div>
+
+    <div class="danger">
+      <strong>The big one — D-1.</strong> The reference inserted the movement row and then
+      issued a <em>separate</em> UPDATE on <code>current_stock</code>, with no transaction. It
+      also wrote <code>initial_stock</code> straight into <code>current_stock</code> at create
+      time with no movement row at all. The first lets ledger and count drift under crash or
+      concurrency; the second guarantees they disagree from day one.
+    </div>
+
+    <div class="table-wrap"><table>
+      <tr><th>#</th><th>Reference finding</th><th>Countermeasure</th></tr>
+      <tr><td>D-1</td><td>Non-transactional stock update (their flag #2); create wrote stock with no movement (their flag #1)</td><td>Both paths run one tx with the row locked; create inserts the opening <code>in</code> movement. <code>Σ movements == current_stock</code> becomes a testable invariant</td></tr>
+      <tr><td>D-2</td><td><code>current_stock</code> reachable as a plain update field</td><td>Not an accepted PATCH key — rejected with <code>VALIDATION_FAILED</code>. Stock has exactly one door</td></tr>
+      <tr><td>D-3</td><td>🗑 shown to managers; BE 403s them</td><td>Button gated on <code>role === 'admin'</code> (FE_STATE §9 rule 13)</td></tr>
+      <tr><td>D-4</td><td>Delete had no in-use guard; the FK would surface as MySQL 1451 → 500</td><td>Service checks <code>product_ingredients</code> first → clean 422. <strong>Load-bearing</strong>: the FK is CASCADE, so without the guard a delete silently destroys recipe rows</td></tr>
+      <tr><td>D-5</td><td><code>created_by</code> scanned but dropped from the JSON (their flag #3)</td><td>Serialized, plus <code>created_by_name</code> joined for display</td></tr>
+      <tr><td>D-6</td><td>loading / empty / search-miss rendered through one conflated state</td><td>Five named branches, each with its own copy and CTA</td></tr>
+      <tr><td>D-7</td><td>409 toast for an error the BE could never emit (no UNIQUE on <code>name</code>)</td><td>Either the UNIQUE amendment lands and 409 becomes real, or the toast is cut. No UI for imaginary errors</td></tr>
+      <tr><td>D-8</td><td><code>StockMoveModal</code> inlined in <code>page.tsx</code></td><td>Own file with its own Zod schema — the over-draw rule needs a testable home</td></tr>
+      <tr><td>D-9</td><td><code>cost_per_unit</code> stored but silently withheld (their flag #4)</td><td>Deliberately exposed at manager+ (ruling 7) — never accidentally invisible</td></tr>
+    </table></div>
+  </section>
+
+  <!-- 08 ------------------------------------------------------------- -->
+  <section id="s8">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Task mapping</h2></div>
+    <p>AD-phase rows are <strong>not yet allocated in <code>TASKS.md</code></strong> — Phase F is
+      still open. These register when AD opens.</p>
+
+    <div class="strip">
+      <div class="snode"><b>AD-INV-1</b>migration</div>
+      <div class="snode"><b>AD-INV-2</b>BE reads</div>
+      <div class="snode"><b>AD-INV-3</b>BE writes</div>
+      <div class="snode"><b>AD-INV-4</b>movements + tx</div>
+      <div class="snode"><b>AD-INV-5</b>ledger tail 💡</div>
+      <div class="snode"><b>AD-INV-6</b>FE page</div>
+      <div class="snode"><b>AD-INV-7</b>FE modals</div>
+    </div>
+
+    <div class="table-wrap"><table>
+      <tr><th>Row</th><th>Slice</th><th>Deps</th><th>Receipt</th></tr>
+      <tr><td>AD-INV-1</td><td>Migration: the 3 inventory tables (+ UNIQUE amendment if ratified)</td><td>F-3</td><td><code>migrate up/down</code> clean</td></tr>
+      <tr><td>AD-INV-2</td><td>BE reads: endpoints 1–3 + status/expiry derivation</td><td>AD-INV-1</td><td>curl: list, low-stock, detail, 404</td></tr>
+      <tr><td>AD-INV-3</td><td>BE writes: endpoints 4–6 + delete guard + 409</td><td>AD-INV-2</td><td>curl: create, patch, delete, 409, 422, 403-as-manager</td></tr>
+      <tr><td>AD-INV-4</td><td>BE movements: endpoint 7 in a locked tx</td><td>AD-INV-2</td><td>curl: in/out/adjustment; over-draw 400; <strong>concurrency</strong></td></tr>
+      <tr><td>AD-INV-5</td><td>Endpoint 8 + history drawer <span class="chip violet">optional</span></td><td>AD-INV-4</td><td>curl: tail w/ <code>created_by_name</code></td></tr>
+      <tr><td>AD-INV-6</td><td>FE page: table, search, badges, 5 branches</td><td>AD-INV-2</td><td>screenshots: each branch</td></tr>
+      <tr><td>AD-INV-7</td><td>FE modals: form + stock-move, all error paths</td><td>3, 4, 6</td><td>screenshots: add, edit, over-draw, 409, 🗑 gating</td></tr>
+    </table></div>
+  </section>
+
+  <!-- 09 ------------------------------------------------------------- -->
+  <section id="s9">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Decisions, flags &amp; verify plan</h2></div>
+
+    <h3>✅ Decided</h3>
+    <div class="table-wrap"><table>
+      <tr><th>#</th><th>Decision</th><th>Grounded in</th></tr>
+      <tr><td>D-1</td><td>Wire uses DB names in snake_case; success unwrapped. The reference's <code>quantity</code>/<code>warningThreshold</code> renames are dropped</td><td>DB_SCHEMA §6 ruling 6 · FE_STATE §9 rule 10</td></tr>
+      <tr><td>D-2</td><td><code>current_stock</code> moves only through movements, only inside a tx</td><td>DB_SCHEMA §4.6 · BE_STATE tx policy</td></tr>
+      <tr><td>D-3</td><td><code>cost_per_unit</code> is exposed here — every endpoint is manager+ gated, exactly the condition ruling 7 set</td><td>DB_SCHEMA §6 ruling 7</td></tr>
+      <tr><td>D-4</td><td>Decimal quantities cross the wire as strings, not JS numbers</td><td><code>DECIMAL(10,3)</code> — float drift on counts</td></tr>
+      <tr><td>D-5</td><td>Pessimistic mutations only — no optimistic stock UI</td><td>FE_STATE loading tiers</td></tr>
+      <tr><td>D-6</td><td>The 🔮 STOR forecast is deferred to <code>/admin/storage</code>, which owns it</td><td>reference admin_storage.md</td></tr>
+      <tr><td>D-7</td><td>💡 The movement-history drawer is an optional slice — recommended, but cuttable</td><td>this plan</td></tr>
+    </table></div>
+
+    <h3>⚠️ Flags for the boss</h3>
+    <div class="flag">
+      <strong>F-1 — schema amendment requested.</strong> <code>UNIQUE(name)</code> on
+      <code>ingredients</code>, with the soft-delete rename rule from <code>DB_SCHEMA.md §4.4</code>.
+      <code>DB_SCHEMA.md</code> owns tables, so this plan <em>requests</em> rather than declares
+      it. Until ratified, behavior 07 and the 409 path do not exist and the duplicate-name toast
+      must be cut.
+    </div>
+    <div class="flag">
+      <strong>F-2 — over-draw default is flippable.</strong> Ruling 8 rejects a below-zero
+      <code>out</code> and says "lock in when AD opens". This plan builds the reject. If real
+      kitchen practice is "count later, log now", say so before AD-INV-4 and it becomes a clamp
+      + warning instead.
+    </div>
+    <div class="flag">
+      <strong>F-3 — admin palette unresolved.</strong> The live admin shell used orange/dark
+      while our tokens are neutral. This set's mockup uses the neutral F-7 tokens per
+      PAGE_PLAN_GUIDE §7. One answer should cover every admin plan.
+    </div>
+    <div class="flag">
+      <strong>❓ C-1 — batch vs ingredient dating.</strong> One <code>import_date</code> per
+      ingredient row means re-importing silently moves <code>expiry_date</code> for stock that
+      is physically older. Real batch tracking needs per-movement dating. Out of scope here;
+      worth a ruling before <code>/admin/storage</code> designs expiry reporting.
+    </div>
+
+    <h3>Verify plan</h3>
+    <div class="table-wrap"><table>
+      <tr><th>Task</th><th>Receipt</th></tr>
+      <tr><td>AD-INV-1</td><td><code>goose up/down</code> transcript; table + index listing</td></tr>
+      <tr><td>AD-INV-2</td><td>curl: list (statuses visible), low-stock ordering, detail, 404 envelope</td></tr>
+      <tr><td>AD-INV-3</td><td>curl: 201 create, 200 patch, 204 delete, 409 dup, 422 in-use, 403 manager-DELETE</td></tr>
+      <tr><td>AD-INV-4</td><td>curl: round-trip w/ <code>resulting_stock</code>; over-draw 400; <strong>two simultaneous <code>out</code> calls leave <code>Σ movements == current_stock</code></strong></td></tr>
+      <tr><td>AD-INV-5</td><td>curl: movement tail incl. <code>created_by_name</code></td></tr>
+      <tr><td>AD-INV-6</td><td>screenshots: ready, loading, error, empty, no-match</td></tr>
+      <tr><td>AD-INV-7</td><td>screenshots: add, edit, over-draw rejection, 409 inline, 🗑 absent as manager / present as admin</td></tr>
+    </table></div>
+    <p>The AD-INV-4 concurrency receipt is the one that proves D-1 — it is the reason the
+      transaction exists, so it is not optional.</p>
+  </section>
+
+  <footer>
+    Written 2026-07-19 for task F-21, from
+    <code>reference/docs/system/08_pages/admin/admin_ingredients/</code>.
+    This page is a <strong>snapshot</strong> of
+    <code>admin_ingredients_PLAN.md</code>, which wins on any conflict.
+    Rules live in the docs named in that file's §2 alignment table.
+  </footer>
+
+</div>
+</body>
+</html>
