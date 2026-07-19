@@ -304,3 +304,91 @@ Every "§3 Flags / Known Mismatches" entry in the object specs, ruled on once:
 | 12 | Combo enrichment degrades silently (missing product → raw UUID shown) | FE concern, ruled in `plans/customer_menu/PLAN.md` (defects-designed-out table) |
 | 13 | STOR forecast (`avg_daily_usage` + computed run-out) planned, not built | **Not v1** — candidate column when AD opens; forecast fields stay computed, no columns |
 | 14 | Reference seeds staff credentials (`admin/admin123`…) | Dev seed only (BE_PLAYBOOK seed rule); never in prod images |
+
+---
+
+## 7. Worked example — one QR order, end to end
+
+The row-type matrix (§4.3) and the snapshot rules are the two things people get
+wrong. Here is one real order flowing through the tables, so the abstract rows are
+concrete. Prices mirror the reference's own combo example (`cb1` in
+`OBJECT_MODEL_COMBO.md`) so the numbers are provably consistent.
+
+**Scene.** Chị Lan scans the QR on **Bàn 05**, adds to her cart:
+
+- **2× Bánh cuốn thịt** (`p1`, ₫35,000) with fillings *Mộc nhĩ* + *Rau sống* (both ₫0), note "ít mắm"
+- **1× Combo bánh cuốn + chả** (`cb1`, list price ₫60,000) = 1× Bánh cuốn thịt (`p1`, ₫35,000) + 1× Chả lụa (`p2`, ₫25,000)
+
+**What the client POSTs** (`POST /orders`) — **ids + quantities only, no names, no prices**
+(§4.3: the client can never set its own price):
+
+```jsonc
+{
+  "source": "qr",
+  "table_id": "tbl-05",
+  "customer_name": "Chị Lan",
+  "items": [
+    { "product_id": "p1", "quantity": 2, "topping_ids": ["t-mocnhi", "t-rau"], "note": "ít mắm" },
+    { "combo_id": "cb1", "quantity": 1, "combo_items": [
+        { "product_id": "p1", "quantity": 1, "topping_ids": [] },
+        { "product_id": "p2", "quantity": 1, "topping_ids": [] } ] }
+  ]
+}
+```
+
+**Row written to `orders`** — server fills everything the client didn't (and mustn't):
+
+| id | order_number | table_id | status | source | customer_name | total_amount | created_by | group_id |
+|---|---|---|---|---|---|---|---|---|
+| `o1` | `ORD-20260719-007` | `tbl-05` | `pending` | `qr` | Chị Lan | **130000** | `NULL` | `NULL` |
+
+- `order_number` — next value from the Redis counter (DB `order_sequences` re-seed fallback, §4.2); **not** client-chosen.
+- `status` = `pending` — BE-set, never from the body (§4.3).
+- `created_by` = `NULL` — guest self-order via QR JWT, not a staff row (§4.3).
+- `total_amount` — **computed by BE**, not sent; see the sum below.
+
+**Rows written to `order_items`** — the client's 2 line items expand to **4 rows**,
+one per row-type in the §4.3 matrix. `name`/`unit_price`/`toppings_snapshot` are all
+**snapshots frozen at order time**:
+
+| # | row type | product_id | combo_id | combo_ref_id | name (snapshot) | unit_price | qty | qty_served | toppings_snapshot |
+|---|---|---|---|---|---|---|---|---|---|
+| A | standalone | `p1` | `NULL` | `NULL` | Bánh cuốn thịt | `35000` | 2 | 0 | `[{id:t-mocnhi,name:"Mộc nhĩ",price:0},{id:t-rau,name:"Rau sống",price:0}]` |
+| B | combo **header** | `NULL` | `cb1` | `NULL` | Combo bánh cuốn + chả | **`0`** | 1 | 0 | `NULL` |
+| C | combo sub-item | `p1` | `NULL` | `B` | Bánh cuốn thịt | `35000` | 1 | 0 | `[]` |
+| D | combo sub-item | `p2` | `NULL` | `B` | Chả lụa | `25000` | 1 | 0 | `[]` |
+
+- **Row B (header) `unit_price = 0`** — the label row. The combo's ₫60,000 is charged
+  through its sub-items (C `35000` + D `25000` = `60000`), so counting the header too
+  would double-charge. This is the "prevents double-count" rule made concrete.
+- **Snapshots, not lookups** — the ₫0 fillings are frozen into `toppings_snapshot` at
+  order time; if a topping's price or availability changes tomorrow, this order is
+  unaffected (§2: *never assume topping price is 0 in code* — snapshot the real value).
+
+**`total_amount` recompute** (`recalculateTotalAmount`, run in-tx after the inserts —
+header contributes nothing):
+
+```
+A 35000 × 2  = 70000
+B     0 × 1  =     0   ← combo header (label row)
+C 35000 × 1  = 35000
+D 25000 × 1  = 25000
+             ───────
+total          130000  → orders.total_amount (denormalized, §4.3)
+```
+
+**One lifecycle beat.** The chef serves one of the two bánh cuốn on row A →
+`PATCH` sets `A.qty_served = 1`. There is **no `item_status` column** (§2 law): the
+service *derives* it — `0`→pending, `0<n<qty`→preparing, `n=qty`→done — so row A now
+reports **preparing**. The order then walks `pending→confirmed→…→paid` (state machine,
+`OVERALL_PLAN §3.7`), and a single `payments` row closes it (§4.5, one payment per order).
+
+> **⚠️ FLAG — combo list price vs sub-item sum.** This mechanism only balances when a
+> combo's `combos.price` **equals the sum of its expanded sub-item prices** (here
+> ₫60,000 = ₫35,000 + ₫25,000). A *discounted* combo (list price < component sum) has
+> no home for the discount under "header = 0, sub-items = real" — the reference never
+> resolved this (`OBJECT_MODEL_COMBO.md` note 4: *"never assume total = sum of combo_items"*).
+> v1 seeds only break-even combos; if discounted combos are ever introduced, the
+> row-type matrix needs an explicit ruling (candidate: header carries a negative
+> adjustment, or sub-items store an allocated price). Not a blocker today — flagged so
+> it's a decision, not a silent bug later.
