@@ -256,7 +256,7 @@ the customer dark/orange shell (§7).
 
 ### 🛠️ Admin (13)
 
-`admin_overview` · `admin_summary` · `admin_products` · `admin_categories` ·
+`admin_overview` ✅ **F-17** · `admin_summary` · `admin_products` · `admin_categories` ·
 `admin_combos` · `admin_toppings` · `admin_ingredients` · `admin_storage` ·
 `admin_staff` · `admin_marketing` · `admin_training` · `admin_task_board` ·
 `admin_todo_list` — all ⬜.

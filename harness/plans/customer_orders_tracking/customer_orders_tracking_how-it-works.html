@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer orders &amp; tracking — how it actually works (runtime walkthrough)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3372B;
+    --red-soft: #F9E7E4;
+    --violet: #6D3BC7;
+    --violet-soft: #EFE8FB;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E8887C; --red-soft: #3A1B17; --violet: #B49AF0; --violet-soft: #2A1E44;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E8887C; --red-soft: #3A1B17; --violet: #B49AF0; --violet-soft: #2A1E44;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3372B; --red-soft: #F9E7E4; --violet: #6D3BC7; --violet-soft: #EFE8FB;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 980px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 76ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 68ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  section { margin-top: 60px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code { border: none; background: transparent; padding: 0; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 76ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 76ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* ---- actor chips: one color per system, used everywhere on this page ---- */
+  .actor { display: inline-block; font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 5px; padding: 2px 8px; white-space: nowrap; }
+  .actor.client { color: var(--accent); background: var(--accent-soft); }   /* browser: components, Query cache, Zustand */
+  .actor.rsc    { color: var(--violet); background: var(--violet-soft); }   /* Next.js server (RSC) / KDS second client */
+  .actor.api    { color: var(--amber); background: var(--amber-soft); }     /* Gin handlers + services */
+  .actor.redis  { color: var(--red); background: var(--red-soft); }         /* Redis pub/sub */
+  .actor.db     { color: var(--done); background: var(--done-soft); }       /* MySQL */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; align-items: center; font-size: 0.8rem; color: var(--muted); }
+
+  /* ---- SVG diagrams (hand-drawn, theme-aware via CSS vars) ---- */
+  .svgwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 12px 10px 6px; margin: 14px 0; }
+  .svgwrap svg { display: block; min-width: 860px; width: 100%; height: auto; }
+  .cap { font-size: 0.8rem; color: var(--muted); margin: -6px 0 18px 4px; }
+  svg text { font-family: var(--mono); }
+  svg .t1 { font-size: 11px; fill: var(--ink); }
+  svg .t2 { font-size: 10.5px; fill: var(--muted); }
+  svg .tb { font-size: 12px; font-weight: 700; }
+  svg .tred { fill: var(--red); }  svg .tgreen { fill: var(--done); }
+  svg .tamber { fill: var(--amber); }  svg .taccent { fill: var(--accent); }  svg .tviolet { fill: var(--violet); }
+  svg .lifeline { stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 5; }
+  svg .call { stroke: var(--ink); stroke-width: 1.6; fill: none; }
+  svg .resp { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 6 4; fill: none; }
+  svg .err  { stroke: var(--red); stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+  svg .flowa { stroke: var(--accent); stroke-width: 2; fill: none; }
+  svg .flowo { stroke: var(--amber); stroke-width: 2; fill: none; }
+  svg .flowg { stroke: var(--done); stroke-width: 2; fill: none; }
+  svg .abox { fill: var(--surface); stroke: var(--line); stroke-width: 1.4; }
+  svg .abox.client { stroke: var(--accent); }
+  svg .abox.rsc { stroke: var(--violet); }
+  svg .abox.api { stroke: var(--amber); }
+  svg .abox.redis { stroke: var(--red); }
+  svg .abox.db { stroke: var(--done); }
+  svg .region { fill: var(--amber-soft); stroke: var(--amber); stroke-width: 1; stroke-dasharray: 5 4; opacity: 0.55; }
+  svg .txbox { fill: var(--done-soft); stroke: var(--done); stroke-width: 1.2; stroke-dasharray: 6 4; opacity: 0.5; }
+  svg .delbox { fill: var(--red-soft); stroke: var(--red); stroke-width: 1.3; }
+
+  /* ---- numbered sequence steps ---- */
+  .seq { list-style: none; margin: 14px 0; padding: 0; display: flex; flex-direction: column; }
+  .seq li { position: relative; display: flex; gap: 12px; padding: 0 0 18px 0; }
+  .seq li::before { content: ""; position: absolute; left: 12px; top: 26px; bottom: 0; width: 2px; background: var(--line); }
+  .seq li:last-child::before { display: none; }
+  .seq .n { flex: none; width: 25px; height: 25px; margin-top: 1px; border-radius: 50%; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 0.74rem; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .seq .body { font-size: 0.9rem; max-width: 78ch; }
+  .seq .body .who { margin-right: 6px; }
+  .seq .body .note { display: block; color: var(--muted); font-size: 0.83rem; margin-top: 2px; }
+  .seq.alt .n { background: var(--red); color: #fff; }
+
+  /* ---- big-picture map ---- */
+  .map { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 16px 0; }
+  .zone { border: 1px dashed var(--line); border-radius: 12px; padding: 12px 14px; background: transparent; }
+  .zone > .zt { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .boxes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bx { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 11px; font-size: 0.8rem; min-width: 110px; }
+  .bx b { font-family: var(--mono); font-size: 0.76rem; display: block; }
+  .bx .d { color: var(--muted); font-size: 0.72rem; }
+  .bx.client { border-top: 3px solid var(--accent); }
+  .bx.rsc { border-top: 3px solid var(--violet); }
+  .bx.api { border-top: 3px solid var(--amber); }
+  .bx.redis { border-top: 3px solid var(--red); }
+  .bx.db { border-top: 3px solid var(--done); }
+  .down { text-align: center; font-family: var(--mono); color: var(--muted); font-size: 0.85rem; margin: -2px 0; }
+
+  /* ---- flow rows ---- */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  /* ---- three-lane summary cards ---- */
+  .lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
+  .lane { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 0.86rem; }
+  .lane .lt { font-family: var(--sans); font-weight: 600; margin-bottom: 4px; }
+  .lane .lp { font-family: var(--mono); font-size: 0.74rem; line-height: 1.7; }
+  .lane p { margin: 6px 0 0; font-size: 0.82rem; color: var(--muted); max-width: none; }
+  .lane.read { border-top: 3px solid var(--accent); }
+  .lane.cart { border-top: 3px solid var(--amber); }
+  .lane.write { border-top: 3px solid var(--done); }
+
+  /* ---- state hub diagram ---- */
+  .hubwrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 16px 0; }
+  .hub { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .hub .hcore { border-radius: 8px; padding: 8px 12px; font-family: var(--mono); font-size: 0.8rem; font-weight: 700; text-align: center; margin-bottom: 10px; }
+  .hub.q .hcore { background: var(--accent-soft); color: var(--accent); }
+  .hub.z .hcore { background: var(--amber-soft); color: var(--amber); }
+  .hub ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
+  .hub li { display: flex; gap: 8px; align-items: baseline; }
+  .hub li .arr { font-family: var(--mono); color: var(--muted); flex: none; }
+  .hub li code { font-size: 0.76rem; }
+  .hub .hnote { margin-top: 10px; font-size: 0.78rem; color: var(--muted); }
+
+  /* ---- decision flowchart (CSS) — the render-branch rail ---- */
+  .dflow { margin: 16px 0; }
+  .drow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .dq { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; font-size: 0.84rem; }
+  .dyes { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+  .dres { font-family: var(--mono); font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; white-space: nowrap; }
+  .dres.q { color: var(--accent); background: var(--accent-soft); }
+  .dres.u { color: var(--violet); background: var(--violet-soft); }
+  .dres.z { color: var(--amber); background: var(--amber-soft); }
+  .dres.g { color: var(--done); background: var(--done-soft); }
+  .dres.r { color: var(--red); background: var(--red-soft); }
+  .dno { margin: 3px 0 3px 26px; font-family: var(--mono); color: var(--muted); font-size: 0.7rem; }
+
+  .warn { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 18px 0; max-width: 76ch; font-size: 0.9rem; }
+  .warn b { color: var(--red); }
+  ul.plain { margin: 0 0 14px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+
+  /* ---- the rollup worked-example ledger ---- */
+  .ledger { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin: 14px 0; }
+  .lcol { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 0.84rem; }
+  .lcol .lh { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .lcol ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; font-family: var(--mono); font-size: 0.76rem; }
+  .lcol li.drop { color: var(--red); text-decoration: line-through; }
+  .lcol li.keep { color: var(--done); }
+  .lcol li.merge { color: var(--amber); font-weight: 700; }
+  .lcol.out { border-top: 3px solid var(--done); }
+</style>
+</head>
+<body>
+
+<!-- shared SVG arrowheads for every diagram below -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="mi" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--ink)"/></marker>
+  <marker id="mm" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--muted)"/></marker>
+  <marker id="mr" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--red)"/></marker>
+  <marker id="ma" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--accent)"/></marker>
+  <marker id="mo" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--amber)"/></marker>
+  <marker id="mg" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--done)"/></marker>
+</defs></svg>
+
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-19</div>
+  <h1>Customer orders &amp; tracking — how it actually works</h1>
+  <p class="lede">Not what we build — what happens when <code>/orders</code> <em>runs</em>. Seven
+  end-to-end sequences, drawn: the first paint from device cache, the SSE handshake and its exhaustive
+  event switch, how one queue payload feeds two surfaces, the "7 loại" rollup math on the Bàn 04
+  order, the cancel write path down through Gin → service → tx → Redis and back up the stream, and a
+  two-client walkthrough where a chef's tap moves this screen with no refresh.</p>
+  <div class="legend">
+    <span>Every step and every diagram uses one color per system:</span>
+    <span class="actor client">this screen (browser)</span>
+    <span class="actor rsc">the other client (KDS/POS)</span>
+    <span class="actor api">gin api</span>
+    <span class="actor redis">redis pub/sub</span>
+    <span class="actor db">mysql</span>
+  </div>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-24</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="customer_orders_tracking_PLAN.md">customer_orders_tracking_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">the plan, drawn</span><span class="v"><a href="customer_orders_tracking_plan.html">customer_orders_tracking_plan.html</a></span></div>
+    <div class="fact"><span class="k">streams</span><span class="v">exactly 1 per page</span></div>
+    <div class="fact"><span class="k">writes</span><span class="v">2 cancels · both pessimistic</span></div>
+    <div class="fact"><span class="k">worked example</span><span class="v">Bàn 04 · 103.000 đ · 7 loại</span></div>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#map">01 big picture</a>
+  <a href="#load">02 first load</a>
+  <a href="#stream">03 the live stream</a>
+  <a href="#queue">04 queue + ETA</a>
+  <a href="#rollup">05 the rollup math</a>
+  <a href="#cancel">06 the cancel write path</a>
+  <a href="#twoclient">07 two-client walkthrough</a>
+</nav>
+
+<!-- ================================================================ 01 -->
+<section id="map">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Big picture — the whole machine on one screen</h2></div>
+
+  <h3>Three ways a guest arrives</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">path 1 · post-201 handoff</span><b>/menu → POST /orders 201</b><br><span style="color:var(--muted);font-size:.74rem">sets <code>activeOrderId</code> in the persisted cart slice, then redirects</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--accent)"><span class="fk">lands on</span><b>/orders</b></div>
+  </div>
+  <div class="flow">
+    <div class="fnode"><span class="fk">path 2 · bottom nav</span><b>tap "Đơn Hàng"</b><br><span style="color:var(--muted);font-size:.74rem">this screen merges the old <em>Đơn Hàng</em> + <em>Theo Dõi</em> tabs</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--accent)"><span class="fk">lands on</span><b>/orders</b></div>
+  </div>
+  <div class="flow">
+    <div class="fnode"><span class="fk">path 3 · cold return</span><b>reopened hours later</b><br><span style="color:var(--muted);font-size:.74rem"><code>activeOrderId</code> survives in the persisted slice; history survives in <code>ORDER_CACHE</code></span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--accent)"><span class="fk">lands on</span><b>/orders</b></div>
+  </div>
+
+  <div class="map">
+    <div class="zone">
+      <div class="zt">guest's phone — browser</div>
+      <div class="boxes">
+        <div class="bx client"><b>OrdersTrackingClient</b><span class="d">the orchestrator · owns the one stream hook · composes the five zones</span></div>
+        <div class="bx client"><b>TanStack Query cache</b><span class="d"><code>['order', id]</code> · staleTime 0 · refetched by SSE, never polled</span></div>
+        <div class="bx client"><b>cart store (persisted)</b><span class="d"><code>activeOrderId</code> — the pivot the whole page hangs on</span></div>
+        <div class="bx client"><b>ORDER_CACHE (device-local)</b><span class="d"><code>order_cache_&lt;id&gt;</code> keys → the history list + instant paint</span></div>
+        <div class="bx client"><b>httpOnly cookie</b><span class="d">guest JWT — rides the SSE handshake, so no token in the URL</span></div>
+      </div>
+    </div>
+    <div class="down">↓ ONE <code>EventSource</code> + <code>GET /orders/:id</code> + two <code>DELETE</code>s &nbsp;·&nbsp; ↑ events</div>
+    <div class="zone">
+      <div class="zt">our servers</div>
+      <div class="boxes">
+        <div class="bx api"><b>GET /orders/:id</b><span class="d">O-2 · ownership by table_id · bare object · never cached</span></div>
+        <div class="bx api"><b>GET /sse/order-monitor/:id</b><span class="d">R-1 · THE stream · own-order gate · 15 s keep-alive · retry:</span></div>
+        <div class="bx api"><b>DELETE /orders/:id</b><span class="d">O-2 · whole-order cancel → 204</span></div>
+        <div class="bx api"><b>DELETE /orders/items/:id</b><span class="d">O-2 · one dish → 204 · 422 CANCEL_THRESHOLD if served</span></div>
+        <div class="bx redis"><b>pub/sub only</b><span class="d"><code>order:{id}</code> · <code>queue:broadcast</code> · <code>tables:broadcast</code> — never a read cache</span></div>
+        <div class="bx db"><b>MySQL</b><span class="d">orders + order_items · read on EVERY GET · the snapshot source on connect</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Three kinds of traffic, and only three</h3>
+  <div class="lanes">
+    <div class="lane read">
+      <div class="lt">1 · the read</div>
+      <div class="lp">GET /orders/:id<br>→ ['order', id]</div>
+      <p>Fires on mount and on every structural event. Never cached anywhere on the server; MySQL is
+      read each time. The FE seeds from <code>ORDER_CACHE</code> first so the paint is instant.</p>
+    </div>
+    <div class="lane cart">
+      <div class="lt">2 · the stream</div>
+      <div class="lp">GET /sse/order-monitor/:id<br>→ connected → snapshot → deltas</div>
+      <p>Exactly one per page, owned by the orchestrator. It <b>never holds order data</b> — it
+      patches or triggers a refetch. Four surfaces hang off it.</p>
+    </div>
+    <div class="lane write">
+      <div class="lt">3 · the two writes</div>
+      <div class="lp">DELETE /orders/items/:id<br>DELETE /orders/:id</div>
+      <p>Both pessimistic, both through the one <code>CancelConfirmModal</code>, both gated by the one
+      <code>canCancel</code> predicate. A refusal shows the envelope message in place — the dish never
+      flickers away first.</p>
+    </div>
+  </div>
+
+  <div class="golden">
+    <p><b>The whole page in one sentence:</b> one pivot (<code>activeOrderId</code>), one read
+    (<code>GET /orders/:id</code> into the Query cache), one stream (four surfaces, exhaustive switch),
+    two writes (both cancels) — and a device-local cache that makes the first paint instant and the
+    history list possible without any server endpoint.</p>
+  </div>
+</section>
+
+<!-- ================================================================ 02 -->
+<section id="load">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — instant paint, then the network, then the stream</h2></div>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 400" role="img" aria-label="First load sequence: cache paint, GET, SSE connect, snapshot">
+    <!-- lanes -->
+    <rect x="20" y="20" width="180" height="34" rx="8" class="abox client"/>
+    <text x="110" y="42" class="tb taccent" text-anchor="middle">/orders (browser)</text>
+    <line x1="110" y1="54" x2="110" y2="380" class="lifeline"/>
+
+    <rect x="250" y="20" width="150" height="34" rx="8" class="abox client"/>
+    <text x="325" y="42" class="tb taccent" text-anchor="middle">ORDER_CACHE</text>
+    <line x1="325" y1="54" x2="325" y2="380" class="lifeline"/>
+
+    <rect x="450" y="20" width="150" height="34" rx="8" class="abox api"/>
+    <text x="525" y="42" class="tb tamber" text-anchor="middle">Gin API</text>
+    <line x1="525" y1="54" x2="525" y2="380" class="lifeline"/>
+
+    <rect x="650" y="20" width="120" height="34" rx="8" class="abox db"/>
+    <text x="710" y="42" class="tb tgreen" text-anchor="middle">MySQL</text>
+    <line x1="710" y1="54" x2="710" y2="380" class="lifeline"/>
+
+    <rect x="810" y="20" width="95" height="34" rx="8" class="abox redis"/>
+    <text x="857" y="42" class="tb tred" text-anchor="middle">Redis</text>
+    <line x1="857" y1="54" x2="857" y2="380" class="lifeline"/>
+
+    <!-- steps -->
+    <line x1="110" y1="80" x2="322" y2="80" class="flowa" marker-end="url(#ma)"/>
+    <text x="216" y="74" class="t2" text-anchor="middle">read activeOrderId + order_cache_&lt;id&gt;</text>
+    <line x1="325" y1="102" x2="112" y2="102" class="resp" marker-end="url(#mm)"/>
+    <text x="216" y="96" class="t2 taccent" text-anchor="middle">seed → INSTANT PAINT, zero skeleton</text>
+
+    <line x1="110" y1="136" x2="522" y2="136" class="call" marker-end="url(#mi)"/>
+    <text x="316" y="130" class="t2" text-anchor="middle">GET /orders/:id  (cookie rides along)</text>
+    <line x1="525" y1="158" x2="707" y2="158" class="flowg" marker-end="url(#mg)"/>
+    <text x="616" y="152" class="t2" text-anchor="middle">ownership by table_id · no cache layer</text>
+    <line x1="710" y1="180" x2="528" y2="180" class="resp" marker-end="url(#mm)"/>
+    <line x1="525" y1="200" x2="113" y2="200" class="resp" marker-end="url(#mm)"/>
+    <text x="316" y="194" class="t2 tgreen" text-anchor="middle">200 bare order object + derived item_status → reconcile ['order', id]</text>
+
+    <line x1="110" y1="238" x2="522" y2="238" class="flowa" marker-end="url(#ma)"/>
+    <text x="316" y="232" class="t2" text-anchor="middle">GET /sse/order-monitor/:id — the ONE EventSource</text>
+    <line x1="525" y1="260" x2="113" y2="260" class="flowo" marker-end="url(#mo)"/>
+    <text x="316" y="254" class="t2 tamber" text-anchor="middle">event: connected → pill flips to ● Đang theo dõi</text>
+
+    <line x1="525" y1="286" x2="707" y2="286" class="flowg" marker-end="url(#mg)"/>
+    <text x="616" y="280" class="t2" text-anchor="middle">snapshot read</text>
+    <line x1="710" y1="306" x2="528" y2="306" class="resp" marker-end="url(#mm)"/>
+    <line x1="525" y1="326" x2="113" y2="326" class="flowo" marker-end="url(#mo)"/>
+    <text x="316" y="320" class="t2 tamber" text-anchor="middle">queue.update + tables.status — the SNAPSHOT</text>
+
+    <line x1="857" y1="356" x2="530" y2="356" class="flowa" marker-end="url(#ma)"/>
+    <text x="700" y="350" class="t2 tred" text-anchor="middle">then deltas: order:{id} · queue:broadcast · tables:broadcast</text>
+    <line x1="525" y1="376" x2="113" y2="376" class="flowo" marker-end="url(#mo)"/>
+    <text x="300" y="370" class="t2" text-anchor="middle">…live from here on</text>
+  </svg></div>
+  <p class="cap">The device cache paints before the network is even touched; the stream connects
+  <em>after</em> the read, and its first act is to hand back a full snapshot — so nothing that happened
+  while the page was closed is missed.</p>
+
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> —
+      <b>Tier 1, route.</b> <code>loading.tsx</code> mirrors the real layout (top bar + banner + card +
+      list stubs), never a centered spinner. The reference shipped a bare spinner for the whole group.</div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor client who">browser</span> —
+      the orchestrator reads <code>activeOrderId</code> from the persisted cart slice and seeds the
+      active order from <code>ORDER_CACHE</code>. <b>A warm return renders real content with zero
+      skeleton.</b>
+      <span class="note">This is why the pivot lives in a persisted store rather than the URL — a cold
+      return has the id before a single byte of network.</span></div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor api who">gin api</span> —
+      <code>GET /orders/:id</code> checks the guest JWT <b>and ownership by <code>table_id</code></b>,
+      reads MySQL (there is no cache to consult), and returns the <b>bare</b> order object — identical
+      in shape to the <code>POST /orders</code> 201, so one TS type serves both.</div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor client who">browser</span> —
+      the response reconciles into <code>['order', id]</code>. Items carry a server-derived
+      <code>item_status</code> (<code>pending | preparing | done</code>) — <b>the FE does not
+      re-derive it</b>.</div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor client who">browser</span> —
+      the orchestrator opens the <b>one</b> <code>EventSource</code>. The httpOnly cookie rides the
+      handshake automatically, so no token ever appears in the URL.</div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor api who">gin api</span> —
+      <code>event: connected</code>, then the <b>snapshot</b> (<code>queue.update</code> +
+      <code>tables.status</code>) read from MySQL, then deltas from Redis. The pill flips to
+      <code>● Đang theo dõi</code>.</div></li>
+    <li><span class="n">7</span><div class="body"><span class="actor client who">browser</span> —
+      live changes are reconciled <b>back into <code>ORDER_CACHE</code></b>, so the history card and
+      the live card can never disagree. That was the reference's stale-list bug.</div></li>
+  </ol>
+
+  <h3>The six render branches, as the decision rail</h3>
+  <p>Evaluated top to bottom; the first match wins. <b>Only branch 1 is fatal</b> — every other branch
+  keeps the floor queue and your history on screen.</p>
+
+  <div class="dflow">
+    <div class="drow">
+      <span class="dq"><b>1.</b> <code>401/403</code> on the stream or the GET?</span>
+      <span class="dyes">— yes →</span>
+      <span class="dres r">FULL-SCREEN · "Phiên làm việc hết hạn — quét lại mã QR tại bàn" + Về trang menu</span>
+    </div>
+    <div class="dno">↓ no</div>
+    <div class="drow">
+      <span class="dq"><b>2.</b> <code>activeOrderId</code> is null?</span>
+      <span class="dyes">— yes →</span>
+      <span class="dres z">SCOPED · friendly CTA in the active-order zone only — history + floor queue still render</span>
+    </div>
+    <div class="dno">↓ no</div>
+    <div class="drow">
+      <span class="dq"><b>3.</b> GET returned <code>404</code>/<code>403</code>?</span>
+      <span class="dyes">— yes →</span>
+      <span class="dres z">SCOPED · "Đơn hàng không tồn tại" card + clears the orphaned pointer</span>
+    </div>
+    <div class="dno">↓ no</div>
+    <div class="drow">
+      <span class="dq"><b>4.</b> GET pending and no cached copy?</span>
+      <span class="dyes">— yes →</span>
+      <span class="dres u">layout-shaped skeleton (no shift)</span>
+    </div>
+    <div class="dno">↓ no</div>
+    <div class="drow">
+      <span class="dq"><b>5.</b> <code>!sseConnected</code>?</span>
+      <span class="dyes">— yes →</span>
+      <span class="dres q">COSMETIC ONLY · pill flips + ConnectionErrorBanner · last-known queue with a stale marker · page fully usable</span>
+    </div>
+    <div class="dno">↓ no</div>
+    <div class="drow">
+      <span class="dq"><b>6.</b> default</span>
+      <span class="dyes">→</span>
+      <span class="dres g">the live screen</span>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>Branch 3 is the deliberate upgrade.</b> In the reference, a missing or foreign order wedged the
+    whole screen — and inside the detail <em>overlay</em> copy it wedged as an <b>infinite spinner</b>,
+    because <code>isNotFound</code> was returned by the hook and never read by the component. Ours
+    scopes the failure to one card and clears the orphaned pointer, so losing your order does not take
+    the floor queue and your history down with it.
+  </div>
+
+  <h3>Tier 3 — the mutation branch</h3>
+  <p>Cancels are <b>pessimistic</b>: confirm → button disabled + inline "Đang huỷ…" → <code>204</code>
+  → refetch. Never optimistic, because a cancel the BE refuses (<code>CANCEL_THRESHOLD</code>) must not
+  flicker the dish away first. The full path is §06.</p>
+</section>
+
+<!-- ================================================================ 03 -->
+<section id="stream">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The live stream — handshake, keep-alive, the exhaustive switch</h2></div>
+
+  <p>Frames are <code>event: &lt;type&gt;</code> followed by a JSON <code>data:</code> line. The
+  server subscribes three Redis channels on the guest's behalf and multiplexes them onto one
+  connection:</p>
+
+  <pre class="diagram">GET /sse/order-monitor/ord9…36        ← cookie rides the handshake; own-order/table gate runs FIRST
+                                        401/403 here are PERMANENT — do not retry
+
+retry: 3000                           ← the browser's reconnect delay, set by the server
+
+event: connected                      ← handshake. pill → "● Đang theo dõi"
+data: {"type":"connected","order_id":"ord9…36"}
+
+event: queue.update                   ← SNAPSHOT (read from MySQL, not Redis)
+data: {"type":"queue.update","total":5,"position":2,"estimated_minutes":8,
+       "queue":[{"order_id":"ord7…","order_number":"ORD-20260719-001",
+                 "table_label":"Bàn 01","status":"preparing","item_count":6,
+                 "created_at":"2026-07-19T10:51:00Z"}, …]}
+
+event: tables.status                  ← SNAPSHOT · consumed by the switch, UI deferred
+data: {…}
+
+: keep-alive                          ← every 15 s · a comment frame; proxies stay awake
+
+event: item_progress                  ← DELTA · from Redis order:{id}
+data: {"type":"item_progress","order_id":"ord9…36","item_id":"oi3…",
+       "qty_served":2,"quantity":3}
+
+event: order_status_changed           ← DELTA
+data: {"type":"order_status_changed","order_id":"ord9…36","status":"ready"}</pre>
+
+  <h3>The exhaustive switch — every event type, and its reaction</h3>
+  <p>A published type <b>without</b> a consumer case <b>fails CI</b>. This single rule is the
+  countermeasure that kills four reference bugs at once.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>event</th><th>source channel</th><th>the case does</th><th>surface it moves</th></tr></thead>
+      <tbody>
+        <tr><td><code>connected</code></td><td>handshake</td><td>set <code>sseConnected = true</code></td><td>connection pill → <code>● Đang theo dõi</code></td></tr>
+        <tr><td><code>queue.update</code></td><td><code>queue:broadcast</code> (+ snapshot)</td><td>store <code>position</code>, <code>estimated_minutes</code>, <code>total</code>, <code>queue[]</code> — <b>rendered, never computed</b></td><td>the banner <b>and</b> the floor list, from one payload (§04)</td></tr>
+        <tr><td><code>item_progress</code></td><td><code>order:{id}</code></td><td>plan default: <b>local cache patch</b> of that item's <code>qty_served</code> — no round trip</td><td>the dish row's ra/còn + the progress bar</td></tr>
+        <tr><td><code>items_added</code></td><td><code>order:{id}</code></td><td><code>refetch(['order', id])</code> — rows changed</td><td>the dish list + totals</td></tr>
+        <tr><td><code>item_updated</code></td><td><code>order:{id}</code></td><td><code>refetch(['order', id])</code></td><td>the dish list</td></tr>
+        <tr><td><code>item_cancelled</code></td><td><code>order:{id}</code></td><td><code>refetch(['order', id])</code> + drop the row</td><td>dish list, rollup, Tổng cộng</td></tr>
+        <tr><td><code>order_status_changed</code></td><td><code>order:{id}</code></td><td>update the badge + open <code>StatusNotificationModal</code></td><td>banner badge + the popup</td></tr>
+        <tr><td><code>order_cancelled</code></td><td><code>order:{id}</code></td><td>terminal branch — actions replaced</td><td>banner + action row</td></tr>
+        <tr><td><code>order_completed</code></td><td><code>order:{id}</code></td><td>terminal branch — "Đơn hàng đã hoàn thành"</td><td>banner + action row</td></tr>
+        <tr><td><code>tables.status</code></td><td><code>tables:broadcast</code> (+ snapshot)</td><td><b>consumed and stored; UI explicitly deferred</b> (staff surfaces own the floor map)</td><td>— (a recorded deferral, not dead code)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="warn">
+    <b>The reference's 🔴 bug, exactly.</b> The FE listened for <code>order.status</code>; the BE
+    published <code>order_status_changed</code>. Nothing threw, nothing logged — the live badge simply
+    never advanced. Three more events (<code>item_progress</code>, <code>items_added</code>,
+    <code>item_cancelled</code>) were published to a hook that had no case for any of them. One
+    generated event-contract file plus an exhaustive switch makes all four impossible to reintroduce.
+  </div>
+
+  <h3>Reconnect — why snapshot-on-connect means nothing is lost</h3>
+
+  <div class="svgwrap"><svg viewBox="0 0 900 300" role="img" aria-label="Reconnect sequence showing a status change during the disconnect being replayed by the snapshot">
+    <rect x="20" y="20" width="180" height="34" rx="8" class="abox client"/>
+    <text x="110" y="42" class="tb taccent" text-anchor="middle">this screen</text>
+    <line x1="110" y1="54" x2="110" y2="284" class="lifeline"/>
+
+    <rect x="360" y="20" width="150" height="34" rx="8" class="abox api"/>
+    <text x="435" y="42" class="tb tamber" text-anchor="middle">SSE handler</text>
+    <line x1="435" y1="54" x2="435" y2="284" class="lifeline"/>
+
+    <rect x="700" y="20" width="150" height="34" rx="8" class="abox db"/>
+    <text x="775" y="42" class="tb tgreen" text-anchor="middle">MySQL (truth)</text>
+    <line x1="775" y1="54" x2="775" y2="284" class="lifeline"/>
+
+    <!-- disconnect window -->
+    <rect x="60" y="76" width="780" height="86" rx="9" class="delbox" opacity="0.35"/>
+    <text x="80" y="96" class="t2 tred" style="font-weight:700">CONNECTION DROPPED — tunnel, lift, backgrounded tab</text>
+    <line x1="110" y1="118" x2="432" y2="118" class="err"/>
+    <text x="270" y="112" class="t2 tred" text-anchor="middle">no frames arriving</text>
+    <line x1="775" y1="142" x2="440" y2="142" class="flowg" marker-end="url(#mg)"/>
+    <text x="600" y="136" class="t2 tgreen" text-anchor="middle">meanwhile: status preparing → ready (this event is MISSED)</text>
+
+    <line x1="110" y1="192" x2="432" y2="192" class="flowa" marker-end="url(#ma)"/>
+    <text x="270" y="186" class="t2" text-anchor="middle">retry: → browser reconnects automatically</text>
+    <line x1="435" y1="216" x2="772" y2="216" class="flowg" marker-end="url(#mg)"/>
+    <text x="604" y="210" class="t2" text-anchor="middle">snapshot read — current truth, not a replay log</text>
+    <line x1="775" y1="240" x2="438" y2="240" class="resp" marker-end="url(#mm)"/>
+    <line x1="435" y1="266" x2="113" y2="266" class="flowo" marker-end="url(#mo)"/>
+    <text x="270" y="260" class="t2 tamber" text-anchor="middle">connected + queue.update + tables.status → badge shows "ready" ✓</text>
+  </svg></div>
+  <p class="cap">The snapshot is <em>current state</em>, not an event replay — which is why it heals a
+  gap of any length. The reference had no replay at all: a transition during a disconnect was lost for
+  good.</p>
+
+  <ul class="plain">
+    <li><b>15 s <code>: keep-alive</code></b> — a comment frame; it carries no data but stops proxies
+    and mobile radios from killing an idle connection.</li>
+    <li><b><code>retry:</code></b> — the server tells the browser how long to wait before reconnecting;
+    the reconnect is the browser's job, not the app's.</li>
+    <li><b><code>401/403</code> are permanent</b> — the ownership gate failing is not a transient
+    error. The hook stops retrying and hands control to <b>branch 1</b> (§02), the only fatal branch.</li>
+    <li><b>Any other drop is cosmetic</b> — <b>branch 5</b>: the pill flips to
+    <code>○ Mất kết nối</code>, <code>ConnectionErrorBanner</code> appears, the last-known queue stays
+    on screen with a stale marker, and the page remains fully usable.</li>
+  </ul>
+</section>
+
+<!-- ================================================================ 04 -->
+<section id="queue">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Queue + ETA — one payload, two surfaces, no disagreement</h2></div>
+
+  <p>The banner ("Vị trí hàng chờ: <b>#2 trong 5 đơn</b>", "<b>~8 phút</b>") and the whole-floor list
+  ("Hàng chờ phục vụ [3 bàn]") look like two independent features. They are <b>one payload rendered
+  twice</b> — which is the entire point.</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 900 330" role="img" aria-label="One queue.update payload feeding both the banner and the floor list">
+    <!-- source -->
+    <rect x="20" y="30" width="180" height="60" rx="9" class="abox db"/>
+    <text x="110" y="55" class="tb tgreen" text-anchor="middle">MySQL</text>
+    <text x="110" y="74" class="t2" text-anchor="middle">ordered active list</text>
+
+    <rect x="20" y="120" width="180" height="60" rx="9" class="abox api"/>
+    <text x="110" y="145" class="tb tamber" text-anchor="middle">BE computes</text>
+    <text x="110" y="164" class="t2" text-anchor="middle">position · estimated_minutes</text>
+
+    <line x1="110" y1="90" x2="110" y2="118" class="flowg" marker-end="url(#mg)"/>
+
+    <!-- payload -->
+    <rect x="270" y="60" width="290" height="130" rx="10" class="abox api" style="stroke-width:2"/>
+    <text x="415" y="84" class="tb tamber" text-anchor="middle">event: queue.update — ONE payload</text>
+    <text x="288" y="106" class="t2">total: 5</text>
+    <text x="288" y="124" class="t2 taccent" style="font-weight:700">position: 2</text>
+    <text x="288" y="142" class="t2 taccent" style="font-weight:700">estimated_minutes: 8</text>
+    <text x="288" y="160" class="t2">queue: [ {order_id, order_number, table_label,</text>
+    <text x="288" y="176" class="t2">          status, item_count, created_at}, … ]</text>
+    <line x1="200" y1="150" x2="266" y2="140" class="flowo" marker-end="url(#mo)"/>
+
+    <!-- two consumers -->
+    <rect x="640" y="24" width="240" height="86" rx="10" class="abox client"/>
+    <text x="760" y="48" class="tb taccent" text-anchor="middle">TableInfoBanner</text>
+    <text x="760" y="68" class="t2" text-anchor="middle">"Vị trí hàng chờ: #2 trong 5 đơn"</text>
+    <text x="760" y="86" class="t2" text-anchor="middle">ETA "~8 phút" · pulses at #1</text>
+    <text x="760" y="103" class="t2 taccent" text-anchor="middle">reads position + estimated_minutes</text>
+
+    <rect x="640" y="146" width="240" height="100" rx="10" class="abox client"/>
+    <text x="760" y="170" class="tb taccent" text-anchor="middle">WholeFloorPrepList</text>
+    <text x="760" y="190" class="t2" text-anchor="middle">"Hàng chờ phục vụ [3 bàn]"</text>
+    <text x="760" y="208" class="t2" text-anchor="middle">numbered rows, sorted by created_at</text>
+    <text x="760" y="226" class="t2" text-anchor="middle">your row ringed orange + "(bàn bạn)"</text>
+    <text x="760" y="242" class="t2 taccent" text-anchor="middle">reads queue[]</text>
+
+    <line x1="562" y1="110" x2="636" y2="76" class="flowa" marker-end="url(#ma)"/>
+    <line x1="562" y1="150" x2="636" y2="186" class="flowa" marker-end="url(#ma)"/>
+
+    <rect x="270" y="230" width="290" height="70" rx="10" class="delbox" opacity="0.5"/>
+    <text x="415" y="252" class="t2 tred" text-anchor="middle" style="font-weight:700">THE REFERENCE, for contrast</text>
+    <text x="415" y="270" class="t2 tred" text-anchor="middle">wire sent position: 0, estimated_minutes: 0</text>
+    <text x="415" y="288" class="t2 tred" text-anchor="middle">FE invented idx+1 and idx×3 → two sources, drift</text>
+  </svg></div>
+  <p class="cap">Because the BE holds the ordered active list at snapshot time, it is the only place
+  that <em>can</em> compute position and ETA correctly. The FE renders; it never calculates.</p>
+
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor db who">mysql</span> — any
+      active-order change floor-wide (a new order, a status transition, a cancel) makes the ordered
+      active list move. Active = <code>pending·confirmed·preparing·ready</code>, ordered by
+      <code>created_at</code>.</div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor api who">gin api</span> —
+      the BE recomputes <b><code>position</code></b> and <b><code>estimated_minutes</code></b> and
+      publishes <b>one</b> <code>queue.update</code> to <code>queue:broadcast</code>. A NULL
+      <code>table_id</code> serializes as <code>table_label: "Mang về"</code>.</div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor client who">browser</span> —
+      the single switch case stores the whole payload once. <code>TableInfoBanner</code> takes
+      <code>position</code>/<code>estimated_minutes</code>; <code>WholeFloorPrepList</code> takes
+      <code>queue[]</code>.
+      <span class="note">Two components, one object, one render pass — they are structurally incapable
+      of showing different numbers.</span></div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor client who">browser</span> —
+      the ETA line <b>pulses when you are at #1</b>; your row in the floor list is ringed in orange
+      and labelled "(bàn bạn)". Only active statuses appear there, and it carries no progress bars —
+      that detail belongs to your order alone.</div></li>
+  </ol>
+
+  <div class="golden">
+    <p><b>Why this is a contract, not a convenience.</b> "The banner says #2 but the list shows me
+    third" is the kind of bug users screenshot. Making the two surfaces read one BE-computed payload
+    means the failure mode does not exist — and it retires the reference's 🟡 finding where the wire
+    sent <code>0</code> placeholders and the FE quietly made numbers up.</p>
+  </div>
+</section>
+
+<!-- ================================================================ 05 -->
+<section id="rollup">
+  <div class="sec-head"><span class="sec-num">05</span><h2>The rollup math — "TỔNG SỐ MÓN (7 loại)"</h2></div>
+
+  <p>The rollup answers a question the raw item list cannot: <em>how many distinct dishes are actually
+  coming to this table?</em> Combos hide their contents, and the same dish arrives from several
+  sources. <code>lib/order-rollup.ts</code> runs three steps, in this order:</p>
+
+  <div class="flow">
+    <div class="fnode" style="border-color:var(--accent)"><span class="fk">step 1</span><b>FLATTEN</b><br><span style="color:var(--muted);font-size:.74rem">every combo → its component rows (<code>combo_ref_id</code> set)</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--red)"><span class="fk">step 2</span><b>DROP the header</b><br><span style="color:var(--muted);font-size:.74rem">combo header row: <code>combo_id</code> set, <code>combo_ref_id</code> NULL, <code>unit_price 0</code> — the 0 đ row</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--amber)"><span class="fk">step 3</span><b>MERGE + SUM</b><br><span style="color:var(--muted);font-size:.74rem">rows sharing <b>dish name AND nhân set</b> collapse; SL adds up</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--done)"><span class="fk">result</span><b>n = distinct rows</b><br><span style="color:var(--muted);font-size:.74rem">Bàn 04 → <b>7 loại</b></span></div>
+  </div>
+
+  <div class="warn">
+    <b>The header-row exclusion is load-bearing twice.</b> The combo header is excluded from every
+    visible dish list <em>and</em> from all progress math. Leave it in the list and the guest sees a
+    phantom "0 đ" line; leave it in the math and <code>Σ qty_served / Σ quantity</code> is diluted by
+    a row that can never be served.
+  </div>
+
+  <h3>The Bàn 04 worked example, step by step</h3>
+  <div class="ledger">
+    <div class="lcol">
+      <div class="lh">1 · raw order_items rows</div>
+      <ul>
+        <li class="drop">Suất Đầy Đủ Trứng Chín ×1 · 0 đ · combo HEADER</li>
+        <li class="keep">↳ Bánh Cuốn ×3 (Nhân thịt · Mộc nhĩ) · combo_ref_id set</li>
+        <li class="keep">↳ Canh có rau ×1 · from a combo</li>
+        <li class="keep">↳ Canh có rau ×2 · from a combo</li>
+        <li class="keep">Canh có rau ×4 · individual</li>
+        <li class="keep">Bánh Trứng Chín · from the combo</li>
+        <li class="keep">Bánh Trứng Vàng · individual</li>
+        <li class="keep">… the remaining individual rows</li>
+      </ul>
+    </div>
+    <div class="lcol">
+      <div class="lh">2 · after flatten + drop</div>
+      <ul>
+        <li class="drop">combo header — gone from lists AND math</li>
+        <li>components promoted to top level</li>
+        <li>each row now carries: name + nhân set (from <code>toppings_snapshot</code>) + quantity + qty_served</li>
+        <li class="merge">3 separate "Canh có rau" rows are now visible side by side: 1 + 2 + 4</li>
+      </ul>
+    </div>
+    <div class="lcol out">
+      <div class="lh">3 · after merge → 7 loại</div>
+      <ul>
+        <li class="merge">Canh có rau ×7 &nbsp;← 1 + 2 + 4 merged</li>
+        <li class="keep">Bánh Cuốn ×3 (Nhân thịt · Mộc nhĩ)</li>
+        <li class="keep">Bánh Trứng Chín</li>
+        <li class="keep">Bánh Trứng Vàng &nbsp;← stays separate</li>
+        <li>… + the remaining distinct dish+nhân rows</li>
+        <li class="merge">n = 7 distinct rows → "TỔNG SỐ MÓN (7 loại)"</li>
+        <li class="keep">Tổng cộng 103.000 đ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="golden">
+    <p><b>The two merge rules that produce 7.</b></p>
+    <p><b>Merge on name AND nhân set.</b> <code>Canh có rau</code> arrives three times — ×1 and ×2
+    from combos plus ×4 ordered individually — and because name and nhân match, all three collapse
+    into one row of <b>×7</b>. That is the merge doing its job.</p>
+    <p><b>Do not merge on name alone.</b> <code>Bánh Trứng Vàng</code> stays a separate row from the
+    combos' <code>Bánh Trứng Chín</code>: different dishes, and even where a name repeats, a different
+    nhân set is a different row. Merging too eagerly would understate <code>n</code> and mislabel what
+    the kitchen is actually cooking.</p>
+  </div>
+
+  <h3>The same flattened list drives the progress math</h3>
+  <pre class="diagram">bar        = Σ qty_served / Σ quantity     over DISPLAY items only (header excluded)
+DishRow    = tổng ×n · ra ×n · còn ×n      + "↳ Nhân thịt · 'ít hành'" caption
+             a fully served row shows ✓ in CÒN
+footer     = "3/6 phần đã ra"
+Card C     = Đã dùng / Còn lại / Tổng cộng     money split three ways
+
+money      = the ONE formatVND() — same function, same glyph as the menu page
+             a zero-priced canh renders "0 đ", NEVER blank</pre>
+
+  <div class="flag">
+    <p><b>⚠️ Money glyph flag.</b> This page's DESIGN_PROMPT specified <code>105.000 ₫</code> (U+20AB,
+    space before); the menu plan locked <code>30.000 đ</code> (U+0111). <code>FE_STATE.md</code>
+    allows exactly <b>one</b> <code>formatVND()</code>, so the app cannot ship both. <b>Plan default:
+    the menu's <code>đ</code></b> — used throughout this page and its <b>103.000 đ</b> worked example.
+    One constant, one file, flips everywhere at once.</p>
+  </div>
+
+  <p>The nhân set comes from <code>toppings_snapshot</code> (₫0 toppings), never from a
+  <code>filling</code> column — that column does not exist, which is what makes the reference's
+  "<code>OrderItem</code> has no <code>filling</code> field" bug structurally impossible here.</p>
+</section>
+
+<!-- ================================================================ 06 -->
+<section id="cancel">
+  <div class="sec-head"><span class="sec-num">06</span><h2>The cancel write path — DELETE /orders/items/:id, all the way down and back</h2></div>
+
+  <p>One tap on "Huỷ" traverses five layers and comes back up as a broadcast to every client watching
+  the order. This is the page's only structural write, and both cancel scopes share it.</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 470" role="img" aria-label="Cancel item write path from the browser through Gin, the service gates, the transaction, Redis and back down the stream">
+    <!-- lanes -->
+    <rect x="16" y="20" width="150" height="34" rx="8" class="abox client"/>
+    <text x="91" y="42" class="tb taccent" text-anchor="middle">this screen</text>
+    <line x1="91" y1="54" x2="91" y2="450" class="lifeline"/>
+
+    <rect x="212" y="20" width="150" height="34" rx="8" class="abox api"/>
+    <text x="287" y="42" class="tb tamber" text-anchor="middle">Gin handler</text>
+    <line x1="287" y1="54" x2="287" y2="450" class="lifeline"/>
+
+    <rect x="410" y="20" width="150" height="34" rx="8" class="abox api"/>
+    <text x="485" y="42" class="tb tamber" text-anchor="middle">order service</text>
+    <line x1="485" y1="54" x2="485" y2="450" class="lifeline"/>
+
+    <rect x="608" y="20" width="140" height="34" rx="8" class="abox db"/>
+    <text x="678" y="42" class="tb tgreen" text-anchor="middle">MySQL (tx)</text>
+    <line x1="678" y1="54" x2="678" y2="450" class="lifeline"/>
+
+    <rect x="790" y="20" width="115" height="34" rx="8" class="abox redis"/>
+    <text x="847" y="42" class="tb tred" text-anchor="middle">Redis</text>
+    <line x1="847" y1="54" x2="847" y2="450" class="lifeline"/>
+
+    <!-- pessimistic UI -->
+    <rect x="24" y="70" width="135" height="34" rx="7" class="region"/>
+    <text x="91" y="84" class="t2 tamber" text-anchor="middle" style="font-weight:700">CancelConfirmModal</text>
+    <text x="91" y="98" class="t2" text-anchor="middle">disabled · "Đang huỷ…"</text>
+
+    <line x1="91" y1="126" x2="284" y2="126" class="call" marker-end="url(#mi)"/>
+    <text x="188" y="120" class="t2" text-anchor="middle">DELETE /orders/items/:id</text>
+
+    <line x1="287" y1="152" x2="482" y2="152" class="flowo" marker-end="url(#mo)"/>
+    <text x="386" y="146" class="t2" text-anchor="middle">guest JWT parsed</text>
+
+    <!-- the three gates -->
+    <rect x="396" y="168" width="180" height="88" rx="8" class="region"/>
+    <text x="486" y="186" class="t2 tamber" text-anchor="middle" style="font-weight:700">THE GATES, in order</text>
+    <text x="486" y="204" class="t2" text-anchor="middle">1 · ownership by table_id → 403</text>
+    <text x="486" y="221" class="t2" text-anchor="middle">2 · canCancel (one predicate) → 422</text>
+    <text x="486" y="238" class="t2 tred" text-anchor="middle">3 · qty_served &gt;= quantity → 422</text>
+    <text x="486" y="252" class="t2 tred" text-anchor="middle">CANCEL_THRESHOLD</text>
+
+    <!-- the tx -->
+    <line x1="485" y1="278" x2="674" y2="278" class="flowg" marker-end="url(#mg)"/>
+    <text x="580" y="272" class="t2" text-anchor="middle">BEGIN</text>
+    <rect x="592" y="288" width="180" height="72" rx="8" class="txbox"/>
+    <text x="682" y="306" class="t2 tgreen" text-anchor="middle" style="font-weight:700">ONE TRANSACTION</text>
+    <text x="682" y="324" class="t2" text-anchor="middle">DeleteOrderItem(id)</text>
+    <text x="682" y="341" class="t2" text-anchor="middle">RecalculateTotalAmount(order)</text>
+    <text x="682" y="356" class="t2 tgreen" text-anchor="middle">COMMIT — both or neither</text>
+
+    <line x1="678" y1="378" x2="490" y2="378" class="resp" marker-end="url(#mm)"/>
+    <line x1="485" y1="398" x2="843" y2="398" class="flowa" marker-end="url(#ma)"/>
+    <text x="664" y="392" class="t2 tred" text-anchor="middle">PUBLISH order:{id} → item_cancelled  (after commit only)</text>
+
+    <line x1="287" y1="424" x2="94" y2="424" class="resp" marker-end="url(#mm)"/>
+    <text x="188" y="418" class="t2 tgreen" text-anchor="middle">204 No Content, empty body</text>
+
+    <line x1="843" y1="446" x2="94" y2="446" class="flowo" marker-end="url(#mo)"/>
+    <text x="450" y="440" class="t2 tamber" text-anchor="middle">…and back down EVERY watching client's stream → refetch(['order', id]) → row gone, Tổng cộng updated</text>
+  </svg></div>
+  <p class="cap">The delete and the total recalculation are in <b>one transaction</b> — a
+  <code>total_amount</code> that disagrees with its items is not a state the database is allowed to
+  reach. The publish happens only after commit, so no client ever sees an event for a write that
+  rolled back.</p>
+
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor client who">browser</span> —
+      "Huỷ" opens the shared <code>CancelConfirmModal</code>. On confirm the button disables and shows
+      inline "Đang huỷ…". <b>Pessimistic by rule</b> — nothing is removed from the UI yet.</div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor api who">gin api</span> —
+      <code>DELETE /orders/items/:id</code>. The guest JWT rides the httpOnly cookie; the handler
+      parses and delegates. Handlers do not contain business rules.</div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor api who">gin api</span> —
+      <b>gate 1, ownership.</b> Not your table's order → <code>403</code>.</div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor api who">gin api</span> —
+      <b>gate 2, active check</b> via the single <code>canCancel</code> predicate — the same predicate
+      the FE uses to decide whether the button renders at all, so the BE and the button can never
+      disagree.
+      <span class="note">⚠️ The cancel rule itself is still open: the reference code enforced &lt; 30 %
+      served, the owner's stated target is "cancel any time before payment". Plan default = the
+      owner's rule; it must be locked before O-2 builds this gate. One predicate, one file, one-line
+      flip.</span></div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor api who">gin api</span> —
+      <b>gate 3, already-served reject.</b> <code>qty_served &gt;= quantity</code> →
+      <code>422 CANCEL_THRESHOLD</code>. You cannot un-cook a dish that is already on the table.</div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor db who">mysql</span> —
+      inside <b>one transaction</b>: <code>DeleteOrderItem</code> then
+      <code>RecalculateTotalAmount</code>. <code>total_amount</code> is denormalized, so every item
+      mutation must recalculate it in the same tx — both or neither.</div></li>
+    <li><span class="n">7</span><div class="body"><span class="actor redis who">redis</span> —
+      after commit, publish <code>item_cancelled</code> to <code>order:{id}</code>. Redis is
+      <b>transport only</b> here — it is never read as a cache for order data.</div></li>
+    <li><span class="n">8</span><div class="body"><span class="actor client who">browser</span> —
+      <code>204 No Content</code> comes back to the caller <em>and</em> the
+      <code>item_cancelled</code> event comes down the stream to <b>every</b> client watching that
+      order — including a POS or a second device at the same table. The switch case refetches
+      <code>['order', id]</code>; the row disappears, the rollup drops a loại if that was its last
+      row, and <b>Tổng cộng</b> updates.</div></li>
+  </ol>
+
+  <h3>The error rail</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Failure</th><th>Status + code</th><th>What the guest sees</th></tr></thead>
+      <tbody>
+        <tr><td>not your table's order</td><td><code>403</code></td><td>the request never had a button to press; if forced, the scoped error surfaces — the page keeps working</td></tr>
+        <tr><td>order no longer active</td><td><code>422 ORDER_NOT_ACTIVE</code></td><td>envelope message shown <b>in place</b>, dish stays put</td></tr>
+        <tr><td>dish already served</td><td><code>422 CANCEL_THRESHOLD</code></td><td><b>"Không thể huỷ món đã phục vụ"</b> in place — and because the mutation is pessimistic, the dish never flickered away first</td></tr>
+        <tr><td>guest session expired</td><td><code>401 TOKEN_EXPIRED</code></td><td><b>branch 1</b> — full-screen "Phiên làm việc hết hạn — quét lại mã QR tại bàn"</td></tr>
+        <tr><td>tx fails mid-way</td><td><code>500</code></td><td>rollback: the item is <em>not</em> deleted and <code>total_amount</code> is unchanged; <b>no event is published</b>, so no client's screen moves</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <pre class="diagram">{ "error": { "code": "CANCEL_THRESHOLD",
+             "message": "Không thể huỷ món đã phục vụ", "details": [] } }</pre>
+
+  <p><b>The whole-order cancel</b> (<code>DELETE /orders/:id</code>) is the same rail with a wider
+  scope: same modal, same <code>canCancel</code> predicate, soft-delete, → <code>204</code>, publishes
+  <code>order_cancelled</code>. On the receiving end that is a <b>terminal branch</b> — the action row
+  is replaced rather than re-rendered.</p>
+</section>
+
+<!-- ================================================================ 07 -->
+<section id="twoclient">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Two-client walkthrough — the chef taps, this screen moves</h2></div>
+
+  <p>This is the R-1 acceptance receipt, drawn: <b>a write on one client must move the other client's
+  screen with no refresh.</b> Client A is the kitchen display; client B is the guest's phone on Bàn 04.</p>
+
+  <div class="svgwrap"><svg viewBox="0 0 920 430" role="img" aria-label="Two-client sequence: KDS increments qty_served, the guest screen updates live">
+    <!-- lanes -->
+    <rect x="16" y="20" width="160" height="34" rx="8" class="abox rsc"/>
+    <text x="96" y="42" class="tb tviolet" text-anchor="middle">A · KDS (chef)</text>
+    <line x1="96" y1="54" x2="96" y2="412" class="lifeline"/>
+
+    <rect x="228" y="20" width="150" height="34" rx="8" class="abox api"/>
+    <text x="303" y="42" class="tb tamber" text-anchor="middle">Gin API</text>
+    <line x1="303" y1="54" x2="303" y2="412" class="lifeline"/>
+
+    <rect x="424" y="20" width="140" height="34" rx="8" class="abox db"/>
+    <text x="494" y="42" class="tb tgreen" text-anchor="middle">MySQL</text>
+    <line x1="494" y1="54" x2="494" y2="412" class="lifeline"/>
+
+    <rect x="612" y="20" width="150" height="34" rx="8" class="abox redis"/>
+    <text x="687" y="42" class="tb tred" text-anchor="middle">Redis order:{id}</text>
+    <line x1="687" y1="54" x2="687" y2="412" class="lifeline"/>
+
+    <rect x="800" y="20" width="105" height="34" rx="8" class="abox client"/>
+    <text x="852" y="42" class="tb taccent" text-anchor="middle">B · /orders</text>
+    <line x1="852" y1="54" x2="852" y2="412" class="lifeline"/>
+
+    <!-- steps -->
+    <line x1="96" y1="88" x2="300" y2="88" class="call" marker-end="url(#mi)"/>
+    <text x="198" y="82" class="t2" text-anchor="middle">chef taps "phần đã ra" → qty_served++</text>
+
+    <line x1="303" y1="116" x2="490" y2="116" class="flowg" marker-end="url(#mg)"/>
+    <text x="396" y="110" class="t2" text-anchor="middle">UPDATE order_items SET qty_served = 3</text>
+    <line x1="494" y1="140" x2="308" y2="140" class="resp" marker-end="url(#mm)"/>
+    <text x="400" y="134" class="t2 tgreen" text-anchor="middle">committed</text>
+
+    <line x1="303" y1="168" x2="683" y2="168" class="flowa" marker-end="url(#ma)"/>
+    <text x="490" y="162" class="t2 tred" text-anchor="middle">PUBLISH order:{id} → item_progress {item_id, qty_served:3, quantity:3}</text>
+
+    <line x1="687" y1="196" x2="848" y2="196" class="flowo" marker-end="url(#mo)"/>
+    <text x="770" y="190" class="t2 tamber" text-anchor="middle">down B's open stream</text>
+
+    <!-- B's reactions -->
+    <rect x="600" y="216" width="300" height="112" rx="9" class="region"/>
+    <text x="750" y="236" class="t2 tamber" text-anchor="middle" style="font-weight:700">B's exhaustive switch reacts</text>
+    <text x="750" y="256" class="t2" text-anchor="middle">DishRow: ra ×2 → ra ×3 · còn ×1 → ✓</text>
+    <text x="750" y="274" class="t2" text-anchor="middle">progress bar: 3/6 → 4/6 phần đã ra</text>
+    <text x="750" y="292" class="t2" text-anchor="middle">item_status → done (server-derived)</text>
+    <text x="750" y="312" class="t2 taccent" text-anchor="middle">local cache patch — no round trip, no flicker</text>
+
+    <!-- queue advance -->
+    <line x1="303" y1="352" x2="683" y2="352" class="flowa" marker-end="url(#ma)"/>
+    <text x="490" y="346" class="t2 tred" text-anchor="middle">order becomes ready → PUBLISH queue:broadcast → queue.update</text>
+    <line x1="687" y1="382" x2="848" y2="382" class="flowo" marker-end="url(#mo)"/>
+    <text x="770" y="376" class="t2 tamber" text-anchor="middle">position 2 → 1</text>
+    <text x="700" y="404" class="t2 taccent" text-anchor="middle">banner "#1 trong 5 đơn" (ETA line pulses) + floor list row advances — same payload</text>
+  </svg></div>
+  <p class="cap">Zero refreshes, zero polls. The only thing B did was keep its one stream open.</p>
+
+  <ol class="seq">
+    <li><span class="n">1</span><div class="body"><span class="actor rsc who">kds</span> —
+      the chef marks one more portion of <b>Bánh Cuốn</b> as served on Bàn 04's ticket.
+      <code>qty_served</code> goes 2 → 3 against <code>quantity: 3</code>.</div></li>
+    <li><span class="n">2</span><div class="body"><span class="actor db who">mysql</span> —
+      the write commits. <code>qty_served</code> is the <em>entire</em> progress model — there is no
+      per-item <code>status</code> column to keep in sync.</div></li>
+    <li><span class="n">3</span><div class="body"><span class="actor redis who">redis</span> —
+      the service publishes <code>item_progress</code> to <code>order:{id}</code>. Redis is pure
+      transport; nothing about this order is cached anywhere.</div></li>
+    <li><span class="n">4</span><div class="body"><span class="actor client who">this screen</span> —
+      B's <code>useOrderMonitorSSE</code> receives the frame and hits its
+      <code>item_progress</code> case. Plan default: <b>a local cache patch</b> of that item's
+      <code>qty_served</code>, not a refetch — the difference between a smooth bar and a flicker.
+      <span class="note">❓ Confirm at R-1. Structural events (<code>items_added</code>,
+      <code>item_cancelled</code>) still refetch, because rows change.</span></div></li>
+    <li><span class="n">5</span><div class="body"><span class="actor client who">this screen</span> —
+      the <code>DishRow</code> moves: <b>tổng ×3 · ra ×3 · còn ✓</b>. The card's bar advances
+      (<code>Σ qty_served / Σ quantity</code> over display items — the 0 đ combo header excluded), the
+      footer reads "4/6 phần đã ra", and Card C's <b>Đã dùng / Còn lại</b> split shifts.</div></li>
+    <li><span class="n">6</span><div class="body"><span class="actor api who">gin api</span> —
+      when the last item completes and the order transitions to <code>ready</code>, two more events
+      fire: <code>order_status_changed</code> on <code>order:{id}</code> and a fresh
+      <code>queue.update</code> on <code>queue:broadcast</code>.</div></li>
+    <li><span class="n">7</span><div class="body"><span class="actor client who">this screen</span> —
+      the <b>StatusBadge</b> advances live, <code>StatusNotificationModal</code> pops "Món của bạn đã
+      sẵn sàng!" with one "Đã hiểu" button, and — from the <em>same</em> <code>queue.update</code>
+      payload — the banner shows <b>#1</b> with its ETA line pulsing while the floor list row advances.
+      <span class="note">Reconciled back into <code>ORDER_CACHE</code>, so the history card below shows
+      the same progress as the live card above.</span></div></li>
+  </ol>
+
+  <div class="golden">
+    <p><b>The receipt this walkthrough becomes:</b> a two-client transcript for R-1 — client A
+    increments <code>qty_served</code>, client B's stream receives <code>item_progress</code> and the
+    queue advances; plus a reconnect transcript proving snapshot-on-connect replays a status changed
+    while dropped, and a <code>403</code> proving the ownership gate. FE rows add mobile-viewport
+    screenshots per behavior, including the rollup showing <b>7 loại</b> for the <b>Bàn 04</b> example
+    and all six render branches.</p>
+  </div>
+
+  <div class="warn">
+    <b>What the reference did instead.</b> It published <code>item_progress</code> and had no consumer
+    case, so cooking progress never moved. It listened for <code>order.status</code> while the BE
+    published <code>order_status_changed</code>, so the badge never advanced. It opened a
+    <em>second</em> SSE connection per opened detail sheet. And it never checked ownership on the
+    stream, so any authed client could watch any order. Each of those is closed structurally here —
+    one gated stream per page, one event-contract file, one exhaustive CI-gated switch.
+  </div>
+</section>
+
+<footer>
+  Written by F-24 (2026-07-19) · ecom-core restaurant platform.
+  This page is a <b>snapshot</b> of
+  <a href="customer_orders_tracking_PLAN.md"><code>customer_orders_tracking_PLAN.md</code></a>,
+  <b>which wins on any conflict</b>. Rules live in their owning docs
+  (<code>FE_STATE.md</code>, <code>BE_STATE.md</code>, <code>OVERALL_PLAN.md §3.5/§3.7</code>,
+  <code>DB_SCHEMA.md §4.3</code>); task status lives in <code>harness/TASKS.md</code>.
+  The plan itself, drawn: <a href="customer_orders_tracking_plan.html">customer_orders_tracking_plan.html</a>.
+</footer>
+
+</div>
+</body>
+</html>

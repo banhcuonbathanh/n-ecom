@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin to-do list — mockup #1 (F-20)</title>
+<style>
+  /* ---- page chrome: F-7 neutral design-system tokens (admin surface) ----
+     Admin screens use the NEUTRAL design-system palette, never the customer
+     dark/orange shell (PAGE_PLAN_GUIDE §7). These tokens follow the viewer's
+     theme in both directions. */
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4; --violet: #6B4FBB; --violet-soft: #EDE8F9;
+    --surface-2: #F3F4F6; --border-strong: #9AA3AF;
+    --shadow-1: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.10);
+    --shadow-3: 0 12px 16px -4px rgba(16,24,40,.10), 0 4px 6px -2px rgba(16,24,40,.05);
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E58278; --red-soft: #3A1D19; --violet: #B39DEB; --violet-soft: #241C3D;
+      --surface-2: #1C2431; --border-strong: #4A5568;
+      --shadow-1: 0 1px 2px rgba(0,0,0,.4); --shadow-3: 0 12px 16px -4px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E58278; --red-soft: #3A1D19; --violet: #B39DEB; --violet-soft: #241C3D;
+    --surface-2: #1C2431; --border-strong: #4A5568;
+    --shadow-1: 0 1px 2px rgba(0,0,0,.4); --shadow-3: 0 12px 16px -4px rgba(0,0,0,.55);
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4; --violet: #6B4FBB; --violet-soft: #EDE8F9;
+    --surface-2: #F3F4F6; --border-strong: #9AA3AF;
+    --shadow-1: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.10);
+    --shadow-3: 0 12px 16px -4px rgba(16,24,40,.10), 0 4px 6px -2px rgba(16,24,40,.05);
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.55; font-size: 16px; margin: 0; }
+  .page { max-width: 1120px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1 { font-family: var(--sans); font-size: 1.9rem; font-weight: 700; margin: 8px 0 12px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.02rem; color: var(--muted); max-width: 68ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  footer { margin-top: 56px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; display: inline-block; }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .chip.violet { color: var(--violet); background: var(--violet-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 24px; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: .82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0; }
+
+  /* ================= the app frame ================= */
+  .frame-wrap { overflow-x: auto; }
+  .frame { min-width: 900px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow-3); }
+
+  .browserbar { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border-bottom: 1px solid var(--line); padding: 8px 12px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); opacity: .5; }
+  .urlbar { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 3px 10px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  .app { display: flex; min-height: 620px; }
+
+  /* --- sidebar --- */
+  .side { flex: none; width: 190px; background: var(--surface-2); border-right: 1px solid var(--line); padding: 14px 0; }
+  .brand { font-family: var(--sans); font-weight: 700; font-size: 14px; padding: 0 16px 14px; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
+  .brand small { display: block; font-family: var(--mono); font-weight: 400; font-size: 10px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .navgrp { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 12px 16px 5px; }
+  .navi { display: flex; align-items: center; gap: 9px; padding: 7px 16px; font-size: 13px; color: var(--muted); }
+  .navi.on { color: var(--accent); background: var(--accent-soft); font-weight: 600; box-shadow: inset 3px 0 0 var(--accent); }
+  .navi .ic { width: 15px; text-align: center; opacity: .85; }
+
+  /* --- main --- */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .topbar h2 { font-family: var(--sans); font-size: 17px; font-weight: 700; margin: 0; }
+  .who { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .rolepill { font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--done); background: var(--done-soft); border-radius: 999px; padding: 2px 8px; }
+
+  .content { padding: 18px 20px 26px; flex: 1; }
+
+  .btn { border: 1px solid transparent; border-radius: 7px; padding: 7px 14px; font-family: var(--body); font-size: 12.5px; font-weight: 600; cursor: pointer; background: var(--accent); color: #fff; box-shadow: var(--shadow-1); }
+  :root[data-theme="dark"] .btn, @media (prefers-color-scheme: dark) { }
+  .btn.ghost { background: transparent; color: var(--accent); border-color: var(--accent); box-shadow: none; }
+  .btn.subtle { background: var(--surface-2); color: var(--ink); border-color: var(--line); box-shadow: none; }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; background: var(--surface-2); border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px; margin-bottom: 18px; }
+  .fld { display: flex; flex-direction: column; gap: 4px; }
+  .fld label { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .fld select, .fld input { font-family: var(--body); font-size: 12.5px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; min-width: 132px; }
+  .fld select:focus, .fld input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-left-width: 3px; border-radius: 9px; padding: 12px 14px; box-shadow: var(--shadow-1); }
+  .kpi .kl { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .kpi .kv { font-family: var(--sans); font-size: 27px; font-weight: 700; line-height: 1.15; }
+  .kpi .kd { font-size: 11px; color: var(--muted); }
+  .kpi.tot { border-left-color: var(--border-strong); }
+  .kpi.ok  { border-left-color: var(--done); } .kpi.ok .kv { color: var(--done); }
+  .kpi.pr  { border-left-color: var(--accent); } .kpi.pr .kv { color: var(--accent); }
+  .kpi.ov  { border-left-color: var(--red); } .kpi.ov .kv { color: var(--red); }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 9px; overflow: hidden; box-shadow: var(--shadow-1); }
+  .card-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+  .card-h b { font-family: var(--sans); font-size: 13.5px; }
+  .card-h .hint { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  .tw { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 9px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.clickable { cursor: pointer; }
+  tr.clickable:hover { background: var(--accent-soft); }
+  tr.overdue-row { background: var(--red-soft); }
+  .tname b { font-weight: 600; }
+  .tname .sub { display: block; font-size: 11px; color: var(--muted); }
+  .strike { text-decoration: line-through; color: var(--muted); }
+
+  .badge { font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: .04em; border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+  .badge.pend { color: var(--muted); background: var(--surface-2); border: 1px solid var(--line); }
+  .badge.prog { color: var(--accent); background: var(--accent-soft); }
+  .badge.done { color: var(--done); background: var(--done-soft); }
+  .badge.over { color: var(--red); background: var(--red-soft); }
+  .rate { font-weight: 700; font-family: var(--mono); font-size: 12px; }
+  .rate.hi { color: var(--done); } .rate.mid { color: var(--amber); } .rate.lo { color: var(--red); }
+  .prio { white-space: nowrap; font-size: 12px; }
+  .iconbtn { background: transparent; border: 1px solid var(--line); border-radius: 6px; width: 30px; height: 30px; cursor: pointer; font-size: 13px; color: var(--ink); }
+  .iconbtn:hover { border-color: var(--accent); color: var(--accent); }
+  .who-cell { display: flex; align-items: center; gap: 8px; }
+  .mini-av { width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--line); font-family: var(--mono); font-size: 9.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+  .rolelbl { font-size: 11px; color: var(--muted); }
+
+  .crumb { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 12.5px; }
+  .crumb .lnk { color: var(--accent); cursor: pointer; }
+  .empty { padding: 34px 16px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  /* modal */
+  .scrim { position: fixed; inset: 0; background: rgba(10,14,22,.55); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 90; }
+  .scrim.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; width: 100%; max-width: 460px; box-shadow: var(--shadow-3); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column; }
+  .modal-h { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid var(--line); }
+  .modal-h b { font-family: var(--sans); font-size: 14.5px; }
+  .modal-b { padding: 14px 16px; display: flex; flex-direction: column; gap: 11px; overflow-y: auto; }
+  .modal-f { display: flex; justify-content: flex-end; gap: 9px; padding: 12px 16px; border-top: 1px solid var(--line); background: var(--surface-2); }
+  .mrow { display: flex; gap: 10px; } .mrow > .fld { flex: 1; }
+  .fld input[type=text], .fld textarea { width: 100%; }
+  .fld textarea { font-family: var(--body); font-size: 12.5px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; resize: vertical; min-height: 52px; }
+  .req { color: var(--red); }
+  .locked { opacity: .62; }
+  .lockmsg { font-size: 10.5px; color: var(--violet); font-family: var(--mono); }
+
+  .notewrap { border-left: 3px solid var(--violet); background: var(--violet-soft); border-radius: 0 7px 7px 0; padding: 8px 11px; font-size: 11.5px; }
+  .notewrap b { font-family: var(--mono); font-size: 10.5px; }
+
+  .switcher { display: flex; gap: 8px; align-items: center; margin: 22px 0 10px; flex-wrap: wrap; }
+  .switcher .lbl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  .tab { border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: 5px 13px; font-family: var(--mono); font-size: 11px; cursor: pointer; }
+  .tab.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+
+  .hidden { display: none !important; }
+  .skel { background: var(--surface-2); border-radius: 6px; animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .5 } }
+  .errpanel { padding: 30px 16px; text-align: center; }
+  .errpanel .et { font-family: var(--sans); font-weight: 600; font-size: 13.5px; margin-bottom: 4px; }
+  .errpanel .ed { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · mockup #1 · 2026-07-19</div>
+  <h1>Admin to-do list — UI preview</h1>
+  <p class="lede">A high-fidelity render of <code>/admin/todo-list</code> as planned: the admin
+  shell, both views, the authoring modal, and the named loading/empty/error branches. Buttons are
+  live so the branches can be inspected — no network, seeded data only.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-20</span></span></div>
+    <div class="fact"><span class="k">palette</span><span class="v">F-7 neutral (admin surface)</span></div>
+    <div class="fact"><span class="k">worked example</span><span class="v">2026-07-19 · chef01 · 18 tasks</span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_todo_list_PLAN.md">admin_todo_list_PLAN.md</a></span></div>
+  </div>
+  <div class="golden">
+    <p><b>Admin surfaces use the neutral F-7 design-system tokens</b>, never the customer
+    dark/orange shell (<a href="../PAGE_PLAN_GUIDE.md">PAGE_PLAN_GUIDE §7</a>). This page therefore
+    follows your light/dark theme in both directions — the customer mockups deliberately do not.</p>
+  </div>
+</header>
+
+<div class="switcher">
+  <span class="lbl">inspect branch</span>
+  <button class="tab on" data-branch="a">View A · stats board</button>
+  <button class="tab" data-branch="b">View B · task list</button>
+  <button class="tab" data-branch="loading">loading</button>
+  <button class="tab" data-branch="empty">empty</button>
+  <button class="tab" data-branch="error">error</button>
+</div>
+
+<div class="frame-wrap">
+<div class="frame">
+  <div class="browserbar">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="urlbar">https://quan-banh-cuon.vn/admin/todo-list</span>
+  </div>
+
+  <div class="app">
+    <!-- ---------------- sidebar ---------------- -->
+    <aside class="side">
+      <div class="brand">Quán Bánh Cuốn<small>admin</small></div>
+      <div class="navgrp">Tổng quan</div>
+      <div class="navi"><span class="ic">▦</span> Bảng điều khiển</div>
+      <div class="navi"><span class="ic">◔</span> Báo cáo</div>
+      <div class="navgrp">Thực đơn</div>
+      <div class="navi"><span class="ic">🍽</span> Món ăn</div>
+      <div class="navi"><span class="ic">◈</span> Suất / Combo</div>
+      <div class="navi"><span class="ic">≡</span> Nguyên liệu</div>
+      <div class="navgrp">Nhân sự</div>
+      <div class="navi"><span class="ic">☺</span> Nhân viên</div>
+      <div class="navi on"><span class="ic">✓</span> Công việc</div>
+      <div class="navi"><span class="ic">▤</span> Bảng công việc</div>
+      <div class="navi"><span class="ic">✦</span> Đào tạo</div>
+    </aside>
+
+    <!-- ---------------- main ---------------- -->
+    <div class="main">
+      <div class="topbar">
+        <h2>Danh sách Công Việc</h2>
+        <div class="who">
+          <span class="rolepill">manager</span>
+          <span>mgr01</span>
+          <span class="avatar">ML</span>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- filter bar -->
+        <div class="filters">
+          <div class="fld">
+            <label for="f-staff">Nhân viên</label>
+            <select id="f-staff">
+              <option>Tất cả</option><option>chef01</option><option>cashier01</option><option>server02</option>
+            </select>
+          </div>
+          <div class="fld">
+            <label for="f-date">Ngày</label>
+            <input id="f-date" type="date" value="2026-07-19">
+          </div>
+          <div class="fld">
+            <label for="f-status">Trạng thái</label>
+            <select id="f-status">
+              <option>Tất cả</option><option>Chờ</option><option>Đang làm</option>
+              <option>Hoàn thành</option><option>Quá hạn</option>
+            </select>
+          </div>
+          <button class="btn subtle" type="button">Xóa lọc</button>
+          <div style="flex:1"></div>
+          <button class="btn" type="button" id="btn-create">+ Tạo công việc</button>
+        </div>
+
+        <!-- ============ VIEW A — stats board ============ -->
+        <div id="view-a">
+          <div class="kpis">
+            <div class="kpi tot"><span class="kl">Tổng</span><div class="kv">18</div><span class="kd">công việc hôm nay</span></div>
+            <div class="kpi ok"><span class="kl">Hoàn thành</span><div class="kv">9</div><span class="kd">50% cả ngày</span></div>
+            <div class="kpi pr"><span class="kl">Đang làm</span><div class="kv">4</div><span class="kd">đang thực hiện</span></div>
+            <div class="kpi ov"><span class="kl">Quá hạn</span><div class="kv">2</div><span class="kd">cần xử lý</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card-h">
+              <b>Theo nhân viên · 2026-07-19</b>
+              <span class="hint">bấm một dòng để xem chi tiết →</span>
+            </div>
+            <div class="tw">
+              <table>
+                <thead>
+                  <tr><th>Nhân viên</th><th>Được giao</th><th>Xong</th><th>Tỉ lệ</th><th>Quá hạn</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="clickable" id="row-chef">
+                    <td><div class="who-cell"><span class="mini-av">C1</span><span><b>chef01</b><span class="rolelbl"> · chef</span></span></div></td>
+                    <td>5</td><td>2</td><td><span class="rate lo">40%</span></td>
+                    <td><span class="badge over">1 quá hạn</span></td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="who-cell"><span class="mini-av">K1</span><span><b>cashier01</b><span class="rolelbl"> · cashier</span></span></div></td>
+                    <td>7</td><td>6</td><td><span class="rate hi">86%</span></td><td>—</td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="who-cell"><span class="mini-av">S2</span><span><b>server02</b><span class="rolelbl"> · staff</span></span></div></td>
+                    <td>4</td><td>1</td><td><span class="rate mid">25%</span></td>
+                    <td><span class="badge over">1 quá hạn</span></td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="who-cell"><span class="mini-av">S3</span><span><b>server03</b><span class="rolelbl"> · staff</span></span></div></td>
+                    <td>2</td><td>0</td><td><span class="rate lo">0%</span></td><td>—</td>
+                  </tr>
+                  <tr class="clickable">
+                    <td><div class="who-cell"><span class="mini-av">B1</span><span><b>bar01</b><span class="rolelbl"> · staff</span></span></div></td>
+                    <td>0</td><td>0</td><td><span class="rate lo">0%</span></td><td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <p style="font-size:11.5px;color:var(--muted);margin-top:9px">
+            <code>bar01</code> has zero tasks and still appears — the stats query LEFT JOINs staff,
+            so nobody is invisible on the board. <b>No <code>qualityScore</code> column</b>: dropped
+            from the contract as invented data (F-22 §3.4).
+          </p>
+        </div>
+
+        <!-- ============ VIEW B — task list ============ -->
+        <div id="view-b" class="hidden">
+          <div class="crumb">
+            <span class="lnk" id="back-a">← Tất cả nhân viên</span>
+            <span style="color:var(--muted)">/</span>
+            <b>chef01</b><span class="rolelbl"> · chef · 2026-07-19</span>
+          </div>
+          <div class="card">
+            <div class="card-h">
+              <b>Công việc của chef01</b>
+              <span class="hint">ưu tiên cao → thấp, rồi theo giờ hạn</span>
+            </div>
+            <div class="tw">
+              <table>
+                <thead>
+                  <tr><th>Tên</th><th>Ưu tiên</th><th>Khung giờ</th><th>Trạng thái</th><th>Hành động</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="overdue-row">
+                    <td class="tname"><b>Vệ sinh khu bếp</b><span class="sub">Lau bếp, thay dầu chiên</span></td>
+                    <td class="prio">🔴 Cao</td><td>08:00 – 09:00</td>
+                    <td><span class="badge over">quá hạn</span></td>
+                    <td><button class="iconbtn edit-btn" type="button" title="Sửa">✏️</button></td>
+                  </tr>
+                  <tr>
+                    <td class="tname"><b>Kiểm kê nguyên liệu</b><span class="sub">Đếm tồn kho tủ lạnh 2</span></td>
+                    <td class="prio">🔴 Cao</td><td>21:00</td>
+                    <td><span class="badge prog">đang làm</span></td>
+                    <td><button class="iconbtn edit-btn" type="button" title="Sửa">✏️</button></td>
+                  </tr>
+                  <tr>
+                    <td class="tname"><b>Chuẩn bị nước chấm</b><span class="sub">Pha 5 lít cho ca trưa</span></td>
+                    <td class="prio">🟡 TB</td><td>—</td>
+                    <td><span class="badge pend">chờ</span></td>
+                    <td><button class="iconbtn edit-btn" type="button" title="Sửa">✏️</button></td>
+                  </tr>
+                  <tr>
+                    <td class="tname"><b class="strike">Nhận hàng buổi sáng</b><span class="sub">Kiểm tra đơn giao 06:30</span></td>
+                    <td class="prio">🟡 TB</td><td>06:30 – 07:00</td>
+                    <td><span class="badge done">hoàn thành</span></td>
+                    <td><button class="iconbtn edit-btn" type="button" title="Sửa">✏️</button></td>
+                  </tr>
+                  <tr>
+                    <td class="tname"><b class="strike">Bật lò hấp</b></td>
+                    <td class="prio">🟢 Thấp</td><td>—</td>
+                    <td><span class="badge done">hoàn thành</span></td>
+                    <td><button class="iconbtn edit-btn" type="button" title="Sửa">✏️</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <p style="font-size:11.5px;color:var(--muted);margin-top:9px">
+            Header reads <b>"Hành động"</b>, not the abbreviated "HĐ" the reference doc drew.
+            <code>description</code> renders as a subtitle — the reference stored it and never showed it.
+            <b>quá hạn</b> is server-derived (<code>isOverdue</code>), never a stored status.
+          </p>
+        </div>
+
+        <!-- ============ loading ============ -->
+        <div id="view-loading" class="hidden">
+          <div class="kpis">
+            <div class="kpi tot"><div class="skel" style="height:12px;width:52px;margin-bottom:9px"></div><div class="skel" style="height:26px;width:44px"></div></div>
+            <div class="kpi tot"><div class="skel" style="height:12px;width:66px;margin-bottom:9px"></div><div class="skel" style="height:26px;width:38px"></div></div>
+            <div class="kpi tot"><div class="skel" style="height:12px;width:58px;margin-bottom:9px"></div><div class="skel" style="height:26px;width:34px"></div></div>
+            <div class="kpi tot"><div class="skel" style="height:12px;width:54px;margin-bottom:9px"></div><div class="skel" style="height:26px;width:30px"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><div class="skel" style="height:14px;width:180px"></div></div>
+            <div style="padding:14px;display:flex;flex-direction:column;gap:11px">
+              <div class="skel" style="height:15px;width:100%"></div>
+              <div class="skel" style="height:15px;width:92%"></div>
+              <div class="skel" style="height:15px;width:96%"></div>
+              <div class="skel" style="height:15px;width:88%"></div>
+              <div class="skel" style="height:15px;width:94%"></div>
+            </div>
+          </div>
+          <p style="font-size:11.5px;color:var(--muted);margin-top:9px">
+            <b>The skeleton mirrors its destination</b> — 4 KPI blocks then table rows. The
+            reference reused one generic 7-bar block for both views, guaranteeing layout shift.
+          </p>
+        </div>
+
+        <!-- ============ empty ============ -->
+        <div id="view-empty" class="hidden">
+          <div class="card">
+            <div class="card-h"><b>Theo nhân viên · 2026-07-20</b></div>
+            <div class="empty">
+              <div style="font-size:26px;margin-bottom:8px;opacity:.5">☑</div>
+              <div style="font-weight:600;color:var(--ink);margin-bottom:4px">Chưa có công việc nào cho ngày này</div>
+              <div style="margin-bottom:14px">Giao việc đầu tiên cho ca hôm nay.</div>
+              <button class="btn" type="button" onclick="openModal('create')">+ Tạo công việc</button>
+            </div>
+          </div>
+          <p style="font-size:11.5px;color:var(--muted);margin-top:9px">
+            <b>Empty is not error and not loading.</b> The reference rendered
+            <code>{data ? … : null}</code> — a blank area for both. Here empty says so and offers
+            the next action.
+          </p>
+        </div>
+
+        <!-- ============ error ============ -->
+        <div id="view-error" class="hidden">
+          <div class="card">
+            <div class="card-h"><b>Theo nhân viên · 2026-07-19</b></div>
+            <div class="errpanel">
+              <div style="font-size:26px;margin-bottom:8px;color:var(--red)">⚠</div>
+              <div class="et">Không tải được dữ liệu công việc</div>
+              <div class="ed">Máy chủ không phản hồi. Dữ liệu hiển thị có thể đã cũ.</div>
+              <button class="btn" type="button">Thử lại</button>
+            </div>
+          </div>
+          <p style="font-size:11.5px;color:var(--muted);margin-top:9px">
+            <b>Error has its own render.</b> The reference showed the <em>empty</em> state when the
+            task fetch failed — telling the manager "no tasks" when the truth was "we don't know".
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ================= modal ================= -->
+<div class="scrim" id="scrim">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-h">
+      <b id="modal-title">Tạo công việc mới</b>
+      <button class="iconbtn" type="button" onclick="closeModal()" aria-label="Đóng">✕</button>
+    </div>
+    <div class="modal-b">
+      <div class="fld">
+        <label for="m-name">Tên công việc <span class="req">*</span></label>
+        <input id="m-name" type="text" placeholder="VD: Vệ sinh khu bếp">
+      </div>
+      <div class="fld" id="m-assign-wrap">
+        <label for="m-assign">Giao cho <span class="req">*</span></label>
+        <select id="m-assign"><option>Chọn nhân viên…</option><option>chef01</option><option>cashier01</option><option>server02</option></select>
+        <span class="lockmsg hidden" id="m-lock">🔒 không đổi được khi sửa — huỷ và tạo lại để giao cho người khác</span>
+      </div>
+      <div class="mrow">
+        <div class="fld">
+          <label for="m-prio">Ưu tiên <span class="req">*</span></label>
+          <select id="m-prio"><option>🔴 Cao</option><option selected>🟡 Trung bình</option><option>🟢 Thấp</option></select>
+        </div>
+        <div class="fld">
+          <label for="m-due">Hạn <span class="req">*</span></label>
+          <input id="m-due" type="datetime-local" value="2026-07-19T17:00">
+        </div>
+      </div>
+      <div class="mrow">
+        <div class="fld"><label for="m-s">Bắt đầu (tuỳ chọn)</label><input id="m-s" type="time"></div>
+        <div class="fld"><label for="m-e">Kết thúc (tuỳ chọn)</label><input id="m-e" type="time"></div>
+      </div>
+      <div class="fld">
+        <label for="m-desc">Mô tả</label>
+        <textarea id="m-desc" placeholder="Chi tiết công việc…"></textarea>
+      </div>
+      <div class="fld">
+        <label for="m-notes">Ghi chú</label>
+        <textarea id="m-notes" placeholder="Ghi chú nội bộ…"></textarea>
+      </div>
+      <div class="notewrap">
+        <b>NEW vs reference.</b> <code>notes</code> now has an input. The reference carried it in
+        the Zod schema and the payload but rendered no field, so it was permanently
+        <code>undefined</code>.
+      </div>
+      <div class="notewrap hidden" id="m-editnote" style="border-left-color:var(--red);background:var(--red-soft)">
+        <b>NEW vs reference.</b> This submits <code>PATCH /admin/tasks/:id</code> and updates the
+        row <b>in place</b>. The reference called <code>POST</code> in edit mode — inserting a
+        duplicate every time, with no delete button to undo it (🔴 Bug 1).
+      </div>
+    </div>
+    <div class="modal-f">
+      <button class="btn subtle" type="button" onclick="closeModal()">Hủy</button>
+      <button class="btn" type="button" id="m-submit">Lưu công việc</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Mockup #1 · written by the engineer-in-charge, 2026-07-19. Neutral F-7 tokens
+  (<a href="../../diagrams/design-system.html">design-system.html</a>) on the admin shell; seeded
+  with the worked example shared across this plan set. Interactions are local only — no network.
+  <b>Snapshot of <a href="admin_todo_list_PLAN.md">admin_todo_list_PLAN.md</a>, which wins on any
+  conflict.</b>
+</footer>
+
+</div>
+
+<script>
+  var views = { a:'view-a', b:'view-b', loading:'view-loading', empty:'view-empty', error:'view-error' };
+  function show(branch) {
+    Object.keys(views).forEach(function (k) {
+      document.getElementById(views[k]).classList.toggle('hidden', k !== branch);
+    });
+    document.querySelectorAll('.tab').forEach(function (t) {
+      t.classList.toggle('on', t.dataset.branch === branch);
+    });
+  }
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () { show(t.dataset.branch); });
+  });
+  document.getElementById('row-chef').addEventListener('click', function () { show('b'); });
+  document.querySelectorAll('#view-a tr.clickable').forEach(function (r) {
+    r.addEventListener('click', function () { show('b'); });
+  });
+  document.getElementById('back-a').addEventListener('click', function () { show('a'); });
+
+  function openModal(mode) {
+    var edit = mode === 'edit';
+    document.getElementById('modal-title').textContent = edit ? 'Sửa công việc' : 'Tạo công việc mới';
+    document.getElementById('m-submit').textContent = edit ? 'Cập nhật' : 'Lưu công việc';
+    document.getElementById('m-lock').classList.toggle('hidden', !edit);
+    document.getElementById('m-assign').disabled = edit;
+    document.getElementById('m-assign-wrap').classList.toggle('locked', edit);
+    document.getElementById('m-editnote').classList.toggle('hidden', !edit);
+    document.getElementById('m-name').value = edit ? 'Kiểm kê nguyên liệu' : '';
+    document.getElementById('m-desc').value = edit ? 'Đếm tồn kho tủ lạnh 2' : '';
+    document.getElementById('m-notes').value = edit ? 'Báo lại quản lý sau khi xong' : '';
+    if (edit) { document.getElementById('m-assign').value = 'chef01'; }
+    document.getElementById('scrim').classList.add('open');
+  }
+  function closeModal() { document.getElementById('scrim').classList.remove('open'); }
+  document.getElementById('btn-create').addEventListener('click', function () { openModal('create'); });
+  document.querySelectorAll('.edit-btn').forEach(function (b) {
+    b.addEventListener('click', function (e) { e.stopPropagation(); openModal('edit'); });
+  });
+  document.getElementById('scrim').addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

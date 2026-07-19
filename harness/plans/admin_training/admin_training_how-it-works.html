@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Training — How it works (F-26)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --red: #B3261E;
+    --red-soft: #FBE9E7;
+    --violet: #6A3FB5;
+    --violet-soft: #EFE8FA;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2938C; --red-soft: #3A1A18; --violet: #C4A7F5; --violet-soft: #2A1F3D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2938C; --red-soft: #3A1A18; --violet: #C4A7F5; --violet-soft: #2A1F3D;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE9E7; --violet: #6A3FB5; --violet-soft: #EFE8FA;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .chip.red { color: var(--red); background: var(--red-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .bad { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .bad p { margin: 0 0 8px; } .bad p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, .bad code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  ol.steps { margin: 0; padding-left: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 10px; }
+  ol.steps > li { counter-increment: s; display: flex; gap: 12px; font-size: 0.92rem; }
+  ol.steps > li::before { content: counter(s); flex: none; width: 22px; height: 22px; margin-top: 2px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-family: var(--mono); font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  .svg-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 12px; margin: 16px 0; }
+  .svg-wrap svg { display: block; }
+  .lane-t { font-family: var(--mono); font-size: 10px; fill: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .step-t { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+  .note-t { font-family: var(--mono); font-size: 10px; fill: var(--muted); }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.c { color: var(--accent); background: var(--accent-soft); }
+  .t.tt { color: var(--amber); background: var(--amber-soft); }
+  .t.o { color: var(--done); background: var(--done-soft); }
+  .dead { color: var(--muted); text-decoration: line-through; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .fnode.err { border-color: var(--red); background: var(--red-soft); }
+  .fnode.ok { border-color: var(--done); background: var(--done-soft); }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin: 16px 0; }
+  .panel { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 12px 14px; }
+  .panel h4 { margin: 0 0 8px; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .panel.good h4 { color: var(--done); }
+  .panel.bad-p { border-color: var(--red); }
+  .panel.bad-p h4 { color: var(--red); }
+  .panel pre { margin: 0; font-family: var(--mono); font-size: 0.74rem; line-height: 1.45; overflow-x: auto; }
+</style>
+</head>
+<body><div class="page">
+
+  <header>
+    <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+    <div class="eyebrow">ecom-core · restaurant platform · runtime walkthrough · 2026-07-19</div>
+    <h1>Đào tạo nhân viên — how it actually works</h1>
+    <p class="lede">Not <em>what we will build</em> — <em>what happens when it runs</em>. Seven numbered
+    end-to-end sequences for <code>/admin/training</code>: first load, the authoring loop, the roster
+    query that makes the tracking table honest, the staff write path the reference never built, the
+    notes write, and why nothing here is cached.</p>
+    <div class="facts">
+      <div class="fact"><span class="k">Task</span><span class="v">F-26</span></div>
+      <div class="fact"><span class="k">Phase</span><span class="v">AD</span></div>
+      <div class="fact"><span class="k">Redis</span><span class="v">none</span></div>
+      <div class="fact"><span class="k">Realtime</span><span class="v">none</span></div>
+      <div class="fact"><span class="k">Stores</span><span class="v">no Zustand</span></div>
+      <div class="fact"><span class="k">Endpoints</span><span class="v">10</span></div>
+    </div>
+  </header>
+
+  <nav class="topnav">
+    <a href="#s1">01 Big picture</a>
+    <a href="#s2">02 First load</a>
+    <a href="#s3">03 Authoring loop</a>
+    <a href="#s4">04 The roster query</a>
+    <a href="#s5">05 Staff write path</a>
+    <a href="#s6">06 Notes write path</a>
+    <a href="#s7">07 Why nothing is cached</a>
+  </nav>
+
+  <div class="bad">
+    <p><b>🔴 The defect this whole runtime designs out.</b> In the reference system, <b>no API path
+    ever wrote <code>training_progress</code> or <code>quiz_attempts</code></b>. The sqlc queries and
+    repository methods existed — <code>UpsertStaffProgress</code>, <code>InsertQuizAttempt</code> —
+    but nothing called them: no service method, no route.</p>
+    <p>So three of the page's seven endpoints could only ever return empty or 404. The completion
+    table always read <i>"Chưa có nhân viên nào được giao hướng dẫn này."</i>, the detail modal always
+    read <i>"Nhân viên này chưa bắt đầu hướng dẫn."</i>, and manager notes 404'd silently on save.
+    <b>The page implied it tracked training and recorded nothing.</b> Sections 04 and 05 are the two
+    mechanisms that fix it.</p>
+  </div>
+
+  <!-- ============================== 01 ============================== -->
+  <section id="s1">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Big picture — the whole machine on one screen</h2></div>
+
+    <p>Two managers, one Gin server, one MySQL. That is the entire cast. There is <b>no Redis</b> in
+    the training domain and <b>no SSE/WS</b> — both deliberate (§07).</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 900 300" width="900" height="300" role="img" aria-label="Training domain architecture: two manager browsers and staff devices talking REST to Gin and MySQL, with no Redis and no realtime channel">
+        <defs>
+          <marker id="mi" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="var(--accent)"/></marker>
+          <marker id="mm" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="var(--muted)"/></marker>
+          <marker id="mo" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="var(--done)"/></marker>
+          <marker id="mv" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="var(--violet)"/></marker>
+        </defs>
+
+        <!-- manager A -->
+        <rect x="10" y="20" width="200" height="90" rx="8" fill="var(--surface)" stroke="var(--accent)"/>
+        <text class="lane-t" x="24" y="40">Manager A — browser</text>
+        <text class="step-t" x="24" y="60">TanStack Query cache</text>
+        <text class="note-t" x="24" y="76">['training','guides',role] 5 min</text>
+        <text class="note-t" x="24" y="92">page useState + URL params</text>
+
+        <!-- manager B -->
+        <rect x="10" y="130" width="200" height="70" rx="8" fill="var(--surface)" stroke="var(--muted)"/>
+        <text class="lane-t" x="24" y="150">Manager B — browser</text>
+        <text class="note-t" x="24" y="168">same cache, own copy</text>
+        <text class="note-t" x="24" y="184">converges on refetch only</text>
+
+        <!-- staff -->
+        <rect x="10" y="220" width="200" height="66" rx="8" fill="var(--surface)" stroke="var(--violet)"/>
+        <text class="lane-t" x="24" y="240">Staff device (AD-T4)</text>
+        <text class="note-t" x="24" y="258">watch % · quiz attempt</text>
+        <text class="note-t" x="24" y="274">the write path §05</text>
+
+        <!-- gin -->
+        <rect x="360" y="90" width="170" height="110" rx="8" fill="var(--surface)" stroke="var(--ink)"/>
+        <text class="lane-t" x="374" y="110">Gin — /api/v1</text>
+        <text class="note-t" x="374" y="130">handler = shape</text>
+        <text class="note-t" x="374" y="147">service = business</text>
+        <text class="note-t" x="374" y="164">sqlc = data</text>
+        <text class="note-t" x="374" y="186">authMW + manager+</text>
+
+        <!-- mysql -->
+        <rect x="660" y="70" width="220" height="150" rx="8" fill="var(--surface)" stroke="var(--done)"/>
+        <text class="lane-t" x="674" y="90">MySQL — the only durable hub</text>
+        <text class="note-t" x="674" y="112">training_guides</text>
+        <text class="note-t" x="674" y="129">training_guide_roles</text>
+        <text class="note-t" x="674" y="146">training_progress</text>
+        <text class="note-t" x="674" y="163">quiz_attempts</text>
+        <text class="note-t" x="674" y="185">staff (the roster source)</text>
+        <text class="note-t" x="674" y="205">no status column — derived</text>
+
+        <!-- arrows -->
+        <line x1="212" y1="62" x2="356" y2="120" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#mi)"/>
+        <text class="note-t" x="228" y="80">REST reads + guide writes</text>
+        <line x1="212" y1="165" x2="356" y2="150" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#mm)"/>
+        <text class="note-t" x="230" y="146">poll / refocus</text>
+        <line x1="212" y1="250" x2="356" y2="180" stroke="var(--violet)" stroke-width="1.6" marker-end="url(#mv)"/>
+        <text class="note-t" x="234" y="238">watch · quiz</text>
+        <line x1="532" y1="140" x2="656" y2="140" stroke="var(--done)" stroke-width="1.6" marker-end="url(#mo)"/>
+        <text class="note-t" x="548" y="132">sqlc</text>
+
+        <!-- absent -->
+        <rect x="360" y="228" width="250" height="56" rx="8" fill="var(--red-soft)" stroke="var(--red)" stroke-dasharray="5 4"/>
+        <text class="lane-t" x="374" y="248" fill="var(--red)">Deliberately absent</text>
+        <text class="note-t" x="374" y="266" fill="var(--red)">no Redis · no SSE · no WS · no push</text>
+      </svg>
+    </div>
+
+    <div class="golden">
+      <p><b>The one-line mental model.</b> Training is a plain REST CRUD domain over MySQL whose only
+      interesting mechanic is a <b>join</b>: the completion table is driven from the <b>staff roster</b>,
+      not from the progress rows. Everything else is ordinary.</p>
+    </div>
+  </section>
+
+  <!-- ============================== 02 ============================== -->
+  <section id="s2">
+    <div class="sec-head"><span class="sec-num">02</span><h2>First load — three tiers, five branches</h2></div>
+
+    <ol class="steps">
+      <li><b>RSC <code>page.tsx</code> runs on the server</b> and prefetches the guides query for the
+      role in <code>?role=</code> (default <code>all</code>). While it awaits, <code>loading.tsx</code>
+      streams a skeleton that <b>mirrors the real layout</b> — header, tab strip, card grid, table —
+      never a centered spinner.</li>
+      <li><b><code>HydrationBoundary</code> hands the cache over.</b> The client mounts with the guides
+      already in the TanStack cache, so a warm server paints with <b>zero spinner</b>.</li>
+      <li><b>The client picks one of five branches</b> (below). They are mutually exclusive and every
+      one is built — the reference documented three and shipped a fourth by accident.</li>
+      <li><b>The tracking table fires its own query</b> for the guide in <code>?guide=</code>
+      (defaulting to the first guide of the active role), <code>enabled: !!guideId</code>.</li>
+      <li><b>Covers lazy-load.</b> Relative <code>cover_image_path</code> → <code>buildImageURL()</code>,
+      fixed aspect-ratio box, so cards never reflow as images arrive.</li>
+    </ol>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Branch</th><th>When</th><th>What renders</th></tr></thead>
+        <tbody>
+          <tr><td><span class="chip plan">loading</span></td><td><code>isPending</code>, no cached data</td><td>card-shaped skeletons + table row skeletons, count matched to the last known guide count</td></tr>
+          <tr><td><span class="chip red">error</span></td><td>guides query failed</td><td>inline retry panel <b>inside the content region</b> — header and tabs stay put</td></tr>
+          <tr><td><span class="chip amber">empty</span></td><td>query ok, no guides for this role</td><td>📚 + “Chưa có hướng dẫn nào.” + “+ Tạo hướng dẫn”</td></tr>
+          <tr><td><span class="chip amber">not-started</span></td><td>guides exist, zero staff activity</td><td>roster table listing every assigned staff as <b>Chưa bắt đầu</b> — a real state, not an error</td></tr>
+          <tr><td><span class="chip done">data</span></td><td>default</td><td>card grid + populated tracking table</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flag">
+      <p><b>Two upgrades over the reference, both in this sequence.</b></p>
+      <p>① It had <b>no <code>loading.tsx</code> at all</b> and was <code>'use client'</code> top to
+      bottom — first paint was a bare shell, then a fixed 4-card pulse regardless of how many guides
+      were coming.</p>
+      <p>② Its guide-list error <b>replaced the entire page</b>, header and tabs included, and the only
+      recovery offered was <code>window.location.reload()</code>. Ours scopes the error to the content
+      region and retries the <i>query</i>, not the document.</p>
+    </div>
+  </section>
+
+  <!-- ============================== 03 ============================== -->
+  <section id="s3">
+    <div class="sec-head"><span class="sec-num">03</span><h2>The authoring loop — create / edit a guide</h2></div>
+
+    <p>This is the half the reference got right, and we keep its shape: a modal that always submits
+    the <b>whole guide object</b>, then invalidate-and-refetch. No optimistic update.</p>
+
+    <div class="flow">
+      <div class="fnode"><span class="fk">click</span><b>+ Tạo hướng dẫn</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode"><span class="fk">modal</span><b>RHF + Zod</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode"><span class="fk">wire</span><b>POST / PUT</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode ok"><span class="fk">201 / 200</span><b>full guide</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode"><span class="fk">cache</span><b>invalidate</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode"><span class="fk">refetch</span><b>card appears</b></div>
+    </div>
+
+    <ol class="steps">
+      <li><b>Validate client-side first.</b> Zod enforces <code>title</code> + <code>role</code>
+      required, <code>pass_threshold</code> 50–100 (default 75), <code>max_attempts</code> 1–10
+      (default 3), <code>responsible_roles</code> ≥ 1, URLs valid-or-empty. <b>One threshold range,
+      one constant</b> — the reference's Zod said 1–100 while its own decision log said 50–100.</li>
+      <li><b>Submit is pessimistic.</b> The save button goes disabled with an inline “Đang lưu…”.
+      Nothing optimistic — a guide is not a cart line.</li>
+      <li><b>Server stamps identity.</b> <code>created_by</code> comes from the JWT and is
+      <b>passed into the service as a parameter</b>, never dug out of a context inside the service.
+      It is never accepted from the request body.</li>
+      <li><b>The verb is honest.</b> Edit is <code>PUT</code>, because the body is a full replace.
+      The reference called it <code>PATCH</code> while requiring every field and overwriting every
+      column — a lie in the method name.</li>
+      <li><b>On success</b> the mutation invalidates <code>['training','guides']</code> (all role
+      variants), the list refetches, and the card appears — carrying the <b>“Nháp”</b> overlay if
+      <code>published</code> is false.</li>
+      <li><b>On error the modal stays open</b>, showing the envelope's message with the form intact.
+      The reference had <b>no <code>onError</code> on any of its four mutations</b>, so create, edit,
+      delete and notes all failed silently.</li>
+    </ol>
+
+    <div class="golden">
+      <p><b>Delete, and why it stopped being a trap.</b> The reference gated
+      <code>DELETE</code> at <code>admin</code> while create/edit needed only <code>manager</code> —
+      and rendered the 🗑 action unconditionally. A manager clicked, got a 403, saw nothing, and the
+      guide stayed. We lower delete to <code>manager</code> <i>and</i> drive the button from one
+      <code>can('training.delete', role)</code> helper, so visibility and the server gate cannot drift
+      apart. Delete is a soft delete: the row keeps its <code>deleted_at</code> and its history.</p>
+    </div>
+  </section>
+
+  <!-- ============================== 04 ============================== -->
+  <section id="s4">
+    <div class="sec-head"><span class="sec-num">04</span><h2>The roster query — the mechanism that makes tracking honest</h2></div>
+
+    <p>This is the most important sequence on the page. The question the table answers is
+    <b>“who of my chefs has done this guide?”</b> — and the reference asked it backwards.</p>
+
+    <div class="split">
+      <div class="panel bad-p">
+        <h4>✗ Reference — progress-first (INNER JOIN)</h4>
+        <pre>SELECT …
+FROM training_progress tp
+INNER JOIN staff s
+  ON s.id = tp.staff_id
+WHERE tp.guide_id = ?
+ORDER BY s.full_name</pre>
+        <p style="font-size:.82rem;margin:10px 0 0;color:var(--muted)">Starts from progress rows. A
+        staff member with no row is <b>invisible</b>. Combined with the fact that nothing ever wrote a
+        progress row, the result set was <b>always empty</b> — forever, by construction.</p>
+      </div>
+      <div class="panel good">
+        <h4>✓ Ours — roster-first (LEFT JOIN)</h4>
+        <pre>SELECT …
+FROM staff s
+LEFT JOIN training_progress tp
+  ON tp.staff_id = s.id
+ AND tp.guide_id = ?
+WHERE s.role = :guide_role
+  AND s.is_active = 1
+  AND s.deleted_at IS NULL
+ORDER BY s.full_name</pre>
+        <p style="font-size:.82rem;margin:10px 0 0;color:var(--muted)">Starts from the <b>roster</b>.
+        Every assigned staff member appears whether or not they have started — the un-started ones
+        simply carry <code>NULL</code> progress, which renders as <b>Chưa bắt đầu</b>.</p>
+      </div>
+    </div>
+
+    <div class="golden">
+      <p><b>Why this matters beyond correctness.</b> Assignment on this page is implicit: a guide is
+      assigned to every active staff member whose <code>role</code> matches <code>guide.role</code>.
+      There is no assignment UI. The LEFT JOIN <i>is</i> the assignment rule, executed at read time —
+      so the table is useful and truthful on day one, before a single staff member touches anything.</p>
+    </div>
+
+    <h3>The worked example — 12 chefs, one guide</h3>
+    <p>Guide <b>“Cuốn bánh đúng cách”</b> (<code>role: chef</code>, <code>pass_threshold: 75</code>).
+    Twelve active chefs on the roster. Two have acted:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nhân viên</th><th><code>watched_percent</code></th><th><code>quiz_passed</code></th><th>Derived status</th><th>Badge</th></tr></thead>
+        <tbody>
+          <tr><td>Nguyễn Văn Bếp</td><td>100</td><td><code>true</code></td><td>Hoàn thành</td><td><span class="chip done">✅ green</span></td></tr>
+          <tr><td>Trần Thị Bánh</td><td>40</td><td><code>null</code></td><td>Đang học</td><td><span class="chip amber">🟡 amber</span></td></tr>
+          <tr><td>Lê Văn Mới <span class="note-t">(+ 9 more)</span></td><td>0</td><td><code>null</code></td><td>Chưa bắt đầu</td><td><span class="chip plan">⬜ neutral</span></td></tr>
+          <tr><td><i>(any failed attempt)</i></td><td>≥ 0</td><td><code>false</code></td><td>Chưa qua quiz</td><td><span class="chip red">❌ red</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top:14px">The reference's INNER JOIN would have returned <b>zero rows</b> here.
+    Ours returns <b>twelve</b>: 1 hoàn thành · 1 đang học · 10 chưa bắt đầu.</p>
+
+    <h3>Status is computed, never stored</h3>
+    <p>No table has a training <code>status</code> column. The four states fall out of two raw fields
+    at render time, in one <code>deriveTrainingStatus()</code> feeding one
+    <code>&lt;TrainingStatusBadge&gt;</code>:</p>
+
+    <pre class="diagram">quiz_passed === true                        → Hoàn thành      ✅  --done
+quiz_passed === false                       → Chưa qua quiz   ❌  --red
+quiz_passed === null && watched_percent > 0 → Đang học        🟡  --amber
+quiz_passed === null && watched_percent === 0 → Chưa bắt đầu  ⬜  --muted</pre>
+
+    <div class="flag">
+      <p><b>The fix hiding in that table.</b> The reference rendered <i>Chưa qua quiz</i> (failed) and
+      <i>Đang học</i> (still watching) with the <b>same 🟡 icon</b>, separated only by a
+      <code>title=</code> tooltip. Those are precisely the two states a manager needs to tell apart —
+      one needs coaching, the other needs time. Ours gives failure its own colour.</p>
+    </div>
+
+    <p>Pagination is server-side, 10 per page, and the quiz verdict is aggregated <b>in the same
+    query</b> — the reference ran <code>ListQuizAttempts</code> once per row (an N+1) with no cache
+    underneath it.</p>
+  </section>
+
+  <!-- ============================== 05 ============================== -->
+  <section id="s5">
+    <div class="sec-head"><span class="sec-num">05</span><h2>The staff write path — the half that never existed</h2></div>
+
+    <p>Section 04 makes the table <i>honest</i>; this section makes it <i>move</i>. These two endpoints
+    are not part of the admin UI at all — they are its <b>truth condition</b>. Without them every row
+    stays “Chưa bắt đầu” forever, which is exactly what the reference shipped.</p>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 880 330" width="880" height="330" role="img" aria-label="Sequence: staff device posts a quiz attempt, Gin validates attempts remaining, and a single transaction inserts the attempt and upserts progress">
+        <defs>
+          <marker id="q1" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="var(--violet)"/></marker>
+          <marker id="q2" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="var(--done)"/></marker>
+          <marker id="q3" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="var(--red)"/></marker>
+        </defs>
+
+        <!-- lanes -->
+        <text class="lane-t" x="20" y="20">Staff device</text>
+        <text class="lane-t" x="250" y="20">Gin handler</text>
+        <text class="lane-t" x="460" y="20">Service</text>
+        <text class="lane-t" x="700" y="20">MySQL</text>
+        <line x1="60" y1="28" x2="60" y2="310" stroke="var(--line)" stroke-width="1"/>
+        <line x1="290" y1="28" x2="290" y2="310" stroke="var(--line)" stroke-width="1"/>
+        <line x1="500" y1="28" x2="500" y2="310" stroke="var(--line)" stroke-width="1"/>
+        <line x1="740" y1="28" x2="740" y2="310" stroke="var(--line)" stroke-width="1"/>
+
+        <line x1="60" y1="55" x2="286" y2="55" stroke="var(--violet)" stroke-width="1.6" marker-end="url(#q1)"/>
+        <text class="step-t" x="70" y="48">1 · POST /training/guides/:id/quiz  {score: 80}</text>
+
+        <line x1="290" y1="90" x2="496" y2="90" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#q2)"/>
+        <text class="step-t" x="298" y="83">2 · bind + staff_id from JWT (never the body)</text>
+
+        <line x1="500" y1="125" x2="736" y2="125" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#q2)"/>
+        <text class="step-t" x="508" y="118">3 · load guide → pass_threshold, max_attempts</text>
+
+        <line x1="500" y1="160" x2="736" y2="160" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#q2)"/>
+        <text class="step-t" x="508" y="153">4 · count existing attempts</text>
+
+        <!-- reject rail -->
+        <rect x="300" y="176" width="420" height="34" rx="6" fill="var(--red-soft)" stroke="var(--red)"/>
+        <text class="step-t" x="312" y="197" fill="var(--red)">5a · attempts ≥ max_attempts → 409 TRAINING_ATTEMPTS_EXHAUSTED</text>
+        <line x1="300" y1="193" x2="66" y2="193" stroke="var(--red)" stroke-width="1.6" marker-end="url(#q3)"/>
+
+        <!-- tx box -->
+        <rect x="470" y="220" width="300" height="76" rx="8" fill="var(--done-soft)" stroke="var(--done)" stroke-dasharray="5 4"/>
+        <text class="lane-t" x="482" y="238" fill="var(--done)">5b · ONE transaction</text>
+        <text class="note-t" x="482" y="256">passed = score &gt;= pass_threshold</text>
+        <text class="note-t" x="482" y="272">INSERT quiz_attempts (attempt_number)</text>
+        <text class="note-t" x="482" y="288">UPSERT training_progress</text>
+
+        <line x1="466" y1="258" x2="66" y2="258" stroke="var(--done)" stroke-width="1.6" marker-end="url(#q2)"/>
+        <text class="step-t" x="80" y="250">6 · 201 {attempt_number, score, passed, attempts_remaining}</text>
+      </svg>
+    </div>
+
+    <div class="bgrid">
+      <div class="bcard"><span class="bn">RULE 1</span><span class="bt">Identity is never client-supplied</span>
+        <p><code>staff_id</code> comes from the JWT. A staff member can only ever write <b>their own</b>
+        progress row, no matter what the body says.</p></div>
+      <div class="bcard"><span class="bn">RULE 2</span><span class="bt">Watch % is monotonic</span>
+        <p><code>POST …/watch</code> upserts a <b>high-water mark</b>. Re-sending a lower percent (a
+        replay, a second device) never walks progress backwards.</p></div>
+      <div class="bcard"><span class="bn">RULE 3</span><span class="bt">The server owns pass/fail</span>
+        <p>The client posts a <code>score</code> only. <code>passed = score &gt;= pass_threshold</code>
+        is computed server-side — the FE never decides, so it can never disagree.</p></div>
+      <div class="bcard"><span class="bn">RULE 4</span><span class="bt">Attempt + progress are atomic</span>
+        <p>Both writes ride <b>one transaction</b>. There is no window where an attempt exists but the
+        progress row disagrees with it.</p></div>
+      <div class="bcard"><span class="bn">RULE 5</span><span class="bt">Exhaustion is a 409, not a silent no-op</span>
+        <p>Past <code>max_attempts</code> the write is rejected with
+        <code>TRAINING_ATTEMPTS_EXHAUSTED</code> in the standard envelope.</p></div>
+      <div class="bcard"><span class="bn">RULE 6</span><span class="bt">Staff never see drafts</span>
+        <p><code>GET /training/my-guides</code> is <b>published-only</b>. Drafts stay in the manager's
+        authoring view.</p></div>
+    </div>
+
+    <div class="flag">
+      <p><b>🚨 The scheduling consequence.</b> Because this path is what gives the tracking half any
+      data at all, the plan blocks <b>AD-T6</b> (the tracking UI) on <b>AD-T4</b> (these endpoints).
+      If AD-T4 slips, AD-T6 ships <b>without</b> the tracking half rather than with an inert one.
+      Shipping a table that cannot fill is how the reference got here.</p>
+    </div>
+  </section>
+
+  <!-- ============================== 06 ============================== -->
+  <section id="s6">
+    <div class="sec-head"><span class="sec-num">06</span><h2>The notes write path — through every layer</h2></div>
+
+    <p>A manager types a coaching note in the progress modal. Small feature, three separate reference
+    bugs designed out.</p>
+
+    <div class="flow">
+      <div class="fnode"><span class="fk">textarea</span><b>onChange</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode"><span class="fk">500 ms</span><b>debounce</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode"><span class="fk">handler</span><b>shape only</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode"><span class="fk">service</span><b>UPSERT</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode"><span class="fk">sqlc</span><b>MySQL</b></div>
+      <div class="farrow">→</div>
+      <div class="fnode ok"><span class="fk">ui</span><b>Đã lưu ✓</b></div>
+    </div>
+
+    <ol class="steps">
+      <li><b>Debounce 500 ms, then flush on modal close.</b> The reference debounced 800 ms with no
+      flush — closing the modal quickly threw the note away. The flush is the whole fix.</li>
+      <li><b>The handler only shapes.</b> Bind <code>{manager_notes}</code>, resolve identity, hand
+      <code>staffId</code>/<code>guideId</code> to the service as parameters. No business logic in the
+      handler (<code>BE_STATE.md</code> layering).</li>
+      <li><b>The service upserts.</b> This is the second fix: the reference did a <i>existence check
+      then update</i>, so leaving a note on someone who had not started 404'd. A note about a staff
+      member who has not begun is <b>exactly when coaching matters</b>, so the row is created on demand.</li>
+      <li><b>Success invalidates</b> <code>['training','staffProgress',staffId,guideId]</code> and the
+      guide's progress page, so the table's “Cập nhật” column stays truthful.</li>
+      <li><b>Failure is visible.</b> An <code>onError</code> surfaces the envelope message — the third
+      fix; the reference's notes mutation had none, so saves failed silently and invisibly.</li>
+    </ol>
+
+    <div class="split">
+      <div class="panel bad-p">
+        <h4>✗ Reference — 404 as an empty state</h4>
+        <pre>GetStaffProgress(...)
+  → no row
+  → 404 TRAINING_PROGRESS_NOT_FOUND
+FE renders the 404 as copy:
+  "Nhân viên này chưa bắt đầu…"</pre>
+      </div>
+      <div class="panel good">
+        <h4>✓ Ours — zero is a value, not an error</h4>
+        <pre>GetStaffProgress(...)
+  → no row
+  → return zeroed detail object
+     watched_percent: 0
+     quiz_attempts: []
+     attempts_remaining: max_attempts</pre>
+      </div>
+    </div>
+
+    <p>An HTTP 404 means <i>this URL addresses nothing</i>. A staff member who exists and simply has
+    not started is a perfectly valid resource with zero progress. Conflating the two is what forced the
+    FE to render an error path as its normal state.</p>
+  </section>
+
+  <!-- ============================== 07 ============================== -->
+  <section id="s7">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Why nothing here is cached, and what that costs</h2></div>
+
+    <p>Training reads go <b>straight to MySQL</b>. No Redis at any layer — this is live admin data, on
+    the do-not-cache side of the Redis policy, which reserves Redis for the catalog cache and auth
+    rate-limiting. The reference made the same call and we keep it.</p>
+
+    <h3>The only cache is the client's</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Query key</th><th>staleTime</th><th>Enabled when</th></tr></thead>
+        <tbody>
+          <tr><td><code>['training','guides',role]</code></td><td>5 min</td><td>always</td></tr>
+          <tr><td><code>['training','progress',guideId,page]</code></td><td>2 min</td><td><code>!!guideId</code></td></tr>
+          <tr><td><code>['training','staffProgress',staffId,guideId]</code></td><td>default</td><td>modal open &amp; both ids set</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Invalidation fan-out</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Write</th><th>Invalidates</th></tr></thead>
+        <tbody>
+          <tr><td>guide create / update / delete</td><td><code>['training','guides']</code> — all role variants</td></tr>
+          <tr><td>manager notes</td><td><code>['training','staffProgress',…]</code> + <code>['training','progress',guideId]</code></td></tr>
+          <tr><td>staff watch / quiz</td><td>that surface's own keys; the manager's table converges on <b>refetch</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>What that costs: eventual convergence between managers</h3>
+    <pre class="diagram">09:03  Manager A  create guide  →  POST  →  MySQL row written
+09:03  Manager B  (no push — nothing arrives)
+09:07  Manager B  window refocus  →  refetch  →  sees the new guide
+09:09  Manager A  delete (soft)   →  vanishes from A immediately
+09:12  Manager B  staleTime 5 min expires  →  refetch  →  vanishes from B</pre>
+
+    <div class="golden">
+      <p><b>This is an accepted trade, not an oversight.</b> A restaurant has one or two managers
+      touching training, and a guide edit is not time-critical the way an order is. Paying for an SSE
+      channel to make two admin screens agree within seconds buys nothing. If the AD phase later opens
+      an admin-wide realtime channel for the live floor, training is a <b>candidate consumer of it,
+      never a reason to build it</b>.</p>
+    </div>
+
+    <h3>Durability at a glance</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Data</th><th>Client memory</th><th>localStorage</th><th>Server DB</th><th>Pushed</th></tr></thead>
+        <tbody>
+          <tr><td>Job guides</td><td>✅ 5 min stale</td><td>❌</td><td>✅ <code>training_guides</code></td><td>❌ refetch only</td></tr>
+          <tr><td>Responsible roles</td><td>✅</td><td>❌</td><td>✅ <code>training_guide_roles</code></td><td>❌</td></tr>
+          <tr><td>Staff progress / quiz</td><td>✅ 2 min stale</td><td>❌</td><td>✅ written by AD-T4</td><td>❌</td></tr>
+          <tr><td>Role tab · selected guide · page</td><td>—</td><td>❌</td><td>❌ — lives in the <b>URL</b></td><td>n/a</td></tr>
+          <tr><td>Modal open / editing target</td><td>React state</td><td>❌</td><td>❌</td><td>n/a</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top:14px">Note the fourth row. The reference held the active role and the selected
+    guide in <code>useState</code>, so F5 reset the tab and a filtered view could neither be shared nor
+    linked. Putting them in the URL is why this page has <b>no Zustand store at all</b> — and why the
+    reference's <code>trainingStore.ts</code>, imported by nothing, is never ported.</p>
+  </section>
+
+  <footer>
+    Written by <b>F-26</b> · 2026-07-19 · from the reference <code>admin_training</code> corpus
+    (<code>08_pages/admin/admin_training/</code> + <code>fe/wireframes/admin_main/admin_main_training/</code>).
+    This page is a <b>snapshot</b> of <code>admin_training_PLAN.md</code>, which wins on any conflict.
+    Rules live in their owning docs — <code>BE_STATE.md</code>, <code>FE_STATE.md</code>,
+    <code>DB_SCHEMA.md</code>, <code>ARCHITECTURE.md</code>; <code>TASKS.md</code> owns status.
+  </footer>
+
+</div></body>
+</html>

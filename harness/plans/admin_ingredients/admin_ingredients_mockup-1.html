@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin ingredients — mockup #1 · ecom-core</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBEAE7; --violet: #6B4CC4; --violet-soft: #EDE8FA;
+    --ds-primary: #2B59D9; --ds-primary-hover: #2249B4;
+    --field: #FFFFFF; --field-line: #C7CDD6; --skel: #E9ECF1;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F0857A; --red-soft: #3A1C18; --violet: #A992F0; --violet-soft: #241C3D;
+      --ds-primary: #8AA8F8; --ds-primary-hover: #A5BDFA;
+      --field: #10161F; --field-line: #3A4557; --skel: #212A38;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F0857A; --red-soft: #3A1C18; --violet: #A992F0; --violet-soft: #241C3D;
+    --ds-primary: #8AA8F8; --ds-primary-hover: #A5BDFA;
+    --field: #10161F; --field-line: #3A4557; --skel: #212A38;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBEAE7; --violet: #6B4CC4; --violet-soft: #EDE8FA;
+    --ds-primary: #2B59D9; --ds-primary-hover: #2249B4;
+    --field: #FFFFFF; --field-line: #C7CDD6; --skel: #E9ECF1;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+         font-family: var(--body); line-height: 1.6; font-size: 16px; overflow-x: hidden; }
+  .page { max-width: 1080px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1, h2, h3 { font-family: var(--sans); line-height: 1.2; text-wrap: balance; }
+  h1 { font-size: 2rem; margin: 8px 0 12px; }
+  a { color: var(--accent); }
+  .back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+             text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 68ch; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--accent-soft);
+         border-radius: 4px; padding: 1px 5px; }
+
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+          padding: 8px 12px; font-size: 0.82rem; }
+  .fact .k { color: var(--muted); font-family: var(--mono); font-size: 0.72rem;
+             text-transform: uppercase; letter-spacing: 0.08em; display: block; }
+  .fact .v { font-weight: 600; }
+
+  /* specimen framing */
+  .spec { margin-top: 44px; }
+  .spec-label { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px;
+                border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+  .spec-num { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+  .spec-label h2 { font-size: 1.15rem; margin: 0; }
+  .spec-note { font-size: 0.86rem; color: var(--muted); margin: 0 0 14px; max-width: 74ch; }
+
+  /* ---- the app surface ---- */
+  .app { border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+         background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .shell-nav { display: flex; gap: 2px; padding: 0 12px; background: var(--paper);
+               border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .shell-nav span { font-size: 0.8rem; padding: 10px 12px; white-space: nowrap;
+                    color: var(--muted); border-bottom: 2px solid transparent; }
+  .shell-nav span.on { color: var(--accent); border-bottom-color: var(--accent);
+                       font-weight: 600; }
+
+  .pg-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+             padding: 16px; border-bottom: 1px solid var(--line); }
+  .pg-head h3 { margin: 0; font-size: 1.15rem; flex: 0 0 auto; }
+  .search { flex: 1 1 200px; position: relative; min-width: 160px; }
+  .search input { width: 100%; padding: 8px 12px 8px 30px; border-radius: 8px;
+                  border: 1px solid var(--field-line); background: var(--field);
+                  color: var(--ink); font-size: 0.86rem; font-family: var(--body); }
+  .search::before { content: "🔍"; position: absolute; left: 9px; top: 7px;
+                    font-size: 0.8rem; opacity: 0.6; }
+
+  .btn { font-family: var(--body); font-size: 0.85rem; font-weight: 600; cursor: default;
+         border-radius: 8px; padding: 8px 14px; border: 1px solid transparent;
+         white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+  .btn.primary { background: var(--ds-primary); color: #fff; }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--field-line); }
+  .btn.danger { background: var(--red); color: #fff; }
+  .btn.sm { font-size: 0.78rem; padding: 5px 10px; }
+  .btn.icon { padding: 5px 8px; }
+
+  .tbl-wrap { overflow-x: auto; }
+  table.data { border-collapse: collapse; width: 100%; font-size: 0.85rem; min-width: 720px; }
+  table.data th { text-align: left; padding: 10px 14px; font-family: var(--mono);
+                  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+                  color: var(--muted); border-bottom: 1px solid var(--line);
+                  background: var(--paper); white-space: nowrap; }
+  table.data td { padding: 11px 14px; border-bottom: 1px solid var(--line);
+                  vertical-align: middle; }
+  table.data tr:last-child td { border-bottom: none; }
+  td.num { font-family: var(--mono); text-align: right; white-space: nowrap; }
+  td.name { font-weight: 600; }
+  .acts { display: flex; gap: 5px; justify-content: flex-end; }
+
+  .badge { display: inline-block; font-size: 0.72rem; font-weight: 700;
+           padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .badge.in { background: var(--done-soft); color: var(--done); }
+  .badge.low { background: var(--amber-soft); color: var(--amber); }
+  .badge.exp { background: var(--violet-soft); color: var(--violet); }
+  .badge.out { background: var(--red-soft); color: var(--red); }
+
+  /* ---- modal specimens ---- */
+  .modal { max-width: 460px; border: 1px solid var(--line); border-radius: 12px;
+           background: var(--surface); box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+           overflow: hidden; }
+  .modal-head { padding: 14px 18px; border-bottom: 1px solid var(--line);
+                font-weight: 700; font-family: var(--sans); }
+  .modal-body { padding: 16px 18px; }
+  .modal-foot { padding: 12px 18px; border-top: 1px solid var(--line);
+                display: flex; justify-content: flex-end; gap: 8px; background: var(--paper); }
+  .fld { margin-bottom: 13px; }
+  .fld label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 4px; }
+  .fld input, .fld select, .fld textarea {
+      width: 100%; padding: 8px 11px; border-radius: 8px; font-size: 0.86rem;
+      border: 1px solid var(--field-line); background: var(--field); color: var(--ink);
+      font-family: var(--body); }
+  .fld.err input { border-color: var(--red); }
+  .fld .msg { font-size: 0.76rem; color: var(--red); margin-top: 4px; font-weight: 600; }
+  .fld .hint { font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .ctx { background: var(--accent-soft); border-radius: 8px; padding: 9px 12px;
+         font-size: 0.82rem; margin-bottom: 14px; }
+  .ctx b { font-family: var(--mono); }
+  .alert-err { background: var(--red-soft); border-left: 3px solid var(--red);
+               border-radius: 0 6px 6px 0; padding: 9px 12px; font-size: 0.82rem;
+               color: var(--red); font-weight: 600; margin-bottom: 14px; }
+
+  .seg { display: inline-flex; border: 1px solid var(--field-line); border-radius: 8px;
+         overflow: hidden; }
+  .seg span { padding: 7px 13px; font-size: 0.82rem; border-right: 1px solid var(--field-line); }
+  .seg span:last-child { border-right: none; }
+  .seg span.on { background: var(--ds-primary); color: #fff; font-weight: 600; }
+
+  /* ---- branches ---- */
+  .branches { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+              gap: 14px; }
+  .branch { border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+            overflow: hidden; }
+  .branch .bh { padding: 7px 12px; background: var(--paper); border-bottom: 1px solid var(--line);
+                font-family: var(--mono); font-size: 0.72rem; font-weight: 700; }
+  .branch .bb { padding: 22px 16px; text-align: center; }
+  .branch .bb p { margin: 0 0 5px; font-size: 0.88rem; }
+  .branch .bb .sub { font-size: 0.79rem; color: var(--muted); margin-bottom: 12px; }
+  .skelrow { height: 13px; border-radius: 5px; background: var(--skel); margin: 9px 0;
+             animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.45 } }
+
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .card { border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+          padding: 14px; }
+  .card h4 { margin: 0 0 10px; font-family: var(--mono); font-size: 0.78rem; }
+  .card.ok h4 { color: var(--done); }
+  .card.no h4 { color: var(--red); }
+
+  .toast { display: inline-flex; align-items: center; gap: 8px; background: var(--ink);
+           color: var(--paper); border-radius: 8px; padding: 9px 14px; font-size: 0.84rem;
+           font-weight: 600; }
+
+  footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
+           font-size: 0.82rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+    <div class="eyebrow" style="margin-top:14px">ecom-core · restaurant platform · UI mockup · 2026-07-19</div>
+    <h1>Mockup #1 — <code>/admin/ingredients</code></h1>
+    <p class="lede">High-fidelity preview of "Kho nguyên liệu" on the <strong>neutral F-7
+      design-system tokens</strong>. Admin surfaces use these tokens — the dark/orange shell is
+      customer-only. Every number below is the canonical seed data from
+      <code>admin_ingredients_PLAN.md §9</code>.</p>
+
+    <div class="facts">
+      <div class="fact"><span class="k">Screens</span><span class="v">5 specimens</span></div>
+      <div class="fact"><span class="k">Seed rows</span><span class="v">5 (all 4 statuses)</span></div>
+      <div class="fact"><span class="k">Reference date</span><span class="v">2026-07-19</span></div>
+      <div class="fact"><span class="k">Tokens</span><span class="v">F-7 neutral</span></div>
+    </div>
+  </header>
+
+  <!-- 1 ------------------------------------------------------------ -->
+  <div class="spec">
+    <div class="spec-label"><span class="spec-num">01</span><h2>Main screen — <code>ready</code></h2></div>
+    <p class="spec-note">Sorted <code>name ASC</code>. Status badges come from the BE's derived
+      <code>status</code> value — the FE never recomputes them. Note <strong>Thịt heo xay</strong>
+      is both low and expiring yet reports <code>expiring_soon</code>, and <strong>Hành lá</strong>
+      is both empty and expiring yet reports <code>out_of_stock</code>: precedence, not a set.</p>
+
+    <div class="app">
+      <div class="shell-nav">
+        <span>Tổng quan</span><span>Tổng kết</span><span>Sản phẩm</span><span>Combo</span>
+        <span>Danh mục</span><span>Nhân viên</span><span class="on">Kho nguyên liệu</span>
+        <span>Marketing</span><span>Đào tạo</span>
+      </div>
+
+      <div class="pg-head">
+        <h3>Kho nguyên liệu</h3>
+        <div class="search"><input value="" placeholder="Tìm nguyên liệu..."></div>
+        <button class="btn primary">+ Thêm nguyên liệu</button>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="data">
+          <thead><tr>
+            <th>Nguyên liệu</th><th>Đơn vị</th><th style="text-align:right">Tồn kho</th>
+            <th style="text-align:right">Tối thiểu</th><th>Hạn dùng</th>
+            <th style="text-align:right">Giá/ĐV</th><th>Trạng thái</th><th></th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="name">Bột gạo</td><td>kg</td>
+              <td class="num">25,500</td><td class="num">10,000</td>
+              <td>10/10/2026</td><td class="num">18.000 ₫</td>
+              <td><span class="badge in">Còn hàng</span></td>
+              <td><div class="acts">
+                <button class="btn ghost sm">Nhập/Xuất</button>
+                <button class="btn ghost sm icon">✎</button>
+                <button class="btn ghost sm icon">🗑</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="name">Hành lá</td><td>kg</td>
+              <td class="num">0,000</td><td class="num">1,000</td>
+              <td>22/07/2026</td><td class="num">25.000 ₫</td>
+              <td><span class="badge out">Hết hàng</span></td>
+              <td><div class="acts">
+                <button class="btn ghost sm">Nhập/Xuất</button>
+                <button class="btn ghost sm icon">✎</button>
+                <button class="btn ghost sm icon">🗑</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="name">Mộc nhĩ</td><td>kg</td>
+              <td class="num">2,300</td><td class="num">2,000</td>
+              <td>16/11/2026</td><td class="num">95.000 ₫</td>
+              <td><span class="badge in">Còn hàng</span></td>
+              <td><div class="acts">
+                <button class="btn ghost sm">Nhập/Xuất</button>
+                <button class="btn ghost sm icon">✎</button>
+                <button class="btn ghost sm icon">🗑</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="name">Nước mắm</td><td>lít</td>
+              <td class="num">4,000</td><td class="num">5,000</td>
+              <td>01/06/2027</td><td class="num">60.000 ₫</td>
+              <td><span class="badge low">Sắp hết</span></td>
+              <td><div class="acts">
+                <button class="btn ghost sm">Nhập/Xuất</button>
+                <button class="btn ghost sm icon">✎</button>
+                <button class="btn ghost sm icon">🗑</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="name">Thịt heo xay</td><td>kg</td>
+              <td class="num">8,000</td><td class="num">10,000</td>
+              <td>21/07/2026</td><td class="num">145.000 ₫</td>
+              <td><span class="badge exp">Sắp hết hạn</span></td>
+              <td><div class="acts">
+                <button class="btn ghost sm">Nhập/Xuất</button>
+                <button class="btn ghost sm icon">✎</button>
+                <button class="btn ghost sm icon">🗑</button>
+              </div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 ------------------------------------------------------------ -->
+  <div class="spec">
+    <div class="spec-label"><span class="spec-num">02</span><h2>Role variant — the 🗑 button</h2></div>
+    <p class="spec-note">Behavior 10 / defect D-3. <code>DELETE</code> is admin-only. The
+      reference rendered 🗑 for every manager and let the request fail with 403 — a button that
+      always fails is a bug. It is <strong>absent</strong>, not disabled: a disabled control
+      implies "not right now", but a manager will never be able to delete.</p>
+
+    <div class="two">
+      <div class="card ok">
+        <h4>role = admin</h4>
+        <div class="acts" style="justify-content:flex-start">
+          <button class="btn ghost sm">Nhập/Xuất</button>
+          <button class="btn ghost sm icon">✎</button>
+          <button class="btn ghost sm icon">🗑</button>
+        </div>
+      </div>
+      <div class="card no">
+        <h4>role = manager</h4>
+        <div class="acts" style="justify-content:flex-start">
+          <button class="btn ghost sm">Nhập/Xuất</button>
+          <button class="btn ghost sm icon">✎</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 ------------------------------------------------------------ -->
+  <div class="spec">
+    <div class="spec-label"><span class="spec-num">03</span><h2>IngredientFormModal</h2></div>
+    <p class="spec-note">Add mode carries <em>Tồn kho ban đầu</em> — which seeds an opening
+      <code>'in'</code> movement, it does not write stock directly. Edit mode has
+      <strong>no stock field at all</strong> (behavior 9): stock has exactly one door.</p>
+
+    <div class="two">
+      <div>
+        <div class="modal">
+          <div class="modal-head">Thêm nguyên liệu</div>
+          <div class="modal-body">
+            <div class="fld"><label>Tên nguyên liệu</label><input value="Mộc nhĩ"></div>
+            <div class="row2">
+              <div class="fld"><label>Đơn vị</label><input value="kg"></div>
+              <div class="fld"><label>Ngày nhập</label><input value="19/07/2026"></div>
+            </div>
+            <div class="row2">
+              <div class="fld"><label>Số ngày lưu kho</label><input value="120">
+                <div class="hint">Hạn dùng: 16/11/2026</div></div>
+              <div class="fld"><label>Tồn kho ban đầu</label><input value="5,000">
+                <div class="hint">Tạo phiếu nhập đầu kỳ</div></div>
+            </div>
+            <div class="row2">
+              <div class="fld"><label>Tồn tối thiểu</label><input value="2,000"></div>
+              <div class="fld"><label>Giá / đơn vị</label><input value="95.000 ₫"></div>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn ghost">Huỷ</button>
+            <button class="btn primary">Lưu</button>
+          </div>
+        </div>
+        <p class="spec-note" style="margin-top:8px"><strong>Add mode</strong></p>
+      </div>
+
+      <div>
+        <div class="modal">
+          <div class="modal-head">Sửa nguyên liệu</div>
+          <div class="modal-body">
+            <div class="fld err"><label>Tên nguyên liệu</label><input value="Bột gạo">
+              <div class="msg">Nguyên liệu này đã tồn tại</div></div>
+            <div class="row2">
+              <div class="fld"><label>Đơn vị</label><input value="kg"></div>
+              <div class="fld"><label>Ngày nhập</label><input value="12/07/2026"></div>
+            </div>
+            <div class="row2">
+              <div class="fld"><label>Số ngày lưu kho</label><input value="90"></div>
+              <div class="fld"><label>Tồn tối thiểu</label><input value="10,000"></div>
+            </div>
+            <div class="fld"><label>Giá / đơn vị</label><input value="18.000 ₫"></div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn ghost">Huỷ</button>
+            <button class="btn primary">Lưu</button>
+          </div>
+        </div>
+        <p class="spec-note" style="margin-top:8px"><strong>Edit mode + 409 duplicate name</strong>
+          (behavior 7) — no stock field; modal stays open, input preserved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 ------------------------------------------------------------ -->
+  <div class="spec">
+    <div class="spec-label"><span class="spec-num">04</span><h2>StockMoveModal</h2></div>
+    <p class="spec-note">The worked example: xuất 2,500 kg of Bột gạo → 23,000 kg. Current stock
+      is shown as context so the operator can sanity-check before confirming.</p>
+
+    <div class="two">
+      <div>
+        <div class="modal">
+          <div class="modal-head">Điều chỉnh kho — Bột gạo</div>
+          <div class="modal-body">
+            <div class="ctx">Tồn hiện tại: <b>25,500 kg</b></div>
+            <div class="fld"><label>Loại</label>
+              <div class="seg"><span>Nhập (+)</span><span class="on">Xuất (−)</span><span>Điều chỉnh</span></div>
+            </div>
+            <div class="fld"><label>Số lượng (kg)</label><input value="2,500">
+              <div class="hint">Còn lại sau thao tác: 23,000 kg</div></div>
+            <div class="fld"><label>Ghi chú</label><textarea rows="2">Hỏng do ẩm</textarea></div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn ghost">Huỷ</button>
+            <button class="btn primary">✓ Xác nhận</button>
+          </div>
+        </div>
+        <p class="spec-note" style="margin-top:8px"><strong>Ready to submit</strong></p>
+      </div>
+
+      <div>
+        <div class="modal">
+          <div class="modal-head">Điều chỉnh kho — Bột gạo</div>
+          <div class="modal-body">
+            <div class="alert-err">Không đủ tồn kho (còn 25,500 kg)</div>
+            <div class="ctx">Tồn hiện tại: <b>25,500 kg</b> — không thay đổi</div>
+            <div class="fld"><label>Loại</label>
+              <div class="seg"><span>Nhập (+)</span><span class="on">Xuất (−)</span><span>Điều chỉnh</span></div>
+            </div>
+            <div class="fld err"><label>Số lượng (kg)</label><input value="30,000"></div>
+            <div class="fld"><label>Ghi chú</label><textarea rows="2"></textarea></div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn ghost">Huỷ</button>
+            <button class="btn primary">✓ Xác nhận</button>
+          </div>
+        </div>
+        <p class="spec-note" style="margin-top:8px"><strong>Over-draw rejected</strong>
+          (behavior 16) — server-side <code>VALIDATION_FAILED</code>; stock unchanged, modal
+          stays open. The reference silently clamped to zero and reported success.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:16px">
+      <span class="toast">✓ Đã xuất 2,5 kg Bột gạo — còn 23 kg</span>
+      <p class="spec-note" style="margin-top:8px">Success toast (behavior 17) — names the delta
+        <em>and</em> the resulting figure, taken from <code>resulting_stock</code>.</p>
+    </div>
+  </div>
+
+  <!-- 5 ------------------------------------------------------------ -->
+  <div class="spec">
+    <div class="spec-label"><span class="spec-num">05</span><h2>The other four render branches</h2></div>
+    <p class="spec-note">Defect D-6: the reference collapsed these into one state, so a search
+      typo looked identical to an empty inventory and to a page still loading. Three different
+      situations need three different next actions.</p>
+
+    <div class="branches">
+      <div class="branch">
+        <div class="bh" style="color:var(--accent)">loading</div>
+        <div class="bb" style="text-align:left;padding:16px">
+          <div class="skelrow" style="width:92%"></div>
+          <div class="skelrow" style="width:78%"></div>
+          <div class="skelrow" style="width:85%"></div>
+          <div class="skelrow" style="width:70%"></div>
+          <div class="skelrow" style="width:88%"></div>
+        </div>
+      </div>
+
+      <div class="branch">
+        <div class="bh" style="color:var(--red)">error</div>
+        <div class="bb">
+          <p style="font-size:1.5rem;margin-bottom:6px">⚠</p>
+          <p>Không tải được kho nguyên liệu</p>
+          <div class="sub"><code>INTERNAL</code></div>
+          <button class="btn ghost sm">Thử lại</button>
+        </div>
+      </div>
+
+      <div class="branch">
+        <div class="bh" style="color:var(--muted)">empty</div>
+        <div class="bb">
+          <p style="font-size:1.5rem;margin-bottom:6px">📦</p>
+          <p>Chưa có nguyên liệu nào</p>
+          <div class="sub">Thêm nguyên liệu đầu tiên để bắt đầu theo dõi tồn kho.</div>
+          <button class="btn primary sm">+ Thêm nguyên liệu</button>
+        </div>
+      </div>
+
+      <div class="branch">
+        <div class="bh" style="color:var(--amber)">no-match</div>
+        <div class="bb">
+          <p style="font-size:1.5rem;margin-bottom:6px">🔍</p>
+          <p>Không tìm thấy nguyên liệu nào</p>
+          <div class="sub">Không có kết quả cho "bôt gao xyz".</div>
+          <button class="btn ghost sm">Xoá tìm kiếm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Written 2026-07-19 for task F-21. Components follow
+    <code>harness/diagrams/design-system.html</code> (F-7 neutral tokens — admin surface).
+    This page is a <strong>snapshot</strong> of
+    <code>admin_ingredients_PLAN.md</code>, which wins on any conflict.
+  </footer>
+
+</div>
+</body>
+</html>

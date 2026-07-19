@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer orders &amp; tracking — FE + BE build plan (F-25)</title>
+<style>
+  :root {
+    --paper: #F6F6F3;
+    --surface: #FFFFFF;
+    --ink: #1D2530;
+    --muted: #5C6675;
+    --line: #DCE0E6;
+    --accent: #2B59D9;
+    --accent-soft: #E8EDFB;
+    --done: #1E8A5A;
+    --done-soft: #E2F2EA;
+    --amber: #96690A;
+    --amber-soft: #F6EDD8;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* sticky top nav */
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  /* task tags in the component tree / tables */
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.c { color: var(--accent); background: var(--accent-soft); }
+  .t.tt { color: var(--amber); background: var(--amber-soft); }
+  .t.o { color: var(--done); background: var(--done-soft); }
+  .dead { color: var(--muted); text-decoration: line-through; }
+
+  /* flow diagram */
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 96px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  /* phase strip */
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); margin: 14px 0; }
+  .snode { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-top: 3px solid var(--accent); }
+  .snode.tph { border-top-color: var(--amber); }
+  .snode.oph { border-top-color: var(--done); }
+  .sarrow { color: var(--muted); font-size: 0.8rem; }
+
+  /* behaviors grid */
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+
+  /* ============ phone mockup — DESIGN PREVIEW, fixed reference palette ============
+     Deliberately does NOT use theme variables: the customer shell's visual source of
+     truth is the reference's dark + orange DESIGN_PROMPT (#0b0f17 / #1b2230 / #f97316
+     / #e5e7eb). It must look the same in this page's light and dark themes. */
+  .anatomy { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+  .phone { flex: none; width: 390px; max-width: 100%; box-sizing: border-box; background: #0b0f17; color: #e5e7eb; border: 8px solid #232a38; border-radius: 28px; overflow: hidden; font-size: 12.5px; line-height: 1.45; }
+  .phone * { box-sizing: border-box; }
+  .ph-sec { position: relative; padding: 10px 12px; border-bottom: 1px solid #1f2734; }
+  .ph-n { position: absolute; top: 8px; right: 8px; z-index: 2; width: 18px; height: 18px; border-radius: 50%; background: #f97316; color: #0b0f17; font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .ph-h { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8b93a3; margin: 0 0 8px; }
+  .ph-card { position: relative; background: #1b2230; border-radius: 12px; padding: 8px; display: flex; gap: 8px; margin-bottom: 8px; }
+  .ph-card:last-child { margin-bottom: 0; }
+  .ph-bar { height: 8px; border-radius: 4px; background: #2a3344; }
+  .ph-price { color: #f97316; font-weight: 700; font-size: 12px; }
+  .ph-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .ph-pill { border: 1px solid #3a4356; border-radius: 999px; padding: 1px 8px; font-size: 10px; color: #c7cdd8; }
+  .ph-pill.on { background: #f97316; border-color: #f97316; color: #0b0f17; font-weight: 700; }
+  .ph-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 0; border-bottom: 1px dashed #242d3d; font-size: 12px; }
+  .ph-row:last-child { border-bottom: none; }
+  .ph-box { background: #141a26; border: 1px solid #242d3d; border-radius: 10px; padding: 8px 10px; margin-top: 8px; }
+  .ph-box .ph-h { margin-bottom: 4px; }
+  .ph-tablepill { display: inline-block; background: #f97316; color: #0b0f17; font-weight: 700; border-radius: 999px; padding: 2px 10px; font-size: 11px; }
+  .ph-nav { display: flex; justify-content: space-between; background: #10161f; padding: 8px 10px 10px; font-size: 9.5px; color: #8b93a3; border-bottom: none; }
+  .ph-nav span { text-align: center; }
+  .ph-nav .on { color: #f97316; font-weight: 700; }
+  .callouts { flex: 1; min-width: 280px; }
+  .callouts ol { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 0.86rem; }
+  .callouts li { display: flex; gap: 10px; }
+  .co-n { flex: none; width: 19px; height: 19px; margin-top: 3px; border-radius: 50%; background: #f97316; color: #0b0f17; font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .callouts b { font-family: var(--mono); font-size: 0.8rem; }
+
+  /* ---- orders-page additions to the phone kit (same fixed palette) ---- */
+  .ph-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #0e1420; }
+  .ph-conn { font-family: var(--mono); font-size: 10px; border-radius: 999px; padding: 2px 9px; background: #14261c; color: #4ade80; border: 1px solid #1f4030; white-space: nowrap; }
+  .ph-conn.off { background: #2a1a16; color: #f87171; border-color: #4a2620; }
+  .ph-status { display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700; border-radius: 999px; padding: 2px 9px; background: #3a2a10; color: #fbbf24; border: 1px solid #5a4218; }
+  .ph-tile { flex: none; width: 62px; height: 52px; border-radius: 10px; background: #f97316; color: #0b0f17; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; line-height: 1.15; }
+  .ph-tile small { font-size: 9px; letter-spacing: .12em; }
+  .ph-tile b { font-size: 17px; }
+  .ph-prog { height: 6px; border-radius: 999px; background: #2a3344; overflow: hidden; }
+  .ph-prog i { display: block; height: 100%; background: #f97316; }
+  .ph-qrow { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px dashed #242d3d; font-size: 11.5px; }
+  .ph-qrow:last-child { border-bottom: none; }
+  .ph-qn { flex: none; width: 18px; height: 18px; border-radius: 50%; background: #1b2230; color: #c7cdd8; font-family: var(--mono); font-size: 10px; display: flex; align-items: center; justify-content: center; }
+  .ph-mine { border: 1px solid #f97316; border-radius: 8px; padding: 4px 6px; }
+  .ph-btn { border: 1px solid #f97316; color: #f97316; border-radius: 999px; padding: 4px 12px; font-size: 11px; font-weight: 700; }
+  .ph-btn.red { border-color: #ef4444; color: #ef4444; }
+  .ph-hist { border-left: 3px solid #f97316; background: #1b2230; border-radius: 0 10px 10px 0; padding: 8px 10px; margin-bottom: 8px; }
+
+  /* schema boxes */
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+  .tbl ul li.hi { color: var(--amber); font-weight: 700; }
+  .tbl ul li.hi b { color: var(--amber); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · consolidated page plan · 2026-07-19</div>
+  <h1>Customer orders &amp; tracking — FE + BE build plan</h1>
+  <p class="lede">One plan for the merged customer screen <code>/orders</code> — <b>"Đơn hàng &amp;
+  Theo dõi"</b>. It does two jobs on one scroll: <em>your</em> order, summary ⇄ live cooking detail,
+  and the <em>whole-floor</em> live queue so you can see where you stand. It is the downstream of the
+  menu page — <code>POST /orders</code> lands here — and it is mostly a <b>realtime contract</b>:
+  one SSE stream drives four surfaces, plus two cancel writes.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-25</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="customer_orders_tracking_PLAN.md">customer_orders_tracking_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">runtime companion</span><span class="v"><a href="customer_orders_tracking_how-it-works.html">how-it-works.html</a></span></div>
+    <div class="fact"><span class="k">reference corpus</span><span class="v">customer_tracking + customer_order_list + customer_order_detail · 22 docs</span></div>
+    <div class="fact"><span class="k">ships across</span><span class="v">O-1 · O-2 · R-1 · O-3 · O-3b/R-2</span></div>
+    <div class="fact"><span class="k">worked example</span><span class="v">Bàn 04 · 103.000 đ · 7 loại</span></div>
+  </div>
+  <div class="golden">
+    <p><b>Three ways a guest lands here:</b></p>
+    <p><b>After ordering</b> — <code>POST /orders</code> 201 on <code>/menu</code> sets
+    <code>activeOrderId</code> → redirect here.</p>
+    <p><b>Bottom-nav tap</b> — "Đơn Hàng" (this screen merges the old <em>Đơn Hàng</em> +
+    <em>Theo Dõi</em> tabs).</p>
+    <p><b>Cold return</b> — reopened later; <code>activeOrderId</code> survives in the persisted cart
+    slice, history survives in the device-local order cache.</p>
+    <p style="margin-top:8px">Core loop: watch your order cook (status badge · queue position ·
+    per-dish served progress) → optionally cancel a dish or the order → "Thêm món" back to the menu →
+    order completes. The <b>whole-floor queue</b> runs alongside the entire time, so the page is
+    useful <em>even with no active order</em>.</p>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#anatomy">01 anatomy</a>
+  <a href="#components">02 components</a>
+  <a href="#state">03 state</a>
+  <a href="#be">04 be contract</a>
+  <a href="#realtime">05 realtime</a>
+  <a href="#behaviors">06 behaviors</a>
+  <a href="#branches">07 branches</a>
+  <a href="#defects">08 defects out</a>
+  <a href="#tasks">09 tasks + decisions</a>
+</nav>
+
+<!-- ================================================================ 01 -->
+<section id="anatomy">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy — the five zones</h2></div>
+  <p><span class="chip amber">design preview</span>&nbsp; The 390 px frame below uses the
+  <b>reference's dark + orange palette</b> (<code>#0b0f17</code> bg · <code>#1b2230</code> cards ·
+  <code>#f97316</code> accent · <code>#e5e7eb</code> text) in <em>both</em> themes of this page.
+  Real strings are the PLAN's; numbers are the canonical worked example
+  <b>Bàn 04 · 103.000 đ · 7 loại</b>.</p>
+
+  <div class="anatomy">
+    <div class="phone">
+
+      <div class="ph-sec ph-top">
+        <span class="ph-n">1</span>
+        <div><b>Đơn hàng &amp; Theo dõi</b></div>
+        <div class="ph-conn" style="margin-right:22px">● Đang theo dõi</div>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">2</span>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div class="ph-tile"><small>BÀN</small><b>04</b></div>
+          <div style="flex:1">
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <span style="color:#8b93a3">Trạng thái:</span>
+              <span class="ph-status">Đang chuẩn bị</span>
+              <span style="color:#8b93a3">~8 phút</span>
+            </div>
+            <div style="margin-top:4px">Vị trí hàng chờ: <b style="color:#f97316">#2 trong 5 đơn</b></div>
+            <div style="color:#8b93a3;font-size:11px">👁 Ẩn bàn của bạn</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">3</span>
+        <p class="ph-h">Tóm tắt đơn hàng ⇄ Chi tiết ⌄</p>
+        <div class="ph-card" style="display:block">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="ph-tablepill">Bàn 04</span>
+            <span style="color:#8b93a3;font-size:11px">ORD-20260719-004</span>
+          </div>
+          <div class="ph-box">
+            <p class="ph-h">COMBO</p>
+            <div class="ph-row"><span>Suất Đầy Đủ Trứng Chín <span class="ph-pill">×1</span></span><span class="ph-price">0 đ</span></div>
+            <div class="ph-row"><span style="color:#8b93a3;font-size:11px">⌄ Chi tiết — component dishes</span></div>
+          </div>
+          <div class="ph-box">
+            <p class="ph-h">MÓN LẺ</p>
+            <div class="ph-row"><span>Bánh Cuốn <span class="ph-pill">×3</span></span><span class="ph-price">0 đ</span></div>
+            <div style="color:#f97316;font-size:11px">↳ Nhân thịt · Mộc nhĩ</div>
+            <div class="ph-row"><span>Canh có rau <span class="ph-pill">×7</span></span><span class="ph-price">0 đ</span></div>
+          </div>
+          <div class="ph-box">
+            <p class="ph-h">TỔNG SỐ MÓN (7 loại)</p>
+            <div class="ph-row"><span style="color:#8b93a3;font-size:11px">MÓN · NHÂN · SL · ĐƠN GIÁ · THÀNH TIỀN</span></div>
+            <div class="ph-row"><b>Tổng cộng</b><b class="ph-price">103.000 đ</b></div>
+          </div>
+          <div class="ph-box">
+            <p class="ph-h">GHI CHÚ ✓ Đã lưu</p>
+            <div style="font-size:11.5px">Gia đình (mẹ + 2 người lớn + 2 trẻ)</div>
+          </div>
+          <div class="ph-box">
+            <p class="ph-h">chi tiết ⌄ — card A · dishes + bar</p>
+            <div class="ph-row"><span>Bánh Cuốn — tổng ×3 · ra ×2 · còn ×1</span><span class="ph-btn">Huỷ</span></div>
+            <div class="ph-prog" style="margin-top:6px"><i style="width:50%"></i></div>
+            <div style="color:#8b93a3;font-size:11px;margin-top:4px">3/6 phần đã ra</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <span class="ph-btn">+ Thêm món</span>
+            <span class="ph-btn red">Huỷ toàn bộ đơn hàng</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">4</span>
+        <p class="ph-h">📋 Đơn hàng của bạn &nbsp;·&nbsp; 🗑 Xoá lịch sử</p>
+        <div class="ph-hist">
+          <div style="display:flex;justify-content:space-between"><b>ORD-20260719-004</b><span class="ph-status">Đang chuẩn bị</span></div>
+          <div class="ph-prog" style="margin:6px 0"><i style="width:50%"></i></div>
+          <div style="color:#8b93a3;font-size:11px">3/6 phần đã ra · 12 phút trước</div>
+          <div style="font-size:11px;margin-top:3px">Bánh Cuốn · Canh có rau · Bánh Trứng Vàng <span style="color:#8b93a3">+4 món</span></div>
+        </div>
+        <div class="ph-hist" style="border-left-color:#3a4356">
+          <div style="display:flex;justify-content:space-between"><b>ORD-20260719-001</b><span style="color:#8b93a3;font-size:11px">đã phục vụ</span></div>
+          <div style="color:#8b93a3;font-size:11px">no progress bar — not active</div>
+        </div>
+      </div>
+
+      <div class="ph-sec">
+        <span class="ph-n">5</span>
+        <p class="ph-h">Hàng chờ phục vụ <span class="ph-pill">3 bàn</span></p>
+        <div class="ph-qrow"><span class="ph-qn">1</span><span>Bàn 01</span><span class="ph-status">Đang chuẩn bị</span><span style="color:#8b93a3;margin-left:auto;font-size:10px">ORD-…-001</span></div>
+        <div class="ph-qrow ph-mine"><span class="ph-qn" style="background:#f97316;color:#0b0f17">2</span><span>Bàn 04 <span style="color:#f97316">(bàn bạn)</span></span><span class="ph-status">Đang chuẩn bị</span></div>
+        <div class="ph-qrow"><span class="ph-qn">3</span><span>Mang về</span><span class="ph-status">Chờ xác nhận</span></div>
+      </div>
+
+      <div class="ph-sec ph-nav">
+        <span>Menu</span><span class="on">Đơn Hàng</span><span>Yêu thích</span><span>Tài khoản</span>
+      </div>
+
+    </div>
+
+    <div class="callouts">
+      <ol>
+        <li><span class="co-n">1</span><div><b>MonitoringTopBar</b> — sticky title + the connection
+          pill: <code>● Đang theo dõi</code> / <code>○ Mất kết nối</code>. The pill is the <em>only</em>
+          fatal-free signal of stream health (branch 5 is cosmetic).</div></li>
+        <li><span class="co-n">2</span><div><b>TableInfoBanner</b> — BÀN tile · "Trạng thái:" +
+          StatusBadge · ETA <code>~8 phút</code> · <code>Vị trí hàng chờ: #2 trong 5 đơn</code>
+          (pulses at #1) · <code>delivered</code> swaps the right side for "Đơn của bạn đã được phục
+          vụ — Cảm ơn!" · <code>👁 Ẩn bàn của bạn</code> collapses the personal zone for privacy on a
+          shared screen.</div></li>
+        <li><span class="co-n">3</span><div><b>ActiveOrderCard — the centerpiece.</b> Defaults to
+          "Tóm tắt đơn hàng" (Bàn 04 pill in a spinning orange ring); "Chi tiết ⌄" ⇄ "Ẩn chi tiết ⌃"
+          reveals the three live cards. Groups COMBO / MÓN LẺ, nhân captions in orange, per-combo
+          expander, group subtotals, bold <b>Tổng cộng</b>, the rollup
+          <code>TỔNG SỐ MÓN (7 loại)</code>, read-only GHI CHÚ with "✓ Đã lưu".</div></li>
+        <li><span class="co-n">4</span><div><b>OrderHistoryList</b> — "📋 Đơn hàng của bạn", newest
+          first, read from <code>ORDER_CACHE</code>: orange left-border card, progress bar
+          <em>only while active</em>, meta row, 3-dish preview + "+N món", tap expands the
+          <em>same</em> detail component inline. "🗑 Xoá lịch sử" clears the cache
+          <b>and</b> the <code>activeOrderId</code> pointer.</div></li>
+        <li><span class="co-n">5</span><div><b>WholeFloorPrepList</b> — "Hàng chờ phục vụ" + a
+          "[3 bàn]" count pill; numbered rows sorted by order time, position · table label ·
+          StatusBadge · order number. <b>Your row is ringed in orange</b> + "(bàn bạn)". Only active
+          statuses; a NULL <code>table_id</code> renders "Mang về"; no progress bars here.</div></li>
+      </ol>
+      <div class="golden" style="margin-top:18px">
+        <p><b>Why the merge is the better product:</b> <code>/tracking</code> and <code>/order</code>
+        were two screens reading the same order over two stream hooks. One screen, one stream, one
+        detail component — and a whole duplicated view disappears.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 02 -->
+<section id="components">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Component tree — the §4.1 file map, tagged by owning task</h2></div>
+  <p>Every node carries the task that builds it: <span class="t o">O-2</span> BE read + cancel ·
+  <span class="t tt">R-1</span> realtime platform + monitor SSE ·
+  <span class="t c">O-3</span> FE static half · <span class="t c">O-3b</span> FE live half.</p>
+
+  <pre class="diagram">fe/src/app/(customer)/orders/
+  page.tsx                     <span class="t c">O-3</span>  thin RSC shell → renders the client orchestrator
+  loading.tsx                  <span class="t c">O-3</span>  layout-mirroring skeleton (top bar + banner + card + list)
+  error.tsx                    <span class="t c">O-3</span>  segment retry
+
+components/orders/
+  OrdersTrackingClient.tsx     <span class="t c">O-3</span><span class="t c">O-3b</span>  THE orchestrator: owns the SSE hook, reads
+                               │      activeOrderId, composes the five zones, owns the two overlays
+  ├── MonitoringTopBar.tsx     <span class="t c">O-3b</span> sticky title + "● Đang theo dõi" / "○ Mất kết nối"
+  ├── TableInfoBanner.tsx      <span class="t c">O-3b</span> BÀN tile · status badge · "Vị trí hàng chờ #2 trong 5 đơn"
+  │                            │      · ETA (#1 pulses) · delivered branch · privacy toggle
+  ├── ActiveOrderCard.tsx      <span class="t c">O-3</span>  the centerpiece: summary ⇄ detail switch
+  │   ├── OrderSummaryPanel.tsx    <span class="t c">O-3</span> "Tóm tắt đơn hàng": COMBO / MÓN LẺ groups, nhân
+  │   │                            │   captions, per-combo expander, subtotals, Tổng cộng,
+  │   │                            │   read-only GHI CHÚ
+  │   ├── OrderRollupTable.tsx     <span class="t c">O-3</span> "TỔNG SỐ MÓN (n loại)" — MÓN·NHÂN·SL·ĐƠN GIÁ·THÀNH TIỀN
+  │   └── OrderDetailCards.tsx     <span class="t c">O-3</span><span class="t c">O-3b</span> live cooking detail:
+  │       └── DishRow.tsx          <span class="t c">O-3b</span> tổng ×n · ra ×n · còn ×n · nhân+ghi chú caption · [Huỷ]
+  ├── OrderHistoryList.tsx     <span class="t c">O-3</span>  "📋 Đơn hàng của bạn" + "🗑 Xoá lịch sử"
+  │   └── OrderHistoryCard.tsx <span class="t c">O-3</span>  left-border card, active-only progress, meta, dish preview
+  ├── WholeFloorPrepList.tsx   <span class="t c">O-3b</span> "Hàng chờ phục vụ [n bàn]" — the see-everyone-else zone
+  ├── CancelConfirmModal.tsx   <span class="t c">O-3</span>  overlay 1 — shared by order-cancel and dish-cancel
+  └── StatusNotificationModal.tsx  <span class="t c">O-3b</span> overlay 2 — status popup, "Đã hiểu"
+
+components/shared/
+  ConnectionErrorBanner.tsx    <span class="t c">O-3b</span> REUSED (SSE down) — not a new component
+  StatusBadge.tsx              <span class="t c">O-3</span>  the 6 VN status pills — ONE owner, reused by staff surfaces
+
+hooks/useOrderMonitorSSE.ts    <span class="t c">O-3b</span><span class="t tt">R-1</span> THE one stream hook; exhaustive event switch
+queries/orders.ts              <span class="t c">O-3</span>  useOrder(id) → ['order', id] · useOrderHistory() (cache reader)
+lib/order-rollup.ts            <span class="t c">O-3</span>  flattenAndMerge() (the "n loại" math) + progress math
+lib/order-cache.ts             <span class="t c">O-3</span>  ORDER_CACHE read / write / clear helpers
+stores/cart.store.ts           <span class="t o">menu</span> activeOrderId pivot — EXISTING, owned by the menu plan</pre>
+
+  <h3>Not built (the reference had them, we don't)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Dropped</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><code class="dead">OrderDetailSheet</code></td><td>the overlay twin of the detail — merged away. <b>One</b> inline detail component serves both callers, which alone kills the reference's 🔴 404-wedge bug (it existed only in the overlay copy).</td></tr>
+        <tr><td><code class="dead">/order/:id</code> route</td><td>deferred; the merged screen covers it.</td></tr>
+        <tr><td><code class="dead">quantity stepper</code></td><td>this page shows a <em>placed</em> order — quantities are read-only <code>×n</code> badges.</td></tr>
+        <tr><td><code class="dead">tableStatuses</code> rendering</td><td>the <code>tables.status</code> event <b>is</b> consumed by the switch; its UI is an <b>explicit deferral</b> (staff surfaces own the floor map) — recorded so it can't rot into the reference's silent dead output.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================================================================ 03 -->
+<section id="state">
+  <div class="sec-head"><span class="sec-num">03</span><h2>State ownership — an instance of FE_STATE §1, no new kinds</h2></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Data</th><th>Kind</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td>active order snapshot</td><td>server</td><td>TanStack Query <code>['order', activeOrderId]</code>, <code>staleTime: 0</code>, refetch driven by SSE (never polled)</td></tr>
+        <tr><td>an expanded history order</td><td>server</td><td>same key factory, <code>['order', &lt;that id&gt;]</code> — one cache, no second copy</td></tr>
+        <tr><td>queue · connection state · table statuses</td><td>server (stream)</td><td><code>useOrderMonitorSSE</code> local state — the only stream owner</td></tr>
+        <tr><td><code>activeOrderId</code> (the pivot)</td><td>client</td><td><code>cart</code> store, persisted slice (set by <code>/menu</code> post-201, cleared by <code>clearCart()</code> <b>and</b> "Xoá lịch sử")</td></tr>
+        <tr><td>order history list</td><td>client (device-local)</td><td><code>ORDER_CACHE</code> via <code>useOrderHistory()</code> — re-scanned on focus + after every live change</td></tr>
+        <tr><td>expanded card · privacy toggle · which modal</td><td>local</td><td><code>useState</code> in the owning component</td></tr>
+        <tr><td>guest session</td><td>session</td><td>httpOnly cookie — cookies ride the SSE handshake, so <b>no token in the URL</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>How state crosses components — two mechanisms, only two</h3>
+  <div class="flow">
+    <div class="fnode" style="border-color:var(--accent)"><span class="fk">mechanism 1</span><b>Server data → the Query cache</b><br><span style="color:var(--muted);font-size:.74rem"><code>ActiveOrderCard</code>, <code>OrderDetailCards</code> and an expanded <code>OrderHistoryCard</code> all read <code>useOrder(id)</code>; identical keys dedupe to <b>one</b> fetch. The SSE hook never holds order data — it calls <code>refetch()</code>.</span></div>
+  </div>
+  <div class="flow">
+    <div class="fnode" style="border-color:var(--amber)"><span class="fk">mechanism 2</span><b>The stream + the pivot → the orchestrator</b><br><span style="color:var(--muted);font-size:.74rem"><code>OrdersTrackingClient</code> holds the one <code>useOrderMonitorSSE</code> and passes read-only props down. Exactly <b>one</b> SSE connection per page — the reference opened a second stream per opened detail sheet.</span></div>
+  </div>
+
+  <h3>The <code>activeOrderId</code> pivot — how state crosses pages</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">/menu</span><b>POST /orders → 201</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--accent)"><span class="fk">persisted cart slice</span><b>activeOrderId = ord9…36</b><br><span style="color:var(--muted);font-size:.74rem">the id does <b>not</b> need to ride the URL</span></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">this page</span><b>/orders</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">append mode</span><b>/menu?add_to_order=&lt;id&gt;</b></div>
+  </div>
+  <p>Live changes reconcile <b>back</b> into <code>ORDER_CACHE</code>, so the history card and the
+  live card can never disagree — that was the reference's stale-list bug.</p>
+
+  <div class="golden">
+    <p><b>Why history is device-local.</b> There is <b>no guest "my orders" endpoint</b> — ownership
+    is by <code>table_id</code>, and a guest's history across table sessions has no server identity to
+    hang on. v1 builds the list by scanning <code>order_cache_&lt;id&gt;</code> keys, newest first.
+    This is <em>honest client state</em>, not cached server state, so it is <b>not</b> a FE_STATE
+    rule-1 violation. Server-backed history arrives with accounts (A-phase).</p>
+  </div>
+</section>
+
+<!-- ================================================================ 04 -->
+<section id="be">
+  <div class="sec-head"><span class="sec-num">04</span><h2>BE contract — endpoints, schema, wire shapes</h2></div>
+
+  <h3>4.1 Endpoints the page consumes (all under <code>/api/v1</code>)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Route</th><th>Auth</th><th>Task</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>GET /orders/:id</code></td><td>guest JWT + <b>ownership by <code>table_id</code></b></td><td><span class="t o">O-2</span></td><td>The active order and any expanded history card. Returns the <b>bare full order object</b> — items carry derived <code>item_status</code> (from <code>qty_served</code> vs <code>quantity</code>; <b>no <code>status</code> column</b>). <code>403</code> foreign, <code>404</code> missing. <b>Never cached.</b></td></tr>
+        <tr><td>2</td><td><code>GET /sse/order-monitor/:id</code></td><td>guest JWT + <b>own-order/table gate</b></td><td><span class="t tt">R-1</span></td><td><b>THE single stream.</b> On connect: <code>event: connected</code> → snapshot (<code>queue.update</code> + <code>tables.status</code>) read from MySQL → then deltas. Subscribes Redis <code>order:{id}</code> + <code>queue:broadcast</code> + <code>tables:broadcast</code>. 15 s <code>: keep-alive</code>, <code>retry:</code> directive. <code>401/403</code> = permanent, non-retryable.</td></tr>
+        <tr><td>3</td><td><code>DELETE /orders/:id</code></td><td>guest JWT + ownership</td><td><span class="t o">O-2</span></td><td>Cancel the whole order → <code>204</code>. Allowed per the <code>canCancel</code> rule (⚠ §09); soft-delete, publishes <code>order_cancelled</code>.</td></tr>
+        <tr><td>4</td><td><code>DELETE /orders/items/:id</code></td><td>guest JWT + ownership</td><td><span class="t o">O-2</span></td><td>Cancel one dish → <code>204</code>. <b>Rejects an already-served item</b> (<code>qty_served &gt;= quantity</code> → <code>422 CANCEL_THRESHOLD</code>). <code>RecalculateTotalAmount</code> in the <b>same tx</b>, then publishes <code>item_cancelled</code>.</td></tr>
+        <tr><td>—</td><td><code>POST /orders/:id/items</code></td><td>guest JWT</td><td><span class="t o">O</span></td><td>"Thêm món" append — <b>owned by the menu plan §3.1 #6</b>. Cross-linked, not re-derived.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:14px"><b>Deliberately NOT consumed:</b> <code class="dead">PATCH /orders/items/:id/quantity</code>.
+  This page shows a <em>placed</em> order — quantities are read-only <code>×n</code> badges. The
+  reference's standalone detail route wired a stepper here; the merged screen drops it.<br>
+  <b>No guest "my orders" list endpoint exists</b> — history is device-local (§03). Errors ride the
+  Session-0 envelope; codes extended with <code>CANCEL_THRESHOLD</code>, <code>ORDER_NOT_ACTIVE</code>,
+  <code>TOKEN_EXPIRED</code>.</p>
+
+  <h3>4.2 Schema this page depends on — read-only, <b>no new tables</b> (O-1)</h3>
+  <p>Full column specs are canonical in <code>DB_SCHEMA.md §4.3</code>, not restated. What this page
+  leans on:</p>
+  <div class="schema">
+    <div class="tbl">
+      <div class="tname">orders</div>
+      <ul>
+        <li><b>order_number</b> ORD-YYYYMMDD-NNN, UNIQUE</li>
+        <li><b>status</b> ENUM · BE-set only<br>pending·confirmed·preparing·<br>ready·delivered·cancelled·paid</li>
+        <li><b>table_id</b> NULL = takeaway → "Mang về"</li>
+        <li class="hi"><b>total_amount</b> denormalized — every item<br>mutation must RecalculateTotalAmount in-tx</li>
+        <li><b>created_at</b> the queue sort key</li>
+      </ul>
+    </div>
+    <div class="tbl">
+      <div class="tname">order_items</div>
+      <ul>
+        <li><b>name · unit_price · toppings_snapshot</b><br>frozen at order time</li>
+        <li><b>quantity</b></li>
+        <li class="hi"><b>qty_served</b> ← the entire progress model</li>
+        <li class="hi"><b>combo_ref_id</b> self-FK: sub-item → its header row</li>
+        <li><b>item_status</b> derived server-side, sent once</li>
+        <li>✗ <b>no <code>filling</code> column, ever</b></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="flag">
+    <p><b>The row-type matrix drives every list on this page.</b> A combo <b>header</b> row
+    (<code>combo_id</code> set, <code>combo_ref_id</code> NULL, <code>unit_price = 0</code>) is
+    <b>excluded from every visible dish list <em>and</em> from all progress math</b>; its
+    <b>component</b> rows (<code>combo_ref_id</code> set) are what render.</p>
+    <p><b>Nhân comes from <code>toppings_snapshot</code></b> (₫0 toppings) — there is no
+    <code>filling</code> column, which makes the reference's "<code>OrderItem</code> has no
+    <code>filling</code> field" bug structurally moot.</p>
+  </div>
+
+  <h3>4.3 Cache &amp; realtime map — there is no cache, that's the point</h3>
+  <p><b>Orders are never cached.</b> MySQL is read on every <code>GET /orders/:id</code>. Redis appears
+  here <b>only as pub/sub transport</b>, never as a read cache — a separate client pool from the cache
+  client.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Write (who)</th><th>Publishes to</th><th>This page reacts by</th></tr></thead>
+      <tbody>
+        <tr><td>chef serves a unit (<code>qty_served++</code>)</td><td><code>order:{id}</code> → <code>item_progress</code></td><td>moving the dish's ra/còn + the progress bar</td></tr>
+        <tr><td>staff/customer adds items</td><td><code>order:{id}</code> → <code>items_added</code></td><td>refetching <code>['order', id]</code></td></tr>
+        <tr><td>item cancelled (this page or POS)</td><td><code>order:{id}</code> → <code>item_cancelled</code></td><td>refetching + removing the row</td></tr>
+        <tr><td>order status transition</td><td><code>order:{id}</code> → <code>order_status_changed</code></td><td>live badge + the notification modal</td></tr>
+        <tr><td>order cancelled</td><td><code>order:{id}</code> → <code>order_cancelled</code></td><td>terminal branch, actions replaced</td></tr>
+        <tr><td>any active-order change (floor-wide)</td><td><code>queue:broadcast</code> → <code>queue.update</code></td><td>re-rendering the floor queue <b>and</b> the banner's position/ETA</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:12px"><b>Invalidation AC:</b> a write on one client must move the other
+  client's screen <em>with no refresh</em> — the two-client transcript in §09.</p>
+
+  <h3>4.4 Wire shapes — the FE↔BE object gallery</h3>
+  <p>Shapes get <b>frozen by curl receipts</b> when O-2/R build them: <code>fe/src/lib/api/types.ts</code>
+  is written from receipts, never guessed.</p>
+
+  <p><b><code>GET /orders/:id</code> → 200</b> — the same object <code>POST /orders</code> returns,
+  plus the derived <code>item_status</code>. Combo header (<code>unit_price: 0</code>) + component rows
+  via <code>combo_ref_id</code>; nullable columns serialize as real <code>null</code>:</p>
+  <pre class="diagram">{ "id": "ord9…36", "order_number": "ORD-20260719-004", "status": "preparing",
+  "source": "qr", "table_id": "tb04…36", "table_name": "Bàn 04",
+  "note": "Gia đình (mẹ + 2 người lớn + 2 trẻ)",
+  "total_amount": 103000, "created_at": "2026-07-19T11:02:00Z",
+  "items": [
+    { "id": "oi2…", "combo_id": "cb1…36", "name": "Suất Đầy Đủ Trứng Chín",
+      "unit_price": 0, "quantity": 1, "qty_served": 0, "combo_ref_id": null,
+      "item_status": "pending", "toppings_snapshot": [] },        <span style="color:var(--amber)">← combo HEADER · excluded from lists + math</span>
+    { "id": "oi3…", "product_id": "p12…36", "name": "Bánh Cuốn",
+      "unit_price": 0, "quantity": 3, "qty_served": 2, "combo_ref_id": "oi2…",
+      "item_status": "preparing",                                 <span style="color:var(--done)">← component row · this is what renders</span>
+      "toppings_snapshot": [ { "id": "t1…", "name": "Nhân thịt", "price": 0 },
+                             { "id": "t2…", "name": "Mộc nhĩ",  "price": 0 } ] } ] }</pre>
+  <p><code>item_status</code> ∈ <code>pending | preparing | done</code> — <b>derived server-side</b>
+  from <code>qty_served</code> vs <code>quantity</code> and sent once; the FE types it and does
+  <b>not</b> re-derive it.</p>
+
+  <p><b><code>GET /sse/order-monitor/:id</code></b> — frames are <code>event: &lt;type&gt;</code> +
+  a JSON <code>data:</code> line. Connect handshake, then snapshot, then deltas:</p>
+  <pre class="diagram">event: connected
+data: {"type":"connected","order_id":"ord9…36"}
+
+event: queue.update
+data: {"type":"queue.update","total":5,"position":2,"estimated_minutes":8,
+       "queue":[{"order_id":"ord7…","order_number":"ORD-20260719-001",
+                 "table_label":"Bàn 01","status":"preparing","item_count":6,
+                 "created_at":"2026-07-19T10:51:00Z"}, …]}
+
+event: item_progress
+data: {"type":"item_progress","order_id":"ord9…36","item_id":"oi3…",
+       "qty_served":2,"quantity":3}
+
+event: order_status_changed
+data: {"type":"order_status_changed","order_id":"ord9…36","status":"ready"}</pre>
+  <p><code>position</code> / <code>estimated_minutes</code> are <b>BE-computed</b> — the banner and
+  the floor list therefore <em>cannot</em> disagree. <code>queue</code> carries only <b>active</b>
+  statuses (<code>pending·confirmed·preparing·ready</code>), ordered by <code>created_at</code>; a
+  NULL <code>table_id</code> serializes <code>table_label: "Mang về"</code>.</p>
+
+  <p><b><code>DELETE /orders/:id</code></b> and <b><code>DELETE /orders/items/:id</code></b> →
+  <code>204 No Content</code>, empty body. Refusals ride the envelope:</p>
+  <pre class="diagram">{ "error": { "code": "CANCEL_THRESHOLD",
+             "message": "Không thể huỷ món đã phục vụ", "details": [] } }</pre>
+  <p><b>Device-local history entry</b> (never crosses the wire) — the bare order object above, stored
+  under <code>order_cache_&lt;order-id&gt;</code>.</p>
+
+  <h3>4.5 Not adopted from the reference (decided here, with reasons)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>❌ Rejected</th><th>Ours, and why</th></tr></thead>
+      <tbody>
+        <tr><td><code>{"data": &lt;Order&gt;}</code> wrapper on GET</td><td>Success responses are <b>never wrapped</b> (only errors ride an envelope). The reference wraps on GET but returns bare on POST 201 — a self-inconsistency we refuse to inherit. Ours: bare object, identical shape to the <code>POST /orders</code> 201, so <b>one TS type serves both</b>.</td></tr>
+        <tr><td>Order held in the SSE hook's <code>useState</code></td><td>Server data belongs to TanStack Query. Ours: <code>['order', id]</code>; SSE <em>triggers</em> refetch, never <em>owns</em> the data.</td></tr>
+        <tr><td>Two implementations of the same detail view</td><td>One inline component, both callers — this alone kills the reference's 🔴 404-wedge bug, which existed only in the overlay copy.</td></tr>
+        <tr><td>FE-invented queue numbers (<code>position = idx+1</code>, <code>ETA = idx×3</code>)</td><td>The BE has the ordered active list at snapshot time — <b>it fills <code>position</code> + <code>estimated_minutes</code></b>. One event contract.</td></tr>
+        <tr><td><code>order.status</code> event-name drift</td><td>The FE listened for <code>order.status</code>, the BE published <code>order_status_changed</code>, so the live badge never moved. Ours: one generated event-contract file + an <b>exhaustive consumer switch</b>.</td></tr>
+        <tr><td>Ungated streams</td><td>Reference SSE checked auth but not ownership; any authed client could watch any order. Ours gates own-order/table.</td></tr>
+        <tr><td>Three routes (<code>/tracking</code>, <code>/order</code>, <code>/order/:id</code>)</td><td>Merged into <code>/orders</code> (⚠ route-reconciliation flag, §09).</td></tr>
+        <tr><td><code>PATCH …/quantity</code> stepper on a placed order</td><td>Read-only <code>×n</code> badges.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================================================================ 05 -->
+<section id="realtime">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Realtime dataflow — one stream, four surfaces</h2></div>
+
+  <p>This is the page's defining property. A single <code>useOrderMonitorSSE</code>, owned by the
+  orchestrator, is the <em>only</em> connection; four independent surfaces are driven from it, so they
+  can never disagree with each other.</p>
+
+  <pre class="diagram">        MySQL ──(snapshot on connect)──┐
+                                       ▼
+  Redis  order:{id} ─────────┐   ┌──────────────────────────┐
+         queue:broadcast ────┼──►│  GET /sse/order-monitor  │  ownership-gated · 15s keep-alive
+         tables:broadcast ───┘   │   /:id       (R-1)       │  retry: directive · 401/403 = permanent
+                                 └────────────┬─────────────┘
+                                              │  ONE EventSource per page
+                                              ▼
+                              ┌───────────────────────────────┐
+                              │  useOrderMonitorSSE            │  exhaustive event switch
+                              │  (the only stream owner)       │  never holds order data
+                              └───┬──────┬──────┬──────┬───────┘
+                                  │      │      │      │
+      surface 1 ◄─────────────────┘      │      │      └──────────► surface 4
+      connection pill                    │      │                   WholeFloorPrepList
+      ● Đang theo dõi / ○ Mất kết nối    │      │                   "Hàng chờ phục vụ [3 bàn]"
+                                         │      │
+      surface 2 ◄────────────────────────┘      └───────────────► surface 3
+      TableInfoBanner                                             per-dish progress via
+      StatusBadge + "#2 trong 5 đơn" + "~8 phút"                  refetch(['order', id])
+                                                                  or a local cache patch</pre>
+
+  <h3>Event → reaction, exhaustively</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Event</th><th>Channel</th><th>Reaction</th><th>Surface moved</th></tr></thead>
+      <tbody>
+        <tr><td><code>connected</code></td><td>handshake</td><td>flip the pill to <code>● Đang theo dõi</code></td><td>1</td></tr>
+        <tr><td><code>queue.update</code></td><td><code>queue:broadcast</code></td><td>re-render the floor queue <b>and</b> the banner's position/ETA from the <b>same</b> payload</td><td>2 + 4</td></tr>
+        <tr><td><code>item_progress</code></td><td><code>order:{id}</code></td><td>move the dish's ra/còn + the progress bar (plan default: local cache patch)</td><td>3</td></tr>
+        <tr><td><code>items_added</code></td><td><code>order:{id}</code></td><td>refetch <code>['order', id]</code> — rows change</td><td>3</td></tr>
+        <tr><td><code>item_updated</code></td><td><code>order:{id}</code></td><td>refetch <code>['order', id]</code></td><td>3</td></tr>
+        <tr><td><code>item_cancelled</code></td><td><code>order:{id}</code></td><td>refetch + remove the row</td><td>3</td></tr>
+        <tr><td><code>order_status_changed</code></td><td><code>order:{id}</code></td><td>live badge + the status notification modal</td><td>2</td></tr>
+        <tr><td><code>order_cancelled</code></td><td><code>order:{id}</code></td><td>terminal branch, actions replaced</td><td>2 + 3</td></tr>
+        <tr><td><code>order_completed</code></td><td><code>order:{id}</code></td><td>terminal branch — "Đơn hàng đã hoàn thành"</td><td>2 + 3</td></tr>
+        <tr><td><code>tables.status</code></td><td><code>tables:broadcast</code></td><td><b>consumed by the switch, UI explicitly deferred</b> (staff surfaces own the floor map) — not silently dropped</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="golden">
+    <p><b>The single countermeasure that kills four reference bugs at once:</b> every event the BE
+    publishes has a case, and a new published type <b>without</b> a consumer case <b>fails CI</b>.
+    The reference shipped <code>item_progress</code>, <code>items_added</code> and
+    <code>item_cancelled</code> to a hook that handled none of them, and listened for an event name
+    (<code>order.status</code>) the BE never published.</p>
+  </div>
+
+  <h3>Snapshot-on-connect — why a reconnect loses nothing</h3>
+  <div class="flow">
+    <div class="fnode"><span class="fk">connect</span><b>event: connected</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--done)"><span class="fk">snapshot from MySQL</span><b>queue.update + tables.status</b></div>
+    <span class="farrow">→</span>
+    <div class="fnode"><span class="fk">then</span><b>deltas from Redis</b></div>
+    <span class="farrow">·</span>
+    <div class="fnode"><span class="fk">every 15 s</span><b>: keep-alive</b></div>
+    <span class="farrow">·</span>
+    <div class="fnode"><span class="fk">drop</span><b>retry: → reconnect → snapshot again</b></div>
+  </div>
+  <p>The reference had <b>no status replay on reconnect</b> — a transition that happened while the
+  client was dropped was simply lost. Because our stream re-sends a full snapshot on every connect,
+  a reconnect is self-healing.</p>
+</section>
+
+<!-- ================================================================ 06 -->
+<section id="behaviors">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors spec — the 15 numbered AC</h2></div>
+  <p>These are the acceptance criteria: each card below becomes a receipt row (mobile-viewport
+  screenshot or transcript) in <code>harness/VERIFICATION.md</code>.</p>
+
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">01</span><span class="bt">One stream, exhaustive switch</span>
+      <p>A single <code>useOrderMonitorSSE</code> drives the connection pill, the status badge + queue
+      position/ETA, per-dish progress, and the floor queue. Every published event has a case; a new
+      published type without a consumer case <b>fails CI</b>. Kills four reference bugs at once.</p></div>
+
+    <div class="bcard"><span class="bn">02</span><span class="bt">Active-order banner</span>
+      <p>BÀN tile · "Trạng thái:" + StatusBadge + "~8 phút" · "Vị trí hàng chờ: #2 trong 5 đơn" · ETA
+      line (<b>pulses at #1</b>) · <code>delivered</code> replaces the right side with "Đơn của bạn đã
+      được phục vụ — Cảm ơn!" · "👁 Ẩn bàn của bạn" collapses the personal zone for privacy on a
+      shared screen.</p></div>
+
+    <div class="bcard"><span class="bn">03</span><span class="bt">Summary ⇄ detail centerpiece</span>
+      <p>Defaults to "Tóm tắt đơn hàng" (Bàn 04 pill in a spinning orange ring); "Chi tiết ⌄" ⇄ "Ẩn
+      chi tiết ⌃" reveals the three live cards. Groups <b>COMBO</b> / <b>MÓN LẺ</b>, per-item nhân
+      caption in orange, per-combo "⌄ Chi tiết" expanding its component dishes, group subtotals, bold
+      <b>Tổng cộng</b>.</p></div>
+
+    <div class="bcard"><span class="bn">04</span><span class="bt">Read-only placed order</span>
+      <p>Quantities are <code>×n</code> badges — <b>no steppers</b>; the order note is read-only with a
+      "✓ Đã lưu" marker; 🗑 becomes <b>"Huỷ"</b> and appears only while cancel is allowed.</p></div>
+
+    <div class="bcard"><span class="bn">05</span><span class="bt">The rollup — "TỔNG SỐ MÓN (n loại)"</span>
+      <p>Flatten every combo into component dishes, merge rows sharing <b>dish name AND nhân set</b>,
+      sum quantities; <code>n</code> = distinct rows after merging. Combo header rows (0 đ) are
+      excluded from every dish list <b>and</b> all progress math. Worked example (Bàn 04) =
+      <b>7 loại</b>, with <code>Canh có rau ×7</code> (1 + 2 from combos + 4 individual) merged into
+      one row while <code>Bánh Trứng Vàng</code> stays separate from the combos'
+      <code>Bánh Trứng Chín</code>.</p></div>
+
+    <div class="bcard"><span class="bn">06</span><span class="bt">Served progress</span>
+      <p>Bar = <code>Σ qty_served / Σ quantity</code> over display items; <code>DishRow</code> shows
+      <b>tổng ×n · ra ×n · còn ×n</b> plus its nhân + ghi chú caption ("↳ Nhân thịt · 'ít hành'" — the
+      reference hid these); a served row shows <b>✓</b> in CÒN; footer "3/6 phần đã ra". Card C splits
+      money into <b>Đã dùng / Còn lại / Tổng cộng</b>.</p></div>
+
+    <div class="bcard"><span class="bn">07</span><span class="bt">History list</span>
+      <p>"📋 Đơn hàng của bạn", newest first, from <code>ORDER_CACHE</code>: orange left-border card,
+      progress bar <b>only while active</b>, meta row (served + relative time), 3-dish preview + "+N
+      món", tap <b>expands the same detail component inline</b>. Empty state = 🛍 "Chưa có đơn hàng
+      nào" / "Quét mã QR tại bàn để bắt đầu đặt món". <b>"🗑 Xoá lịch sử" clears the cache AND the
+      <code>activeOrderId</code> pointer.</b></p></div>
+
+    <div class="bcard"><span class="bn">08</span><span class="bt">Whole-floor queue</span>
+      <p>"Hàng chờ phục vụ" + "[3 bàn]" count pill; numbered rows sorted by order time: position ·
+      table label · StatusBadge · order number. <b>Your row is highlighted</b> with an orange ring +
+      "(bàn bạn)". Only active statuses appear; takeaway shows "Mang về"; no progress bars here.
+      Updates live.</p></div>
+
+    <div class="bcard"><span class="bn">09</span><span class="bt">Queue numbers have one source</span>
+      <p>Position and ETA come from the <code>queue.update</code> payload — <b>the FE never computes
+      them</b>, so the banner and the floor list always agree.</p></div>
+
+    <div class="bcard"><span class="bn">10</span><span class="bt">Cancel, two scopes, one predicate</span>
+      <p>Per-dish "Huỷ" (<code>DELETE /orders/items/:id</code>) when that dish still has unserved
+      units; whole-order "Huỷ toàn bộ đơn hàng" (<code>DELETE /orders/:id</code>) when
+      <code>canCancel</code>. Both route through the one <code>CancelConfirmModal</code>.
+      <code>canCancel</code> is a <b>single predicate in one file</b> so the rule flip is a one-line
+      change. A <code>422</code> refusal shows the envelope message in place.</p></div>
+
+    <div class="bcard"><span class="bn">11</span><span class="bt">Status notification modal</span>
+      <p>On a status transition: "Đơn của bạn đã được xác nhận" (confirmed) · "Món của bạn đã sẵn
+      sàng!" (ready) · "Đơn đã bị huỷ" (cancelled), one "Đã hiểu" button. Fires from the <b>live
+      event</b>, not from a poll.</p></div>
+
+    <div class="bcard"><span class="bn">12</span><span class="bt">Actions</span>
+      <p>"+ Thêm món" (dine-in only → <code>/menu?add_to_order=&lt;id&gt;</code>) and the outlined-red
+      cancel; on <code>delivered</code> both are replaced by the calm "Đơn hàng đã hoàn thành"
+      banner.</p></div>
+
+    <div class="bcard"><span class="bn">13</span><span class="bt">Money via the one formatVND()</span>
+      <p>The same function and the same glyph as the menu page (⚠ glyph flag, §09). Zero-priced canh
+      renders <code>0 đ</code>, <b>never blank</b>.</p></div>
+
+    <div class="bcard"><span class="bn">14</span><span class="bt">VN-first copy</span>
+      <p>Exactly the reference strings, in one constants file; <code>StatusBadge</code> never shows a
+      raw English status.</p></div>
+
+    <div class="bcard"><span class="bn">15</span><span class="bt">Worked example everywhere</span>
+      <p>Docs, seeds and screenshots all use <b>Bàn 04 · 103.000 · 7 loại</b> — the same canonical
+      order as the menu plan, carried through to this page's receipts.</p></div>
+  </div>
+</section>
+
+<!-- ================================================================ 07 -->
+<section id="branches">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Loading branches — three tiers, six named branches</h2></div>
+
+  <h3>Tier 1 — route</h3>
+  <p><code>loading.tsx</code> mirrors the real layout (top bar + banner + card + list stubs), never a
+  centered spinner — the reference shipped a bare spinner for the whole group. <b>Instant paint from
+  cache:</b> the active order is seeded from <code>ORDER_CACHE</code> on mount, so a warm return
+  renders <em>real content with zero skeleton</em>, then reconciles from the network.</p>
+
+  <h3>Tier 2 — component: six named render branches, evaluated in this order</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Branch</th><th>When</th><th>UI</th><th>Fatal?</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>session expired</td><td><code>401/403</code> on the stream or the GET</td><td><b>full-screen</b> "Phiên làm việc hết hạn — quét lại mã QR tại bàn" + Về trang menu</td><td><b>yes — the only one</b></td></tr>
+        <tr><td>2</td><td>no active order</td><td><code>activeOrderId</code> null</td><td>friendly CTA <b>in the active-order zone only</b> — history + floor queue still render</td><td>no</td></tr>
+        <tr><td>3</td><td>active order gone</td><td>GET <code>404</code>/<code>403</code></td><td><b>scoped</b> "Đơn hàng không tồn tại" card + clears the orphaned pointer; the rest of the page keeps working</td><td>no</td></tr>
+        <tr><td>4</td><td>loading</td><td>GET pending, no cached copy</td><td>layout-shaped skeleton (no shift)</td><td>no</td></tr>
+        <tr><td>5</td><td>stream down</td><td><code>!sseConnected</code></td><td><b>cosmetic only</b> — pill flips + <code>ConnectionErrorBanner</code>; last-known queue stays with a stale marker; page fully usable</td><td>no</td></tr>
+        <tr><td>6</td><td>data</td><td>default</td><td>the live screen</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flag">
+    <p><b>Branch 3 is a deliberate upgrade.</b> The reference made a missing order a <em>full-screen
+    wedge</em> — and in the overlay copy, an <em>infinite spinner</em> (<code>isNotFound</code> was
+    returned but never read). Ours scopes it to one card and clears the orphaned pointer.</p>
+    <p><b>Only branch 1 is fatal.</b> Losing your order must not take the floor queue and your history
+    down with it — the page is still useful with no active order at all (branch 2).</p>
+  </div>
+
+  <h3>Tier 3 — mutation</h3>
+  <p>The two cancels are <b>pessimistic</b> — confirm in the modal → button disabled + inline "Đang
+  huỷ…" → <code>204</code> → refetch. <b>Never optimistic:</b> a cancel that the BE refuses
+  (<code>CANCEL_THRESHOLD</code>) must not flicker the dish away first.</p>
+  <div class="flow">
+    <div class="fnode"><span class="fk">1</span><b>confirm in modal</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">2</span><b>disabled + "Đang huỷ…"</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">3</span><b>DELETE</b></div><span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--done)"><span class="fk">204</span><b>refetch</b></div>
+    <span class="farrow">/</span>
+    <div class="fnode" style="border-color:var(--amber)"><span class="fk">422</span><b>envelope message in place</b></div>
+  </div>
+</section>
+
+<!-- ================================================================ 08 -->
+<section id="defects">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Reference defects designed out</h2></div>
+  <p>Fourteen findings from the 22-doc digest of the two parent page corpora, each with the structural
+  countermeasure that makes it impossible rather than merely fixed.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Ref finding</th><th>Our countermeasure</th></tr></thead>
+      <tbody>
+        <tr><td>🔴 404 / foreign order wedges the detail overlay in an infinite spinner (<code>isNotFound</code> returned, never read)</td><td>one detail component (§02) + branch 3 named and built (§07)</td></tr>
+        <tr><td>🔴 Live status badge never advances — FE listens <code>order.status</code>, BE publishes <code>order_status_changed</code></td><td>one event-contract file + exhaustive switch, <b>CI-gated</b> (§06-1)</td></tr>
+        <tr><td>🟠 Per-dish cooking progress not live — <code>item_progress</code> published, no consumer case</td><td>same switch handles it (§05 / §06-6)</td></tr>
+        <tr><td>🟠 History cards never refetch — cache scanned once, stale until a sheet is opened</td><td>re-scan on focus + reconcile live changes back into <code>ORDER_CACHE</code> (§03)</td></tr>
+        <tr><td>🟠 <code>item_cancelled</code> / <code>items_added</code> published but unhandled — cancels and sibling-device appends invisible</td><td>same switch (§05)</td></tr>
+        <tr><td>🟡 Queue <code>position</code>/<code>estimated_minutes</code> are FE-invented while the wire sends <code>0</code> placeholders</td><td>BE computes both; FE renders only (§04.5 / §06-9)</td></tr>
+        <tr><td>🟡 SSE stream has no ownership check — any authed client can watch any order</td><td>own-order/table gate</td></tr>
+        <tr><td>🟡 "Xoá lịch sử" leaves <code>activeOrderId</code> → orphaned pointer into a deleted order</td><td>clearing history clears the pointer (§06-7)</td></tr>
+        <tr><td>🟡 <code>DishRow</code> hides nhân + ghi chú although both exist on the item</td><td>rendered as the caption (§06-6); nhân reads <code>toppings_snapshot</code>, no <code>filling</code> column (§04.2)</td></tr>
+        <tr><td>🟡 Two implementations of one detail view drift apart (only one has the 404 branch)</td><td>one component, both callers (§02)</td></tr>
+        <tr><td>🟡 Dead outputs shipped (<code>tableStatuses</code> unrendered, <code>reconnect()</code> with no button, an unused constant)</td><td>the event is handled; its UI is an <b>explicit deferral</b>, not silent dead code (§09)</td></tr>
+        <tr><td>🟡 <code>{"data":…}</code> on GET but bare on POST — one endpoint pair, two envelopes</td><td>never wrap success (§04.5)</td></tr>
+        <tr><td>🟡 No status replay on reconnect — transitions during a disconnect are lost</td><td>snapshot-on-connect (§05)</td></tr>
+        <tr><td>🟡 Second SSE connection opened per detail sheet</td><td>exactly one stream per page, owned by the orchestrator (§03)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================================================================ 09 -->
+<section id="tasks">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Task mapping, decisions + verify plan</h2></div>
+
+  <h3>Where this plan lands in <code>TASKS.md</code></h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>TASKS.md row</th><th>This plan's slice</th><th>Receipt type</th></tr></thead>
+      <tbody>
+        <tr><td><span class="t o">O-1</span> orders schema</td><td>§04.2 — already specified in <code>DB_SCHEMA.md §4.3</code>; <b>no new tables</b></td><td>migrate up/down</td></tr>
+        <tr><td><span class="t o">O-2</span> BE order read + cancel + item-edit</td><td>endpoints #1, #3, #4 + the <code>canCancel</code> predicate</td><td>curl: get, cancel OK, cancel refused (<code>CANCEL_THRESHOLD</code>), item cancel + total recalc</td></tr>
+        <tr><td><span class="t tt">R-1 (new)</span> realtime platform + monitor SSE</td><td>endpoint #2: pub/sub pkg, the one event-contract file, snapshot-on-connect, ownership gate, <b>BE-filled position/ETA</b></td><td>two-client SSE transcript</td></tr>
+        <tr><td><span class="t c">O-3</span> FE <code>/orders</code>, static half</td><td>zones 3–4: active-order card, summary + rollup, detail cards, history list, cancels</td><td>mobile screenshots per §06 behavior</td></tr>
+        <tr><td><span class="t c">O-3b / R-2</span> FE <code>/orders</code>, live half</td><td>zones 1–2 + 5: connection pill, live badge + queue/ETA, per-dish progress, floor queue, notification modal</td><td>two-client screencap: chef serves → this screen moves</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Build order</h3>
+  <div class="strip">
+    <span class="snode oph">O-1 · schema</span><span class="sarrow">→</span>
+    <span class="snode oph">O-2 · BE read + cancel</span><span class="sarrow">→</span>
+    <span class="snode tph">R-1 · realtime + SSE</span><span class="sarrow">→</span>
+    <span class="snode">O-3 · FE static half</span><span class="sarrow">→</span>
+    <span class="snode">O-3b / R-2 · FE live half</span>
+  </div>
+
+  <div class="flag">
+    <p><b>⚠️ O-3 must split.</b> Its current row ("FE: order history + order detail with status
+    tracking") is one row for what is really two: the <b>static half depends only on O-2</b>, while the
+    <b>live half is blocked on R-1</b>. Split at registration — sizing rule (1 session / 1 AC). The R
+    phase has <b>no rows yet</b> in <code>TASKS.md</code>; <b>R-1 is registered by this plan</b>.</p>
+  </div>
+
+  <h3>Open flags — these three block or bind other work</h3>
+
+  <div class="flag">
+    <p><b>⚠️ FLAG — the cancel rule is still open</b> (❓ since F-9). Three sources disagree: the
+    reference <b>code</b> enforces <code>&lt; 30 % served</code> (and gives a <code>pending</code>
+    order no cancel button at all), the reference <b>DESIGN_PROMPT</b> repeats the 30 % rule, and the
+    <b>owner's stated target</b> is "cancel any time before payment".</p>
+    <p><b>Plan default: the owner's rule</b> (harness wins), expressed as one <code>canCancel</code>
+    predicate so the flip is a one-line change. <b>Lock it before O-2 builds the BE gate</b> — the BE
+    and the button must never disagree.</p>
+  </div>
+
+  <div class="flag">
+    <p><b>⚠️ FLAG — money glyph.</b> This page's DESIGN_PROMPT specifies <code>105.000 ₫</code>
+    (U+20AB, space before); the menu plan locked <code>30.000 đ</code> (U+0111). <code>FE_STATE.md</code>
+    allows exactly <b>one</b> <code>formatVND()</code>, so the app cannot ship both.</p>
+    <p><b>Plan default: the menu's <code>đ</code></b> — it is already the canonical worked example.
+    One constant, one file, and it flips everywhere at once. <em>This drift is precisely what the
+    one-formatter rule exists to catch.</em></p>
+  </div>
+
+  <div class="flag">
+    <p><b>⚠️ FLAG — route reconciliation (touches the menu plan).</b> The menu plan §4.2 redirects
+    post-201 to <code>/order/&lt;id&gt;</code>; this merged screen is <b><code>/orders</code></b>,
+    pivoted on <code>activeOrderId</code>, so the id need not ride the URL.</p>
+    <p><b>Recommendation: the menu handoff targets <code>/orders</code>.</b> Not edited here — that
+    plan owns its own handoff line, and this task stays surgical. Fold it in when the O-phase task
+    wires the redirect.</p>
+  </div>
+
+  <h3>Decided (✅) · to confirm (❓) · suggested (💡)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th></th><th>Decision</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>✅</td><td>Merge the three reference routes into one <code>/orders</code></td><td><code>/tracking</code> and <code>/order</code> were two screens reading the same order over two stream hooks; the merge is the better product <em>and</em> removes a whole duplicated view.</td></tr>
+        <tr><td>✅</td><td>History is device-local in v1</td><td>No guest my-orders endpoint exists. Honest client state, re-scanned and reconciled. 💡 Server-backed history is an A-phase (accounts) feature; revisit only then.</td></tr>
+        <tr><td>✅</td><td>The active order is Query-owned; SSE only triggers refetch</td><td>The reference's hook-owned <code>useState</code> copy is rejected.</td></tr>
+        <tr><td>✅</td><td><code>tables.status</code> is consumed but not rendered</td><td>The floor-table map is a <b>deliberate deferral</b> (staff surfaces own it), recorded so it can't rot into the reference's silent dead output.</td></tr>
+        <tr><td>❓</td><td><b>CLARIFY — smooth progress vs refetch</b></td><td><code>item_progress</code> can move a dish's bar with no network round-trip; <code>items_added</code>/<code>item_cancelled</code> must refetch (rows change). Plan default: apply <code>item_progress</code> as a <b>local cache patch</b>, refetch on structural events. <b>Confirm at R-1</b> — it is the difference between a smooth bar and a flicker.</td></tr>
+        <tr><td>💡</td><td><b>SUGGESTION — <code>StatusBadge</code> is shared surface</b></td><td>The six VN status pills are needed identically by KDS, POS and admin. Build it once in <code>components/shared/</code> rather than letting each surface re-style them; the reference drifted their colors per page.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Verify plan — per-task receipts, logged in <code>harness/VERIFICATION.md</code></h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Task</th><th>Receipt</th></tr></thead>
+      <tbody>
+        <tr><td><span class="t o">O-2</span> BE</td><td>curl transcripts — <code>GET /orders/:id</code> (own = 200, foreign = 403, missing = 404), <code>DELETE /orders/items/:id</code> (served = <code>422 CANCEL_THRESHOLD</code>, unserved = 204 <b>plus a <code>total_amount</code> recalc proof</b>), <code>DELETE /orders/:id</code> per the locked rule.</td></tr>
+        <tr><td><span class="t tt">R-1</span> realtime</td><td>a <b>two-client transcript</b> — client A (chef) increments <code>qty_served</code>; client B's stream receives <code>item_progress</code> and the queue advances. Plus a <b>reconnect transcript</b> proving snapshot-on-connect replays a status changed while dropped, and a <code>403</code> proving the ownership gate.</td></tr>
+        <tr><td><span class="t c">FE rows</span></td><td>mobile-viewport screenshots per §06 behavior — including the rollup showing <b>7 loại</b> for the Bàn 04 example, all six §07 branches (notably <b>branch 3</b>: the page survives a missing order), and a cancel round-trip.</td></tr>
+        <tr><td><span class="t c">F-25</span> this plan</td><td>the folder holds the prefixed docs; the <code>.md</code> is complete; all HTML companions render in <b>both themes</b> with <b>no horizontal page scroll</b> — receipt row dated 2026-07-19.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  Written by F-25 (2026-07-19) · ecom-core restaurant platform.
+  This page is a <b>snapshot</b> of
+  <a href="customer_orders_tracking_PLAN.md"><code>customer_orders_tracking_PLAN.md</code></a>,
+  <b>which wins on any conflict</b>. Rules live in their owning docs
+  (<code>FE_STATE.md</code>, <code>BE_STATE.md</code>, <code>OVERALL_PLAN.md §3.5/§3.7</code>,
+  <code>DB_SCHEMA.md §4.3</code>); task status lives in <code>harness/TASKS.md</code>.
+  Runtime sequences: <a href="customer_orders_tracking_how-it-works.html">customer_orders_tracking_how-it-works.html</a>.
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin task board — mockup #1 (F-22)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --raised: #FAFAF8; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --line-soft: #EDEFF2; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBE9E7; --violet: #6B4FBB; --violet-soft: #EDE8FA;
+    --skel: #E6E8EC;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --r: 10px; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --raised: #1C242F; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --line-soft: #222B38; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2837B; --red-soft: #3A1714; --violet: #A992F0; --violet-soft: #241C3D;
+      --skel: #232C3A; --shadow: 0 1px 2px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --raised: #1C242F; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --line-soft: #222B38; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2837B; --red-soft: #3A1714; --violet: #A992F0; --violet-soft: #241C3D;
+    --skel: #232C3A; --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --raised: #FAFAF8; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --line-soft: #EDEFF2; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #C0392B; --red-soft: #FBE9E7; --violet: #6B4FBB; --violet-soft: #EDE8FA;
+    --skel: #E6E8EC; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.04);
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.55; font-size: 15px; margin: 0; }
+  .page { max-width: 1080px; margin: 0 auto; padding: 44px 20px 96px; }
+  h1 { font-family: var(--sans); font-size: 1.9rem; font-weight: 700; margin: 8px 0 10px; line-height: 1.2; }
+  .eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .lede { color: var(--muted); max-width: 66ch; margin: 0 0 8px; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .panel-label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 44px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+  .panel-label b { color: var(--accent); }
+  .note { color: var(--muted); font-size: 0.86rem; max-width: 70ch; margin: 10px 0 0; }
+
+  /* ---- the app frame ---- */
+  .app { border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); overflow: hidden; box-shadow: var(--shadow); }
+  .scroll { overflow-x: auto; }
+  .inner { min-width: 860px; }
+
+  .crumb { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; background: var(--surface); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .crumb .path { font-size: 0.82rem; color: var(--muted); }
+  .crumb .path b { color: var(--ink); font-size: 1.08rem; font-family: var(--sans); font-weight: 600; display: block; margin-top: 2px; }
+
+  .btn { font-family: var(--body); font-size: 0.84rem; font-weight: 600; border-radius: 8px; padding: 8px 14px; border: 1px solid transparent; cursor: default; white-space: nowrap; }
+  /* primary button ink flips with the theme so it stays legible on --accent */
+  .btn.primary { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .btn.primary { color: #0F141C; } }
+  :root[data-theme="dark"] .btn.primary { color: #0F141C; }
+  :root[data-theme="light"] .btn.primary { color: #fff; }
+  .btn.ghost { background: var(--surface); border-color: var(--line); color: var(--ink); }
+  .btn.sm { font-size: 0.76rem; padding: 5px 10px; }
+  .btn[disabled] { opacity: .6; }
+
+  .filters { display: flex; gap: 10px; padding: 14px 20px; background: var(--raised); border-bottom: 1px solid var(--line); flex-wrap: wrap; align-items: center; }
+  .ctl { display: inline-flex; align-items: center; gap: 7px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; font-size: 0.82rem; }
+  .ctl .lbl { color: var(--muted); font-size: 0.74rem; }
+  .ctl .car { color: var(--muted); font-size: 0.7rem; }
+  .ctl.grow { flex: 1; min-width: 170px; color: var(--muted); }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 18px 20px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow); }
+  .kpi .k { font-size: 0.76rem; color: var(--muted); }
+  .kpi .v { font-family: var(--sans); font-size: 1.85rem; font-weight: 700; line-height: 1.1; margin-top: 4px; }
+  .kpi.acc .v { color: var(--accent); } .kpi.ok .v { color: var(--done); }
+  .kpi.warn .v { color: var(--amber); } .kpi.bad .v { color: var(--red); }
+
+  table.grid { width: 100%; border-collapse: collapse; background: var(--surface); font-size: 0.86rem; }
+  table.grid th { text-align: left; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 10px 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--raised); white-space: nowrap; }
+  table.grid td { padding: 11px 14px; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+  table.grid tr.row-over td { background: var(--red-soft); }
+  table.grid tr.row-open td { background: var(--accent-soft); }
+  .who { display: flex; align-items: center; gap: 10px; }
+  .av { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; font-family: var(--mono); flex: none; }
+  .chev { color: var(--muted); font-family: var(--mono); width: 14px; display: inline-block; }
+  .muted { color: var(--muted); }
+  .bar { height: 6px; border-radius: 999px; background: var(--line); width: 74px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 8px; }
+  .bar i { display: block; height: 100%; background: var(--done); }
+
+  .tag { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.05em; border-radius: 999px; padding: 3px 9px; white-space: nowrap; display: inline-block; }
+  .tag.hi { color: var(--red); background: var(--red-soft); }
+  .tag.md { color: var(--amber); background: var(--amber-soft); }
+  .tag.lo { color: var(--muted); background: var(--line-soft); }
+  .tag.st-pend { color: var(--muted); background: var(--line-soft); }
+  .tag.st-prog { color: var(--accent); background: var(--accent-soft); }
+  .tag.st-done { color: var(--done); background: var(--done-soft); }
+  .tag.st-over { color: var(--red); background: var(--red-soft); }
+  .tag.role { color: var(--violet); background: var(--violet-soft); }
+
+  .sub { background: var(--raised); }
+  .sub-wrap { padding: 4px 14px 14px 46px; }
+  .sub table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  .sub th { text-align: left; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .sub td { padding: 9px 10px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  .sub tr:last-child td { border-bottom: none; }
+  .tname { font-weight: 600; }
+  .tdesc { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+  .sel { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 7px; padding: 3px 8px; font-size: 0.74rem; }
+
+  .empty { text-align: center; padding: 52px 20px; background: var(--surface); }
+  .empty .ico { font-size: 2.1rem; }
+  .empty .msg { color: var(--muted); font-size: 0.88rem; margin: 8px 0 14px; }
+
+  .skel { background: var(--skel); border-radius: 6px; display: block; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .55 } }
+  .pulse { animation: pulse 1.5s ease-in-out infinite; }
+
+  .err { background: var(--red-soft); border: 1px solid var(--red); border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .err .t { color: var(--red); font-size: 0.85rem; }
+
+  /* modal */
+  .scrim { background: rgba(16,20,28,.55); border-radius: var(--r); padding: 28px 16px; }
+  .modal { max-width: 470px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 10px 30px rgba(0,0,0,.22); overflow: hidden; }
+  .modal .mh { padding: 15px 18px; border-bottom: 1px solid var(--line); font-family: var(--sans); font-weight: 600; }
+  .modal .mb { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+  .modal .mf { padding: 13px 18px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 9px; background: var(--raised); }
+  .field .fl { font-size: 0.76rem; color: var(--muted); margin-bottom: 4px; display: block; }
+  .field .fl .req { color: var(--red); }
+  .input { border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 8px 11px; font-size: 0.84rem; color: var(--ink); }
+  .input.ph { color: var(--muted); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .seg { display: flex; gap: 6px; }
+  .seg span { border: 1px solid var(--line); border-radius: 7px; padding: 5px 11px; font-size: 0.78rem; color: var(--muted); }
+  .seg span.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+  footer { margin-top: 60px; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  code { font-family: var(--mono); font-size: 0.84em; }
+  @media (max-width: 720px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:16px">ecom-core · restaurant platform · mockup #1 · 2026-07-19</div>
+  <h1>Bảng công việc — <span class="muted" style="font-weight:400">/admin/staff/task-board</span></h1>
+  <p class="lede">The screen a manager sees, on the neutral F-7 admin tokens. Seed day
+  19/06/2026 · 18 tasks across 6 staff · 9 done · 2 overdue. Below the main render are the
+  other five states the plan calls for.</p>
+</header>
+
+<div class="panel-label"><b>ready</b> — the main state, one row expanded</div>
+
+<div class="app">
+ <div class="scroll"><div class="inner">
+
+  <div class="crumb">
+    <div class="path">Nhân viên<b>Bảng công việc</b></div>
+    <button class="btn primary">+ Giao việc</button>
+  </div>
+
+  <div class="filters">
+    <span class="ctl"><span class="lbl">📅</span> 19/06/2026 <span class="car">▾</span></span>
+    <span class="ctl"><span class="lbl">Vai trò</span> Tất cả <span class="car">▾</span></span>
+    <span class="ctl"><span class="lbl">Trạng thái</span> Tất cả <span class="car">▾</span></span>
+    <span class="ctl grow">🔍 Tìm nhân viên…</span>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi acc"><div class="k">Tổng công việc hôm nay</div><div class="v">18</div></div>
+    <div class="kpi"><div class="k">Đang thực hiện</div><div class="v">4</div></div>
+    <div class="kpi ok"><div class="k">Hoàn thành</div><div class="v">9</div></div>
+    <div class="kpi bad"><div class="k">Quá hạn</div><div class="v">2</div></div>
+  </div>
+
+  <table class="grid">
+    <thead>
+      <tr>
+        <th style="width:34px"></th>
+        <th>Nhân viên</th><th>Vai trò</th><th>Số việc</th><th>Hoàn thành</th>
+        <th>Tỷ lệ</th><th>Quá hạn</th><th style="text-align:right">Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row-over">
+        <td><span class="chev">▸</span></td>
+        <td><span class="who"><span class="av">C1</span> chef01</span></td>
+        <td><span class="tag role">chef</span></td>
+        <td>5</td><td>2</td>
+        <td><span class="bar"><i style="width:40%"></i></span>40%</td>
+        <td><span class="tag st-over">! 1 quá hạn</span></td>
+        <td style="text-align:right"><button class="btn ghost sm">Giao việc</button></td>
+      </tr>
+
+      <tr class="row-open">
+        <td><span class="chev">▾</span></td>
+        <td><span class="who"><span class="av">C2</span> cash02</span></td>
+        <td><span class="tag role">cashier</span></td>
+        <td>4</td><td>3</td>
+        <td><span class="bar"><i style="width:75%"></i></span>75%</td>
+        <td class="muted">—</td>
+        <td style="text-align:right"><button class="btn ghost sm">Giao việc</button></td>
+      </tr>
+      <tr class="sub">
+        <td colspan="8">
+          <div class="sub-wrap">
+            <table>
+              <thead><tr><th>Công việc</th><th>Ưu tiên</th><th>Giờ</th><th>Trạng thái</th><th>Ghi chú</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div class="tname">Kiểm kê nguyên liệu</div><div class="tdesc">Đếm tồn kho tủ lạnh 2</div></td>
+                  <td><span class="tag hi">cao</span></td>
+                  <td>21:00</td>
+                  <td><span class="sel"><span class="tag st-prog">đang làm</span> ▾</span></td>
+                  <td class="muted">Báo lại quản lý sau khi xong</td>
+                </tr>
+                <tr>
+                  <td><div class="tname">Lau quầy thu ngân</div><div class="tdesc">Cuối ca chiều</div></td>
+                  <td><span class="tag md">vừa</span></td>
+                  <td>18:00</td>
+                  <td><span class="sel"><span class="tag st-done">hoàn thành</span> ▾</span></td>
+                  <td class="muted">—</td>
+                </tr>
+                <tr>
+                  <td><div class="tname">Đối soát tiền mặt đầu ca</div><div class="tdesc">So với sổ quỹ</div></td>
+                  <td><span class="tag hi">cao</span></td>
+                  <td>14:00</td>
+                  <td><span class="sel"><span class="tag st-done">hoàn thành</span> ▾</span></td>
+                  <td class="muted">Lệch 0 đ</td>
+                </tr>
+                <tr>
+                  <td><div class="tname">In hoá đơn tồn kho</div><div class="tdesc">Gửi quản lý cuối ngày</div></td>
+                  <td><span class="tag lo">thấp</span></td>
+                  <td>17:30</td>
+                  <td><span class="sel"><span class="tag st-done">hoàn thành</span> ▾</span></td>
+                  <td class="muted">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+
+      <tr class="row-over">
+        <td><span class="chev">▸</span></td>
+        <td><span class="who"><span class="av">M1</span> manager01</span></td>
+        <td><span class="tag role">manager</span></td>
+        <td>3</td><td>2</td>
+        <td><span class="bar"><i style="width:67%"></i></span>67%</td>
+        <td><span class="tag st-over">! 1 quá hạn</span></td>
+        <td style="text-align:right"><button class="btn ghost sm">Giao việc</button></td>
+      </tr>
+      <tr>
+        <td><span class="chev">▸</span></td>
+        <td><span class="who"><span class="av">S3</span> staff03</span></td>
+        <td><span class="tag role">staff</span></td>
+        <td>4</td><td>1</td>
+        <td><span class="bar"><i style="width:25%"></i></span>25%</td>
+        <td class="muted">—</td>
+        <td style="text-align:right"><button class="btn ghost sm">Giao việc</button></td>
+      </tr>
+      <tr>
+        <td><span class="chev">▸</span></td>
+        <td><span class="who"><span class="av">C3</span> chef02</span></td>
+        <td><span class="tag role">chef</span></td>
+        <td>2</td><td>1</td>
+        <td><span class="bar"><i style="width:50%"></i></span>50%</td>
+        <td class="muted">—</td>
+        <td style="text-align:right"><button class="btn ghost sm">Giao việc</button></td>
+      </tr>
+      <tr>
+        <td><span class="chev">▸</span></td>
+        <td><span class="who"><span class="av">C4</span> cash01</span></td>
+        <td><span class="tag role">cashier</span></td>
+        <td class="muted">0</td><td class="muted">—</td>
+        <td class="muted">—</td>
+        <td class="muted">—</td>
+        <td style="text-align:right"><button class="btn ghost sm">Giao việc</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+ </div></div>
+</div>
+
+<p class="note"><strong>Reconciles:</strong> 5+4+3+4+2+0 = <strong>18</strong> tasks · 2+3+2+1+1+0 =
+<strong>9</strong> done · 1+1 = <strong>2</strong> overdue — the KPI row is the sum of the table,
+not a separate invention. <code>cash01</code> carries 0 tasks and still appears (behavior 4,
+the LEFT JOIN). There is <strong>no "Chất lượng ★/5.0" column</strong> — it was deleted by
+decision, because it was only the completion rate divided by 20.</p>
+
+<div class="panel-label"><b>loading</b> — skeletons, not the literal string "…"</div>
+
+<div class="app">
+ <div class="scroll"><div class="inner">
+  <div class="crumb">
+    <div class="path">Nhân viên<b>Bảng công việc</b></div>
+    <button class="btn primary">+ Giao việc</button>
+  </div>
+  <div class="filters">
+    <span class="ctl"><span class="lbl">📅</span> 19/06/2026 <span class="car">▾</span></span>
+    <span class="ctl"><span class="lbl">Vai trò</span> Tất cả <span class="car">▾</span></span>
+    <span class="ctl"><span class="lbl">Trạng thái</span> Tất cả <span class="car">▾</span></span>
+    <span class="ctl grow">🔍 Tìm nhân viên…</span>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="k">Tổng công việc hôm nay</div><span class="skel pulse" style="height:30px;width:56px;margin-top:6px"></span></div>
+    <div class="kpi"><div class="k">Đang thực hiện</div><span class="skel pulse" style="height:30px;width:46px;margin-top:6px"></span></div>
+    <div class="kpi"><div class="k">Hoàn thành</div><span class="skel pulse" style="height:30px;width:46px;margin-top:6px"></span></div>
+    <div class="kpi"><div class="k">Quá hạn</div><span class="skel pulse" style="height:30px;width:40px;margin-top:6px"></span></div>
+  </div>
+  <table class="grid">
+    <thead><tr><th style="width:34px"></th><th>Nhân viên</th><th>Vai trò</th><th>Số việc</th><th>Hoàn thành</th><th>Tỷ lệ</th><th>Quá hạn</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><span class="chev">▸</span></td><td><span class="who"><span class="skel pulse" style="width:28px;height:28px;border-radius:50%"></span><span class="skel pulse" style="height:11px;width:86px"></span></span></td><td><span class="skel pulse" style="height:11px;width:54px"></span></td><td><span class="skel pulse" style="height:11px;width:20px"></span></td><td><span class="skel pulse" style="height:11px;width:20px"></span></td><td><span class="skel pulse" style="height:11px;width:74px"></span></td><td><span class="skel pulse" style="height:11px;width:34px"></span></td><td></td></tr>
+      <tr><td><span class="chev">▸</span></td><td><span class="who"><span class="skel pulse" style="width:28px;height:28px;border-radius:50%"></span><span class="skel pulse" style="height:11px;width:70px"></span></span></td><td><span class="skel pulse" style="height:11px;width:62px"></span></td><td><span class="skel pulse" style="height:11px;width:20px"></span></td><td><span class="skel pulse" style="height:11px;width:20px"></span></td><td><span class="skel pulse" style="height:11px;width:74px"></span></td><td><span class="skel pulse" style="height:11px;width:34px"></span></td><td></td></tr>
+      <tr><td><span class="chev">▸</span></td><td><span class="who"><span class="skel pulse" style="width:28px;height:28px;border-radius:50%"></span><span class="skel pulse" style="height:11px;width:94px"></span></span></td><td><span class="skel pulse" style="height:11px;width:50px"></span></td><td><span class="skel pulse" style="height:11px;width:20px"></span></td><td><span class="skel pulse" style="height:11px;width:20px"></span></td><td><span class="skel pulse" style="height:11px;width:74px"></span></td><td><span class="skel pulse" style="height:11px;width:34px"></span></td><td></td></tr>
+      <tr><td><span class="chev">▸</span></td><td><span class="who"><span class="skel pulse" style="width:28px;height:28px;border-radius:50%"></span><span class="skel pulse" style="height:11px;width:78px"></span></span></td><td><span class="skel pulse" style="height:11px;width:58px"></span></td><td><span class="skel pulse" style="height:11px;width:20px"></span></td><td><span class="skel pulse" style="height:11px;width:20px"></span></td><td><span class="skel pulse" style="height:11px;width:74px"></span></td><td><span class="skel pulse" style="height:11px;width:34px"></span></td><td></td></tr>
+    </tbody>
+  </table>
+ </div></div>
+</div>
+
+<p class="note">The table region keeps its shape while loading. In the reference the whole
+region sits behind a <code>!statsLoading</code> guard, so it unmounts — the page below the KPI
+row goes blank and then jumps when data lands.</p>
+
+<div class="panel-label"><b>empty-day</b> vs <b>empty-filter</b> — two states, deliberately different</div>
+
+<div class="app" style="margin-bottom:14px">
+  <div class="empty">
+    <div class="ico">📋</div>
+    <div class="msg">Chưa có công việc nào cho ngày <strong>19/06/2026</strong>.</div>
+    <button class="btn primary">+ Giao việc</button>
+  </div>
+</div>
+
+<div class="app">
+  <div class="empty">
+    <div class="ico">🔍</div>
+    <div class="msg">Không có nhân viên khớp bộ lọc <strong>vai trò: chef</strong> · <strong>trạng thái: hoàn thành</strong>.</div>
+    <button class="btn ghost">Xoá bộ lọc</button>
+  </div>
+</div>
+
+<p class="note">Same data volume, completely different meaning — one says "nothing was assigned",
+the other says "your filter hid everything", and each offers the action that actually helps.
+The reference renders one identical string for both, so a mis-set filter is indistinguishable
+from an empty day.</p>
+
+<div class="panel-label"><b>expanded-row error</b> — with the retry the reference lacks</div>
+
+<div class="app">
+ <div class="scroll"><div class="inner">
+  <table class="grid">
+    <tbody>
+      <tr class="row-open">
+        <td style="width:34px"><span class="chev">▾</span></td>
+        <td><span class="who"><span class="av">C2</span> cash02</span></td>
+        <td><span class="tag role">cashier</span></td>
+        <td>4</td><td>3</td>
+        <td><span class="bar"><i style="width:75%"></i></span>75%</td>
+        <td class="muted">—</td>
+        <td style="text-align:right"><button class="btn ghost sm">Giao việc</button></td>
+      </tr>
+      <tr class="sub">
+        <td colspan="8">
+          <div class="sub-wrap">
+            <div class="err">
+              <span class="t">⚠ Không thể tải công việc của nhân viên này.</span>
+              <button class="btn ghost sm">Thử lại</button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+ </div></div>
+</div>
+
+<p class="note">The retry refetches the row in place. Without it — the reference's behaviour —
+the only recovery is to collapse the row and expand it again.</p>
+
+<div class="panel-label"><b>modal</b> — Giao việc, mid-submit</div>
+
+<div class="app scrim">
+  <div class="modal">
+    <div class="mh">Giao việc mới</div>
+    <div class="mb">
+      <div class="field">
+        <span class="fl">Nhân viên <span class="req">*</span></span>
+        <div class="input" style="display:flex;justify-content:space-between">cash02 — cashier <span class="muted">▾</span></div>
+      </div>
+      <div class="field">
+        <span class="fl">Tên công việc <span class="req">*</span></span>
+        <div class="input">Kiểm kê nguyên liệu</div>
+      </div>
+      <div class="field">
+        <span class="fl">Mô tả</span>
+        <div class="input">Đếm tồn kho tủ lạnh 2</div>
+      </div>
+      <div class="field">
+        <span class="fl">Ưu tiên <span class="req">*</span></span>
+        <div class="seg"><span class="on">Cao</span><span>Vừa</span><span>Thấp</span></div>
+      </div>
+      <div class="row2">
+        <div class="field"><span class="fl">Ngày đến hạn <span class="req">*</span></span><div class="input">19/06/2026</div></div>
+        <div class="field"><span class="fl">Giờ đến hạn <span class="req">*</span></span><div class="input">21:00</div></div>
+      </div>
+      <div class="row2">
+        <div class="field"><span class="fl">Khung giờ bắt đầu</span><div class="input ph">— tuỳ chọn —</div></div>
+        <div class="field"><span class="fl">Khung giờ kết thúc</span><div class="input ph">— tuỳ chọn —</div></div>
+      </div>
+      <div class="field">
+        <span class="fl">Ghi chú</span>
+        <div class="input">Báo lại quản lý sau khi xong</div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn ghost">Huỷ</button>
+      <button class="btn primary" disabled>Đang tạo…</button>
+    </div>
+  </div>
+</div>
+
+<p class="note">The time window is marked optional and looks optional. In the reference a time is
+<em>mandatory</em> at create but the table column reads the optional window fields, so a task can
+display "—" for a time the manager was forced to enter. Here the required
+<code>Giờ đến hạn</code> is what the "Giờ" column shows.</p>
+
+<footer>
+  Written 2026-07-19 for task F-22 · admin surface on the neutral F-7 tokens from
+  <code>harness/diagrams/design-system.html</code> (not the customer dark/orange shell).
+  Snapshot of <code>admin_task_board_PLAN.md</code>, which wins on any conflict.
+</footer>
+
+</div>
+</body>
+</html>

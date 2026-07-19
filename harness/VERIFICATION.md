@@ -19,6 +19,44 @@
 
 ## Log (newest on top)
 
+### F-17 — Admin-overview page-plan set (4 docs, one folder) · 2026-07-19
+**AC:** Folder holds the 4 slug-prefixed docs; `.md` is sole source of truth (each HTML footer says so); BE contract (7 endpoints incl. the consolidated SSE channel, state machine, wire shapes) + FE plan (file map, state ownership, 13 numbered behaviors) + defects-designed-out + task mapping; zero rule duplication (links owning docs); all 3 HTML render both themes; indexes updated per Hard Rule 6
+**Receipt:**
+```
+$ ls -o harness/plans/admin_overview/
+admin_overview_PLAN.md                      27763   # canonical, 8 sections, slug-prefixed
+admin_overview_plan.html                    64387
+admin_overview_how-it-works.html            44483
+admin_overview_mockup-1.html                32005
+
+$ python3 tagcheck.py harness/plans/admin_overview/*.html
+admin_overview_how-it-works.html       UNCLOSED: none  MISMATCH: 0  SIZE: 43663
+    prefers-color-scheme | data-theme | overflow-x:auto x3 | self-contained | sections:8 | PLAN.md-wins
+admin_overview_mockup-1.html           UNCLOSED: none  MISMATCH: 0  SIZE: 31166
+    prefers-color-scheme | data-theme | overflow-x:auto x2 | self-contained | sections:0 | PLAN.md-wins
+admin_overview_plan.html               UNCLOSED: none  MISMATCH: 0  SIZE: 63051
+    prefers-color-scheme | data-theme | overflow-x:auto x3 | self-contained | sections:9 | PLAN.md-wins
+EXIT=0
+```
+Source: 2 Explore agents digested the 10-doc reference corpus
+`reference/docs/system/08_pages/admin/admin_overview/` (~2,800 lines) — one on page/BE/
+loading/scenario, one on cross-component + cross-page dataflow and the COMPARISON
+doc-vs-code audits.
+
+**Key reconciliations (harness beats reference):** ① the reference's **two** realtime
+channels (SSE doorbell + an ungated `WS /ws/orders-live?token=` that any parseable JWT
+incl. `customer` could open) collapse to **one cookie-JWT, manager-gated SSE stream** —
+kills the SEC hole structurally (F-5) and deletes 2 dead switch cases · ② **no cache
+map** — orders are never cached (`BE_STATE §7`), Redis is pub/sub only here · ③
+`POST /payments` takes `{order_id, method}` only, no client `amount` · ④ optimistic
+status advance gains a **rollback** · ⑤ N+1 live-list enrichment → one batched fetch.
+**11 reference defects designed out** (all 4 distinct 🔴 roots + the load-bearing 🟡s).
+**Flags raised:** ⚠ cash-payment phase (COD now, gateways P) · ⚠ N+1 watch at AD-1 ·
+❓ cancel rule still open in `OVERALL_PLAN §3.7` (plan assumes cancel from
+pending/confirmed/preparing only).
+**Verdict:** AC met — marked ✅ in TASKS.md. Admin is Session-0 deferred, so the plan
+seeds future AD-1/AD-2/AD-3 rows and cross-links the R and P phases (no rows invented).
+
 ### F-19 — Customer order detail: merge ruling + supplement · 2026-07-19
 **AC:** Supplement records the merge ruling, points at the real home, and owns the three
 items the merge left unhomed (deep-link gap · stepper ruling · redirect drift); zero

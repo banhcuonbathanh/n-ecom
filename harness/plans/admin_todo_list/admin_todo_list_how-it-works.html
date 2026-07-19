@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin to-do list — how it works at runtime (F-20)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4; --violet: #6B4FBB; --violet-soft: #EDE8F9;
+    --surface-2: #F3F4F6;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E58278; --red-soft: #3A1D19; --violet: #B39DEB; --violet-soft: #241C3D;
+      --surface-2: #1C2431;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E58278; --red-soft: #3A1D19; --violet: #B39DEB; --violet-soft: #241C3D;
+    --surface-2: #1C2431;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3382C; --red-soft: #F8E7E4; --violet: #6B4FBB; --violet-soft: #EDE8F9;
+    --surface-2: #F3F4F6;
+  }
+
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; white-space: nowrap; display: inline-block; }
+  .chip.done { color: var(--done); background: var(--done-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .chip.red { color: var(--red); background: var(--red-soft); }
+  .chip.violet { color: var(--violet); background: var(--violet-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .danger { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .danger p { margin: 0 0 8px; } .danger p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, .danger code, .step code { border: none; background: transparent; padding: 0; }
+  ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; letter-spacing: 0.04em; }
+  .topnav a:hover { color: var(--accent); }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 92px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .fnode.acc { border-color: var(--accent); } .fnode.vio { border-color: var(--violet); }
+  .fnode.red { border-color: var(--red); } .fnode.grn { border-color: var(--done); }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; font-size: 0.85rem; }
+
+  /* numbered runtime steps */
+  .steps { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .step { display: flex; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; }
+  .step .sn { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .step.err .sn { background: var(--red); } .step.ok .sn { background: var(--done); } .step.new .sn { background: var(--violet); }
+  .step .sb { flex: 1; min-width: 0; }
+  .step .st { font-family: var(--sans); font-weight: 600; font-size: 0.93rem; display: block; margin-bottom: 2px; }
+  .step p { margin: 0; font-size: 0.86rem; color: var(--muted); max-width: none; }
+  .step p b, .step p code { color: var(--ink); }
+
+  .svg-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 12px; margin: 16px 0; }
+  svg text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+  svg text.lane { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; }
+  svg text.note { font-size: 10px; fill: var(--muted); }
+  svg .lifeline { stroke: var(--line); stroke-width: 1; stroke-dasharray: 4 4; }
+  svg .box { fill: var(--surface-2); stroke: var(--line); }
+  svg .msg { stroke: var(--accent); stroke-width: 1.6; fill: none; }
+  svg .msg-v { stroke: var(--violet); stroke-width: 1.6; fill: none; }
+  svg .msg-g { stroke: var(--done); stroke-width: 1.6; fill: none; }
+  svg .msg-r { stroke: var(--red); stroke-width: 1.6; fill: none; }
+  svg .msg-m { stroke: var(--muted); stroke-width: 1.3; fill: none; stroke-dasharray: 5 3; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-19</div>
+  <h1>Admin to-do list — how it works at runtime</h1>
+  <p class="lede">Not <em>what we will build</em> but <em>what happens when it runs</em>: the
+  morning load, the view switch, the two write paths, and how a page with <b>no realtime and no
+  server cache</b> still stays fresh.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-20</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_todo_list_PLAN.md">admin_todo_list_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">realtime</span><span class="v">none — pull only</span></div>
+    <div class="fact"><span class="k">server cache</span><span class="v">none — direct MySQL</span></div>
+  </div>
+  <div class="golden">
+    <p><b>The mental model in one line:</b> <code>/admin/todo-list</code> is a
+    <b>plan-the-shift</b> screen — read a per-staff board, author tasks that land as plain MySQL
+    rows, drill into one person. All <code>manager+</code>, all pull-only.</p>
+    <p>Worked example throughout: <b>2026-07-19, 07:45</b>, manager <code>mgr01</code> opens the
+    page; <code>chef01</code> has 5 tasks, 2 done, 1 overdue.</p>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#big">01 big picture</a>
+  <a href="#load">02 first load</a>
+  <a href="#switch">03 the a/b switch</a>
+  <a href="#modal">04 modal internals</a>
+  <a href="#across">05 state across</a>
+  <a href="#write">06 the write path</a>
+  <a href="#fresh">07 freshness</a>
+</nav>
+
+<section id="big">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Big picture — the whole machine on one screen</h2></div>
+<pre class="diagram">                        ┌──────────────── browser ────────────────┐
+                        │  TodoPageClient                          │
+   manager (mgr01) ────→│   ├─ filters {staffId, date, status}     │
+                        │   ├─ VIEW A  stats board   ◀─┐           │
+                        │   ├─ VIEW B  task list     ◀─┤ A/B switch│
+                        │   └─ TaskFormModal          │ on staffId │
+                        │        create │ edit        │            │
+                        │  TanStack Query cache ──────┘            │
+                        └───────┬─────────────────────┬────────────┘
+                    reads (3)   │                     │  writes (2)
+                                ▼                     ▼
+                        ┌─────────────────────────────────────────┐
+                        │  Gin · authMW + AtLeast("manager")      │  ← the real gate
+                        │  handler → service → sqlc repo          │
+                        └───────────────────┬─────────────────────┘
+                                            ▼
+                        ┌─────────────────────────────────────────┐
+                        │  MySQL   staff_tasks · staff            │  no Redis anywhere
+                        └───────────────────┬─────────────────────┘
+                                            │ same rows, pulled independently
+                                            ▼
+                              /admin/staff/task-board  (F-22 sibling)</pre>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Traffic kind</th><th>Calls</th><th>When</th></tr>
+      <tr><td><b>Read — always</b></td><td><code>GET /admin/tasks/stats</code> · <code>GET /staff</code></td><td>on mount, both views</td></tr>
+      <tr><td><b>Read — gated</b></td><td><code>GET /admin/tasks?staffId=&amp;date=</code></td><td>only once a staff member is selected (<code>enabled: !!staffId</code>)</td></tr>
+      <tr><td><b>Write — create</b></td><td><code>POST /admin/tasks</code> → 201</td><td>modal, <code>create</code> mode</td></tr>
+      <tr><td><b>Write — edit</b> <span class="chip violet">new</span></td><td><code>PATCH /admin/tasks/:id</code> → 200</td><td>modal, <code>edit</code> mode</td></tr>
+      <tr><td><b>Push</b></td><td>—</td><td><b>none.</b> No SSE, no WS. "Live" means refetch</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="load">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — 07:45, the manager opens the page</h2></div>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 900 320" width="900" height="320" role="img" aria-label="First load sequence across browser, Gin and MySQL">
+      <defs>
+        <marker id="mi" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#2B59D9"/></marker>
+        <marker id="mg" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#1E8A5A"/></marker>
+        <marker id="mm" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#5C6675"/></marker>
+      </defs>
+      <rect class="box" x="20"  y="10" width="150" height="26" rx="5"/><text class="lane" x="42"  y="28">TodoPageClient</text>
+      <rect class="box" x="330" y="10" width="130" height="26" rx="5"/><text class="lane" x="360" y="28">Gin (manager+)</text>
+      <rect class="box" x="620" y="10" width="120" height="26" rx="5"/><text class="lane" x="655" y="28">MySQL</text>
+      <line class="lifeline" x1="95"  y1="40" x2="95"  y2="310"/>
+      <line class="lifeline" x1="395" y1="40" x2="395" y2="310"/>
+      <line class="lifeline" x1="680" y1="40" x2="680" y2="310"/>
+
+      <path class="msg" d="M95,66 L390,66" marker-end="url(#mi)"/><text x="120" y="60">1 · GET /admin/tasks/stats?date=2026-07-19</text>
+      <path class="msg" d="M95,94 L390,94" marker-end="url(#mi)"/><text x="120" y="88">2 · GET /staff?limit=100   (parallel)</text>
+      <text class="note" x="120" y="116">tasks query NOT fired — enabled: !!staffId, staffId = null</text>
+
+      <path class="msg" d="M395,142 L675,142" marker-end="url(#mi)"/><text x="415" y="136">DATE(due_at)=? AND deleted_at IS NULL</text>
+      <path class="msg-g" d="M675,170 L400,170" marker-end="url(#mg)"/><text x="415" y="164">metrics + staffStats[] (LEFT JOIN — zero-task staff included)</text>
+      <path class="msg-g" d="M390,198 L100,198" marker-end="url(#mg)"/><text x="120" y="192">200 { data: { metrics, staffStats } }</text>
+
+      <text class="note" x="120" y="226">render VIEW A — 4 KPI cards + per-staff board</text>
+      <path class="msg-m" d="M95,252 L95,290" marker-end="url(#mm)"/>
+      <text class="note" x="112" y="250">while in flight: TodoStatsSkeleton (mirrors cards+table, not a generic 7-row block)</text>
+      <text class="note" x="112" y="272">isOverdue derived server-side: status IN (pending,in_progress) AND due_at &lt; NOW()</text>
+      <text class="note" x="112" y="294">staff dropdown fills independently — disabled + "Đang tải…" until it resolves</text>
+    </svg>
+  </div>
+
+  <div class="steps">
+    <div class="step"><span class="sn">1</span><div class="sb"><span class="st">Route tier — <code>loading.tsx</code></span>
+      <p><b>New vs the reference</b>, which had none: navigating in from another admin page showed a blank flash. The route skeleton covers the JS-bundle gap.</p></div></div>
+    <div class="step"><span class="sn">2</span><div class="sb"><span class="st">Two queries fire in parallel, one does not</span>
+      <p><code>stats</code> and <code>staff</code> go immediately. The <b>tasks</b> query is interaction-gated — it has no <code>staffId</code> yet, so it never leaves the browser.</p></div></div>
+    <div class="step"><span class="sn">3</span><div class="sb"><span class="st">Gin gates before the handler runs</span>
+      <p><code>authMW</code> + <code>AtLeast("manager")</code>. A guest, customer, chef or cashier JWT is rejected <b>403</b> before any query. The FE's <code>canCreate</code> is chrome; <b>this</b> is the gate.</p></div></div>
+    <div class="step"><span class="sn">4</span><div class="sb"><span class="st">One day, one query</span>
+      <p>Every task read is <code>WHERE DATE(due_at) = ?</code>. There is no <code>BETWEEN</code> — which is exactly why the reference's date-<em>range</em> filter was decorative and why this plan removed it.</p></div></div>
+    <div class="step ok"><span class="sn">5</span><div class="sb"><span class="st">Render View A — and only View A</span>
+      <p>The two views are mutually exclusive. With no staff selected there is no task list in the DOM at all.</p></div></div>
+  </div>
+
+  <div class="flag">
+    <p><b>Three branches the reference collapsed into one.</b> Its stats fetch rendered
+    <code>{data ? (…) : null}</code> — so a <b>failed</b> fetch and an <b>empty</b> day both
+    produced a blank page section, and a failed <em>task</em> fetch rendered the <em>empty</em>
+    state, actively lying to the manager. Here: <b>loading</b> → skeleton, <b>error</b> → panel +
+    Thử lại, <b>empty</b> → "Chưa có công việc nào cho ngày này" + a create CTA. Three states,
+    three renders.</p>
+  </div>
+</section>
+
+<section id="switch">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The core client action — the A/B switch, zero new machinery</h2></div>
+  <p>The page's defining interaction costs <b>one <code>setState</code></b>. There is no router
+  navigation, no store, no prop-drilling — the view is a pure function of one field.</p>
+
+<pre class="diagram">07:49 — the manager clicks chef01's row in the stats board
+
+  onClick ──→ setFilters(f =&gt; ({ ...f, staffId: 'chef01-uuid' }))
+                 │
+                 ├─ staffId != null ──────→ VIEW B replaces VIEW A        (render branch)
+                 │
+                 ├─ useStaffTasks(staffId, date)
+                 │     enabled: !!staffId  ── false → true
+                 │     └─→ GET /admin/tasks?staffId=chef01&amp;date=2026-07-19   (FIRST fetch)
+                 │
+                 └─ filter-bar dropdown shows "chef01"
+                       └─ DERIVED from filters.staffId — not a second copy of the selection
+
+clearing the selection → staffId = null → VIEW A returns, already cached (staleTime 30s)</pre>
+
+  <div class="golden">
+    <p><b>Why the dropdown is derived, not synced.</b> The reference kept a local dropdown value
+    and pushed the stats-row click into it with a <code>useEffect</code> — two sources for one
+    truth, kept in step by a side effect. Here the <code>&lt;select&gt;</code> <em>reads</em>
+    <code>filters.staffId</code>. There is nothing to sync, so there is nothing to desync
+    (<a href="../../FE_STATE.md">FE_STATE.md §9</a> derived-not-stored).</p>
+  </div>
+
+  <div class="steps">
+    <div class="step"><span class="sn">1</span><div class="sb"><span class="st">First click pays the network cost</span>
+      <p>The tasks query has never run, so this is a cold fetch → <code>TodoTasksSkeleton</code>.</p></div></div>
+    <div class="step"><span class="sn">2</span><div class="sb"><span class="st">Going back is free</span>
+      <p>View A's data is still in the Query cache within its 30 s <code>staleTime</code> — instant, no skeleton.</p></div></div>
+    <div class="step"><span class="sn">3</span><div class="sb"><span class="st">Re-selecting the same person is free</span>
+      <p><code>['admin','tasks',staffId,date]</code> is already cached for 15 s.</p></div></div>
+    <div class="step"><span class="sn">4</span><div class="sb"><span class="st">Status filtering never touches the network</span>
+      <p>The day's rows are already in hand, so the filter runs client-side over cached data — including <code>in_progress</code>, which the reference's dropdown omitted entirely.</p></div></div>
+  </div>
+</section>
+
+<section id="modal">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Inside the authoring modal — one form, two verbs</h2></div>
+  <p>This is the page's reason to exist and the place the reference broke worst. The modal is a
+  single component with a <code>mode</code>; everything else follows from it.</p>
+
+<pre class="diagram">TaskFormModal
+├── mode: 'create' | 'edit'          ← the only branch that matters
+├── RHF + Zod form state             ← field values live here, never in the parent
+│     name*  assignedTo*  priority*  dueAt*  dueTimeStart?  dueTimeEnd?
+│     description?  notes?           ← notes NOW HAS AN INPUT (reference had none)
+└── submit
+      ├── create → POST  /admin/tasks        → 201 → new row
+      └── edit   → PATCH /admin/tasks/:id    → 200 → SAME row, updated
+                    └── body = changed fields only; absent = unchanged
+                    └── assignedTo is LOCKED (not patchable — see below)</pre>
+
+  <div class="danger">
+    <p><b>🔴 The reference's Bug 1, drawn.</b> Its <code>handleModalSubmit</code> called
+    <code>createTask.mutate(...)</code> <em>regardless of mode</em> — it never read
+    <code>editTask.id</code>:</p>
+    <p style="font-family:var(--mono);font-size:.8rem">
+    edit "Kiểm kê" &nbsp;→&nbsp; POST /admin/tasks &nbsp;→&nbsp; <b>201 Created</b> &nbsp;→&nbsp;
+    list now has <b>2</b> near-identical tasks &nbsp;→&nbsp; <b>no delete button exists</b></p>
+    <p>Every edit silently forked the row. The manager's only recourse was to ignore it. That is
+    why <code>PATCH /admin/tasks/:id</code> ships with this page rather than staying deferred —
+    the button is unshippable without it.</p>
+  </div>
+
+  <h3>Why <code>assignedTo</code> is locked in edit mode</h3>
+  <p>Patching the assignee would <b>silently move a row between two people's boards</b> — a task
+  vanishes from one manager's view of chef01 and appears under cashier01, with no trace of the
+  move. Correcting a typo and re-assigning work are different intents with different blast radii.
+  v1: <b>cancel + re-create</b>. Revisit if the owner asks for hand-off.</p>
+
+  <h3>What a partial <code>PATCH</code> actually sends</h3>
+<pre class="diagram">the manager opens ✏️ on "Kiểm kê nguyên liệu" and changes only the time
+
+  form dirty-fields ──→ { dueAt: "2026-07-19T14:00:00Z" }      ← ONLY what changed
+                            │
+                            ▼
+  UPDATE staff_tasks SET
+      title       = COALESCE(?, title),          ← NULL → keep
+      priority    = COALESCE(?, priority),
+      due_at      = COALESCE(?, due_at),         ← 14:00 → change
+      notes       = COALESCE(?, notes),
+      updated_at  = NOW()
+  WHERE id = ? AND deleted_at IS NULL            ← soft-deleted rows are invisible → 404
+
+  NOT touched: status (endpoint 4 owns it) · assigned_by (JWT) · completed_at</pre>
+</section>
+
+<section id="across">
+  <div class="sec-head"><span class="sec-num">05</span><h2>State across components &amp; pages</h2></div>
+
+  <h3>Across components — the Query cache is the shared bus</h3>
+<pre class="diagram">  TaskFormModal ──mutate──→ TanStack Query ──invalidate──┬──→ VIEW A stats board  (refetch)
+                                                          └──→ VIEW B task list    (refetch)
+
+  the modal never talks to the views · the views never talk to each other
+  parent TodoPageClient owns only: filters · modalOpen · editTask   (passed by props)</pre>
+  <p>There is <b>no store</b>. Nothing here crosses a route boundary, so
+  <a href="../../FE_STATE.md">FE_STATE.md §1</a>'s decision flow lands on component state + the
+  server cache. Adding Zustand would be machinery for a problem the page does not have.</p>
+
+  <h3>Across pages — server-side, pull-only</h3>
+<pre class="diagram">  /admin/todo-list          /admin/staff/task-board          another manager's laptop
+        │                            │                                  │
+        └──── POST/PATCH ────→ staff_tasks (MySQL) ←──── GET ────────────┘
+                                     │
+        no shared client state · no SSE/WS · no Redis · no cross-tab channel</pre>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Observer</th><th>Sees a new/edited task after…</th><th>Mechanism</th></tr>
+      <tr><td>The manager who wrote it</td><td><b>immediately</b></td><td>invalidate-on-success → refetch</td></tr>
+      <tr><td>Another tab, same manager</td><td>≤ 30 s (stats) / 15 s (tasks)</td><td><code>staleTime</code> expiry + refetch-on-focus</td></tr>
+      <tr><td>Another manager's laptop</td><td>≤ 30 s / 15 s, or on reload</td><td>same — <b>no push exists</b></td></tr>
+      <tr><td>The assigned staff member</td><td>n/a</td><td>staff have no task-facing screen in this plan's scope</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="write">
+  <div class="sec-head"><span class="sec-num">06</span><h2>The write path — <code>PATCH</code> through every layer</h2></div>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 900 400" width="900" height="400" role="img" aria-label="PATCH write path from modal through Gin, service, sqlc to MySQL and back">
+      <defs>
+        <marker id="wi" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#6B4FBB"/></marker>
+        <marker id="wg" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#1E8A5A"/></marker>
+        <marker id="wr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#B3382C"/></marker>
+        <marker id="wm" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 z" fill="#5C6675"/></marker>
+      </defs>
+      <rect class="box" x="15"  y="10" width="120" height="26" rx="5"/><text class="lane" x="35"  y="28">TaskFormModal</text>
+      <rect class="box" x="215" y="10" width="110" height="26" rx="5"/><text class="lane" x="238" y="28">handler</text>
+      <rect class="box" x="410" y="10" width="110" height="26" rx="5"/><text class="lane" x="435" y="28">service</text>
+      <rect class="box" x="605" y="10" width="110" height="26" rx="5"/><text class="lane" x="628" y="28">sqlc repo</text>
+      <rect class="box" x="780" y="10" width="100" height="26" rx="5"/><text class="lane" x="805" y="28">MySQL</text>
+      <line class="lifeline" x1="75"  y1="40" x2="75"  y2="390"/>
+      <line class="lifeline" x1="270" y1="40" x2="270" y2="390"/>
+      <line class="lifeline" x1="465" y1="40" x2="465" y2="390"/>
+      <line class="lifeline" x1="660" y1="40" x2="660" y2="390"/>
+      <line class="lifeline" x1="830" y1="40" x2="830" y2="390"/>
+
+      <path class="msg-v" d="M75,66 L265,66" marker-end="url(#wi)"/><text x="88" y="60">PATCH /admin/tasks/3a7e… { dueAt }</text>
+      <text class="note" x="88" y="82">tier 0 — Zod blocks empty/invalid before the network</text>
+
+      <path class="msg-v" d="M270,108 L460,108" marker-end="url(#wi)"/><text x="285" y="102">bind + shape only</text>
+      <text class="note" x="285" y="124">handler = shape · service = business (BE_STATE.md)</text>
+
+      <path class="msg-v" d="M465,150 L655,150" marker-end="url(#wi)"/><text x="480" y="144">tier 1 — name 1..200 · priority enum · RFC3339</text>
+      <path class="msg-v" d="M660,192 L825,192" marker-end="url(#wi)"/><text x="672" y="186">UPDATE … COALESCE</text>
+      <text class="note" x="672" y="208">WHERE id=? AND deleted_at IS NULL</text>
+
+      <path class="msg-g" d="M825,236 L665,236" marker-end="url(#wg)"/><text x="672" y="230">1 row</text>
+      <path class="msg-g" d="M655,264 L470,264" marker-end="url(#wg)"/><text x="480" y="258">re-read → full task</text>
+      <path class="msg-g" d="M460,292 L275,292" marker-end="url(#wg)"/><text x="285" y="286">TaskDTO</text>
+      <path class="msg-g" d="M265,320 L80,320" marker-end="url(#wg)"/><text x="88" y="314">200 { data: task }</text>
+
+      <path class="msg-r" d="M660,356 L470,356" marker-end="url(#wr)"/><text x="480" y="350">0 rows → 404 NOT_FOUND</text>
+      <text class="note" x="88" y="378">on 200 → close modal → invalidate BOTH keys for BOTH dates → background refetch</text>
+    </svg>
+  </div>
+
+  <div class="steps">
+    <div class="step"><span class="sn">0</span><div class="sb"><span class="st">Tier 0 — the form</span>
+      <p>Zod blocks an empty name, a bad priority, a malformed date, and an <b>entirely unchanged</b> submit before a request exists.</p></div></div>
+    <div class="step"><span class="sn">1</span><div class="sb"><span class="st">Gin gate, again</span>
+      <p><code>AtLeast("manager")</code> runs before the handler. Writes are gated identically to reads.</p></div></div>
+    <div class="step"><span class="sn">2</span><div class="sb"><span class="st">Handler binds, service decides</span>
+      <p>Per <a href="../../BE_STATE.md">BE_STATE.md</a>: handlers do shape, services do business. The handler never touches SQL.</p></div></div>
+    <div class="step new"><span class="sn">3</span><div class="sb"><span class="st">Partial update via <code>COALESCE</code></span>
+      <p>Absent fields pass <code>NULL</code> and keep their stored value. <b>No read-modify-write</b>, so two managers editing different fields of the same task do not clobber each other.</p></div></div>
+    <div class="step err"><span class="sn">4</span><div class="sb"><span class="st">Zero rows is a 404, not a 500</span>
+      <p><code>deleted_at IS NULL</code> is in the <code>WHERE</code>, so a soft-deleted task is simply invisible → <code>404 NOT_FOUND</code>, surfaced inline in the modal (behavior B12). The reference's habit of returning <b>500</b> for caller error is designed out (F-22 §3.4).</p></div></div>
+    <div class="step ok"><span class="sn">5</span><div class="sb"><span class="st">Success invalidates two keys across two dates</span>
+      <p>If the edit <b>moved</b> the due date, the KPI rollup changed on <b>both</b> days. Invalidating only the new date leaves yesterday's board stale — the sharpened form of a bug F-22 designed out for create.</p></div></div>
+    <div class="step"><span class="sn">6</span><div class="sb"><span class="st">No optimistic update</span>
+      <p>Per <a href="../../FE_STATE.md">FE_STATE.md</a>, optimistic is <b>cart-only</b>. The modal disables its button and waits for the 200 — a manager must never see an edit that did not land.</p></div></div>
+  </div>
+</section>
+
+<section id="fresh">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Freshness without Redis and without realtime</h2></div>
+  <p>Most pages in this system have a cache tier or a push channel. This one has <b>neither</b> —
+  and that is a decision, not a gap.</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Layer</th><th>Here</th><th>Why</th></tr>
+      <tr><td>Redis</td><td><b>none</b></td><td><a href="../../ARCHITECTURE.md">ARCHITECTURE.md §4</a> scopes Redis to the catalog cache + auth rate-limiting. Task reads are low-volume and manager-only, and must never be stale against a write the same manager just made</td></tr>
+      <tr><td>SSE / WS</td><td><b>none</b></td><td>Nothing on this screen is time-critical to a second. Contrast the order pages, which genuinely push</td></tr>
+      <tr><td>TanStack Query</td><td><b>the only cache</b></td><td>stats 30 s · tasks 15 s · staff 5 min</td></tr>
+    </table>
+  </div>
+
+<pre class="diagram">  staleness bound = the staleTime of whichever key you are looking at
+
+  own write ─────→ invalidate ─────→ 0 s stale          (the case that matters)
+  someone else's write ──────────→ ≤ 30 s (stats) / ≤ 15 s (tasks)
+  tab regains focus ─────────────→ refetch-on-focus → fresh
+
+  worst case: a manager stares at a board for 30 s while a colleague adds a task.
+  For a shift-planning screen this is correct; for the kitchen display it would not be.</pre>
+
+  <div class="golden">
+    <p><b>Skeletons must not flash on a refresh.</b> Background refetches set
+    <code>isFetching</code>, not <code>isLoading</code>. Cached data stays on screen until the new
+    data lands — so a <code>staleTime</code> expiry is invisible, while a genuine cold load still
+    gets its skeleton. Binding a skeleton to <code>isFetching</code> would make the board strobe
+    every 30 seconds.</p>
+  </div>
+</section>
+
+<footer>
+  Written by the engineer-in-charge, 2026-07-19. Runtime companion to
+  <a href="admin_todo_list_plan.html">admin_todo_list_plan.html</a>. The shared task contract is
+  owned by <a href="../admin_task_board/admin_task_board_PLAN.md">admin_task_board_PLAN.md</a>
+  and <a href="../../DB_SCHEMA.md">DB_SCHEMA.md §4.7</a> — linked, never restated.
+  <b>Snapshot of <a href="admin_todo_list_PLAN.md">admin_todo_list_PLAN.md</a>, which wins on any
+  conflict.</b>
+</footer>
+
+</div>
+</body>
+</html>
