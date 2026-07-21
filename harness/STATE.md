@@ -35,6 +35,36 @@
 
 ## Checkpoint log
 
+### 2026-07-21 — Session 18 (F-25): customer orders-&-tracking page-plan set — **COMPLETE**
+- Done: F-25 ✅ — owner "make me page order tracking, spawn agent as need". Picked the
+  merged `/orders` screen (`customer_orders_tracking`: live tracking + history + detail in
+  one scroll) over the single-order `/tracking` page — owner confirmed via question.
+  Delivered `harness/plans/customer_orders_tracking/`: `_PLAN.md` (465 ln, source of truth)
+  + `_plan.html` (958) + `_how-it-works.html` (1028, 6 SVG sequence lanes) + `_mockup-1.html`
+  (921, dark/orange shell). 2 Explore agents digested the tracking+order_list+order_detail
+  corpora; 2 builder agents wrote the HTML. Receipt in VERIFICATION.md.
+- Decisions/reconciliations: order held in TanStack Query, not the SSE hook's `useState`
+  (SSE only triggers refetch) · ONE inline detail component replaces the ref's duplicate
+  OrderDetailSheet+`/order/:id` (kills the 🔴 404-wedge) · BE computes queue position/ETA
+  (ref invented them FE-side) · exhaustive SSE event switch, CI-gated (kills the
+  `order.status` name-drift bug) · GET returns bare order, never `{data:…}` · history stays
+  device-local `ORDER_CACHE` v1 (no guest my-orders endpoint) · one monitor-SSE stream
+  drives all four live surfaces.
+- Registered: new **Phase R** in TASKS.md (R-1 realtime platform + monitor SSE; R-2 FE live
+  half) — R phase had no rows; **O-3 split** (static half stays O-3, live half → R-2).
+  Hard Rule 6: 4 CONTEXT_MAP inventory rows + new "Realtime" routing row + 4 README rows.
+- Open flags for owner: ⚠ **cancel rule** still 3-way (ref `<30%` vs owner "before payment"
+  — plan defaults owner's, one `canCancel` predicate, LOCK before O-2) · ⚠ **money glyph**
+  `đ` vs `₫` (one `formatVND()`; plan defaults menu's `đ`) · ⚠ **route reconciliation**
+  (menu plan redirects to `/order/<id>`; this screen is `/orders` via `activeOrderId` —
+  recommend menu handoff → `/orders`; NOT edited here, stayed surgical) · ❓ `item_progress`
+  smooth-patch vs refetch (confirm at R-1).
+- Drift/friction: task-id collisions with parallel sessions forced F-17→F-18→F-24→**F-25**
+  (shared TASKS.md id space — worth a reservation convention). `personal/command.md` flag
+  stands.
+- Next: unchanged upstream — F-2 (dev stack skeleton). When O/R open, O-2/O-3 + R-1/R-2
+  read `plans/customer_orders_tracking/…_PLAN.md` first (CONTEXT_MAP routing updated).
+
 ### 2026-07-21 — Session 17 (F-23): admin-staff page-plan set — **COMPLETE**
 - Done: F-23 ✅ — owner "make me page admin staff, spawn agent as need". Delivered
   `harness/plans/admin_staff/` 4-doc set per PAGE_PLAN_GUIDE: `admin_staff_PLAN.md`
