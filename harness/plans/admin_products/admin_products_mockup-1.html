@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin products — UI mockup #1 (F-27)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B4322A; --red-soft: #F7E0DE;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E88A82; --red-soft: #3A1512;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E88A82; --red-soft: #3A1512;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B4322A; --red-soft: #F7E0DE;
+  }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.55; font-size: 16px; margin: 0; }
+  .page { max-width: 1040px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1 { font-family: var(--sans); font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-family: var(--sans); font-size: 1.3rem; margin: 0 0 6px; }
+  p { margin: 0 0 14px; max-width: 74ch; } .lede { font-size: 1.05rem; color: var(--muted); }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); } a.back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; } .topnav a:hover { color: var(--accent); }
+  section { margin-top: 48px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 8px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .cap { font-size: 0.82rem; color: var(--muted); margin: 4px 0 14px; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* ===== admin app shell — neutral F-7 tokens (design-system.html) ===== */
+  .app { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); box-shadow: 0 8px 30px rgba(0,0,0,.06); }
+  .topbar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .brand { font-family: var(--sans); font-weight: 700; }
+  .tabs { display: flex; gap: 4px; overflow-x: auto; padding: 8px 12px; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+  .tabs a { color: var(--muted); text-decoration: none; padding: 5px 10px; border-radius: 8px; }
+  .tabs a.on { color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+  .body { padding: 16px; }
+  .phead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .phead h3 { font-family: var(--sans); font-size: 1.15rem; margin: 0; }
+  .btn { border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 700; border: 1px solid transparent; cursor: default; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+  .btn.danger { background: var(--red); color: #fff; }
+  .btn.disabled { background: var(--line); color: var(--muted); }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+  .inp { border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; font-size: 13px; background: var(--paper); color: var(--muted); }
+  .grow { flex: 1; }
+  table.data { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.data th { text-align: left; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  table.data td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .thumb { width: 34px; height: 34px; border-radius: 7px; background: linear-gradient(135deg, var(--accent-soft), var(--line)); }
+  .badge { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; display: inline-block; }
+  .badge.on { color: var(--done); background: var(--done-soft); }
+  .badge.off { color: var(--muted); background: var(--line); }
+  .badge.pend { color: var(--amber); background: var(--amber-soft); }
+  .tchip { font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; color: var(--muted); }
+  .rowdim td { opacity: .5; }
+  .act { font-size: 14px; color: var(--muted); }
+  .act .del { color: var(--muted); opacity: .4; }
+  .tbl-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+
+  /* modal */
+  .stage { position: relative; border: 1px dashed var(--line); border-radius: 12px; padding: 22px; background: repeating-linear-gradient(45deg, transparent, transparent 9px, rgba(120,120,120,.05) 9px, rgba(120,120,120,.05) 10px); }
+  .modal { max-width: 460px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 18px 50px rgba(0,0,0,.25); overflow: hidden; }
+  .modal .mh { padding: 12px 16px; border-bottom: 1px solid var(--line); font-family: var(--sans); font-weight: 700; }
+  .modal .mb { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .fld { display: flex; flex-direction: column; gap: 4px; }
+  .fld label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .ctl { border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; font-size: 13px; background: var(--paper); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .imgrow { display: flex; gap: 10px; align-items: center; }
+  .imprev { width: 52px; height: 52px; border-radius: 9px; background: linear-gradient(135deg, var(--accent-soft), var(--line)); flex: none; }
+  .checks { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chk { font-size: 12px; border: 1px solid var(--line); border-radius: 8px; padding: 4px 9px; color: var(--muted); }
+  .chk.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+  .affix { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: var(--paper); }
+  .affix input, .affix span.v { padding: 8px 10px; font-size: 13px; flex: 1; }
+  .affix .u { padding: 8px 10px; color: var(--muted); background: var(--line); font-family: var(--mono); font-size: 12px; }
+  .mf { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line); }
+
+  .branchgrid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 720px) { .branchgrid { grid-template-columns: 1fr 1fr; } }
+  .branch { border: 1px solid var(--line); border-radius: 11px; overflow: hidden; background: var(--surface); }
+  .branch .bh { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding: 7px 12px; border-bottom: 1px solid var(--line); background: var(--paper); }
+  .branch .bc { padding: 16px; min-height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; }
+  .sk { width: 100%; height: 12px; border-radius: 6px; background: linear-gradient(90deg, var(--line), var(--paper), var(--line)); }
+  .big { font-size: 26px; } .muted { color: var(--muted); font-size: 13px; }
+  .dlg { max-width: 400px; margin: 0 auto; }
+  .pendrow { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · mockup · 2026-07-20</div>
+  <h1>Admin products — UI mockup #1</h1>
+  <p class="lede">A high-fidelity, eyeball-able render of <code>/admin/products</code> on the
+  neutral F-7 admin shell — the table, the form modal, every render branch, the delete dialog,
+  and the mutation pending states. Real Vietnamese seed data, house VND format.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v">plan · F-27</span></div>
+    <div class="fact"><span class="k">tokens</span><span class="v">design-system.html (F-7 neutral)</span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_products_PLAN.md">admin_products_PLAN.md</a></span></div>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#s1">01 Main screen</a><a href="#s2">02 Form modal</a><a href="#s3">03 Render branches</a>
+  <a href="#s4">04 Delete</a><a href="#s5">05 Pending states</a>
+</nav>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Main screen — data branch</h2></div>
+  <p class="cap">The whole surface: admin shell tabs, page header, toolbar, and the products table
+  with a dimmed <code>is_available=0</code> row and a <b>disabled</b> delete (manager can't delete).</p>
+  <div class="app">
+    <div class="topbar"><span class="brand">Bánh Cuốn · Quản trị</span><span class="muted" style="margin-left:auto">Chị Hương · manager</span></div>
+    <div class="tabs">
+      <a href="#">Tổng quan</a><a href="#" class="on">Sản phẩm</a><a href="#">Danh mục</a>
+      <a href="#">Combo</a><a href="#">Topping</a><a href="#">Nguyên liệu</a><a href="#">Nhân viên</a>
+    </div>
+    <div class="body">
+      <div class="phead"><h3>Sản phẩm (24)</h3><span class="btn primary">+ Thêm sản phẩm</span></div>
+      <div class="toolbar"><span class="inp grow">🔍 Tìm sản phẩm…</span><span class="inp">Danh mục: Tất cả ▾</span></div>
+      <div class="tbl-scroll">
+        <table class="data">
+          <thead><tr><th>Ảnh</th><th>Tên</th><th>Danh mục</th><th>Giá</th><th>Toppings</th><th>Còn hàng</th><th>Hành động</th></tr></thead>
+          <tbody>
+            <tr><td><span class="thumb"></span></td><td>Bánh cuốn trứng</td><td>BÁNH CUỐN</td><td>35.000&nbsp;đ</td><td><span class="tchip">Nhân thịt</span> <span class="tchip">Mộc nhĩ</span></td><td><span class="badge on">Còn hàng</span></td><td class="act">✎ &nbsp;<span class="del" title="Chỉ admin mới xoá được">🗑</span></td></tr>
+            <tr><td><span class="thumb"></span></td><td>Bánh cuốn chay</td><td>BÁNH CUỐN</td><td>30.000&nbsp;đ</td><td><span class="tchip">—</span></td><td><span class="badge on">Còn hàng</span></td><td class="act">✎ &nbsp;<span class="del">🗑</span></td></tr>
+            <tr><td><span class="thumb"></span></td><td>Giò</td><td>GIÒ</td><td>9.000&nbsp;đ</td><td><span class="tchip">—</span></td><td><span class="badge on">Còn hàng</span></td><td class="act">✎ &nbsp;<span class="del">🗑</span></td></tr>
+            <tr class="rowdim"><td><span class="thumb"></span></td><td>Canh chua</td><td>CANH</td><td>10.000&nbsp;đ</td><td><span class="tchip">—</span></td><td><span class="badge off">Hết hàng</span></td><td class="act">✎ &nbsp;<span class="del">🗑</span></td></tr>
+            <tr><td><span class="thumb"></span></td><td>Bánh cuốn tôm</td><td>BÁNH CUỐN</td><td>45.000&nbsp;đ</td><td><span class="tchip">Hành phi</span></td><td><span class="badge on">Còn hàng</span></td><td class="act">✎ &nbsp;<span class="del">🗑</span></td></tr>
+            <tr><td><span class="thumb"></span></td><td>Bánh cuốn trứng vịt lộn</td><td>BÁNH CUỐN</td><td>55.000&nbsp;đ</td><td><span class="tchip">Hành phi</span></td><td><span class="badge on">Còn hàng</span></td><td class="act">✎ &nbsp;<span class="del">🗑</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <p class="cap">🗑 is dimmed with a "Chỉ admin mới xoá được" tooltip — the manager sees why, no
+  403 on click (PLAN §4.4 B1). The dimmed row is a sold-out dish still visible to management (B2).</p>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Form modal — create, worked example</h2></div>
+  <p class="cap">Overlay on a dimmed backdrop, populated with the canonical create example:
+  "Bánh cuốn trứng vịt lộn" · BÁNH CUỐN · 55.000 đ · thứ tự 5 · topping "Hành phi".</p>
+  <div class="stage">
+    <div class="modal">
+      <div class="mh">Thêm sản phẩm</div>
+      <div class="mb">
+        <div class="grid2">
+          <div class="fld"><label>Danh mục</label><span class="ctl">BÁNH CUỐN ▾</span></div>
+          <div class="fld"><label>Thứ tự</label><span class="ctl">5</span></div>
+        </div>
+        <div class="fld"><label>Tên sản phẩm</label><span class="ctl">Bánh cuốn trứng vịt lộn</span></div>
+        <div class="fld"><label>Mô tả</label><span class="ctl">Bánh cuốn đặc biệt nhân trứng vịt lộn</span></div>
+        <div class="fld"><label>Giá</label><div class="affix"><span class="v">55.000</span><span class="u">đ</span></div></div>
+        <div class="fld"><label>Ảnh</label><div class="imgrow"><span class="imprev"></span><span class="btn ghost">Đổi ảnh</span></div></div>
+        <div class="fld"><label>Topping áp dụng</label><div class="checks"><span class="chk on">✓ Hành phi</span><span class="chk">Nhân thịt</span><span class="chk">Mộc nhĩ</span></div></div>
+        <div class="fld"><label>Còn hàng</label><span class="badge on">● Bật</span></div>
+      </div>
+      <div class="mf"><span class="btn ghost">Huỷ</span><span class="btn primary">Lưu</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Render branches — the four non-data states</h2></div>
+  <p class="cap">PLAN §4.3 — they must look <b>different</b> from each other; the reference conflated
+  empty with filtered-empty and had no error branch at all.</p>
+  <div class="branchgrid">
+    <div class="branch"><div class="bh">loading</div><div class="bc" style="align-items:stretch">
+      <div class="sk"></div><div class="sk" style="width:82%"></div><div class="sk" style="width:90%"></div><div class="sk" style="width:70%"></div>
+    </div></div>
+    <div class="branch"><div class="bh">error</div><div class="bc">
+      <div class="big">⚠</div><div class="muted">Không tải được danh sách sản phẩm</div><span class="btn ghost">Thử lại</span>
+    </div></div>
+    <div class="branch"><div class="bh">empty</div><div class="bc">
+      <div class="big">🍜</div><div class="muted">Chưa có sản phẩm nào</div><span class="btn primary">+ Thêm sản phẩm</span>
+    </div></div>
+    <div class="branch"><div class="bh">filtered-empty</div><div class="bc">
+      <div class="big">🔍</div><div class="muted">Không tìm thấy sản phẩm phù hợp</div><span class="btn ghost">Xoá bộ lọc</span>
+    </div></div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Delete — dialog + the guarded 409</h2></div>
+  <p class="cap">A real dialog (not <code>window.confirm</code>) stating the consequence, and the
+  BE's <code>409 PRODUCT_IN_USE</code> when the dish is on an active order.</p>
+  <div class="branchgrid">
+    <div class="stage"><div class="modal dlg">
+      <div class="mh">Xoá "Canh chua"?</div>
+      <div class="mb"><p class="muted" style="margin:0">Món sẽ biến mất khỏi thực đơn. Các đơn hàng đã đặt <b>không</b> bị ảnh hưởng (đơn lưu tên &amp; giá tại thời điểm đặt).</p></div>
+      <div class="mf"><span class="btn ghost">Huỷ</span><span class="btn danger">Xoá</span></div>
+    </div></div>
+    <div class="stage"><div class="modal dlg">
+      <div class="mh" style="color:var(--red)">Không thể xoá</div>
+      <div class="mb"><div style="background:var(--red-soft); border-radius:9px; padding:10px 12px; font-size:13px; color:var(--red)">Sản phẩm đang có đơn hàng đang xử lý, không thể xoá.</div></div>
+      <div class="mf"><span class="btn ghost">Đã hiểu</span></div>
+    </div></div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Mutation pending states</h2></div>
+  <p class="cap">PLAN §4.3 tier 3 — the reference had none of these, so toggles and deletes could
+  double-fire.</p>
+  <div class="pendrow">
+    <span class="btn disabled">Đang lưu…</span>
+    <span class="badge pend">↻ đang cập nhật</span>
+    <span class="btn disabled">Đang tải ảnh…</span>
+    <span class="muted">— save button · row availability badge · image field, each disabled while in flight</span>
+  </div>
+</section>
+
+<footer>
+  Written for F-27 · 2026-07-20 · a snapshot of <a href="admin_products_PLAN.md">admin_products_PLAN.md</a>,
+  which wins on any conflict. Components follow <a href="../../diagrams/design-system.html">design-system.html</a>
+  (F-7 neutral admin tokens) — deliberately not the customer dark/orange shell.
+</footer>
+
+</div>
+</body>
+</html>

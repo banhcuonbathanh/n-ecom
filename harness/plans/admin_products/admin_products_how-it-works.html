@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin products — how it works at runtime (F-27)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B4322A; --red-soft: #F7E0DE; --violet: #6D46C6; --violet-soft: #ECE6F9;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E88A82; --red-soft: #3A1512; --violet: #B49BEC; --violet-soft: #241a3d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E88A82; --red-soft: #3A1512; --violet: #B49BEC; --violet-soft: #241a3d;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B4322A; --red-soft: #F7E0DE; --violet: #6D46C6; --violet-soft: #ECE6F9;
+  }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 26px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); } a.back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag.red { border-left-color: var(--red); background: var(--red-soft); }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 14px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; } .topnav a:hover { color: var(--accent); }
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 92px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; }
+  .seq { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin: 14px 0; }
+  .seq svg { display: block; min-width: 560px; }
+  .seq text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+  .seq .lane { fill: var(--muted); font-weight: 700; }
+  .seq .lbl { fill: var(--muted); }
+  .lgnd { display:flex; gap:14px; flex-wrap:wrap; font-family:var(--mono); font-size:0.72rem; color:var(--muted); margin-top:6px; }
+  .lgnd span::before { content:"■ "; }
+  .ok::before { color: var(--done); } .bad::before { color: var(--red); } .wr::before { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-20</div>
+  <h1>Admin products — how it works at runtime</h1>
+  <p class="lede">Not what we build — what <b>happens when it runs</b>. The two-step create,
+  the availability toggle drawn broken-vs-fixed, the guarded delete, and the cache life that
+  carries a write to the customer menu. Snapshot of the plan; the <code>.md</code> wins.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-27</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_products_PLAN.md">admin_products_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">companion</span><span class="v"><a href="admin_products_plan.html">the plan →</a></span></div>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#s1">01 Big picture</a><a href="#s2">02 First load</a><a href="#s3">03 Create</a>
+  <a href="#s4">04 Toggle</a><a href="#s5">05 Delete</a><a href="#s6">06 Cache life</a><a href="#s7">07 Mutation states</a>
+</nav>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>The whole machine on one screen</h2></div>
+  <div class="flow">
+    <div class="fnode"><span class="fk">admin device</span><b>/admin/products</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">Gin</span><b>handler → service</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">write (tx)</span><b>MySQL</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">DEL</span><b>Redis keys</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">rebuild on next fetch</span><b>/menu · /pos · /admin/combos</b></div>
+  </div>
+  <p>Two truths this diagram encodes: there is <b>no realtime push</b> (downstream reads
+  rebuild lazily), and the admin table's own read is <b>uncached</b> so a manager never waits
+  for a TTL to see their own change.</p>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — prefetch then five branches</h2></div>
+  <p>RSC <code>page.tsx</code> prefetches products + categories + toppings →
+  <code>HydrationBoundary</code> → the client hydrates the same cache (zero-spinner first
+  paint on a warm server; <code>loading.tsx</code> streams a table-shaped skeleton while the
+  RSC awaits). Then the table renders exactly one branch:</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Branch</th><th>When</th><th>UI</th></tr></thead>
+    <tbody>
+      <tr><td>loading</td><td><code>isPending</code>, no cache</td><td>skeleton rows (no layout shift)</td></tr>
+      <tr><td>error</td><td>query failed</td><td>inline "Không tải được danh sách sản phẩm" + Thử lại</td></tr>
+      <tr><td>empty</td><td>0 products</td><td>"Chưa có sản phẩm nào" + create CTA</td></tr>
+      <tr><td>filtered-empty</td><td><code>?q=</code>/<code>?cat=</code> matches nothing</td><td>"Không tìm thấy sản phẩm phù hợp" + clear</td></tr>
+      <tr><td>data</td><td>default</td><td>the table</td></tr>
+    </tbody>
+  </table></div>
+  <p>The reference had a bare <code>&lt;p&gt;Đang tải...&lt;/p&gt;</code> and conflated empty
+  with filtered-empty; its modal sub-queries degraded silently so "loading" and "none exist"
+  looked identical. All five branches here are named and built.</p>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The create path — two decoupled steps</h2></div>
+  <p>Upload first (own progress + errors), then submit the form. A product can be saved with no image; a failed upload never blocks the form.</p>
+  <div class="seq">
+    <svg viewBox="0 0 620 250" role="img" aria-label="Create sequence">
+      <defs>
+        <marker id="mw" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker>
+        <marker id="mo" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--done)"/></marker>
+      </defs>
+      <text class="lane" x="40" y="16">Modal</text>
+      <text class="lane" x="200" y="16">Gin</text>
+      <text class="lane" x="340" y="16">service (tx)</text>
+      <text class="lane" x="520" y="16">MySQL + Redis</text>
+      <line x1="55" y1="24" x2="55" y2="240" stroke="var(--line)"/>
+      <line x1="215" y1="24" x2="215" y2="240" stroke="var(--line)"/>
+      <line x1="365" y1="24" x2="365" y2="240" stroke="var(--line)"/>
+      <line x1="540" y1="24" x2="540" y2="240" stroke="var(--line)"/>
+      <text class="lbl" x="60" y="44">POST /files/upload (10MB, sniff)</text>
+      <line x1="55" y1="50" x2="215" y2="50" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <text class="lbl" x="60" y="70">← 201 { object_path }, is_orphan=1</text>
+      <line x1="215" y1="76" x2="55" y2="76" stroke="var(--done)" marker-end="url(#mo)"/>
+      <text class="lbl" x="60" y="102">POST /products { …, image_path }</text>
+      <line x1="55" y1="108" x2="215" y2="108" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <line x1="215" y1="120" x2="365" y2="120" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <text class="lbl" x="370" y="140">INSERT product + toppings</text>
+      <line x1="365" y1="146" x2="540" y2="146" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <text class="lbl" x="370" y="168">flip is_orphan 0 · DEL products/categories/combos:list</text>
+      <line x1="365" y1="174" x2="540" y2="174" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <text class="lbl" x="60" y="204">← 201 full product object</text>
+      <line x1="365" y1="210" x2="55" y2="210" stroke="var(--done)" marker-end="url(#mo)"/>
+      <text class="lbl" x="60" y="230">toast "Đã thêm sản phẩm" · invalidateQueries(['admin','products'])</text>
+    </svg>
+    <div class="lgnd"><span class="wr">request</span><span class="ok">response</span></div>
+  </div>
+  <p>Header + topping junction + orphan flip + cache DEL all ride <b>one transaction</b>; the
+  response is the <b>full object</b>, so the table doesn't refetch just to learn what it wrote.</p>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>The availability toggle — broken vs fixed</h2></div>
+  <p>The reference's headline bug. The route pointed at the full-update handler, which required
+  <code>name</code>/<code>price</code>/<code>category_id</code> and never wrote the column — so a
+  <code>{is_available}</code>-only body was a permanent <b>400</b>, and a sold-out dish kept
+  showing to customers.</p>
+  <div class="seq">
+    <svg viewBox="0 0 620 210" role="img" aria-label="Toggle broken vs fixed">
+      <defs>
+        <marker id="mw2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker>
+        <marker id="mb" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--red)"/></marker>
+        <marker id="mo2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--done)"/></marker>
+      </defs>
+      <text class="lane" x="40" y="16">badge</text>
+      <text class="lane" x="230" y="16">route</text>
+      <text class="lane" x="430" y="16">outcome</text>
+      <text class="lbl" fill="var(--red)" x="20" y="52">REFERENCE</text>
+      <text class="lbl" x="70" y="46">PATCH /:id/availability { is_available }</text>
+      <line x1="60" y1="54" x2="250" y2="54" stroke="var(--accent)" marker-end="url(#mw2)"/>
+      <text class="lbl" x="255" y="46">→ UpdateProduct handler</text>
+      <text class="lbl" x="435" y="72">400 (name/price required;</text>
+      <text class="lbl" x="435" y="88">column never written)</text>
+      <line x1="250" y1="78" x2="425" y2="78" stroke="var(--red)" marker-end="url(#mb)"/>
+      <line x1="20" y1="108" x2="600" y2="108" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="lbl" fill="var(--done)" x="20" y="140">OURS</text>
+      <text class="lbl" x="70" y="134">PATCH /:id/availability { is_available }</text>
+      <line x1="60" y1="142" x2="250" y2="142" stroke="var(--accent)" marker-end="url(#mw2)"/>
+      <text class="lbl" x="255" y="134">→ UpdateAvailability handler</text>
+      <text class="lbl" x="435" y="160">SetAvailability → DEL keys</text>
+      <text class="lbl" x="435" y="176">→ 200 full object</text>
+      <line x1="250" y1="166" x2="425" y2="166" stroke="var(--done)" marker-end="url(#mo2)"/>
+    </svg>
+    <div class="lgnd"><span class="wr">request</span><span class="bad">reference: 400</span><span class="ok">ours: 200</span></div>
+  </div>
+  <p>Dedicated route → dedicated handler binding only <code>{is_available}</code> → the existing
+  <code>ToggleProductAvailability</code> query → invalidate. The badge is pessimistic: it shows
+  pending, then the server's truth, and the dish drops out of <code>products:list</code>.</p>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>The delete path — guarded</h2></div>
+  <div class="flow">
+    <div class="fnode"><span class="fk">admin (admin+)</span><b>DELETE /:id</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">pre-flight</span><b>count active order_items</b></div><span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--red)"><span class="fk">&gt; 0</span><b>409 PRODUCT_IN_USE</b></div>
+    <span class="farrow">/</span>
+    <div class="fnode" style="border-color:var(--done)"><span class="fk">= 0</span><b>soft-delete · 204</b></div>
+  </div>
+  <div class="golden">
+    <p><b>Why historical orders are safe.</b> <code>order_items</code> snapshot
+    <code>name</code>/<code>unit_price</code> at order-create time. A soft-delete only affects
+    the <b>live</b> menu — never a placed bill. That durability boundary is why this whole page
+    can be cache-invalidation-based instead of realtime.</p>
+  </div>
+  <p>The reference soft-deleted unconditionally and its FE 409 branch was dead code. Ours emits
+  the 409, so the branch that shows "Sản phẩm đang có đơn hàng đang xử lý, không thể xoá" is
+  reachable.</p>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Cache life</h2></div>
+  <p>Cache-aside in services only. A read fills a key with 5-min TTL; a write <b>DELs</b> it
+  outright (never rewrites), so the next downstream read rebuilds from MySQL.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Write</th><th>DEL</th><th>Who rebuilds</th></tr></thead>
+    <tbody>
+      <tr><td>product create/update/delete/toggle</td><td><code>products:list</code> · <code>categories:list</code> · <code>product:&lt;id&gt;</code> · <code>combos:list</code></td><td>/menu, /pos, /admin/combos on next fetch</td></tr>
+      <tr><td>topping write</td><td><code>toppings:list</code> · <code>products:list</code> + joined <code>product:&lt;id&gt;</code></td><td>/menu (products embed toppings)</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>Staleness bound:</b> admin table = instant (uncached read + query invalidate); customer
+  menu ≤ its staleTime + 5-min TTL. Redis failures <b>fail open</b> — a Del error is logged, not
+  fatal; a get miss falls through to MySQL.</p>
+</section>
+
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Mutation states — pessimistic, always</h2></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Mutation</th><th>Pending UI</th><th>On error</th></tr></thead>
+    <tbody>
+      <tr><td>Save (create/update)</td><td>submit disabled + "Đang lưu…"</td><td>modal stays open; envelope message, field-mapped</td></tr>
+      <tr><td>Toggle availability</td><td>that row's badge disabled + spinner</td><td>badge reverts; ref left it clickable → double-fire</td></tr>
+      <tr><td>Delete</td><td>dialog confirm disabled + "Đang xoá…"</td><td>409 → in-use message in the dialog</td></tr>
+      <tr><td>Image upload</td><td>field-local "Đang tải ảnh…"</td><td>field error; form stays usable</td></tr>
+    </tbody>
+  </table></div>
+  <p>Optimism is cart-only (FE rule 4). Nothing here writes the cache before the server answers —
+  a silently-reverted toggle is precisely the failure the reference shipped.</p>
+</section>
+
+<footer>
+  Written for F-27 · 2026-07-20 · a snapshot of <a href="admin_products_PLAN.md">admin_products_PLAN.md</a>,
+  which wins on any conflict. Companion: <a href="admin_products_plan.html">the plan</a>. Admin surface uses
+  the neutral F-7 tokens of <a href="../../diagrams/design-system.html">design-system.html</a>.
+</footer>
+
+</div>
+</body>
+</html>
