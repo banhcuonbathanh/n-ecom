@@ -19,6 +19,65 @@
 
 ## Log (newest on top)
 
+### F-26 — Admin-training page-plan set (4 docs, one folder) · 2026-07-19
+**AC:** Folder holds `admin_training_PLAN.md` (source of truth: FE+BE contract, 10-endpoint table incl. the staff watch/quiz write path the reference never built, the roster-first progress reads, derived 4-state completion status, 12-behavior spec, AD-T1…AD-T6 task mapping, 19 defects designed out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes (mockup on the neutral F-7 admin tokens, NOT the customer dark/orange shell); every reference bug mapped to a countermeasure; zero rule duplication (links owning docs); indexes updated per Hard Rule 6.
+**Receipt:**
+```
+$ ls harness/plans/admin_training/
+admin_training_PLAN.md  admin_training_how-it-works.html
+admin_training_mockup-1.html  admin_training_plan.html
+
+$ wc -l harness/plans/admin_training/*
+    482 admin_training_PLAN.md              # canonical, 8 sections, slug-prefixed
+    932 admin_training_plan.html            # 9 sections
+    658 admin_training_how-it-works.html    # 7 sequences (SVG lanes)
+    514 admin_training_mockup-1.html        # 6 zones + 2 modal panels
+
+$ for f in harness/plans/admin_training/*.html; do check; done
+each: <!DOCTYPE> ✓  </html> ✓  <script>:0  external(http/@import):0
+theme: :root + prefers-color-scheme + data-theme[dark]+[light]  (all 4 blocks)
+wide content wrapped in overflow-x:auto (tables + SVG sequence diagrams)
+customer-orange bleed (#f97316/#0b0f17): 0 in every file  (admin = neutral F-7)
+footer on all 3 HTML: "snapshot of admin_training_PLAN.md, which wins on any conflict"
+```
+**Digest:** 13 reference docs (`08_pages/admin/admin_training/` ×7 + `fe/wireframes/admin_main/admin_main_training/` ×6) read in full; the first delegated digest agent + two of three HTML builders died on the session usage limit, so the digest and `how-it-works.html` were produced inline (the `_plan.html` + `_mockup-1.html` builders landed their files before failing).
+**Headline finding designed out:** the reference page was a working guide-authoring CMS bolted onto a **dead** tracking shell — no API path ever wrote `training_progress`/`quiz_attempts`, so 3 of its 7 endpoints returned empty/404 forever. Plan blocks the tracking UI (AD-T6) on the staff write path (AD-T4) so it never ships inert; roster-first LEFT JOIN replaces the reference's permanently-empty INNER JOIN.
+**Verdict:** AC met — 4-doc set complete + registered. TASKS.md row marked 🔄 (planning done; AD build rows AD-T1…T6 are proposals, un-registered until AD phase opens). ⚠️ task-id churn: row renumbered F-20→F-25→F-26 under concurrent-session collisions (see STATE.md).
+
+### F-29 — Admin-toppings page-plan set (4 docs, one folder) · 2026-07-19
+**AC:** Folder holds the 4 slug-prefixed docs; `.md` is sole source of truth (each HTML footer says so); BE contract (5 endpoints incl. the public/`all` role-scoped split + server-joined `products[]`, 3-target cache fan-out, wire shapes in DB names) + FE plan (file map, state ownership, 4 named render branches, 16 numbered behaviors) + 12 reference defects designed out + AD-TOP task mapping; zero rule duplication (links owning docs incl. the customer-menu cache map + `admin_products` F-27 for the picker); all 3 HTML render both themes; indexes updated per Hard Rule 6.
+**Receipt:**
+```
+$ wc -l harness/plans/admin_toppings/*
+     400 admin_toppings_PLAN.md              # canonical, 8 sections, slug-prefixed
+     499 admin_toppings_plan.html
+     363 admin_toppings_how-it-works.html
+     386 admin_toppings_mockup-1.html
+
+$ python3 tagcheck harness/plans/admin_toppings/*.html
+admin_toppings_how-it-works.html   UNCLOSED:0 MISMATCH:0 SIZE:24914
+    prefers-color-scheme | data-theme | overflow-x:auto x3 | self-contained | PLAN.md-wins
+admin_toppings_mockup-1.html       UNCLOSED:0 MISMATCH:0 SIZE:22455
+    prefers-color-scheme | data-theme | overflow-x:auto x1 | self-contained | PLAN.md-wins
+admin_toppings_plan.html           UNCLOSED:0 MISMATCH:0 SIZE:36632
+    prefers-color-scheme | data-theme | overflow-x:auto x2 | self-contained | PLAN.md-wins
+# (PLAN.md-wins confirmed by hand on all 3 footers; tag scan reports it as
+#  NO-wins only because the phrase "which wins on any conflict" wraps a line.)
+
+$ # naming law + link integrity
+naming: 0 files NOT prefixed with 'admin_toppings'
+links:  all ../ and href targets resolve (build-plan.html, DB_SCHEMA.md,
+        BE_STATE.md, FE_STATE.md, design-system.html, customer_menu_PLAN.md,
+        admin_products_PLAN.md, OVERALL_PLAN.md, PAGE_PLAN_GUIDE.md)
+```
+**Notes:** ID collision avoided — `F-22` and `AD-T1/2/3` were already taken by the
+parallel-session `admin_task_board`/`admin_training` plans, so this task took **F-29**
+and the `AD-TOP-1…3` row prefix. Registered as a new row in TASKS.md (Phase F). ⚠ The
+plan requests a `UNIQUE(name)` amendment to `DB_SCHEMA.md §4.1` (needed for the 409-dup
+fix) — flagged for the C-1 migration task, **not** written into the schema by this
+docs-only task (one fact, one home).
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-17 — Admin-overview page-plan set (4 docs, one folder) · 2026-07-19
 **AC:** Folder holds the 4 slug-prefixed docs; `.md` is sole source of truth (each HTML footer says so); BE contract (7 endpoints incl. the consolidated SSE channel, state machine, wire shapes) + FE plan (file map, state ownership, 13 numbered behaviors) + defects-designed-out + task mapping; zero rule duplication (links owning docs); all 3 HTML render both themes; indexes updated per Hard Rule 6
 **Receipt:**

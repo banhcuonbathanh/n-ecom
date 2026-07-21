@@ -35,6 +35,53 @@
 
 ## Checkpoint log
 
+### 2026-07-21 — Session 16 (F-29): admin-toppings page-plan set — **COMPLETE**
+- Done: F-29 ✅ — owner "make me page admin topping, spawn agent as need". Delivered
+  `harness/plans/admin_toppings/` 4-doc set per PAGE_PLAN_GUIDE: `admin_toppings_PLAN.md`
+  (canonical, 8 sections) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html` (neutral
+  F-7 admin tokens). Digested 8 reference docs + 7 wireframe docs **by hand** — the Explore
+  digest agent died on an account session-limit (not a task error; no output returned).
+  Receipt in VERIFICATION.md; indexes updated (TASKS.md row + CONTEXT_MAP + README ×4).
+- Decisions: 5-endpoint contract with a **public `GET /toppings` (available-only) vs
+  manager+ `GET /toppings/all` (products joined server-side)** role split; DELETE admin-only;
+  the reference's N+1 whole-catalog fetch (used only to print one column) replaced by the
+  server join; cache fan-out Dels every joined `product:<id>` (fixes the 5-min stale-price
+  bug); 12 defects designed out; `['admin','toppings']` shared with the product picker on
+  purpose; wire fields use DB names (`price`/`is_available`, never `extraPrice`).
+- ⚠ Flags: (1) plan **requests** a `UNIQUE(name)` amendment to `DB_SCHEMA.md §4.1` for the
+  409-dup fix — to be written in C-1, NOT by this docs task. (2) narrowing `GET /toppings`
+  to available-only is a contract change for future readers. (3) blank-AuthGuard window is a
+  shell-level gap, not page-local.
+- Drift fixed / found: **task-ID collision** — `F-22` + `AD-T1/2/3` already owned by the
+  parallel `admin_task_board`/`admin_training` plans; renumbered to **F-29** + `AD-TOP-1…3`
+  before registering. `personal/command.md` flag still stands.
+- Next: unchanged — F-2 (dev stack skeleton). Admin page-plan backlog continues
+  (`admin_categories`, `admin_marketing`, `admin_storage`, public pages) per PAGE_PLAN_GUIDE §10.
+
+### 2026-07-19 — Session (F-26): admin_training page-plan set
+- Done: F-26 ✅ — owner asked "make me page admin training, spawn agents as needed."
+  Delivered `harness/plans/admin_training/` per PAGE_PLAN_GUIDE: `admin_training_PLAN.md`
+  (canonical, 8 §) + `_plan.html` (9 §) + `_how-it-works.html` (7 SVG sequences) +
+  `_mockup-1.html` (neutral F-7 admin tokens, 12-chef worked example). Digested 13
+  reference docs. CONTEXT_MAP + README Rule-6 rows added; receipt in VERIFICATION.md.
+- Decisions: the reference page = working guide-authoring CMS on a **dead** tracking
+  shell (no API ever wrote training_progress/quiz_attempts → 3 of 7 endpoints empty/404
+  forever). Countermeasures: (1) 🚨 tracking UI **AD-T6 blocked on** the staff watch/quiz
+  write path **AD-T4** — never ships inert; (2) roster-first LEFT JOIN (every assigned
+  staff shows "Chưa bắt đầu" day one) replaces the ref's permanently-empty INNER JOIN;
+  (3) DELETE lowered manager→ one `can()` helper (kills invisible-403); (4) 404-as-empty,
+  wrapped/unwrapped payloads, two-statuses-one-icon, dead Zustand store, useState filters
+  all designed out (19 defect rows). Training = AD phase, no Redis, no realtime. ❓ open:
+  how `watched_percent` is measured (self-reported vs embedded player) — decide before AD-T4.
+- Drift/infra: ⚠ **task-id churn** — concurrent sessions share one working tree; my row
+  bounced F-20→F-25→F-26 as others claimed each id. TASKS.md still has out-of-order rows
+  + earlier dup collisions (F-17 admin_overview vs admin_products). Needs a reconciliation
+  sweep. ⚠ session usage limit killed the digest agent + 2 of 3 HTML builders mid-run
+  (resets ~3:40am) — digest + how-it-works.html done inline; the other two builders had
+  already written their files before failing.
+- Next: unchanged — F-2 (dev stack skeleton). AD-phase build rows AD-T1…AD-T6 stay
+  proposals in the plan until the AD phase opens (Phase-4 ⛔ Admin row un-defers then).
+
 ### 2026-07-19 — Session 15b (F-17): admin_overview page-plan set (4 docs, one folder) — **COMPLETE**
 - Done: F-17 ✅ — owner "make me page admin overview". Delivered
   `harness/plans/admin_overview/` per PAGE_PLAN_GUIDE: `admin_overview_PLAN.md` (canonical,
