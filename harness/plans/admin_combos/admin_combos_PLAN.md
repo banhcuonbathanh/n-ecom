@@ -154,20 +154,24 @@ endpoint's ids-only shape, and it kills a whole bug class (§6):
 
 ```json
 [ { "id": "cb1…36", "name": "Suất Đầy Đủ Trứng Chín", "description": null,
-    "price": 28000, "image_path": null, "category_id": null,
+    "price": 30000, "image_path": null, "category_id": null,
     "is_active": true, "sort_order": 1,
     "retail_total": 30000,
     "items": [
       { "id": "ci1…", "product_id": "p9…36", "product_name": "Bánh Trứng Chín",
         "unit_price": 9000, "quantity": 1, "product_deleted": false },
       { "id": "ci2…", "product_id": "p4…36", "product_name": "Bánh Cuốn Thịt",
-        "unit_price": 4000, "quantity": 3, "product_deleted": false } ] } ]
+        "unit_price": 4000, "quantity": 3, "product_deleted": false },
+      { "id": "ci3…", "product_id": "pg…36", "product_name": "Giò",
+        "unit_price": 9000, "quantity": 1, "product_deleted": false } ] } ]
 ```
 
 `retail_total` and `product_deleted` are **computed, not columns** — the server is
 the one place that can compute them correctly even when a product has been
 soft-deleted. `savings` is deliberately *not* sent: it is `retail_total − price`,
-one subtraction, and `FE_STATE.md` rule 11 says derived values stay derived.
+one subtraction, and `FE_STATE.md` rule 11 says derived values stay derived. On the
+canonical seed this combo prices at retail (30.000 = 30.000) so `savings` is 0 and
+the UI shows `—` — the owner-accepted default (§7).
 
 **`POST /combos` request:**
 
@@ -357,9 +361,10 @@ distinguished 403/404/409.
     chọn)", "Bỏ chọn tất cả", "Các món đã chọn", "Tổng giá lẻ", "Giá combo *",
     "Thứ tự", "Huỷ bỏ", "Lưu combo", "Đang lưu…", "Đã tạo combo", "Đã cập nhật
     combo", "Đã xoá combo", "Giá lẻ", "Tiết kiệm".
-12. **Worked example everywhere** (§7): **Suất Đầy Đủ Trứng Chín** — 1 Bánh Trứng
-    Chín (9.000) + 3 Bánh Cuốn Thịt (4.000) + 1 Giò (9.000) + 1 Canh có rau (0) →
-    `Giá lẻ` 30.000 · `Giá combo` 28.000 · `Tiết kiệm` 2.000.
+12. **Worked example everywhere** (owner-locked, §7): **Suất Đầy Đủ Trứng Chín** —
+    1 Bánh Trứng Chín (9.000) + 3 Bánh Cuốn Thịt (4.000) + 1 Giò (9.000) + 1 Canh có
+    rau (0) → `Giá lẻ` 30.000 · `Giá combo` **30.000** · `Tiết kiệm` 0 → renders `—`.
+    This is the seed-faithful price; savings is `—` here by design (§7).
 
 ## 5. Task mapping
 
@@ -413,25 +418,27 @@ opens, and this section is the registration source. AD-P* rows belong to F-27.
   would silently change what customers pay when a product price moves.
 - ✅ **Items map, not `useFieldArray`** (§4.2) — duplicates become impossible.
 - ✅ **Delete = admin+, everything else manager+** (reference's split, kept).
-- ⚠️ **FLAG — `is_active` vs `is_available` naming collision.** `DB_SCHEMA.md §4.1`
-  says `is_available` for combos; `plans/customer_menu/PLAN.md §3.5` already ships
-  `is_active` on the same endpoint. **Ruling: `is_active`** (§3.2), with `DB_SCHEMA`
-  corrected in AD-C1. Flagging because it edits a doc this plan does not own.
-- 🚨 **RISK — the savings feature is invisible on our own seed data.** In
-  `reference/…/03_be/SEED_DATA.md` every suất is priced **exactly at its retail sum**
-  (30.000 = 9.000 + 3×4.000 + 9.000; 25.000 = 9.000 + 4×4.000). So on the canonical
-  dataset `Tiết kiệm` is 0 for every row, every savings hint is hidden, and the
-  page's headline feature ("Minh bạch giá cả") renders as a column of `—`. **Decide
-  one:** (a) seed at least one genuinely discounted combo — this plan's default, and
-  the reason the worked example prices Suất Đầy Đủ Trứng Chín at **28.000** against a
-  30.000 retail; or (b) accept `—` as the normal state and drop the savings column.
-  Needs an owner call before AD-C4 builds the cell.
-- ⚠️ **FLAG — worked-example inconsistency across plans.**
-  `plans/customer_menu/PLAN.md §3.5` illustrates a combo as `"Suất đầy đủ"` at
-  **55.000**, but the seed catalog has **Suất Đầy Đủ Trứng Chín / Trứng Tái at
-  30.000** and no 55.000 combo exists. One of the two must move; this plan uses the
-  seed-faithful name and price. Recommend correcting the menu plan's illustrative
-  JSON in its next touch — noting it here rather than editing a plan I don't own.
+- ✅ **RESOLVED (owner, 2026-07-20) — combo flag = `is_active`.** `DB_SCHEMA.md §4.1`
+  said `is_available` for combos; `plans/customer_menu/PLAN.md §3.5` already ships
+  `is_active` on the same endpoint. Owner confirmed **`is_active`** (§3.2);
+  `DB_SCHEMA.md §4.1` gets corrected in AD-C1's scope contract (a doc this plan does
+  not own, so the edit lands with the task that touches it).
+- ✅ **RESOLVED (owner, 2026-07-20) — combo price = retail on seed; savings shows
+  `—`.** In `reference/…/03_be/SEED_DATA.md` every suất is priced **exactly at its
+  retail sum** (30.000 = 9.000 + 3×4.000 + 9.000; 25.000 = 9.000 + 4×4.000), so
+  `Tiết kiệm` is 0 for every seed row. The owner chose to **keep the seed prices**
+  (worked example: Suất Đầy Đủ Trứng Chín at **30.000** = retail). Consequence,
+  accepted: on the canonical dataset the `Tiết kiệm` column renders `—` and the
+  savings hint is hidden — that is the **normal state**, not a bug. The column and
+  the `price ≥ retail_total` warning (§4.4 B5) **stay** — they light up the moment a
+  genuinely discounted combo is created. AD-C4 builds the cell against this reality
+  (its screenshots show `—`, not a fabricated saving).
+- ✅ **RESOLVED (owner, 2026-07-20) — worked example = "Suất Đầy Đủ" at 30.000.**
+  `plans/customer_menu/PLAN.md §3.5` illustrated a combo as `"Suất đầy đủ"` at
+  **55.000**, which has no basis in the seed catalog. The owner locked **30.000**
+  (seed-faithful). ⚠️ Follow-up (F-15-owned, not edited here): the menu plan's
+  illustrative `55000` should be corrected to `30000` in its next touch so the one
+  worked example stays consistent across every doc.
 - 💡 **SUGGESTION — no per-id combo endpoint exists.** `/menu/combo/:id` pulls the
   whole `GET /combos` list and finds the combo client-side. Fine at 5 combos, wasteful
   later. Out of scope here; belongs to the C-5 detail-page task.
