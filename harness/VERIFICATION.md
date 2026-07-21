@@ -19,6 +19,64 @@
 
 ## Log (newest on top)
 
+### F-25 — Customer orders-&-tracking page-plan set (merged `/orders`, 4 docs) · 2026-07-19
+**AC:** Folder holds `customer_orders_tracking_PLAN.md` (source of truth: FE+BE contract incl. the single monitor-SSE stream + 2 cancel writes, 15-behavior spec, 6 named loading branches, TASKS.md row mapping, 14 defects designed out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes (mockup on the customer dark/orange shell); zero rule duplication (links owning docs); indexes updated per Hard Rule 6.
+**Receipt:**
+```
+$ ls harness/plans/customer_orders_tracking/
+customer_orders_tracking_PLAN.md            customer_orders_tracking_how-it-works.html
+customer_orders_tracking_mockup-1.html      customer_orders_tracking_plan.html
+
+$ wc -l harness/plans/customer_orders_tracking/*
+    465 customer_orders_tracking_PLAN.md          # canonical, 8 sections, slug-prefixed
+    958 customer_orders_tracking_plan.html        # 9 sections (anatomy…tasks+flags)
+   1028 customer_orders_tracking_how-it-works.html # 7 runtime sequences, 6 inline SVG lanes
+    921 customer_orders_tracking_mockup-1.html    # 5 zones + 4 state frames + StatusBadge strip
+
+$ checks
+plan/how-it-works: :root(light) + prefers-color-scheme + data-theme[dark]+[light]  (theme toggle wins both ways)
+mockup: hard-coded dark/orange shell (#0b0f17/#1b2230/#222b3a/#2a3344/#f97316) — identical in light+dark viewers
+money glyph in UI: đ throughout (0 đ for canh); the only ₫ are prose in the §7 glyph-flag deviation note
+<section> balanced (plan 9/9, how-it-works 7/7); no external css/js/font/img; wide blocks in overflow-x:auto
+each HTML footer: "snapshot of customer_orders_tracking_PLAN.md, which wins on any conflict"
+worked example consistent across all docs: Bàn 04 · 103.000 đ · 7 loại
+```
+Built with 2 Explore agents (digest of the tracking + order_list + order_detail corpora) + 2 builder agents (the 3 HTML companions). Registered per Hard Rule 6: 4 rows in CONTEXT_MAP.md §Doc inventory + a new "Realtime" routing row + 4 rows in README.md §plans/.
+Also registered a new **Phase R** in TASKS.md (R-1 realtime platform + monitor SSE; R-2 FE live half) and **split O-3** (was one row for two ACs — static half stays O-3, live half → R-2).
+Reconciliation highlights (§3.4/§6): reference order-in-`useState` → TanStack Query (SSE only triggers refetch) · duplicate OrderDetailSheet+`/order/:id` → one inline detail component (kills the 🔴 404-wedge) · FE-invented queue position/ETA → BE-computed (one event contract) · `order.status` name drift → exhaustive consumer switch (CI-gated) · ungated SSE → own-order/table gate · `{data:…}` on GET but bare on POST → never wrap success · "Xoá lịch sử" orphaned `activeOrderId` → clears the pointer · hidden nhân/note → rendered from `toppings_snapshot`.
+Open flags for owner (§7): ⚠ cancel rule 3-way (ref `<30%` vs owner "before payment" — plan defaults owner's, one `canCancel` predicate, lock before O-2) · ⚠ money glyph `đ` vs `₫` (one `formatVND()`; plan defaults menu's `đ`) · ⚠ route reconciliation (menu plan redirects to `/order/<id>`; this screen is `/orders` via `activeOrderId` — recommend menu handoff → `/orders`, not edited here) · ❓ `item_progress` smooth-patch vs refetch (confirm at R-1).
+
+### F-23 — Admin-staff page-plan set (4 docs, one folder) · 2026-07-19
+**AC:** Folder holds `admin_staff_PLAN.md` (source of truth: 6-endpoint manager+ FE+BE contract, the 4 guards, reference error codes mapped onto the BE_STATE §4 9-code enum, 20-behavior spec, S/AD task mapping, 17 reference defects designed out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes (mockup on the neutral F-7 admin tokens, NOT the customer dark/orange shell); every reference flag gets an adopt/fix/drop ruling; zero rule duplication (links owning docs); indexes updated per Hard Rule 6.
+**Receipt:**
+```
+$ ls harness/plans/admin_staff/
+admin_staff_PLAN.md            admin_staff_how-it-works.html
+admin_staff_mockup-1.html      admin_staff_plan.html
+
+$ wc -l harness/plans/admin_staff/*
+    496 admin_staff_PLAN.md              # canonical, 8 sections, slug-prefixed
+    923 admin_staff_plan.html            # 9 sections (anatomy…tasks)
+    902 admin_staff_how-it-works.html    # 7 sequences (map/load/filter/write/patch/fanout/durability)
+    781 admin_staff_mockup-1.html        # roster + 2 overlay panels + all 5 render branches
+
+$ for f in harness/plans/admin_staff/*.html; do check; done
+each: <!doctype> ✓  </html> ✓  <script src>/http/@import: 0
+theme: :root(light) + prefers-color-scheme + data-theme[dark] + data-theme[light]  (3 blocks each, in sync)
+wide content (tables, SVG sequence lanes, roster) wrapped in overflow-x:auto; body overflow-x:hidden
+customer-orange bleed (#f97316/#0b0f17/#1b2230): 0 in every file  (admin = neutral F-7 tokens)
+each HTML footer: "snapshot of admin_staff_PLAN.md, which wins on any conflict"
+```
+Registered per Hard Rule 6: 4 rows in CONTEXT_MAP.md §Doc inventory + 4 rows in README.md §plans/.
+Reconciliation highlights (§3.4/§6): raw-SQL repo → goose+sqlc · client 100-row cap → server-side
+paging (URL-owned per FE_STATE §9.2) · unrevoked refresh tokens → same-tx delete on deactivate/delete ·
+soft-delete UNIQUE trap → `<username>#deleted-<id>` rename · `performance_score:0` phantom → dropped ·
+loading≡empty≡no-match conflation → 5 named branches · stuck detail drawer → named error branch.
+Open flags for owner: ⚠ shared `CONFLICT` code needs a `details[].issue` discriminator (or 2 new enum
+codes) · ⚠ RBAC role-level table needs a permanent home (proposed OVERALL_PLAN §3) · ❓ no password-reset
+path anywhere in the reference — assumed v1 gap (admin resets via DB) unless S-4 adds it.
+**Verdict:** AC met — F-23 is a planning deliverable (no runnable code); receipt is the 4-file render check above.
+
 ### F-26 — Admin-training page-plan set (4 docs, one folder) · 2026-07-19
 **AC:** Folder holds `admin_training_PLAN.md` (source of truth: FE+BE contract, 10-endpoint table incl. the staff watch/quiz write path the reference never built, the roster-first progress reads, derived 4-state completion status, 12-behavior spec, AD-T1…AD-T6 task mapping, 19 defects designed out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes (mockup on the neutral F-7 admin tokens, NOT the customer dark/orange shell); every reference bug mapped to a countermeasure; zero rule duplication (links owning docs); indexes updated per Hard Rule 6.
 **Receipt:**

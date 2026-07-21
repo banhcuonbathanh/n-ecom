@@ -35,6 +35,28 @@
 
 ## Checkpoint log
 
+### 2026-07-21 — Session 17 (F-23): admin-staff page-plan set — **COMPLETE**
+- Done: F-23 ✅ — owner "make me page admin staff, spawn agent as need". Delivered
+  `harness/plans/admin_staff/` 4-doc set per PAGE_PLAN_GUIDE: `admin_staff_PLAN.md`
+  (canonical, 8 sections, 496 lines) + `_plan.html` (9 sec) + `_how-it-works.html` (7 seq)
+  + `_mockup-1.html` (neutral F-7 admin tokens). Digested the 4 reference docs by hand
+  (BE/loading/crosspage/FE); 3 builder agents rendered the HTML — each died once on an
+  account session-limit and was resumed from its warm transcript. Receipt in VERIFICATION.md;
+  indexes updated (TASKS.md row + CONTEXT_MAP ×4 + README ×4). Committed to `main`.
+- Decisions: 6-endpoint manager+ contract (admin-only DELETE) · reference codes mapped onto
+  BE_STATE §4 9-code enum via a `details[].issue` discriminator · server-side paging replaces
+  the reference's 100-row client cap (URL-owned, FE_STATE §9.2) · refresh-token revoke added on
+  deactivate+delete (closes the reference's unimplemented "revoke sessions") · soft-delete
+  `<username>#deleted-<id>` rename (DB_SCHEMA §4.4) · `performance_score` phantom dropped · 5
+  named render branches fix the loading≡empty≡no-match conflation.
+- Open flags for owner: ⚠ shared `CONFLICT` code + `details.issue` discriminator vs 2 new enum
+  codes (decide before S-4) · ⚠ RBAC role-level table needs a permanent home (proposed
+  OVERALL_PLAN §3) · ❓ **no password-reset path exists anywhere** in the reference — assumed a
+  v1 gap (admin resets via DB) unless S-4 adds `PATCH /staff/:id/password`.
+- Drift / notes: heavy shared-index churn — parallel sessions renumbered my task row twice
+  (F-21→F-22→F-23) and a sibling "sdfg" commit swept my mockup + index rows into history.
+- Next: unchanged — F-2 (dev stack skeleton).
+
 ### 2026-07-21 — Session 16 (F-29): admin-toppings page-plan set — **COMPLETE**
 - Done: F-29 ✅ — owner "make me page admin topping, spawn agent as need". Delivered
   `harness/plans/admin_toppings/` 4-doc set per PAGE_PLAN_GUIDE: `admin_toppings_PLAN.md`
