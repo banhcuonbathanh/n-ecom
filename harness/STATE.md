@@ -35,6 +35,28 @@
 
 ## Checkpoint log
 
+### 2026-07-19 — Session 15b (F-17): admin_overview page-plan set (4 docs, one folder) — **COMPLETE**
+- Done: F-17 ✅ — owner "make me page admin overview". Delivered
+  `harness/plans/admin_overview/` per PAGE_PLAN_GUIDE: `admin_overview_PLAN.md` (canonical,
+  8 sections) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html` (all both-theme,
+  neutral F-7 admin tokens — NOT the customer dark/orange shell). 2 Explore agents digested
+  the 10-doc reference corpus (~2,800 lines). Receipt in VERIFICATION.md; Hard-Rule-6 rows
+  added (CONTEXT_MAP §Doc inventory ×4 + routing pointer, README §plans ×4, PAGE_PLAN_GUIDE
+  §10 backlog admin_overview→✅). TASKS.md F-17 row inserted after F-16 (id order kept).
+- Decisions (harness beats reference): one cookie-JWT manager-gated **SSE** channel replaces
+  the reference's SSE-doorbell + ungated `WS ?token=` (SEC hole gone, F-5) · **no cache map**
+  — orders never cached, Redis pub/sub only (BE_STATE §7) · `POST /payments` = `{order_id,
+  method}` only (no client amount) · optimistic status advance **+ rollback** · N+1 live-list
+  → one batched fetch. 11 reference defects designed out (4 distinct 🔴 roots + 🟡s).
+- Flags: ⚠ cash path lands O/AD though gateways are P-phase · ⚠ N+1 watch at AD-1 · ❓ cancel
+  rule still open (OVERALL_PLAN §3.7) — plan assumes cancel from pending/confirmed/preparing.
+- Drift found: ⚠ **task-id churn under parallel sessions** — an earlier draft of
+  `admin_overview_PLAN.md` was swept into a sibling's checkpoint commit (`0cb37d8`), and F-17
+  had been reused for admin_products before a sibling renumbered that to F-27/F-28; verified
+  F-17 is now uniquely admin_overview. `personal/command.md` flag still stands.
+- Next: unchanged — F-2 (dev stack skeleton). Admin build itself waits for the AD phase; this
+  is a plan-only deliverable. Sibling page-plan tasks F-27/F-28/F-19…F-26 in flight (🔄).
+
 ### 2026-07-20 — Session 15 (F-27/F-28): admin_products + admin_combos page plans — **PARTIAL**
 - Done: both canonical `.md` plans written — `harness/plans/admin_products/
   admin_products_PLAN.md` (F-27) and `harness/plans/admin_combos/admin_combos_PLAN.md`
