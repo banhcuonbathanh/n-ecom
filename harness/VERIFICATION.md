@@ -19,6 +19,100 @@
 
 ## Log (newest on top)
 
+### F-20 — Admin to-do-list page-plan set (`/admin/todo-list`, 4 docs) · 2026-07-21
+**AC:** Folder holds `admin_todo_list_PLAN.md` (source of truth: FE+BE contract with the one owned endpoint `PATCH /admin/tasks/:id`, 12-behavior spec, AD-3…AD-5 task mapping, 14 reference defects designed out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes on the neutral F-7 tokens; reference's empty≡loading≡error conflation designed out with named branches; the shared `/admin/tasks` contract is **linked** to `admin_task_board_PLAN.md` (F-22) + `DB_SCHEMA.md §4.7`, not re-derived; indexes updated per Hard Rule 6.
+**Receipt:**
+```
+$ ls harness/plans/admin_todo_list/
+admin_todo_list_PLAN.md              admin_todo_list_how-it-works.html
+admin_todo_list_mockup-1.html        admin_todo_list_plan.html
+
+$ # HTML well-formedness (python html.parser) + both-theme + source-of-truth footer
+OK parse: admin_todo_list_plan.html          PLAN.md-refs=2  dark-media=1  theme-toggle=1
+OK parse: admin_todo_list_how-it-works.html  PLAN.md-refs=2  dark-media=1  theme-toggle=1
+OK parse: admin_todo_list_mockup-1.html      PLAN.md-refs=2  dark-media=2  theme-toggle=2
+
+$ # tag balance
+plan.html:          <section 9/9   <div 114/114
+how-it-works.html:  <section 7/7   <div 59/59
+mockup-1.html:      <section 0/0   <div 112/112
+```
+**Notes:** Hard Rule 6 — 4 rows added to `CONTEXT_MAP.md §Doc inventory` + 4 to `README.md §plans/`.
+Reconciliation headline: the reference's todo-list and its sibling task-board (F-22) are ~80% the
+same page; this plan owns only task **authoring** (the modal + `PATCH /admin/tasks/:id`, which
+un-breaks the reference's 🔴 duplicate-on-edit bug) and links everything else. ⚠ FLAG raised for
+the owner: consider merging the two pages into one `/admin/tasks` screen before AD-4 (FE-only
+decision, nothing blocked either way). ⚠ TASKS.md id churn: registered as **F-20** after parallel
+sessions took F-19; two `F-17` rows and duplicate `F-18` also present in the shared file (pre-existing).
+
+### F-22 — Admin task-board page-plan set (`/admin/staff/task-board`, 4 docs) · 2026-07-19
+**AC:** the 4-doc page-plan set per `PAGE_PLAN_GUIDE.md` in `harness/plans/admin_task_board/`
+(MD source of truth + 3 both-theme HTML on neutral F-7 tokens), all 4 reference bugs designed
+out, `staff_tasks` promoted out of the `DB_SCHEMA.md §4.7` stub, indexes updated (Hard Rule 6).
+**Receipt:**
+```
+$ ls harness/plans/admin_task_board/
+  admin_task_board_PLAN.md  admin_task_board_plan.html
+  admin_task_board_how-it-works.html  admin_task_board_mockup-1.html
+
+$ python3  # tag balance + anchor resolution, per file
+  plan.html          div 59/59  section 9/9  table 9/9  svg 0/0   anchors: all resolve
+  how-it-works.html  div 29/29  section 7/7  table 1/1  svg 1/1   anchors: all resolve
+  mockup-1.html      div 88/88  section 0/0  table 4/4  svg 0/0   anchors: all resolve
+
+$ # both theme mechanisms present in every HTML
+  prefers-color-scheme + :root[data-theme="dark"] + :root[data-theme="light"]  ✓ all 4 files
+$ # self-contained: external refs (http/@import/cdn) per file →  0 / 0 / 0 / 0
+
+$ python3  # mockup seed arithmetic reconciles KPI row ↔ staff table
+  tasks 5+4+3+4+2+0 = 18   done 2+3+2+1+1+0 = 9   overdue 1+1 = 2   ✓ matches the 4 KPIs
+  no "Chất lượng ★/5.0" column rendered (dropped by decision)  ✓
+
+$ grep -c 'staff_tasks .full. (F-22)' harness/DB_SCHEMA.md   # promoted out of the stub →  1
+```
+**Notes:** admin surface → neutral F-7 tokens (not the customer dark/orange shell). All 13
+reference findings (`TASK_BOARD_BUGS` ×4 + 9 doc'd gaps) sit in PLAN §6 with countermeasures.
+Central correction: `overdue` is derived read-side, not stored, and a new
+`PATCH /admin/tasks/:id/status` makes the status lifecycle reachable — the reference's write-once
+`pending` left 3 of 4 KPIs permanently zero. Doc task → committed to `main`. Three builder
+sub-agents were spawned but landed nothing (session-limit / process-exit); the 3 HTML companions
+were authored inline instead.
+
+### F-21 — Admin-ingredients page-plan set (`/admin/ingredients`, 4 docs) · 2026-07-19
+**AC:** Folder holds `admin_ingredients_PLAN.md` (source of truth: 8-endpoint BE contract w/ manager+/admin-only DELETE split, wire shapes using DB names per DB_SCHEMA ruling 6, status-derivation ladder, 20-behavior spec, AD-INV task mapping, 9 reference defects designed out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes on the neutral F-7 tokens; zero rule duplication (links owning docs); indexes updated per Hard Rule 6.
+**Receipt:**
+```
+$ ls harness/plans/admin_ingredients/
+admin_ingredients_PLAN.md            admin_ingredients_how-it-works.html
+admin_ingredients_mockup-1.html      admin_ingredients_plan.html
+
+$ for f in harness/plans/admin_ingredients/*.html; do
+    echo "$(basename $f): doctype=$(grep -c '<!DOCTYPE html>' $f) body=$(grep -c '</body>' $f) \
+darktoggle=$(grep -c 'data-theme="dark"' $f) lighttoggle=$(grep -c 'data-theme="light"' $f) \
+footer=$(grep -c 'wins on any conflict' $f)"; done
+admin_ingredients_how-it-works.html: doctype=1 body=1 darktoggle=1 lighttoggle=1 footer=1
+admin_ingredients_mockup-1.html:     doctype=1 body=1 darktoggle=1 lighttoggle=1 footer=1
+admin_ingredients_plan.html:         doctype=1 body=1 darktoggle=1 lighttoggle=1 footer=1
+
+$ for f in harness/plans/admin_ingredients/*.html; do
+    echo "$(basename $f): <div>=$(grep -o '<div' $f | wc -l) </div>=$(grep -o '</div>' $f | wc -l)"; done
+admin_ingredients_how-it-works.html: <div>=38 </div>=38   (balanced)
+admin_ingredients_mockup-1.html:     <div>=109 </div>=109 (balanced)
+admin_ingredients_plan.html:         <div>=72 </div>=72   (balanced)
+```
+Each HTML: single doctype + closing body, both `prefers-color-scheme` and `data-theme`
+toggle overrides (renders in both themes), footer names the `.md` as source of truth, all
+`<div>` balanced. Seed data (Bột gạo 25.500→23.000 kg worked example; 5 rows covering all 4
+statuses) consistent across all four docs. Per-task plan page `diagrams/task-F-21.html`
+published; CONTEXT_MAP + README each carry 4 new rows (Hard Rule 6).
+**Reconciliation delivered:** wire uses DB names not the reference's `quantity`/`warningThreshold`
+renames (DB_SCHEMA ruling 6); stock movement + create wrapped in one locked tx with an opening
+`in` movement (fixes reference flags #1/#2, invariant `Σ movements == current_stock`); over-draw
+rejected not silently clamped (ruling 8); 🗑 admin-only; 5 named render branches; `created_by`
+serialized; `cost_per_unit` exposed (ruling 7). ⚠ requests a `UNIQUE(name)` schema amendment
+(flagged for owner, not self-applied — DB_SCHEMA owns tables).
+**Verdict:** AC met — marked ✅ in TASKS.md.
+
 ### F-25 — Customer orders-&-tracking page-plan set (merged `/orders`, 4 docs) · 2026-07-19
 **AC:** Folder holds `customer_orders_tracking_PLAN.md` (source of truth: FE+BE contract incl. the single monitor-SSE stream + 2 cancel writes, 15-behavior spec, 6 named loading branches, TASKS.md row mapping, 14 defects designed out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes (mockup on the customer dark/orange shell); zero rule duplication (links owning docs); indexes updated per Hard Rule 6.
 **Receipt:**

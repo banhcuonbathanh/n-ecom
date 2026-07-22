@@ -35,6 +35,48 @@
 
 ## Checkpoint log
 
+### 2026-07-21 — Session 15 (F-20): admin to-do-list page-plan set — **COMPLETE**
+- Done: F-20 ✅ — owner asked "make me page admin to do list, spawn agent as need." Delivered the
+  4-doc set in `harness/plans/admin_todo_list/` (`_PLAN.md` source of truth + `_plan.html` +
+  `_how-it-works.html` + `_mockup-1.html`, neutral F-7 admin tokens) from
+  `reference/…/admin/admin_todo_list` (10 docs, read directly — the Explore digest agent died
+  when its prior session exited). Receipt in VERIFICATION.md; Hard Rule 6 rows added to
+  CONTEXT_MAP + README.
+- Key reconciliation: this page is the ~80%-overlapping sibling of `admin_task_board` (F-22).
+  The `staff_tasks` table + endpoints 1–3/5 + status machine + cache map are **owned by**
+  `admin_task_board_PLAN.md` + `DB_SCHEMA.md §4.7` — **linked, not re-derived.** This plan owns
+  only task authoring: the two-view shell, filter bar, modal, and one new endpoint
+  `PATCH /admin/tasks/:id` (AD-3) that un-breaks the reference's 🔴 duplicate-on-edit bug.
+- Decisions: `assignedTo` not patchable (cancel+re-create) · `DELETE` stays deferred (edit fixes
+  the cause) · date-range removed (server is single-day) · status filter client-side · hooks +
+  `TaskStatusBadge` shared with the board. 14 reference defects designed out.
+- ⚠ For owner: **FLAG 1** — merge `admin_todo_list` + `admin_task_board` into one `/admin/tasks`
+  screen? Recommendation yes; FE-only, decide before AD-4, nothing blocked either way.
+  **FLAG 2** — filters are component state not URL (admin day-view isn't deep-linked).
+- Drift/⚠: TASKS.md id churn from parallel sessions — this task is **F-20** (F-19 was taken);
+  duplicate `F-17`/`F-18` rows sit in the shared file (pre-existing, not renumbered mid-flight).
+  Commits local on `main`; push per Hard Rule 3.
+- Next: unchanged — F-2 (dev stack skeleton). AD-3…AD-5 register when the AD phase opens.
+
+### 2026-07-21 — Session 19 (F-22): admin task-board page-plan set — **COMPLETE**
+- Done: F-22 ✅ — owner asked "make me page admin task board, spawn agent as need." Delivered the
+  4-doc set in `harness/plans/admin_task_board/` (`_PLAN.md` source of truth + `_plan.html` +
+  `_how-it-works.html` + `_mockup-1.html`, neutral F-7 admin tokens) + `diagrams/task-F-22.html`.
+  Promoted `staff_tasks` out of the `DB_SCHEMA.md §4.7` stub (15 cols). Rule-6 rows added to
+  CONTEXT_MAP + README. Receipt in VERIFICATION.md.
+- Decisions: **`overdue` is derived read-side** (`due_at < NOW()`), NOT a stored status — 4-value
+  stored enum; NEW `PATCH /admin/tasks/:id/status` transition machine (the reference had none, so
+  status was write-once `pending` and 3 of 4 KPIs were permanently 0); fabricated `qualityScore`
+  dropped; FK-reject 500 → 422 active-staff pre-check; invalidate BOTH task.dueDate + filters.date;
+  status filter wired via `byStatus` DTO counts; edit/delete deferred (reference "edit" dup'd rows);
+  no Redis (ARCH §4). This plan owns the `/admin/tasks` contract; sibling `admin_todo_list` links it.
+- Flags: ⚠ task-id collisions — two TASKS.md rows claim F-20, two claim F-24 (parallel sessions,
+  same class as the F-10 three-way); took F-22 to stay clear. 💡 assignee has no read surface (both
+  consumers manager+). ❓ who marks a task done (defaulted manager+).
+- Drift: `staff_tasks` now "full" not "stub" in DB_SCHEMA §4.7 + summary table. Three builder
+  sub-agents landed nothing (session-limit / process-exit); the HTML was authored inline.
+- Next: unchanged — F-2 (dev stack skeleton).
+
 ### 2026-07-21 — Session 18 (F-25): customer orders-&-tracking page-plan set — **COMPLETE**
 - Done: F-25 ✅ — owner "make me page order tracking, spawn agent as need". Picked the
   merged `/orders` screen (`customer_orders_tracking`: live tracking + history + detail in
