@@ -50,6 +50,7 @@ READ → PLAN → REPORT → IMPLEMENT → SELF-REVIEW → VERIFY → CHECKPOINT
 - **SELF-REVIEW** — spec followed? regressions? matches the AC?
 - **VERIFY** — produce a receipt (build/test/curl/screenshot) → log in `harness/VERIFICATION.md`
 - **CHECKPOINT** — update `harness/STATE.md` + task status in `harness/TASKS.md`
+  + **log every flag raised this task to `harness/FINDINGS.md`** (one `F#` row each; STATE links the id — a raised flag with no row is a dropped finding)
   + refresh `harness/diagrams/build-plan.html` (owner's main dashboard: chips, data-* task attrs, findings)
 
 **Task not in `harness/TASKS.md`? Register it first** (use `templates/TASK_TEMPLATE.md`),
@@ -65,6 +66,8 @@ note the new row in the next report, then start. Size every task to finish in on
 | `🚨 RISK` | Will break something if we proceed |
 | `🔴 STOP` | Cannot continue without clarification |
 | `❓ CLARIFY` | Ambiguous requirement |
+
+Every flag raised → a tracked row in `harness/FINDINGS.md` (lifecycle + the ≥2 kaizen rule live there).
 
 ## Project Overview
 
@@ -88,6 +91,7 @@ note the new row in the next report, then start. Size every task to finish in on
 | `harness/SUBAGENTS.md` | 8 Sub-agents | Task is big/separable — standing auto-delegation rules live there (long session ≠ reason to spawn) |
 | `harness/SKILLS.md` | 9 Skills & Procedures | Recurring job — check for a playbook first |
 | `harness/VERIFICATION.md` | 10 Verification | End of EVERY task |
+| `harness/FINDINGS.md` | 10 Verification | CHECKPOINT of EVERY task (log flags raised) + `/handoff` (improvement sweep) |
 
 ## Skills (slash commands)
 

@@ -20,6 +20,7 @@
 | [SUBAGENTS.md](SUBAGENTS.md) | 8 · Sub-agents | When to delegate (search, review, doc generation, research) vs. never ("session is long" is not a reason), standing auto-delegation rules, narrow-brief rules. |
 | [SKILLS.md](SKILLS.md) | 9 · Skills & Procedures | Installed slash commands (`/start-task`, `/finish-task`, `/handoff`) and inline playbooks: add-an-endpoint, add-a-migration, add-a-runtime-tool, fix-a-bug. |
 | [VERIFICATION.md](VERIFICATION.md) | 10 · Verification | Receipt log — evidence (build/test/curl/screenshot/migration round-trip) required before any task is marked ✅. |
+| [FINDINGS.md](FINDINGS.md) | 10 · Verification | Findings ledger + improvement loop (H-1): every flag raised (`💡⚠️🚨🔴❓`) gets a tracked `F#` row with a status lifecycle (🔵→🟡→✅/⛔); the ≥2-same-root-cause kaizen rule graduates a recurring finding into an `H#` rule-change task. STATE links ids, this file owns them. |
 
 ## Design docs (expanded from PLAN.md)
 

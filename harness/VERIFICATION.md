@@ -19,6 +19,23 @@
 
 ## Log (newest on top)
 
+### H-1 — Findings ledger + improvement loop · 2026-07-22
+**AC:** `harness/FINDINGS.md` exists with the status-lifecycle + ≥2-root-cause kaizen protocol and a seeded ledger; CLAUDE.md CHECKPOINT step + Harness Map reference it while staying < 120 lines; CONTEXT_MAP routing + doc inventory and README carry rows (Hard Rule 6).
+**Receipt:**
+```
+$ test -f harness/FINDINGS.md && grep -c '^| F[0-9]' harness/FINDINGS.md   # seeded ledger rows
+14
+$ wc -l < CLAUDE.md                                                        # must be < 120
+119
+$ for f in CLAUDE.md harness/CONTEXT_MAP.md harness/README.md harness/TASKS.md; do \
+>   printf "%-24s " "$f"; grep -c 'FINDINGS.md' "$f"; done                 # every index wired
+CLAUDE.md                3
+harness/CONTEXT_MAP.md   3     # routing (Bug fix + Docs/planning) + doc-inventory row
+harness/README.md        1
+harness/TASKS.md         1     # H-1 row, Phase H
+```
+Ledger seeded from the open flags previously only in STATE.md (deep-link 🚨, task-id collisions, theme × schema-amend pairs already at the ≥2 kaizen threshold). Docs-only change; committed to `main`.
+
 ### F-27 / F-28 — Admin products + combos page-plan sets (8 docs) · 2026-07-22
 **AC:** Each folder holds `<slug>_PLAN.md` (source of truth: FE+BE contract, write/CRUD endpoints, cache-invalidation map, behavior spec, TASKS-row mapping, defects-designed-out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes on the neutral F-7 admin tokens; combos cross-links products for the shared contract (re-derives nothing); indexes updated per Hard Rule 6.
 **Receipt:**

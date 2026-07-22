@@ -35,6 +35,21 @@
 
 ## Checkpoint log
 
+### 2026-07-22 — Session (H-1): findings ledger + improvement loop
+- Done: H-1 ✅ — new `harness/FINDINGS.md` (Primitive 10, verification family): tracked `F#`
+  rows, 🔵→🟡→✅/⛔ lifecycle, and the **≥2-same-root-cause kaizen rule** (a recurring finding
+  graduates into an `H#` rule-change task). Wired the **CHECKPOINT capture rule** into
+  CLAUDE.md's task loop + Proactive-Flags table (kept at 119 lines, < 120). Registered as
+  Phase H (new) in TASKS.md; Hard-Rule-6 rows in CONTEXT_MAP (routing + inventory) + README.
+  Receipt in VERIFICATION.md.
+- Seeded the ledger (F01–F14) from the open flags that until now lived only here in STATE.
+  **These flags are now owned by `FINDINGS.md`** — this checkpoint is their last full restatement;
+  future sessions read/close them there. Two root-causes already at the ≥2 threshold:
+  `theme-ambiguity` (F01 customer shell, F06 admin palette) and `schema-amend-request`
+  (F07 ingredients, F08 toppings `UNIQUE(name)`) → both are `H#` rule-change candidates.
+- Next: unchanged — F-2 (dev stack skeleton). Going forward every task's CHECKPOINT must
+  drop its flags into FINDINGS.md; `/handoff` runs the improvement sweep (stale > 3 sessions → escalate).
+
 ### 2026-07-19 — Session (F-21): admin_ingredients page-plan set
 - Done: F-21 ✅ — 4-doc set in `harness/plans/admin_ingredients/` (`_PLAN.md` source of
   truth + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all both-theme on the

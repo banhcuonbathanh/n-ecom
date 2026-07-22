@@ -85,6 +85,12 @@
 | — | Admin (product CRUD, order mgmt, dashboard) | ⏸ | deferred Session 0 — v1 manages products via SQL scripts | ⛔ | |
 | — | AI assistant (shopping chat) | ⏸ | deferred Session 0 | ⛔ | |
 
+## Phase H — Harness improvements (meta)
+
+| ID | Task | Deps | AC (acceptance criteria) | Status | Receipt |
+|---|---|---|---|---|---|
+| H-1 | Findings ledger + improvement loop — new `harness/FINDINGS.md` (tracked `F#` rows, status lifecycle, ≥2-root-cause kaizen rule → `H#` task), CHECKPOINT capture rule wired into CLAUDE.md task loop + Proactive-Flags table, seeded from the open flags scattered in STATE.md | — | `FINDINGS.md` exists with the lifecycle/kaizen protocol + seeded ledger; CLAUDE.md CHECKPOINT step and Harness Map reference it (still < 120 lines); CONTEXT_MAP routing + inventory and README have rows (Hard Rule 6); docs render | ✅ | VERIFICATION.md 2026-07-22 |
+
 ---
 
 ## Rules

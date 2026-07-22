@@ -13,9 +13,9 @@
 | New FE page/component | `FE_STATE.md` + `PLAN.md §Architecture (FE)` + domain section + the page plan under `harness/plans/` if one exists (menu: `plans/customer_menu/customer_menu_PLAN.md`; orders/tracking: `plans/customer_orders_tracking/customer_orders_tracking_PLAN.md`) | BE internals (use API contract only) |
 | **Realtime (SSE/WS, pub/sub)** | `OVERALL_PLAN.md §3.5` (the design + the 4 fixed defects) + `BE_STATE.md` + `plans/customer_orders_tracking/customer_orders_tracking_PLAN.md` §3.1 #2/§3.3/§3.5 (the monitor-stream contract + event→reaction map — the first consumer of the event contract) | catalog/cache docs |
 | DB migration | `DB_SCHEMA.md` (canonical tables/columns) + `PLAN.md §File map (db)` + `BE_PLAYBOOK.md §1–2` (sqlc workflow + migration checklist) + migration skill in `SKILLS.md` | everything else |
-| Bug fix | `STATE.md` (recent decisions) + the failing area's PLAN section | unrelated domains |
+| Bug fix | `STATE.md` (recent decisions) + `FINDINGS.md` (is this a known finding?) + the failing area's PLAN section | unrelated domains |
 | Infra / DevOps | `DEVOPS.md` + `ENVIRONMENT.md` | domain specs |
-| Docs / planning | `TASKS.md` + `STATE.md` | code |
+| Docs / planning | `TASKS.md` + `STATE.md` + `FINDINGS.md` (open findings this work should close) | code |
 
 ## Rules
 
@@ -46,6 +46,7 @@
 | `harness/TASKS.md` | Task list | statuses, deps, ACs |
 | `harness/STATE.md` | Checkpoint log | decisions, resume point |
 | `harness/VERIFICATION.md` | Receipts | proof of done |
+| `harness/FINDINGS.md` | Findings ledger (H-1) | every flag raised during work — the tracked `F#` rows, their status lifecycle, and the ≥2-root-cause kaizen rule that graduates a recurring finding into an `H#` rule-change task (STATE summarizes + links ids; this file is the system of record) |
 | `harness/ENVIRONMENT.md` | Dev env | commands, ports, env vars |
 | `harness/TOOLS.md` | Tools/MCP | tool schemas + gating rules |
 | `harness/SUBAGENTS.md` | Delegation | when to spawn |
