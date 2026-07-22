@@ -35,6 +35,27 @@
 
 ## Checkpoint log
 
+### 2026-07-19 — Session (F-21): admin_ingredients page-plan set
+- Done: F-21 ✅ — 4-doc set in `harness/plans/admin_ingredients/` (`_PLAN.md` source of
+  truth + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all both-theme on the
+  neutral F-7 tokens) + `diagrams/task-F-21.html` + Hard-Rule-6 rows (CONTEXT_MAP + README
+  ×4 each). Receipt in VERIFICATION.md. Registered as F-21 (F-19/F-20 taken by parallel
+  sessions; shared index churn ongoing).
+- Decisions/reconciliation: wire uses DB names (`current_stock`/`min_stock`), not the
+  reference's `quantity`/`warningThreshold` renames (DB_SCHEMA ruling 6) · stock movement +
+  create run in one locked tx with an opening `in` movement → invariant `Σ movements ==
+  current_stock` (fixes reference flags #1/#2) · over-draw rejected w/ VALIDATION_FAILED not
+  silently clamped (ruling 8) · 🗑 admin-only (managers never see it) · `cost_per_unit`
+  exposed at manager+ (ruling 7) · `created_by` serialized · 5 named render branches ·
+  inventory never cached (server-side).
+- Flags for owner: ⚠ requests a `UNIQUE(name)` schema amendment on `ingredients` (not
+  self-applied — DB_SCHEMA owns tables; until ratified the 409-dup path/toast is cut) ·
+  ⚠ over-draw reject is flippable while AD is open · ⚠ admin palette (orange/dark vs neutral)
+  still unresolved across all admin plans · ❓ batch-vs-ingredient `import_date` dating.
+- Note: 3 builder sub-agents spawned but landed nothing (session-limit / process-exit) —
+  the 3 HTML companions were authored inline instead.
+- Next: unchanged — F-2 (dev stack skeleton). AD-INV-1…7 rows register when AD phase opens.
+
 ### 2026-07-21 — Session 15 (F-20): admin to-do-list page-plan set — **COMPLETE**
 - Done: F-20 ✅ — owner asked "make me page admin to do list, spawn agent as need." Delivered the
   4-doc set in `harness/plans/admin_todo_list/` (`_PLAN.md` source of truth + `_plan.html` +
