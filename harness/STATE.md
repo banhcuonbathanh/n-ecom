@@ -219,16 +219,14 @@
 - Next: unchanged — F-2 (dev stack skeleton). Admin build itself waits for the AD phase; this
   is a plan-only deliverable. Sibling page-plan tasks F-27/F-28/F-19…F-26 in flight (🔄).
 
-### 2026-07-20 — Session 15 (F-27/F-28): admin_products + admin_combos page plans — **PARTIAL**
-- Done: both canonical `.md` plans written — `harness/plans/admin_products/
-  admin_products_PLAN.md` (F-27) and `harness/plans/admin_combos/admin_combos_PLAN.md`
-  (F-28). Products digested by me directly from the 8-doc reference corpus; combos by
-  1 Explore agent. Both follow PAGE_PLAN_GUIDE §3's 8-section structure.
-- **NOT done — F-27/F-28 stay 🔄:** the 6 HTML companions (`_plan`, `_how-it-works`,
-  `_mockup-1` × 2 pages). Two builder agents were launched and **both failed on an
-  API session limit**; no HTML was written. No receipts logged, no Hard-Rule-6 index
-  rows added yet. Next session: render the 6 HTML from the two `.md` files (they are
-  complete and stable), then CONTEXT_MAP + README rows + VERIFICATION receipts.
+### 2026-07-22 — Session (F-27/F-28): admin_products + admin_combos page plans — **✅ COMPLETE**
+- Done: F-27 ✅ + F-28 ✅ — both 4-doc sets shipped. `harness/plans/admin_products/`
+  and `harness/plans/admin_combos/`, each = `_PLAN.md` (source of truth) + `_plan.html`
+  + `_how-it-works.html` + `_mockup-1.html`, all both-theme on the neutral F-7 admin
+  tokens. Products digested directly from the 8-doc corpus; combos by 1 Explore agent.
+  All 6 HTML **authored inline** — the two builder sub-agents (and the earlier pair)
+  died on API session limits, same pattern as F-20/F-21/F-22 this cohort. Receipts in
+  VERIFICATION.md; Hard-Rule-6 rows added to CONTEXT_MAP §Doc inventory (8) + README (8).
 - Decisions: admin writes are pessimistic (FE rule 4) · delete = admin+, rest manager+
   · admin list reads stay uncached · `GET /combos/all` is **new** (ref had no
   manager-only combo read) · combo management read carries a **server-side join**

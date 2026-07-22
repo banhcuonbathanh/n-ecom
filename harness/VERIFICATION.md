@@ -19,6 +19,42 @@
 
 ## Log (newest on top)
 
+### F-27 / F-28 — Admin products + combos page-plan sets (8 docs) · 2026-07-22
+**AC:** Each folder holds `<slug>_PLAN.md` (source of truth: FE+BE contract, write/CRUD endpoints, cache-invalidation map, behavior spec, TASKS-row mapping, defects-designed-out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes on the neutral F-7 admin tokens; combos cross-links products for the shared contract (re-derives nothing); indexes updated per Hard Rule 6.
+**Receipt:**
+```
+$ ls harness/plans/admin_products/ harness/plans/admin_combos/
+harness/plans/admin_products/:
+admin_products_PLAN.md          admin_products_how-it-works.html
+admin_products_mockup-1.html    admin_products_plan.html
+
+harness/plans/admin_combos/:
+admin_combos_PLAN.md            admin_combos_how-it-works.html
+admin_combos_mockup-1.html      admin_combos_plan.html
+
+$ # every HTML carries all four theme-token blocks (light default + prefers-color-scheme
+$ #   + data-theme=dark + data-theme=light) → both-theme guaranteed
+$ for f in harness/plans/admin_products/*.html harness/plans/admin_combos/*.html; do
+>   printf "%-56s " "$f"; grep -c 'prefers-color-scheme\|data-theme="dark"\|data-theme="light"\|^  :root {' "$f"; done
+harness/plans/admin_products/admin_products_how-it-works.html  4
+harness/plans/admin_products/admin_products_mockup-1.html      4
+harness/plans/admin_products/admin_products_plan.html          4
+harness/plans/admin_combos/admin_combos_how-it-works.html      4
+harness/plans/admin_combos/admin_combos_mockup-1.html          4
+harness/plans/admin_combos/admin_combos_plan.html              4
+
+$ # no customer dark/orange shell hex on the admin surface (the one hit below is prose
+$ #   inside a <code> caption explaining the neutral-tokens choice, not a color value)
+$ grep -l '#0b0f17\|#f97316' harness/plans/admin_products/*.html harness/plans/admin_combos/*.html
+harness/plans/admin_products/admin_products_plan.html
+
+$ # each HTML footer names its PLAN.md as the source of truth that wins on conflict
+$ grep -lc 'wins on any conflict' harness/plans/admin_products/*.html harness/plans/admin_combos/*.html | wc -l
+6
+```
+**Content:** admin_products_PLAN.md — 8 endpoints (availability toggle on its own handler fixing the ref's permanent-400 bug; admin-only DELETE; uncached `GET /products/all`), cache map incl. the new product-write→`combos:list` cross-DEL, 5 render branches, 12 behaviors, **13 reference defects designed out**. admin_combos_PLAN.md — new `GET /combos/all` with server-side item join, one-transaction item writes, new active toggle, guarded delete, the product-dependency edge cases, 12 behaviors, **~20 defects designed out**. Owner decisions applied: `is_active` (not `is_available`); worked example Suất Đầy Đủ 30.000 = retail (savings shows `—` on seed). Hard-Rule-6 rows added to CONTEXT_MAP §Doc inventory (8) + README §plans/ (8).
+**Verdict:** AC met — F-27 + F-28 marked ✅ in TASKS.md. (Task ids renumbered from F-17/F-18 after a parallel session claimed F-17 = admin_overview.)
+
 ### F-20 — Admin to-do-list page-plan set (`/admin/todo-list`, 4 docs) · 2026-07-21
 **AC:** Folder holds `admin_todo_list_PLAN.md` (source of truth: FE+BE contract with the one owned endpoint `PATCH /admin/tasks/:id`, 12-behavior spec, AD-3…AD-5 task mapping, 14 reference defects designed out) + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`, all rendering both themes on the neutral F-7 tokens; reference's empty≡loading≡error conflation designed out with named branches; the shared `/admin/tasks` contract is **linked** to `admin_task_board_PLAN.md` (F-22) + `DB_SCHEMA.md §4.7`, not re-derived; indexes updated per Hard Rule 6.
 **Receipt:**

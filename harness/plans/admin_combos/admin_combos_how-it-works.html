@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin combos — how it works at runtime (F-28)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B4322A; --red-soft: #F7E0DE; --violet: #6D46C6; --violet-soft: #ECE6F9;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E88A82; --red-soft: #3A1512; --violet: #B49BEC; --violet-soft: #241a3d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E88A82; --red-soft: #3A1512; --violet: #B49BEC; --violet-soft: #241a3d;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B4322A; --red-soft: #F7E0DE; --violet: #6D46C6; --violet-soft: #ECE6F9;
+  }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 26px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; } .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); } a.back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag.red { border-left-color: var(--red); background: var(--red-soft); }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 14px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; } .topnav a:hover { color: var(--accent); }
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 92px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; }
+  .seq { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin: 14px 0; }
+  .seq svg { display: block; min-width: 580px; }
+  .seq text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+  .seq .lane { fill: var(--muted); font-weight: 700; } .seq .lbl { fill: var(--muted); }
+  .lgnd { display:flex; gap:14px; flex-wrap:wrap; font-family:var(--mono); font-size:0.72rem; color:var(--muted); margin-top:6px; }
+  .lgnd span::before { content:"■ "; }
+  .ok::before { color: var(--done); } .bad::before { color: var(--red); } .wr::before { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-20</div>
+  <h1>Admin combos — how it works at runtime</h1>
+  <p class="lede">What <b>happens when it runs</b>: the two-query load and its join, the
+  one-transaction write, the deleted-product edge case the reference got wrong, and the combo→order
+  expansion downstream. Snapshot of the plan; the <code>.md</code> wins.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-28</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_combos_PLAN.md">admin_combos_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">companion</span><span class="v"><a href="admin_combos_plan.html">the plan →</a></span></div>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#s1">01 Big picture</a><a href="#s2">02 First load + join</a><a href="#s3">03 Create (tx)</a>
+  <a href="#s4">04 Deleted product</a><a href="#s5">05 Active + delete</a><a href="#s6">06 Cache + order expansion</a>
+</nav>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>The whole machine on one screen</h2></div>
+  <div class="flow">
+    <div class="fnode"><span class="fk">manager</span><b>/admin/combos</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">Gin</span><b>handler → service (tx)</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">write</span><b>combos + combo_items</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">DEL</span><b>combos:list</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">next fetch</span><b>/menu ComboSection</b></div>
+  </div>
+  <p>Pull-only (no SSE). The page can't render its own table without the <b>products</b> contract —
+  names, prices, the picker and the retail sum all come from <code>GET /products/all</code>. Our
+  server-side join on <code>GET /combos/all</code> makes the <i>table</i> independent of it; only the
+  picker still needs it.</p>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>First load — two queries, one join</h2></div>
+  <p>RSC prefetches both queries → <code>HydrationBoundary</code>. The picker joins products by id;
+  the table reads its names/prices from the <b>server</b> join, so it survives a slow products query.</p>
+  <div class="flow">
+    <div class="fnode"><span class="fk">Query A</span><b>['admin','combos']</b></div>
+    <div class="fnode"><span class="fk">Query B</span><b>['admin','products']</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">productMap</span><b>by id (picker)</b></div>
+  </div>
+  <p>Five named branches for the table <b>and</b> five for the picker (the reference had three for the
+  table, <b>no error branch at all</b>, and a blank box for the picker):</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Branch</th><th>Table</th><th>Picker</th></tr></thead>
+    <tbody>
+      <tr><td>loading</td><td>skeleton rows</td><td>skeleton list</td></tr>
+      <tr><td>error</td><td>"Không tải được danh sách combo" + Thử lại</td><td>"Không tải được sản phẩm" + Thử lại</td></tr>
+      <tr><td>empty</td><td>"Chưa có combo nào" + CTA</td><td>"Chưa có sản phẩm nào — thêm sản phẩm trước"</td></tr>
+      <tr><td>filtered-empty</td><td>"Không tìm thấy combo phù hợp"</td><td>"Không tìm thấy sản phẩm phù hợp"</td></tr>
+      <tr><td>data</td><td>the table</td><td>the checkbox list</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The create path — one transaction</h2></div>
+  <p>Tick ≥ 2 products, set quantities, type the price, save. Header + every item write in
+  <b>one transaction</b> — a bad item rolls the whole thing back.</p>
+  <div class="seq">
+    <svg viewBox="0 0 640 230" role="img" aria-label="Create in a transaction">
+      <defs>
+        <marker id="mw" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/></marker>
+        <marker id="mo" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--done)"/></marker>
+        <marker id="mb" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--red)"/></marker>
+      </defs>
+      <text class="lane" x="40" y="16">Modal</text>
+      <text class="lane" x="220" y="16">service</text>
+      <text class="lane" x="430" y="16">MySQL tx</text>
+      <line x1="55" y1="24" x2="55" y2="220" stroke="var(--line)"/>
+      <line x1="235" y1="24" x2="235" y2="220" stroke="var(--line)"/>
+      <line x1="450" y1="24" x2="450" y2="220" stroke="var(--line)"/>
+      <text class="lbl" x="60" y="44">POST /combos { name, price:30000, items[3] }</text>
+      <line x1="55" y1="50" x2="235" y2="50" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <text class="lbl" x="240" y="70">BEGIN</text>
+      <line x1="235" y1="76" x2="450" y2="76" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <text class="lbl" x="240" y="96">INSERT combo header</text>
+      <line x1="235" y1="102" x2="450" y2="102" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <text class="lbl" x="240" y="122">INSERT ×3 combo_items</text>
+      <line x1="235" y1="128" x2="450" y2="128" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <text class="lbl" fill="var(--red)" x="240" y="150">any item fails → ROLLBACK → 400/409</text>
+      <line x1="450" y1="156" x2="235" y2="156" stroke="var(--red)" marker-end="url(#mb)"/>
+      <text class="lbl" x="240" y="180">else COMMIT + DEL combos:list</text>
+      <line x1="235" y1="186" x2="450" y2="186" stroke="var(--accent)" marker-end="url(#mw)"/>
+      <text class="lbl" x="60" y="210">← 201 full combo object · toast "Đã tạo combo"</text>
+      <line x1="235" y1="216" x2="55" y2="216" stroke="var(--done)" marker-end="url(#mo)"/>
+    </svg>
+    <div class="lgnd"><span class="wr">request/step</span><span class="ok">commit</span><span class="bad">rollback</span></div>
+  </div>
+  <p>The reference looped item inserts, <code>slog.Warn</code>-ing and continuing on failure — so a
+  combo could return <code>201</code> with items missing, and a failed <i>edit</i> (items deleted
+  before re-insert) left the combo with fewer items than it started with. The transaction ends both.</p>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>The deleted-product edge case — the reference's worst hole</h2></div>
+  <p>A product referenced by a combo is soft-deleted elsewhere. <code>combo_items</code> survives (no
+  cascade on soft delete). What the two systems then show:</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th></th><th>Reference</th><th>Ours</th></tr></thead>
+    <tbody>
+      <tr><td>chip</td><td style="color:var(--red)">raw UUID <code>p4f9…36</code></td><td>warning chip "⚠ Sản phẩm đã xoá"</td></tr>
+      <tr><td>Giá lẻ</td><td style="color:var(--red)">under-counted (item = 0)</td><td>server excludes it from <code>retail_total</code>, marks <code>product_deleted</code></td></tr>
+      <tr><td>in the modal</td><td style="color:var(--red)">invisible → silently re-saved</td><td>shown explicitly for removal</td></tr>
+      <tr><td>hard delete</td><td>raw FK error</td><td><code>409 PRODUCT_IN_USE</code> "đang nằm trong 2 combo"</td></tr>
+    </tbody>
+  </table></div>
+  <div class="golden">
+    <p>The fix is <b>server-side</b>: <code>GET /combos/all</code> joins <code>product_name</code> +
+    <code>unit_price</code> and computes <code>product_deleted</code> — the one place that can be
+    correct even when the product row is gone. The FE just renders the truth it's handed.</p>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Active toggle &amp; guarded delete</h2></div>
+  <p><b>Active toggle</b> — a capability the reference did not have at all (no route, no UI, SQL
+  hardcoded <code>is_active=1</code> on insert):</p>
+  <div class="flow">
+    <div class="fnode"><span class="fk">badge</span><b>PATCH /:id/active</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">{ is_active:false }</span><b>service</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">DEL</span><b>combos:list</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">next /menu fetch</span><b>combo hidden</b></div>
+  </div>
+  <p><b>Delete</b> — existence check + in-use guard (the ref returned 204 for any id and had no guard):</p>
+  <div class="flow">
+    <div class="fnode"><span class="fk">admin+</span><b>DELETE /:id</b></div><span class="farrow">→</span>
+    <div class="fnode" style="border-color:var(--red)"><span class="fk">unknown id</span><b>404</b></div>
+    <div class="fnode" style="border-color:var(--red)"><span class="fk">on active order</span><b>409 COMBO_IN_USE</b></div>
+    <div class="fnode" style="border-color:var(--done)"><span class="fk">else</span><b>soft-delete 204</b></div>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Cache life &amp; combo → order expansion</h2></div>
+  <p>Cache-aside; a write DELs <code>combos:list</code>. The <b>new cross-rule</b>: a product write DELs
+  <code>combos:list</code> too, because a combo shows that product's name/price.</p>
+  <pre class="diagram">product price change ──► DEL products:list + combos:list ──► /menu rebuilds both
+combo write          ──► DEL combos:list                 ──► /menu ComboSection rebuilds
+staleness bound: admin instant (uncached read) · customer ≤ staleTime + 5-min TTL</pre>
+  <div class="golden">
+    <p><b>Why edits are safe.</b> At order time a combo <b>expands</b> into <code>order_items</code>:
+    one header row (<code>combo_id</code>, <code>unit_price = 0</code>) + N child rows via
+    <code>combo_ref_id</code>, each carrying a price the server <b>snapshots</b> from the catalogue —
+    never trusted from the client. A later combo edit or delete never rewrites a placed order. That
+    snapshot is why this whole page can be cache-based instead of realtime.</p>
+  </div>
+  <div class="flow">
+    <div class="fnode"><span class="fk">order</span><b>1× Suất Đầy Đủ</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">header</span><b>unit_price 0</b></div>
+    <div class="fnode"><span class="fk">child</span><b>Bánh Trứng ×1 · 9.000</b></div>
+    <div class="fnode"><span class="fk">child</span><b>Bánh Cuốn ×3 · 4.000</b></div>
+    <div class="fnode"><span class="fk">child</span><b>Giò ×1 · 9.000</b></div>
+  </div>
+  <p style="font-family:var(--mono);font-size:0.78rem;color:var(--muted)">The ₫0 header prevents
+  double-counting; <code>order.total_amount</code> stays 30.000.</p>
+</section>
+
+<footer>
+  Written for F-28 · 2026-07-20 · a snapshot of <a href="admin_combos_PLAN.md">admin_combos_PLAN.md</a>,
+  which wins on any conflict. Companion: <a href="admin_combos_plan.html">the plan</a>. The product contract
+  lives in <a href="../admin_products/admin_products_PLAN.md">admin_products_PLAN.md</a>. Neutral F-7 tokens
+  (<a href="../../diagrams/design-system.html">design-system.html</a>).
+</footer>
+
+</div>
+</body>
+</html>

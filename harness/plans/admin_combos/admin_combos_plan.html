@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin combos page — FE + BE build plan (F-28)</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B4322A; --red-soft: #F7E0DE; --violet: #6D46C6; --violet-soft: #ECE6F9;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #E88A82; --red-soft: #3A1512; --violet: #B49BEC; --violet-soft: #241a3d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #E88A82; --red-soft: #3A1512; --violet: #B49BEC; --violet-soft: #241a3d;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B4322A; --red-soft: #F7E0DE; --violet: #6D46C6; --violet-soft: #ECE6F9;
+  }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 28px 0 10px; }
+  p { margin: 0 0 14px; max-width: 74ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 66ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); } a.back { font-family: var(--mono); font-size: 0.78rem; text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .chip { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; }
+  .chip.plan { color: var(--accent); background: var(--accent-soft); }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .golden p { margin: 0 0 8px; } .golden p:last-child { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 74ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .flag.red { border-left-color: var(--red); background: var(--red-soft); }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); margin: 14px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code { border: none; background: transparent; padding: 0; }
+  pre.diagram { font-family: var(--mono); font-size: 0.78rem; line-height: 1.45; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 16px; }
+  .topnav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); margin: 24px -24px 0; padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--mono); font-size: 0.72rem; }
+  .topnav a { color: var(--muted); text-decoration: none; } .topnav a:hover { color: var(--accent); }
+  .t { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+  .t.c { color: var(--accent); background: var(--accent-soft); }
+  .dead { color: var(--muted); text-decoration: line-through; }
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 12px; margin: 14px 0; }
+  .fnode { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; min-width: 92px; }
+  .fnode .fk { display: block; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .fnode b { font-family: var(--mono); font-size: 0.8rem; }
+  .farrow { align-self: center; font-family: var(--mono); color: var(--muted); padding: 0 8px; }
+  .strip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--mono); margin: 14px 0; }
+  .snode { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-size: 0.76rem; font-weight: 700; border-top: 3px solid var(--accent); }
+  .snode.adc { border-top-color: var(--violet); }
+  .sarrow { color: var(--muted); font-size: 0.8rem; }
+  .bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .bcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.87rem; }
+  .bcard .bn { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; color: var(--accent); }
+  .bcard .bt { display: block; font-family: var(--sans); font-weight: 600; margin: 2px 0 4px; }
+  .bcard p { margin: 0; font-size: 0.84rem; color: var(--muted); max-width: none; }
+  .bcard p b, .bcard p code { color: var(--ink); }
+  .schema { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .tbl { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; min-width: 180px; font-size: 0.8rem; overflow: hidden; }
+  .tbl .tname { font-family: var(--mono); font-weight: 700; font-size: 0.78rem; padding: 6px 12px; background: var(--accent-soft); color: var(--accent); }
+  .tbl ul { margin: 0; padding: 8px 12px; list-style: none; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+  .tbl ul li b { color: var(--ink); font-weight: 600; }
+  .wire { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 12.5px; margin: 8px 0; }
+  .wire .w-shell { display: flex; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--muted); overflow-x: auto; white-space: nowrap; }
+  .wire .w-shell .on { color: var(--accent); font-weight: 700; border-bottom: 2px solid var(--accent); padding-bottom: 4px; }
+  .wire .w-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; }
+  .w-btn { background: var(--accent); color: #fff; border-radius: 8px; padding: 5px 12px; font-size: 11px; font-weight: 700; }
+  .w-tbl { width: 100%; border-collapse: collapse; }
+  .w-tbl th { font-size: 10px; padding: 7px 12px; } .w-tbl td { padding: 7px 12px; font-size: 12px; border-bottom: 1px solid var(--line); }
+  .w-chip { font-size: 10px; border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; color: var(--muted); }
+  .w-save { color: var(--done); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <a class="back" href="../../diagrams/build-plan.html">← build-plan.html</a>
+  <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · consolidated page plan · 2026-07-20</div>
+  <h1>Admin combos page — FE + BE build plan</h1>
+  <p class="lede">The combo ("suất") builder at <code>/admin/combos</code> — where products are
+  composed into the bundles the customer menu sells. Planned <b>on top of</b> the products
+  contract: it cross-links <a href="../admin_products/admin_products_PLAN.md">admin_products</a>
+  rather than re-deriving it. Snapshot of the plan; the <code>.md</code> wins.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-28</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="admin_combos_PLAN.md">admin_combos_PLAN.md</a></span></div>
+    <div class="fact"><span class="k">depends on</span><span class="v">F-27 products contract</span></div>
+    <div class="fact"><span class="k">ships across</span><span class="v">C-1 · AD-C1…C5</span></div>
+  </div>
+  <div class="golden">
+    <p><b>A combo is built from products</b> — the picker, every chip name, the retail sum and the
+    savings figure all come from <code>GET /products/all</code>. That one dependency is this page's
+    defining risk, and the reference handled it badly: a deleted product turned into a raw UUID chip
+    and a wrong <code>Giá lẻ</code>, with no warning anywhere.</p>
+    <p style="margin-top:8px"><b>Two sources in the corpus.</b> The traced <code>08_pages</code> set
+    is the running code (audit found zero doc-vs-code contradictions); the <code>wireframes</code>
+    draft was never built. Where they disagree the traced set wins — §07 lists the draft's inventions.</p>
+  </div>
+</header>
+
+<nav class="topnav">
+  <a href="#s1">01 Anatomy</a><a href="#s2">02 Component tree</a><a href="#s3">03 State</a>
+  <a href="#s4">04 BE contract</a><a href="#s5">05 Dataflow</a><a href="#s6">06 Behaviors</a>
+  <a href="#s7">07 Defects out</a><a href="#s8">08 Tasks</a><a href="#s9">09 Decisions</a>
+</nav>
+
+<section id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Page anatomy</h2></div>
+  <div class="wire">
+    <div class="w-shell"><span>Tổng quan</span><span>Sản phẩm</span><span>Danh mục</span><span class="on">Combo</span><span>Topping</span><span>Nguyên liệu</span></div>
+    <div class="w-head"><b>Combo (5)</b><span class="w-btn">+ Thêm combo</span></div>
+    <div class="table-wrap" style="margin:0; border:0; border-radius:0">
+      <table class="w-tbl">
+        <thead><tr><th>Tên combo</th><th>Sản phẩm trong combo</th><th>Giá combo</th><th>Giá lẻ</th><th>Tiết kiệm</th><th>HĐ</th></tr></thead>
+        <tbody>
+          <tr><td>Suất Đầy Đủ Trứng Chín</td><td><span class="w-chip">Bánh Trứng Chín ×1</span> <span class="w-chip">Bánh Cuốn Thịt ×3</span> <span class="w-chip">Giò ×1</span></td><td>30.000&nbsp;đ</td><td>30.000&nbsp;đ</td><td>—</td><td>Sửa</td></tr>
+          <tr><td>Suất Giò</td><td><span class="w-chip">Giò ×1</span> <span class="w-chip">Bánh Cuốn Thịt ×4</span></td><td>25.000&nbsp;đ</td><td>25.000&nbsp;đ</td><td>—</td><td>Sửa</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:8px 12px; border-top:1px solid var(--line); font-family:var(--mono); font-size:10px; color:var(--muted)">▤ overlay → ComboFormModal: tên · mô tả · <b>ProductPicker</b> (search + tick + [−] n [+]) · Tổng giá lẻ · giá combo (gợi ý 90%) · thứ tự</div>
+  </div>
+  <div class="golden">
+    <p><b>On our own seed data, <code>Tiết kiệm</code> is <code>—</code> on every row</b> — every
+    suất is priced exactly at its retail sum (owner-locked, §09). The savings column stays; it lights
+    up only when a genuinely discounted combo is created.</p>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Component tree</h2></div>
+  <p>The reference was <b>one 552-line <code>page.tsx</code></b> with everything inline. Ours
+  decomposes; the wireframe draft's <code>_components/*</code> names were never built and are not a guide.</p>
+  <pre class="diagram">app/(admin)/admin/combos/
+  page.tsx                  RSC prefetch combos + products → HydrationBoundary
+  loading.tsx               table-shaped skeleton
+components/admin/combos/
+  CombosHeader.tsx          "Combo (5)" + "+ Thêm combo"                 <span class="t c">AD-C4</span>
+  CombosTable.tsx           5 named render branches (§03)                <span class="t c">AD-C4</span>
+  ComboItemChips.tsx        name ×qty · deleted-product warning chip     <span class="t c">AD-C4</span>
+  ComboSavingsCell.tsx      Giá lẻ + Tiết kiệm + "không còn lời" warning <span class="t c">AD-C4</span>
+  ActiveBadge.tsx           the is_active toggle (NEW — ref had none)    <span class="t c">AD-C3/C4</span>
+  ComboFormModal.tsx        RHF+Zod scalars; hosts the picker            <span class="t c">AD-C5</span>
+  ProductPicker.tsx         search + list + per-row qty stepper          <span class="t c">AD-C5</span>
+  ComboSummaryPanel.tsx     Các món đã chọn · Tổng giá lẻ · gợi ý 90%    <span class="t c">AD-C5</span>
+  DeleteComboDialog.tsx     typed confirm (not window.confirm)           <span class="t c">AD-C5</span>
+queries/admin-combos.ts     useAdminCombos / Create / Update / ToggleActive / Delete
+lib/combo-schema.ts         THE one Zod schema — mirrors the server validator
+<span class="dead">🎲 Random combo · strikethrough old price · dup RawCombo/ComboRaw types</span>  ← not ported</pre>
+</section>
+
+<section id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>State ownership + the product dependency</h2></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Data</th><th>Kind</th><th>Owner</th></tr></thead>
+    <tbody>
+      <tr><td>combo list</td><td>server</td><td>Query <code>['admin','combos']</code>, staleTime 30 s</td></tr>
+      <tr><td>product list (picker + join)</td><td>server</td><td>Query <code>['admin','products']</code> — <b>the same key F-27's page uses</b></td></tr>
+      <tr><td>picker search / list search</td><td>URL</td><td><code>?pq=</code> / <code>?q=</code> — FE rule 2</td></tr>
+      <tr><td>scalar form fields</td><td>form</td><td>RHF + Zod</td></tr>
+      <tr><td><b>selected items</b> (product_id → qty)</td><td>form</td><td>a <code>Record&lt;string,number&gt;</code> map — <b>not useFieldArray</b></td></tr>
+    </tbody>
+  </table></div>
+  <div class="golden">
+    <p><b>Why a map, not <code>useFieldArray</code>:</b> toggling/de-duping is O(1) and duplicate
+    <code>product_id</code>s become <b>structurally impossible</b>. The reference made this call and
+    it's correct; we keep it and validate the map at submit against the shared Zod schema.</p>
+  </div>
+  <h3>What happens when a referenced product changes (the reference's biggest hole)</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Event</th><th>Our behavior</th></tr></thead>
+    <tbody>
+      <tr><td>renamed</td><td>chips follow (server joins the name at read)</td></tr>
+      <tr><td>price changed</td><td>combo <code>price</code> untouched; <code>retail_total</code> moves → <b>warn</b> when <code>price ≥ retail_total</code>; product write DELs <code>combos:list</code></td></tr>
+      <tr><td>soft-deleted</td><td>server marks the item <code>product_deleted:true</code>, excludes it from <code>retail_total</code>; a <b>warning chip</b> names it, not a raw UUID; the modal shows it for explicit removal</td></tr>
+      <tr><td>hard-deleted</td><td>blocked by <code>combo_items.product_id</code> RESTRICT → surfaced as <code>409 PRODUCT_IN_USE</code> with a combo count</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>BE contract</h2></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Route</th><th>Auth</th><th>Task</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><code>GET /combos/all</code></td><td>manager+</td><td>AD-C1</td><td><b>New.</b> Management read — all combos incl. <code>is_active=0</code>, uncached, <b>items server-joined</b>.</td></tr>
+      <tr><td>2</td><td><code>GET /combos</code></td><td>public</td><td>C-3</td><td>Customer read — active only, cached; ids-only (owned by customer_menu plan).</td></tr>
+      <tr><td>3</td><td><code>GET /products/all</code></td><td>manager+</td><td>AD-P1</td><td>Picker + join. <b>Owned by F-27</b>.</td></tr>
+      <tr><td>4</td><td><code>POST /combos</code></td><td>manager+</td><td>AD-C2</td><td>Create; header + items <b>in one transaction</b>; full object 201.</td></tr>
+      <tr><td>5</td><td><code>PATCH /combos/:id</code></td><td>manager+</td><td>AD-C2</td><td>Update; items replace-all in tx; <b>omitted scalars preserved</b>.</td></tr>
+      <tr><td>6</td><td><code>PATCH /combos/:id/active</code></td><td>manager+</td><td>AD-C3</td><td><b>New.</b> Hide/show — the ref had no way to take a combo off the menu.</td></tr>
+      <tr><td>7</td><td><code>DELETE /combos/:id</code></td><td><b>admin+</b></td><td>AD-C3</td><td>Soft delete; existence check (404) + <code>409 COMBO_IN_USE</code>.</td></tr>
+      <tr><td>8</td><td><code>POST /files/upload</code></td><td>manager+</td><td>AD-P4</td><td>Combo image — same endpoint as products (owned by F-27).</td></tr>
+    </tbody>
+  </table></div>
+  <p>One <b>shared validator</b> for create + update: <code>name</code> required, <code>price ≥ 1</code>,
+  <code>items</code> min 2. The reference let create/update drift, accepting a price-0 zero-item combo
+  it then refused to edit.</p>
+
+  <h3>Schema (no new tables — <code>DB_SCHEMA.md §4.1</code>)</h3>
+  <div class="schema">
+    <div class="tbl"><div class="tname">combos</div><ul>
+      <li><b>id</b> · <b>name</b> · <b>description</b></li><li><b>price</b> NOT NULL</li>
+      <li><b>image_path</b> · <b>is_active</b></li><li><b>category_id</b> NULL SET NULL</li><li>sort_order · soft-del</li>
+    </ul></div>
+    <div class="tbl"><div class="tname">combo_items</div><ul>
+      <li><b>combo_id</b> FK CASCADE</li><li><b>product_id</b> FK <b>RESTRICT</b></li>
+      <li><b>quantity</b> CHECK &gt; 0</li><li>no soft delete (replaced on edit)</li>
+    </ul></div>
+  </div>
+  <div class="flag"><p><b>✅ RESOLVED (owner) — flag = <code>is_active</code></b>, not <code>is_available</code>
+  (both pages consume the same endpoint). <code>DB_SCHEMA.md §4.1</code> gets corrected in AD-C1.</p></div>
+
+  <h3>Cache map</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Write</th><th>DEL keys</th></tr></thead>
+    <tbody>
+      <tr><td>combo create / update / delete / active-toggle</td><td><code>combos:list</code></td></tr>
+      <tr><td><b>product</b> write (F-27) — <b>new cross-rule</b></td><td><code>products:list</code> · <code>categories:list</code> · <code>product:&lt;id&gt;</code> · <b><code>combos:list</code></b></td></tr>
+    </tbody>
+  </table></div>
+  <p>The second row is load-bearing and new: a product name/price change alters what every combo
+  displays and is worth, so a product write must evict <code>combos:list</code> too. Recorded in both plans.</p>
+
+  <h3>Wire shape — <code>GET /combos/all</code> (items carry a server-side join)</h3>
+  <pre class="diagram">[ { "id":"cb1…", "name":"Suất Đầy Đủ Trứng Chín", "price":30000,
+    "is_active":true, "category_id":null, "image_path":null,
+    "retail_total":30000,                          ← computed, not a column
+    "items":[
+      { "product_id":"p9…", "product_name":"Bánh Trứng Chín", "unit_price":9000,
+        "quantity":1, "product_deleted":false },
+      { "product_id":"p4…", "product_name":"Bánh Cuốn Thịt", "unit_price":4000,
+        "quantity":3, "product_deleted":false },
+      { "product_id":"pg…", "product_name":"Giò", "unit_price":9000,
+        "quantity":1, "product_deleted":false } ] } ]
+   savings = retail_total − price = 0 → UI shows "—" (owner-locked seed price)</pre>
+  <p>The <b>customer</b> <code>GET /combos</code> stays ids-only; this admin read carries the join so
+  the table renders correctly even when a product is gone — a deliberate, documented divergence (§09).</p>
+</section>
+
+<section id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Dataflow</h2></div>
+  <div class="flow">
+    <div class="fnode"><span class="fk">page mount</span><b>2 queries</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">combos</span><b>GET /combos/all</b></div>
+    <div class="fnode"><span class="fk">products</span><b>GET /products/all</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">join for picker</span><b>productMap by id</b></div>
+  </div>
+  <p><b>Write path</b> — header + items ride one transaction; a failed item rolls the whole write back
+  (the ref <code>slog.Warn</code>-ed and continued, so a combo could save with items missing):</p>
+  <div class="flow">
+    <div class="fnode"><span class="fk">modal</span><b>POST/PATCH</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">tx</span><b>combo + items</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">DEL</span><b>combos:list</b></div><span class="farrow">→</span>
+    <div class="fnode"><span class="fk">next fetch</span><b>/menu ComboSection</b></div>
+  </div>
+  <p style="font-family:var(--mono);font-size:0.78rem;color:var(--muted)">Pull-only, no SSE. At order
+  time a combo expands into a ₫0 header row + child rows (<code>combo_ref_id</code>) with
+  server-snapshotted prices — a later edit never rewrites a placed order.</p>
+</section>
+
+<section id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Behaviors — the AC</h2></div>
+  <div class="bgrid">
+    <div class="bcard"><span class="bn">B1</span><span class="bt">Manager builds; only admin deletes</span><p><code>Xoá</code> hidden/disabled below admin.</p></div>
+    <div class="bcard"><span class="bn">B2</span><span class="bt">A combo needs ≥ 2 items</span><p>Client <i>and</i> server, on both create and update (ref: update only).</p></div>
+    <div class="bcard"><span class="bn">B3</span><span class="bt">Picker de-dups by id, not name</span><p>Searchable (<code>?pq=</code>); ref de-duped by name so same-named products were unpickable.</p></div>
+    <div class="bcard"><span class="bn">B4</span><span class="bt">Unavailable products marked</span><p>Still selectable, with a warning; ref offered them indistinguishably.</p></div>
+    <div class="bcard"><span class="bn">B5</span><span class="bt">Price manual; system advises</span><p><code>Tổng giá lẻ</code> + 90% suggestion + green <code>✓ Tiết kiệm</code> when &gt; 0; <b>warn</b> when <code>price ≥ retail</code>.</p></div>
+    <div class="bcard"><span class="bn">B6</span><span class="bt">Active toggle</span><p>Hide a combo from the menu in one click — a capability the ref lacked entirely.</p></div>
+    <div class="bcard"><span class="bn">B7</span><span class="bt">Delete guarded twice</span><p>Typed dialog + <code>409 COMBO_IN_USE</code>; unknown id → 404, not a cheerful 204.</p></div>
+    <div class="bcard"><span class="bn">B8</span><span class="bt">Edit: replace-all items, preserve scalars</span><p>Editing the name must not erase image/category (ref's bug 2).</p></div>
+    <div class="bcard"><span class="bn">B9</span><span class="bt">Chips tell the truth</span><p><code>Tên ×qty</code> from the join; a deleted product renders a warning chip, never a raw UUID.</p></div>
+    <div class="bcard"><span class="bn">B10</span><span class="bt">Prices via formatVND()</span><p>Normalised to <code>30.000 đ</code>; corpus was inconsistent.</p></div>
+    <div class="bcard"><span class="bn">B11</span><span class="bt">VN-first copy</span><p>"+ Thêm combo", "(N món đã chọn)", "Tổng giá lẻ", "Giá combo *", "Lưu combo", "Tiết kiệm".</p></div>
+    <div class="bcard"><span class="bn">B12</span><span class="bt">Worked example</span><p>Suất Đầy Đủ Trứng Chín · Giá lẻ 30.000 · Giá combo 30.000 · Tiết kiệm <b>—</b>.</p></div>
+  </div>
+</section>
+
+<section id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Reference defects designed out</h2></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Ref finding</th><th>Countermeasure</th></tr></thead>
+    <tbody>
+      <tr><td>🟠 Management table reads the available-only endpoint → a hidden combo is invisible & uneditable</td><td><code>GET /combos/all</code> (manager+)</td></tr>
+      <tr><td>🟠 <code>PATCH</code> NULLs <code>image_path</code>+<code>category_id</code> on every edit</td><td>omitted scalars preserved; regression AC</td></tr>
+      <tr><td>🟡 Item inserts non-transactional, errors swallowed → save with items missing / edit loses items</td><td>header + items in one tx; errors returned</td></tr>
+      <tr><td>🟡 Create/update validation disagree (price-0, zero-item accepted on create)</td><td>one shared validator</td></tr>
+      <tr><td>No availability toggle exists at all — <code>is_available</code> a dead field</td><td><code>PATCH /:id/active</code> + a real toggle</td></tr>
+      <tr><td><code>DELETE</code> no existence check (unknown id → 204) + no in-use guard</td><td>404 + <code>409 COMBO_IN_USE</code></td></tr>
+      <tr><td>Product deleted under a combo → raw UUID chips, wrong Giá lẻ, invisible in modal, silently re-saved</td><td>server join + <code>product_deleted</code> + warning chip + explicit removal</td></tr>
+      <tr><td>Product price change silently makes a combo non-saving; Tiết kiệm just shows —</td><td>server <code>retail_total</code>; warn when <code>price ≥ retail</code></td></tr>
+      <tr><td>Product writes never invalidated <code>combos:list</code></td><td>product writes DEL <code>combos:list</code></td></tr>
+      <tr><td>Picker de-dups by name; offers unavailable products indistinguishably</td><td>de-dup by id; mark unavailable</td></tr>
+      <tr><td>No error branch on either query — a failed fetch renders "Chưa có combo nào"</td><td>explicit error branch (table + picker)</td></tr>
+      <tr><td>Products query ungated → UUID chips + — prices during load</td><td>table no longer depends on it; picker has own branches</td></tr>
+      <tr><td>Bare loading text; blank screen while auth resolves; no delete pending; one generic error toast</td><td>skeletons; per-row pending; status-mapped errors</td></tr>
+      <tr><td><code>window.confirm()</code>; custom SVG checkbox (a11y)</td><td>design-system dialog + real controls</td></tr>
+      <tr><td>🎲 Random combo toasts "Đã tạo 3" even when 2 of 3 failed</td><td>not ported; seeding is C-1 SQL</td></tr>
+      <tr><td>Duplicate <code>RawCombo</code>/<code>ComboRaw</code> wire types</td><td>one shared type</td></tr>
+      <tr><td><b>Wireframe draft inventions</b> — <code>_components/*</code>, picker search, strikethrough old price, stored <code>retail_sum</code>/<code>savings</code>, <code>PUT</code>, 409-on-dup-name</td><td>none exist — recorded so nobody builds against the draft</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="s8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Task mapping</h2></div>
+  <div class="strip">
+    <span class="snode">C-1 schema+seed</span><span class="sarrow">→</span>
+    <span class="snode adc">AD-C1 read+join</span><span class="sarrow">→</span>
+    <span class="snode adc">AD-C2 create/update (tx)</span><span class="sarrow">→</span>
+    <span class="snode adc">AD-C3 active/delete</span><span class="sarrow">→</span>
+    <span class="snode adc">AD-C4 table</span><span class="sarrow">→</span>
+    <span class="snode adc">AD-C5 modal+picker</span>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Row</th><th>Slice</th><th>Receipt</th></tr></thead>
+    <tbody>
+      <tr><td>AD-C1</td><td>server join + <code>is_active</code> rename</td><td>curl: manager 200/cashier 403; a soft-deleted product still renders</td></tr>
+      <tr><td>AD-C2</td><td>create+update in tx + validator + invalidation</td><td>curl: 201 full object; forced item failure rolls back; PATCH name-only preserves image</td></tr>
+      <tr><td>AD-C3</td><td>active toggle + guarded delete + PRODUCT_IN_USE</td><td>curl: toggle removes from <code>GET /combos</code>; delete 409/404</td></tr>
+      <tr><td>AD-C4 / C5</td><td>FE table + chips + savings cell; modal + picker + dialog</td><td>screenshots per branch + a ≥2-item round-trip</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="s9">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Decisions &amp; flags</h2></div>
+  <div class="golden">
+    <p><b>✅ Management read carries a server-side join</b> while the customer read stays ids-only —
+    the admin table must stay correct even when a product is gone.</p>
+    <p><b>✅ Combo price stays manual</b> with a 90%-of-retail suggestion.</p>
+    <p><b>✅ Items map, not useFieldArray</b> — duplicates impossible.</p>
+    <p><b>✅ Delete = admin+, everything else manager+.</b></p>
+    <p><b>✅ RESOLVED (owner) — <code>is_active</code></b>; and <b>worked example = Suất Đầy Đủ at
+    30.000</b> (= retail; savings shows <code>—</code> on seed, column kept for discounted combos).</p>
+  </div>
+  <div class="flag">
+    <p><b>⚠ Follow-up (F-15-owned):</b> the menu plan's illustrative combo (<code>55000</code>) should be
+    corrected to <code>30000</code> so the one worked example stays consistent across every doc.</p>
+    <p><b>💡</b> no per-id combo endpoint exists (<code>/menu/combo/:id</code> pulls the whole list) —
+    belongs to the C-5 detail task. <b>❓</b> combo images: contract supports them, owner to confirm intent.</p>
+  </div>
+  <h3>Verify plan</h3>
+  <p>BE: role matrix; create/update in a tx with a <b>forced item failure proving rollback</b>;
+  PATCH-name-only preserving <code>image_path</code>; the validator rejecting <code>items&lt;2</code>
+  on both paths; active toggle + guarded delete + <code>PRODUCT_IN_USE</code>; DEL proof for
+  <code>combos:list</code> on product writes. FE: a screenshot per branch (table + picker), the
+  deleted-product warning chip, the <code>price ≥ retail</code> warning, a ≥2-item round-trip.</p>
+</section>
+
+<footer>
+  Written for F-28 · 2026-07-20 · a snapshot of <a href="admin_combos_PLAN.md">admin_combos_PLAN.md</a>,
+  which wins on any conflict. The product contract lives in
+  <a href="../admin_products/admin_products_PLAN.md">admin_products_PLAN.md</a> and is cross-linked, never
+  re-derived. Components follow <a href="../../diagrams/design-system.html">design-system.html</a> (F-7 neutral).
+</footer>
+
+</div>
+</body>
+</html>
