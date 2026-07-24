@@ -245,7 +245,7 @@ is planned. Verdicts for unplanned pages are **proposals** — confirm at planni
 
 | slug | plan set | BE plan |
 |---|---|---|
-| `customer_menu` | ✅ **F-15** — 4 docs | ✅ **F-30** — `customer_menu_BE_PLAN.md`, first one written; 6-slice spine, owns catalog + order-create |
+| `customer_menu` | ✅ **F-15** — 4 docs · **+ `_FE_PLAN.md` (F-31)**, the §12 doc kind | ✅ **F-30** — `customer_menu_BE_PLAN.md`, first one written; 6-slice spine, owns catalog + order-create |
 | `customer_orders_tracking` | ✅ **F-25** — 4 docs; the merged `/orders` screen (live tracking + history + detail) | ⬜ **needed** — SSE/monitor-stream contract, order state machine, `canCancel`; the biggest un-planned backend |
 | `customer_favourites` | ✅ **F-24** — 4 docs | — rides the menu catalog contract |
 | `customer_order_detail` | ⛔ **F-19** — `/order/:id` merged into `/orders` by owner ruling (2026-07-19). Folder holds a stub + `_SUPPLEMENT.md` only (owns the deep-link gap F02, dropped qty stepper F03, stale redirect); **not** an unfinished set | — merged away |
@@ -367,6 +367,58 @@ of that contract) → `customer_checkout` (**blocked** on `orders.guest_id`, FIN
 `admin_overview` (rollups read everything above — cheapest last).
 
 A page with a BE plan is marked `✅` in §10's BE-plan column.
+
+---
+
+## 12. Optional 6th doc — `<page>_FE_PLAN.md` (the frontend build spine)
+
+Introduced by **F-31** for `customer_menu`, the exact mirror of §11. `_PLAN.md §4` answers
+**WHAT** the page does (file map, state ownership, loading tiers, numbered behaviors); a
+`_FE_PLAN.md` answers **HOW it gets built** — slices, token/copy/store/query contracts,
+component prop contracts, and per-slice screenshot receipts.
+
+- **Not part of the standard set**, same as §11 — most pages never need one.
+- **Still subordinate to `<page>_PLAN.md`.** Same naming law, same registration duty.
+- Route FE build tasks at it in `CONTEXT_MAP §Routing` ("New FE page/component").
+
+### 12.1 When a page needs one — the test
+
+Write a `_FE_PLAN.md` if **any** of these is true. Otherwise `_PLAN.md §4` is enough.
+
+| Trigger | Why §4 can't carry it |
+|---|---|
+| **≥ 3 build slices** — the page can't ship in one session | the slice DAG *is* the plan (F-31 has six; C-4 splits) |
+| **Owns a client store** — persisted Zustand state, not just `useState` | store shape + `partialize` + migration is build detail, not behavior |
+| **A non-obvious client algorithm** — payload building, id/dedup schemes, derivations | "easy to get wrong" deserves prose (F-31 §7) |
+| **Owns a shell or token scope** — a layout other pages render inside | unowned shells block the first session (F-31 §10 F36) |
+| **A cross-page handoff with ordering constraints** — post-mutation navigation, resumed sessions | the bug is in the *sequence*, which a behavior list doesn't show |
+
+A page that only renders another page's contract with local `useState` is **not** a
+trigger — cross-link the plan that owns the shared surface instead.
+
+### 12.2 Structure
+
+Mirror F-31's section order (the FE analogue of §11.2):
+
+```
+1 Scope            — the surfaces this page's frontend must ship
+2 Alignment        — what governs the build (read, don't restate)
+3 Build spine      — the ordered slices + their dependency edges (incl. the BE-receipt edge)
+4 Foundation       — 4.1 route files · 4.2 tokens + copy constants · 4.3 api/types/query layer
+5 State layer      — 5.1 file inventory (the scope-contract skeleton) · 5.2 store contracts ·
+                     5.3 derivations (computed, never stored)
+6 Component layer  — 6.1 inventory + prop contracts + RSC/client split · 6.2 render-branch matrix
+7 The hard part    — the one client algorithm most likely to be got wrong
+8 Task mapping     — the TASKS.md rows this build needs
+9 Verify plan      — the screenshot/test receipt each slice owes
+10 Findings raised  — → FINDINGS.md rows
+```
+
+§5.1 carries the same weight as §11.2's: it *is* the scope contract for every FE task.
+
+**The one edge §11 doesn't have:** an FE slice that types `types.ts` is blocked on the BE
+slice's **curl receipt** (`ARCHITECTURE §5` gate 8 — the receipt is the contract). Draw
+that edge in §3 or a session will guess a wire shape.
 
 ---
 

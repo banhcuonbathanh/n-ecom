@@ -39,35 +39,59 @@
 | F-29 | Admin-toppings page build plan (`/admin/toppings` — topping CRUD: the paid add-ons **and** the ₫0 nhân fillings the customer menu renders as pills) from `reference/…/admin/admin_toppings` + the `admin_main_topping` wireframe set — 4-doc set per `PAGE_PLAN_GUIDE.md` in `harness/plans/admin_toppings/` (`admin_toppings_PLAN.md` + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`) reconciled with DB_SCHEMA §4.1 `toppings`/`product_toppings` + §4.3 snapshot rule, BE_STATE tx policy + error enum, FE_STATE state/cache/3-tier-loading rules; cross-links the customer-menu plan (shared catalog cache map) and `admin_products` F-27 (which owns the product↔topping picker — not re-derived); mockup on the **neutral F-7 `design-system.html` tokens** (admin surface, not the customer dark/orange shell) | F-16, F-15, F-9, F-7 | Folder holds `admin_toppings_PLAN.md` (source of truth: 5-endpoint contract with the public/`all` role-scoped split, cache fan-out incl. every joined `product:<id>`, wire shapes in DB names, 16-behavior spec, AD-TOP-1…3 task mapping) + 3 HTML companions rendering both themes; **12 reference defects designed out** — the N+1 whole-catalog fetch for one column → server-joined `products[]`, the unlgated second query's "Chưa gắn sản phẩm" flash, bare-text loading → skeleton, unused delete-pending → per-row disable, missing `product:<id>` invalidation → 5-min stale price, dead 409 branch → real `UNIQUE(name)`, stale-modal RHF reset, JS `confirm()` → real dialog, hardcoded `is_available=1` on create, orphaned junction rows → purge in tx, raw `ExecContext` → one sqlc stmt; ⚠ flags a `UNIQUE(name)` DB_SCHEMA amendment (not written here — one fact one home); zero rule duplication (links owning docs); indexes updated per Hard Rule 6 | ✅ | VERIFICATION.md 2026-07-19 |
 | F-30 | Customer-menu **backend build plan** — `harness/plans/customer_menu/customer_menu_BE_PLAN.md`: the HOW under the menu plan's §3 contract (build spine + 6 slices, migration/seed/sqlc-query inventory, package + service/tx contracts, cache-key ownership, error map incl. the new `ORDER_CLOSED`, route + DTO layer, the combo-expansion algorithm, task-row mapping, per-slice curl receipts), reconciled with `BE_STATE.md`, `BE_PLAYBOOK.md`, `DB_SCHEMA.md §4.1/§4.2/§4.3/§7/§8`, `ARCHITECTURE.md §2/§4`, `OVERALL_PLAN.md §3.4/§3.6/§3.7` | F-15, F-16, F-11, F-8 | MD is a pure delta on the contract (links, never restates §3 or the owning rule docs); every slice maps to a TASKS.md row (existing or drafted-for-registration) with a named receipt; every doc-vs-doc conflict found gets a plan default **and** an `F#` row in FINDINGS.md; indexes updated per Hard Rule 6 | ✅ | VERIFICATION.md 2026-07-24 |
 | F-23 | Admin-staff page build plan from `reference/…/admin/admin_staff` — 4-doc set per `PAGE_PLAN_GUIDE.md` in `harness/plans/admin_staff/` (`admin_staff_PLAN.md` + `_plan.html` + `_how-it-works.html` + `_mockup-1.html`) reconciled with DB_SCHEMA §4.4 `staff` (5-value role enum + soft-delete×UNIQUE rename rule), BE_STATE §4 9-code error enum, BE_PLAYBOOK sqlc pipeline, FE_STATE URL-owned filter rule; mockup uses the **neutral F-7 `design-system.html` tokens** (admin surface, not the customer dark/orange shell) | F-16, F-9, F-7 | Folder holds `admin_staff_PLAN.md` (source of truth: 6-endpoint FE+BE contract, RBAC hierarchy guards, behavior spec, TASKS-row mapping, defects designed out) + 3 HTML companions rendering both themes; every reference flag (dead self-guard, unused filter params, 100-row cap, no-error-branch drawer, loading≡empty≡no-match conflation, unrevoked refresh tokens, `performance_score` stub) gets an explicit adopt/fix/drop ruling; reference error codes mapped onto our 9-code enum; zero rule duplication (links owning docs); indexes updated per Hard Rule 6 | ✅ | VERIFICATION.md 2026-07-21 |
-| F-31 | Customer-menu **frontend build plan** — `harness/plans/customer_menu/customer_menu_FE_PLAN.md`: the HOW under the menu plan's §4 WHAT (build spine + slices, exact file inventory as the scope-contract skeleton, component/prop contracts, token + copy constants, store shapes, query/hook layer, the payload-builder algorithm, per-slice screenshot receipts), the FE twin of F-30; + `PAGE_PLAN_GUIDE.md §12` registering the `_FE_PLAN.md` doc kind | F-15, F-30, F-5, F-12 | MD is a pure delta on the contract (links, never restates §4 or the owning rule docs); every slice maps to a TASKS.md row with a named receipt; the three decisions that gate C-4 (theme F01, deep-link F02, money glyph F12) are named with a plan default so no slice is blocked; `PAGE_PLAN_GUIDE §12` defines when a page needs one; indexes updated per Hard Rule 6 | ⬜ | |
-| F-32 | Build-readiness reconciliation — drain the drift the F-30/F-31 plans exposed: rewrite C-1/C-3/O-1 ACs to the restaurant plans, register the two unregistered rows (T-1, O-0), write **F27**'s `orders.guest_id` into `DB_SCHEMA.md §4.3` (the amendment the BE plan requested but does not own), and add the F-9-pivot supersession note to `PLAN.md §Domains/§Business rules` (Hard Rule 5) | F-30, F-31 | No TASKS.md row contradicts its owning plan (C-1 menu-complete seed, C-3 combos, O-1 `order_items`); T-1 + O-0 exist as rows with deps + ACs; `DB_SCHEMA §4.3` carries `orders.guest_id` → F27 closes; `PLAN.md` §Domains/§Business rules carry dated supersession notes pointing at the restaurant plans; findings updated | ⬜ | |
+| F-31 | Customer-menu **frontend build plan** — `harness/plans/customer_menu/customer_menu_FE_PLAN.md`: the HOW under the menu plan's §4 WHAT (build spine + slices, exact file inventory as the scope-contract skeleton, component/prop contracts, token + copy constants, store shapes, query/hook layer, the payload-builder algorithm, per-slice screenshot receipts), the FE twin of F-30; + `PAGE_PLAN_GUIDE.md §12` registering the `_FE_PLAN.md` doc kind | F-15, F-30, F-5, F-12 | MD is a pure delta on the contract (links, never restates §4 or the owning rule docs); every slice maps to a TASKS.md row with a named receipt; the three decisions that gate C-4 (theme F01, deep-link F02, money glyph F12) are named with a plan default so no slice is blocked; `PAGE_PLAN_GUIDE §12` defines when a page needs one; indexes updated per Hard Rule 6 | ✅ | VERIFICATION.md 2026-07-24 |
+| F-32 | Build-readiness reconciliation — drain the drift the F-30/F-31 plans exposed: rewrite C-1/C-3/O-1 ACs to the restaurant plans, register the two unregistered rows (T-1, O-0), write **F27**'s `orders.guest_id` into `DB_SCHEMA.md §4.3` (the amendment the BE plan requested but does not own), and add the F-9-pivot supersession note to `PLAN.md §Domains/§Business rules` (Hard Rule 5) | F-30, F-31 | No TASKS.md row contradicts its owning plan (C-1 menu-complete seed, C-3 combos, O-1 `order_items`); T-1 + O-0 exist as rows with deps + ACs; `DB_SCHEMA §4.3` carries `orders.guest_id` → F27 closes; `PLAN.md` §Domains/§Business rules carry dated supersession notes pointing at the restaurant plans; findings updated | ✅ | VERIFICATION.md 2026-07-24 |
 
 ## Phase 1 — Catalog
 
-| ID | Task | Deps | AC | Status | Receipt |
-|---|---|---|---|---|---|
-| C-1 | Catalog schema: products + categories migration + SQL seed script | F-3 | migrate up/down clean; seed inserts ≥ 10 products across ≥ 3 categories | ⬜ | |
-| C-2 | BE: product list (paging + category filter) + product detail endpoints | C-1, F-4 | curl transcripts: list page 2, filtered list, detail, 404 in error envelope | ⬜ | |
-| C-3 | BE: category list + product search (LIKE-based v1) | C-2 | curl: categories; search hits + empty result | ⬜ | |
-| C-4 | FE: product list page (grid, category filter, paging) | C-2 | screenshot: grid renders seeded products; filter works | ⬜ | |
-| C-5 | FE: product detail page | C-4 | screenshot: detail renders name/price/stock from API | ⬜ | |
-
-## Phase 2 — Cart & Checkout
+> **Reconciled 2026-07-24 (F-32)** against `plans/customer_menu/customer_menu_BE_PLAN.md §8`
+> and `…_FE_PLAN.md §8`. The pre-pivot generic-shop wording (paging, category filter,
+> LIKE search, stock) is gone — this phase builds the **restaurant menu**: no query
+> params (client-side filtering), combos instead of search, C-4 split as its plan predicted.
 
 | ID | Task | Deps | AC | Status | Receipt |
 |---|---|---|---|---|---|
-| CC-1 | Cart schema (guest cart via cookie token) migration | C-1 | migrate up/down clean; token uniqueness enforced | ⬜ | |
-| CC-2 | BE: cart endpoints (get / add / update qty / remove) | CC-1 | curl: full add→update→remove round-trip; stock-cap rejection in envelope | ⬜ | |
-| CC-3 | FE: cart page + add-to-cart from product pages | CC-2, C-5 | screenshot: badge count updates; cart page edits quantities | ⬜ | |
-| CC-4 | BE: checkout — address + order placement (price snapshot, atomic stock decrement) | CC-2, O-1 | curl: place order → order id; stock decremented; insufficient-stock rejection | ⬜ | |
-| CC-5 | FE: checkout flow (address form → place order → confirmation) | CC-4 | screenshot: order placed from UI, confirmation shows order id | ⬜ | |
+| C-1 | Catalog schema (6 tables) migration + **menu-complete** seed (`BE_PLAN §4.1/§4.2`) | F-3 | migrate up/down/up clean; seed counts prove ≥ 4 categories incl. **CANH** w/ distinct `sort_order`, ≥ 10 products incl. **both canh variants** (₫0), the ₫0 nhân topping set + junction rows giving one product 2 nhân / one 1 / one none, ≥ 2 combos, ≥ 1 `tables` row (Bàn 04, dev `qr_token`); **the canh-free-template proof query returns 0 rows** (F30); idempotent re-run | ⬜ | |
+| C-2 | BE: `GET /categories` + `GET /products` + `GET /products/:id` + cache-aside (`BE_PLAN` BE-M2) | C-1, F-4 | curl: all three + `/products/<unknown>` → 404 envelope; Redis miss→SET(300 s)→hit; one write → DEL → next read fresh; `docker stop cache` → reads still 200 (fail-open); `BE_SUMMARY.md` opened | ⬜ | |
+| C-3 | BE: `GET /combos` + `GET /combos/:id` (**repurposed** from "category list + product search" — categories moved to C-2, search is client-side) | C-2 | curl: `/combos` showing **ids-only** `combo_items`; `/combos/:id`; unknown id → 404 envelope | ⬜ | |
+| C-4a | FE: customer shell + menu route (`FE_PLAN` FE-M1) — `(customer)/layout.tsx` token scope, RSC prefetch of the 3 catalog queries, layout-shaped `loading`/`error`, the api/types/query layer **written from the C-2/C-3 receipts** | C-2, C-3, F-2, F-4 | screenshots: zero-spinner first paint (warm), streamed skeleton (throttled), error branch (BE stopped); `npm run build && npm run lint` green | ⬜ | |
+| C-4b | FE: sectioned menu (`FE_PLAN` FE-M2) — header, scroll-spy nav, product/combo cards, nhân pills, all 5 render branches | C-4a | screenshots (390×844): sectioned menu on the seed, tab-tap scroll-spy, the 3 nhân states, "Hết" overlay, empty category; **zero raw hex** in `components/menu/` | ⬜ | |
+| C-5 | FE: detail pages `/menu/product/[id]` + `/menu/combo/[id]` + prefetch-on-hover (`FE_PLAN` FE-M5) | C-4b | screenshots: both pages from a cold URL + a warm hover-prefetch navigation | ⬜ | |
+
+## Phase T — Table & guest session (registered by F-32; design in `customer_menu_BE_PLAN.md` + `…_FE_PLAN.md`)
+
+> The phase every doc referred to as "the T phase" without it having a home here.
+
+| ID | Task | Deps | AC | Status | Receipt |
+|---|---|---|---|---|---|
+| T-1 | BE: `tables` + `order_sequences` migration, guest-JWT mint (QR + online) with httpOnly cookie, per-IP rate limit on both mints, guest auth middleware (`BE_PLAN` BE-M4) | C-1, F-4 | curl: `Set-Cookie` httpOnly + **no body token** on both mints; bad `qr_token` → 404 envelope; burst → 429 envelope; a protected route without the cookie → 401 | ⬜ | |
+| T-2 | FE: cart store + on-page cart surfaces (`FE_PLAN` FE-M4) — `cart.store.ts` (persisted, versioned, `partialize`), `OrderSummary` line editor + canh stepper + rollup, `CartBottomBar`, the canh gate | C-4b | screenshots: same dish + different nhân ⇒ **two rows**; rollup table; canh gate (dim → toast → auto-open → shake); reload keeps the note and drops the lines; **store unit tests** for the line-id algebra (`FE_PLAN §7.1`) | ⬜ | |
+
+## Phase 2 — Cart & Checkout (⛔ **superseded 2026-07-24 by the F-9 pivot** — see F-32)
+
+> The server-side guest cart these rows describe does not exist in the restaurant scope:
+> the cart is **FE-only client state** (`customer_menu_PLAN.md §4.2`) and has no backend
+> surface, and orders decrement no stock (`OVERALL_PLAN.md §3.7` rule 3). Rows kept as the
+> record, not as work. Their real successors: **T-2** (cart), **O-0** (order create),
+> **O-0F** (confirm/append). Online-path checkout (`/checkout`, name+phone) is unplanned —
+> `PAGE_PLAN_GUIDE §10` lists `customer_checkout` as ⬜ and 🚨 blocked on F27.
+
+| ID | Task | Deps | AC | Status | Receipt |
+|---|---|---|---|---|---|
+| CC-1 | ~~Cart schema (guest cart via cookie token) migration~~ | — | superseded — no cart tables | ⛔ | |
+| CC-2 | ~~BE: cart endpoints~~ | — | superseded — cart never crosses the wire | ⛔ | |
+| CC-3 | ~~FE: cart page + add-to-cart~~ | — | superseded by **T-2** (on-page `OrderSummary`, not a cart page) | ⛔ | |
+| CC-4 | ~~BE: checkout — order placement w/ atomic stock decrement~~ | — | superseded by **O-0** (stock-free; snapshot + combo expansion) | ⛔ | |
+| CC-5 | ~~FE: checkout flow~~ | — | superseded by **O-0F** (QR path); the online `/checkout` page is unplanned | ⛔ | |
 
 ## Phase 3 — Orders (Payment ⏸ deferred)
 
 | ID | Task | Deps | AC | Status | Receipt |
 |---|---|---|---|---|---|
-| O-1 | Orders schema: orders + order_lines + status enum migration | C-1 | migrate up/down clean; lifecycle enum matches PLAN.md §Business rules | ⬜ | |
-| O-2 | BE: my-orders list + order detail + cancel (window per rule 2, stock restore) | O-1, CC-4 | curl: list, detail, cancel `placed` OK, cancel `shipped` rejected in envelope | ⬜ | |
+| O-0 | BE: order create + append — `POST /orders`, `POST /orders/:id/items` (`BE_PLAN` BE-M6): combo expansion, price/name snapshot, in-tx recalc, order-number sequence, ownership gates | T-1, O-1 | curl: the worked example → **201 full object incl. `order_number`**, 5 `order_items` rows matching `DB_SCHEMA §7`, `total_amount = 33000`; append round-trip; `403` on a foreign table; `409 ORDER_CLOSED` on a delivered order; `422` + `details[]` on an 86'd product | ⬜ | |
+| O-0F | FE: order confirm + append (`FE_PLAN` FE-M6) — `TableConfirmModal` reading `cart.orderNote`, the one `buildOrderItemsPayload()`, the post-201 handoff, `?add_to_order=` append mode | T-2, T-1, O-0 | screenshots: **note round-trip** (typed in OrderSummary → present in the POST body); Bàn 04 · 103.000 đ · badge 13 → 201; a `422` rendered on the offending line; append via `?add_to_order=` | ⬜ | |
+| O-1 | Orders schema: `orders` + **`order_items`** + status enum migration (`DB_SCHEMA §4.3`; **not** `order_lines`) | C-1 | migrate up/down clean; status enum matches `OVERALL_PLAN §3.7`; a combo-header row with `unit_price != 0` **rejected** by `chk_oi_item_type`; `qty_served` CHECK `0..quantity` holds | ⬜ | |
+| O-2 | BE: my-orders list + order detail + cancel (rule per F11; **no stock restore** — stock-free) | O-1, O-0 | curl: list, detail, an allowed cancel, a refused cancel in the error envelope | ⬜ | |
 | O-3 | FE: merged `/orders` screen — **static half** (history list from `ORDER_CACHE`, active-order summary + rollup, inline detail cards, the two cancels) per `plans/customer_orders_tracking/…_PLAN.md` §4. ⚠ **Split from the live half** (→ R-2): this row was one row for two ACs; live surfaces are blocked on R-1 | O-2 | screenshots: history lists cached orders; summary shows the Bàn 04 rollup (7 loại); detail shows ra/còn per dish; cancel round-trip incl. a `422 CANCEL_THRESHOLD` refusal | ⬜ | |
 | — | Payment gateway integration | ⏸ | deferred Session 0 — no gateway in v1 (COD); re-scope when phase opens | ⛔ | |
 
@@ -84,7 +108,7 @@
 |---|---|---|---|---|---|
 | A-1 | Users schema + BE register/login (bcrypt, JWT) + auth middleware | F-3 | curl: register, login → JWT, protected route 401 without / 200 with token | ⬜ | |
 | A-2 | FE: register/login pages + session handling in the API client | A-1 | screenshot: login → logged-in header state; token attached to API calls | ⬜ | |
-| A-3 | Cart merge on login + orders tied to account (order history per user) | A-1, CC-2, O-2 | curl: guest cart merges per PLAN.md rule 5; my-orders scoped to the user | ⬜ | |
+| A-3 | Guest → account claim: orders tied to an account (order history per user). ⚠ **No cart merge** — the cart never reaches the server (F-32); what carries over is the guest's *orders*, matched on `guest_id`/`table_id` | A-1, O-2 | curl: an order placed as a guest appears in my-orders after login; my-orders scoped to the user | ⬜ | |
 | — | Admin (product CRUD, order mgmt, dashboard) | ⏸ | deferred Session 0 — v1 manages products via SQL scripts | ⛔ | |
 | — | AI assistant (shopping chat) | ⏸ | deferred Session 0 | ⛔ | |
 

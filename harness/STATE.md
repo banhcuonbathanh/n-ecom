@@ -8,34 +8,60 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-30 (customer-menu **backend build plan** —
-  `plans/customer_menu/customer_menu_BE_PLAN.md`; 8 findings F26–F33, one build-blocking).
-- **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`; unchanged by F-9
-  (skeleton is identical for the restaurant scope). C-4/C-5 now read
-  `plans/customer_menu/customer_menu_PLAN.md` first; **C-1/C-2/C-3 and the T/O order rows read
-  `plans/customer_menu/customer_menu_BE_PLAN.md` first**; **F-3 and every migration task read
-  `DB_SCHEMA.md` first** (CONTEXT_MAP routing updated).
-  🚨 **F27 blocks the online-order path** until `DB_SCHEMA §4.3` gains `orders.guest_id`.
-  New ⚠ for owner: customer-shell theme = reference dark/orange (default) vs F-7
-  blue — decide before C-4 (PLAN.md §7).
+- **Status:** ✅ F-31 (customer-menu **frontend** build plan — `…/customer_menu_FE_PLAN.md`,
+  the twin of F-30) + ✅ F-32 (build-readiness reconciliation — TASKS/DB_SCHEMA/PLAN drift
+  drained). The menu page is now **plan-complete on both sides**.
+- **Next:** **F-2 (dev stack skeleton)** — unchanged, prompt ready in `PROMPTS.md`. It is the
+  first task that writes code; everything until now has been plans.
+  Routing: C-1/C-2/C-3 + T-1 + O-0 read `customer_menu_BE_PLAN.md` first; **C-4a/C-4b/C-5 +
+  T-2 + O-0F read `customer_menu_FE_PLAN.md` first**; F-3 and every migration read
+  `DB_SCHEMA.md` first (CONTEXT_MAP routing updated).
+  ⚠ **The FE spine trails the BE spine by two slices** — `fe/src/lib/api/types.ts` is written
+  from the C-2/C-3 **curl receipts** (gate 8), so C-4a cannot start before they exist.
 - **Open decisions:** ⚠ **Scope pivot** (OVERALL_PLAN.md §9.1): reference = restaurant
-  platform, adopted as north star — silence = accepted. ❓ Cancel rule + ❓ one-order-
-  per-table (OVERALL_PLAN.md §3.7) — defaults chosen, lock in when O phase opens.
-  💡 Redis policy (ARCHITECTURE.md §4) locks in at C-2 · 💡 brand hue before C-4 ·
-  💡 VN-first copy + 💡 no public staff register (OVERALL_PLAN.md §9). ⚠ `personal/
-  command.md` tracked in git despite the Session-0b personal-stays-out decision
-  (owner committed it in `dda8ccc` — say "untrack it" to fix).
-  🚨 **NEW (F-19) — order deep-link gap:** `/order/:id` was merged into `/orders`, which
-  picks its order from `activeOrderId` in the *persisted client store*; a shared link,
-  a QR re-scan on a second phone, a private tab or a cleared store then cannot reach a
-  live order. Fix recommended: `/orders?id=<uuid>`. **Decide before the `/orders` FE row
-  opens** (`plans/customer_order_detail/customer_order_detail_SUPPLEMENT.md` §1).
-  ⚠ quantity stepper `PATCH /orders/items/:id/quantity` dropped by omission (same file §2).
+  platform, adopted as north star — silence = accepted. ❓ Cancel rule ([F11](FINDINGS.md)) +
+  ❓ one-order-per-table (OVERALL_PLAN.md §3.7) — defaults chosen, lock when O opens.
+  💡 Redis policy ([F29](FINDINGS.md)) locks at C-2 · ⚠ **customer-shell theme**
+  ([F01](FINDINGS.md)) — dark/orange default, now costs **one token table** to flip, decide
+  before C-4a · 🚨 **order deep-link** ([F02](FINDINGS.md)) `/orders?id=` — decide before
+  O-0F, it removes an ordering dependency in the post-201 handoff · ⚠ money glyph
+  ([F12](FINDINGS.md)) before `formatVND()` lands at C-4a.
+  🚨 **NEW (F-31) — canh is keyed by name on the FE** ([F34](FINDINGS.md)): the FE string-matches
+  `isSoupName()` while the BE seeds a real CANH category and refuses name-matching — an admin
+  rename would break the canh gate, the double-canh guard and the payload builder at once.
+  Default: key both sides off `category_id`. Also ⚠ [F35](FINDINGS.md) `keys.ts` pre-pivot,
+  ⚠ [F36](FINDINGS.md) the customer shell now has an owner, 💡 [F37](FINDINGS.md) append-mode
+  URL-vs-store.
+  ✅ **Closed:** [F27](FINDINGS.md) — `orders.guest_id` is in `DB_SCHEMA §4.3`; the online-order
+  path is unblocked.
+  ⚠ `personal/command.md` still tracked in git ([F14](FINDINGS.md) — say "untrack it" to fix).
   Deferred: payment gateways (→ P phase), AI.
 
 ---
 
 ## Checkpoint log
+
+### 2026-07-24 — Session 21 (F-31 + F-32): the FE build plan, and draining the drift
+- Owner asked whether FE+BE could actually be built, then "close the gap only". Measured first:
+  **BE ~90 %** (F-30 is buildable), **FE ~60 %** — behavior fully specified, no build spine.
+- Done: **F-31 ✅** — `plans/customer_menu/customer_menu_FE_PLAN.md` (387 lines): six FE slices,
+  route-file inventory, the **token-scope + VN-copy layer**, api/types/query layer, the file tree
+  that *is* the scope contract, cart/favourites store contracts, component **prop contracts** +
+  RSC/client split, the 5-branch render matrix, **the payload builder** (line-id algebra, the FE
+  half of the canh contract, the post-201 handoff), task mapping, screenshot receipts. Registered
+  the doc kind as `PAGE_PLAN_GUIDE §12` (mirror of §11).
+- **4 findings — F34–F37.** Headline **F34 🚨**: the FE identifies canh by *name* while the BE
+  seeds a real CANH category — one rule keyed two ways, breakable by an admin rename. Also **F36**:
+  the dark/orange customer shell had **no owning file map** in any plan; this plan claims it.
+  `cache-key-drift` reaches ≥2 (F29 BE + F35 FE) → kaizen candidate.
+- Done: **F-32 ✅** — drift drained: C-1 (menu-complete seed AC), C-3 (→ combos), **C-4 split into
+  C-4a/C-4b**, C-5 retitled, O-1 (`order_items`), **Phase 2 ⛔ superseded** with successor pointers,
+  **Phase T created**, **T-1 · T-2 · O-0 · O-0F registered**, A-3's dangling dep fixed.
+  **F27 closed** — `orders.guest_id` written into `DB_SCHEMA §4.3`. `PLAN.md` §Domains +
+  §Business rules carry per-rule supersession notes (Hard Rule 5).
+- Receipts in VERIFICATION.md; task page `diagrams/task-F-31.html`; dashboard §R + its phase list
+  rebuilt to match the reconciled board.
+- Next: **F-2** — the first code task. FE slices wait on BE curl receipts (gate 8).
 
 ### 2026-07-24 — Session 20 (F-30): customer-menu backend build plan
 - Done: F-30 ✅ — `harness/plans/customer_menu/customer_menu_BE_PLAN.md` (521 lines): the **HOW**

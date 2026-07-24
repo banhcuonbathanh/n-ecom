@@ -19,6 +19,63 @@
 
 ## Log (newest on top)
 
+### F-31 — Customer-menu frontend build plan · 2026-07-24
+**AC:** `customer_menu_FE_PLAN.md` is a pure delta on the menu plan's §4 behavior spec (links owning docs, restates neither the behaviors nor the FE rules); every slice maps to a TASKS.md row with a named receipt; the three decisions gating C-4 (F01 theme, F02 deep-link, F12 glyph) are named with a plan default so no slice is blocked; `PAGE_PLAN_GUIDE §12` defines when a page needs one; indexes updated per Hard Rule 6.
+**Receipt:**
+```
+$ ls harness/plans/customer_menu/
+customer_menu_BE_PLAN.md
+customer_menu_FE_PLAN.md
+customer_menu_PLAN.md
+customer_menu_how-it-works.html
+customer_menu_mockup-1.html
+customer_menu_plan.html
+
+$ wc -l harness/plans/customer_menu/customer_menu_FE_PLAN.md
+     387 harness/plans/customer_menu/customer_menu_FE_PLAN.md
+
+$ python3 -c "<link checker over the 8 touched md files>"
+broken relative links: 0
+markdown table rows with wrong cell count (escaped pipes ignored): 0
+
+$ python3 -c "<HTMLParser tag-balance over the 2 touched html files>"
+harness/diagrams/task-F-31.html   : unclosed=[] errors=[]
+harness/diagrams/build-plan.html  : unclosed=[] errors=[]
+
+$ grep -c "^| F3[4-7] " harness/FINDINGS.md
+4                       # F34 canh-by-name · F35 keys.ts drift · F36 unowned shell · F37 append source
+
+$ grep -c "FE_PLAN" harness/CONTEXT_MAP.md harness/README.md harness/plans/PAGE_PLAN_GUIDE.md
+harness/CONTEXT_MAP.md:3            # routing row + inventory row + guide pointer
+harness/README.md:2
+harness/plans/PAGE_PLAN_GUIDE.md:4  # §10 backlog cell + §12 doc kind
+```
+**Result:** ✅ — 6 slices (§3) ↔ 6 task rows (§8) ↔ 6 receipt rows (§9), all cross-checked. §5.1 file tree is the scope contract for every FE task. 4 findings raised. Slice→receipt coverage verified by hand: FE-M1↔C-4a, FE-M2↔C-4b, FE-M3↔C-6, FE-M4↔T-2, FE-M5↔C-5, FE-M6↔O-0F.
+
+### F-32 — Build-readiness reconciliation · 2026-07-24
+**AC:** no TASKS.md row contradicts its owning plan; T-1 + O-0 (+ the FE twins T-2/O-0F) exist as rows with deps + ACs; `DB_SCHEMA §4.3` carries `orders.guest_id` → F27 closes; `PLAN.md §Domains/§Business rules` carry dated supersession notes; findings updated.
+**Receipt:**
+```
+$ grep -c "^| T-1 |\|^| T-2 |\|^| O-0 |\|^| O-0F |\|^| C-4a |\|^| C-4b |" harness/TASKS.md
+6                       # all four new rows + the C-4 split registered
+
+$ grep -n "guest_id" harness/DB_SCHEMA.md
+109:| `guest_id` | CHAR(36) NULL, **INDEX** | Added 2026-07-24 (F-32, closing finding F27) …
+
+$ grep -o "^| F27 .*✅ closed" harness/FINDINGS.md
+| F27 | 2026-07-24 | F-30 | 🚨 | schema-amend-request | … | ✅ closed
+
+$ grep -ci "LIKE-based\|category filter" harness/TASKS.md
+0                       # generic-shop catalog wording gone (C-1/C-3/C-4/C-5 rewritten)
+
+$ grep -c "⛔" harness/TASKS.md
+7                       # CC-1…CC-5 superseded + payment + admin, all with successor pointers
+
+$ python3 -c "<dep-graph check: every non-⛔ row's deps resolve to a live row>"
+dangling deps: 0        # A-3's dep on the superseded CC-2 found and fixed in the same pass
+```
+**Result:** ✅ — C-1 (menu-complete seed AC + the 0-row canh proof), C-3 (repurposed to combos), C-4 (split a/b), C-5 (retitled), O-1 (`order_items`, not `order_lines`), Phase 2 ⛔ superseded with successor pointers, Phase T created, four rows registered. **F27 closed** — the online-order path is unblocked. `PLAN.md` §Domains + §Business rules carry per-rule supersession notes pointing at the owning docs (Hard Rule 5).
+
 ### F-30 — Customer-menu backend build plan · 2026-07-24
 **AC:** `harness/plans/customer_menu/customer_menu_BE_PLAN.md` is a pure delta on the menu plan's §3 contract (links owning docs, restates neither the contract nor the rules); every build slice maps to a TASKS.md row (existing or drafted) with a named receipt; every doc-vs-doc conflict found gets a plan default **and** an `F#` row in FINDINGS.md; indexes updated per Hard Rule 6.
 **Receipt:**

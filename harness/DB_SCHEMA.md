@@ -153,6 +153,7 @@ primary; Redis is wipeable per ARCHITECTURE §4):
 | `id` | CHAR(36) PK | UUID |
 | `order_number` | VARCHAR(30) **UNIQUE** | `ORD-YYYYMMDD-NNN` |
 | `table_id` | CHAR(36) NULL FK→tables RESTRICT | NULL = online order |
+| `guest_id` | CHAR(36) NULL, **INDEX** | **Added 2026-07-24 (F-32, closing finding F27).** The guest-session id from the JWT claim — no FK (guest sessions are not a table). Ownership of an order = `table_id` match **or** `guest_id` match, so a table-less **online** order is ownable at all; without it every `table_id IS NULL` order fails every ownership gate, which is the exact bug `OVERALL_PLAN §3.4` promises to fix. Stamped from the claim, never from the body |
 | `status` | ENUM('pending','confirmed','preparing','ready','delivered','cancelled','paid') | default `pending`; BE-set, never from client; state machine in OVERALL_PLAN §3.7 |
 | `source` | ENUM('online','qr','pos') | from request |
 | `customer_name` | VARCHAR(100) NULL | |

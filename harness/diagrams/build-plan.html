@@ -310,6 +310,24 @@
     <details class="report" open>
       <summary>
         <span class="r-date">2026-07-24</span>
+        <span class="r-title">F-31 + F-32 — The frontend build plan, and the task board caught up · delivered</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> “do you have sufficient information to complete building FE and BE?” — then “close the gap only.” I measured it first: the <b>backend was ~90 % buildable</b> (F-30 gives migrations, queries, transaction bodies, the expansion algorithm), the <b>frontend ~60 %</b> — it had a complete description of what the page should <em>do</em>, and nothing describing how to build it. Task page: <a href="task-F-31.html">task-F-31.html</a>.</p>
+        <p><b>Delivered:</b> <code style="font-family:var(--mono);font-size:0.85em">customer_menu_FE_PLAN.md</code>, the twin of the backend plan — six slices, the exact file tree that acts as the scope contract, the token and Vietnamese-copy layer, the cart-store contract, every component’s props, and the screenshot each slice owes. Plus one edge nobody had drawn: <b>a frontend slice can’t start until the backend slice it consumes has produced its curl transcript</b>, because our rule is that FE types are typed from the receipt, never from a document. That single line is why the FE spine trails the BE spine by two slices — better to know now than to discover it mid-session.</p>
+        <h4>What was wrong underneath 🚨</h4>
+        <p>Writing it surfaced <b>four more conflicts</b> (F34–F37). The one worth your attention: <b>the frontend identifies the soup by its name</b> — a text match on “Canh…” — while the backend seeds a real <b>CANH category</b> and refuses to match names on principle. So one rule of the house is enforced two different ways, and renaming a dish in the admin screen would silently break the canh gate, the double-soup guard and the order payload <em>at once</em>. Fixed by keying both sides off the category. Also found: the dark/orange customer shell <b>had no owner</b> — three plans render “on the shell”, no plan’s file list contained it — which would have stalled the first frontend session.</p>
+        <h4>And the board caught up</h4>
+        <p>F-32 drained the drift the two plans exposed. <b>Your ‘online orders can’t be owned’ risk from the last report is closed</b> — <code style="font-family:var(--mono);font-size:0.85em">orders.guest_id</code> is written into the schema doc, so the online path is unblocked. The catalog rows no longer describe a generic shop (paging, LIKE search, stock); the cart/checkout phase is marked <b>superseded</b> rather than left looking like pending work; the “T phase” everything referenced now exists; and the four rows the plans had drafted but not registered (<code style="font-family:var(--mono);font-size:0.85em">T-1 · T-2 · O-0 · O-0F</code>) are registered. <code style="font-family:var(--mono);font-size:0.85em">PLAN.md</code>’s Session-0 shop rules carry dated supersession notes pointing at what replaced them.</p>
+        <p style="font-size:0.92rem"><b>Still yours to decide, none of it blocking:</b> the customer shell’s colour (dark/orange is the default and now costs one table to change), whether <code style="font-family:var(--mono);font-size:0.85em">/orders?id=</code> replaces the fragile post-order redirect, and the money glyph (<code style="font-family:var(--mono);font-size:0.85em">đ</code> vs <code style="font-family:var(--mono);font-size:0.85em">₫</code>). <b>Next up is unchanged: F-2</b>, the compose skeleton — the first task that writes code. Receipt in VERIFICATION.md.</p>
+      </div>
+    </details>
+
+    <details class="report" open>
+      <summary>
+        <span class="r-date">2026-07-24</span>
         <span class="r-title">F-30 — Customer-menu backend build plan · delivered (1 risk for you)</span>
         <span class="chip done">done</span>
         <span class="r-hint">detail</span>
@@ -636,35 +654,43 @@
 
     <div class="phase">
       <div class="phase-head"><h4>Phase 1 — Catalog</h4><span class="chip todo">todo</span></div>
-      <p class="milestone">Milestone: <b>you can browse the shop</b> — grid, category filter, search, product page.</p>
+      <p class="milestone">Milestone: <b>the menu is browsable</b> — seeded catalog, cached reads, the sectioned menu page. <span style="color:var(--amber)">Rows reconciled 2026-07-24 (F-32) with the two menu build plans.</span></p>
       <ul class="tasks">
-        <li data-deps="F-3" data-ac="migrate up/down clean; seed inserts ≥ 10 products across ≥ 3 categories"><span class="id">C-1</span><span>Products + categories schema, seed ≥ 10 products</span></li>
-        <li data-deps="C-1, F-4" data-ac="curl transcripts: list page 2, filtered list, detail, 404 in error envelope"><span class="id">C-2</span><span>BE: product list (paging, filter) + product detail</span></li>
-        <li data-deps="C-2" data-ac="curl: categories; search hits + empty result"><span class="id">C-3</span><span>BE: categories + search</span></li>
-        <li data-deps="C-2" data-ac="screenshot: grid renders seeded products; filter works"><span class="id">C-4</span><span>FE: product grid page — <b>first page with the design system</b></span></li>
-        <li data-deps="C-4" data-ac="screenshot: detail renders name/price/stock from API"><span class="id">C-5</span><span>FE: product detail page</span></li>
+        <li data-deps="F-3" data-ac="migrate up/down/up clean; menu-complete seed counts incl. the 0-row canh-template proof"><span class="id">C-1</span><span>Catalog schema (6 tables) + <b>menu-complete</b> seed (combos, ₫0 nhân, both canh, Bàn 04)</span></li>
+        <li data-deps="C-1, F-4" data-ac="curl: 3 reads + 404 envelope; Redis miss→SET(300s)→hit→DEL; cache down → still 200"><span class="id">C-2</span><span>BE: categories + products + product detail, cache-aside</span></li>
+        <li data-deps="C-2" data-ac="curl: /combos with ids-only combo_items; /combos/:id; 404 envelope"><span class="id">C-3</span><span>BE: combos <span style="color:var(--amber)">(repurposed — search is client-side)</span></span></li>
+        <li data-deps="C-2, C-3, F-2, F-4" data-ac="zero-spinner first paint; streamed skeleton; error branch; build + lint green"><span class="id">C-4a</span><span>FE: customer shell + menu route — <b>first page with the design system</b> <span style="color:var(--amber)">(split)</span></span></li>
+        <li data-deps="C-4a" data-ac="screenshots: sectioned menu, scroll-spy, 3 nhân states, Hết overlay, empty category, zero raw hex"><span class="id">C-4b</span><span>FE: sectioned menu — nav, cards, nhân pills, all 5 render branches <span style="color:var(--amber)">(split)</span></span></li>
+        <li data-deps="C-4b" data-ac="screenshots: both detail pages cold-URL + a warm hover-prefetch navigation"><span class="id">C-5</span><span>FE: product + combo detail pages</span></li>
       </ul>
     </div>
 
     <div class="phase">
-      <div class="phase-head"><h4>Phase 2 — Cart &amp; Checkout</h4><span class="chip todo">todo</span></div>
-      <p class="milestone">Milestone: <b>you can buy</b> — guest cart, address form, place a COD order.</p>
+      <div class="phase-head"><h4>Phase T — Table &amp; guest session</h4><span class="chip todo">todo</span></div>
+      <p class="milestone">Milestone: <b>a guest can sit down and fill a cart</b> — QR mints a session, the cart lives in the browser. <span style="color:var(--amber)">Phase added 2026-07-24 (F-32) — every doc referred to “the T phase” without it existing here.</span></p>
       <ul class="tasks">
-        <li data-deps="C-1" data-ac="migrate up/down clean; token uniqueness enforced"><span class="id">CC-1</span><span>Cart schema (guest cart = cookie token, 30 days)</span></li>
-        <li data-deps="CC-1" data-ac="curl: full add → update → remove round-trip; stock-cap rejection in envelope"><span class="id">CC-2</span><span>BE: cart add / update / remove, stock-capped</span></li>
-        <li data-deps="CC-2, C-5" data-ac="screenshot: badge count updates; cart page edits quantities"><span class="id">CC-3</span><span>FE: cart page + add-to-cart everywhere</span></li>
-        <li data-deps="CC-2, O-1" data-ac="curl: place order → order id; stock decremented; insufficient-stock rejection"><span class="id">CC-4</span><span>BE: checkout — price snapshot, atomic stock decrement (needs O-1)</span></li>
-        <li data-deps="CC-4" data-ac="screenshot: order placed from UI, confirmation shows order id"><span class="id">CC-5</span><span>FE: checkout flow → confirmation with order number</span></li>
+        <li data-deps="C-1, F-4" data-ac="curl: httpOnly Set-Cookie on both mints, no body token; bad qr_token → 404; burst → 429; no cookie → 401"><span class="id">T-1</span><span>BE: tables + order_sequences, guest-JWT mint (QR + online), rate limit, auth middleware</span></li>
+        <li data-deps="C-4b" data-ac="screenshots: two nhân ⇒ two rows; rollup; canh gate; reload keeps note drops lines; store unit tests"><span class="id">T-2</span><span>FE: cart store + OrderSummary + bottom bar + the canh gate</span></li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><h4>Phase 2 — Cart &amp; Checkout</h4><span class="chip defer">superseded</span></div>
+      <p class="milestone"><b>Not work any more.</b> These five rows describe a server-side guest cart and a stock decrement — neither exists in the restaurant scope (the cart is browser-only and never crosses the wire; an order decrements nothing). Kept as the record; the real successors are <b>T-2</b>, <b>O-0</b> and <b>O-0F</b>.</p>
+      <ul class="tasks">
+        <li><span class="id">CC-1…5</span><span>⛔ superseded 2026-07-24 (F-32) by the restaurant pivot</span></li>
       </ul>
     </div>
 
     <div class="phase">
       <div class="phase-head"><h4>Phase 3 — Orders</h4><span class="chip todo">todo</span></div>
-      <p class="milestone">Milestone: <b>you can follow your order</b> — history, status, cancel while allowed.</p>
+      <p class="milestone">Milestone: <b>you can order and follow it</b> — place, append, track, cancel while allowed.</p>
       <ul class="tasks">
-        <li data-deps="C-1" data-ac="migrate up/down clean; lifecycle enum matches PLAN.md §Business rules"><span class="id">O-1</span><span>Orders + order_lines schema, status enum: placed → confirmed → shipped → delivered / cancelled</span></li>
-        <li data-deps="O-1, CC-4" data-ac="curl: list, detail, cancel placed OK, cancel shipped rejected in envelope"><span class="id">O-2</span><span>BE: my orders, detail, cancel (restores stock)</span></li>
-        <li data-deps="O-2" data-ac="screenshot: history lists orders; detail shows status + lines"><span class="id">O-3</span><span>FE: order history + tracking view</span></li>
+        <li data-deps="C-1" data-ac="migrate up/down clean; combo header with unit_price != 0 rejected by chk_oi_item_type"><span class="id">O-1</span><span>Orders + <b>order_items</b> schema (7-status enum, row-type CHECK, qty_served)</span></li>
+        <li data-deps="T-1, O-1" data-ac="the worked example → 201 full object incl. order_number, 5 rows, total 33.000; 403 / 409 / 422 rails"><span class="id">O-0</span><span>BE: order create + append — combo expansion, price/name snapshot, in-tx recalc</span></li>
+        <li data-deps="T-2, T-1, O-0" data-ac="note round-trip; Bàn 04 · 103.000 đ → 201; a 422 on the offending line; append via ?add_to_order="><span class="id">O-0F</span><span>FE: confirm modal + the one payload builder + append mode</span></li>
+        <li data-deps="O-1, O-0" data-ac="curl: list, detail, an allowed cancel, a refused cancel in the envelope"><span class="id">O-2</span><span>BE: my orders, detail, cancel <span style="color:var(--amber)">(no stock restore — stock-free)</span></span></li>
+        <li data-deps="O-2" data-ac="screenshots: history, the Bàn 04 rollup, ra/còn per dish, a 422 cancel refusal"><span class="id">O-3</span><span>FE: merged /orders screen — static half (live half is R-2)</span></li>
       </ul>
     </div>
 

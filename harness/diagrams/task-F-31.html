@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-31 + F-32 — Menu FE build plan &amp; build-readiness reconciliation · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE6E4;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2938C; --red-soft: #3A1714;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2938C; --red-soft: #3A1714;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE6E4;
+  }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 26px 0 8px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .risk { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .risk p { margin: 0 0 8px; } .risk p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, .risk code, pre code { border: none; background: transparent; padding: 0; }
+  pre.diagram { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; font-family: var(--mono); font-size: 0.78rem; line-height: 1.5; margin: 0 0 18px; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.92rem; }
+  ul.checks li::before { content: "☑ "; color: var(--done); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="build-plan.html#report">← build-plan.html §R</a>
+  <p class="eyebrow" style="margin-top:18px">Task plan · Phase F</p>
+  <h1>F-31 + F-32 — the <em>frontend</em> build plan, and draining the drift</h1>
+  <p class="lede">Owner ask (2026-07-24): after an audit of whether the menu page could actually
+  be built, “close the gap only.” The audit found the backend ~90 % buildable and the frontend
+  ~60 % — spec-complete on behavior, with no build spine — plus a layer of task/schema/plan
+  drift that would have been discovered one session at a time. Two tasks: <b>F-31</b> writes the
+  missing plan, <b>F-32</b> drains the drift.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">Status</span><span class="v">✅ delivered 2026-07-24</span></div>
+    <div class="fact"><span class="k">Deps</span><span class="v">F-15 · F-30 · F-5 · F-12</span></div>
+    <div class="fact"><span class="k">Findings</span><span class="v">4 raised (F34–F37) · 1 closed (F27)</span></div>
+    <div class="fact"><span class="k">Branch</span><span class="v">main (docs task)</span></div>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">1</span><h2>The gap, measured</h2></div>
+    <p>The question was “do we have enough to build FE and BE?” Answering it honestly meant
+    reading both plans against the docs they lean on. The asymmetry was the finding:</p>
+    <div class="table-wrap"><table>
+      <tr><th>Side</th><th>Before</th><th>Missing</th></tr>
+      <tr><td>BE</td><td><b>~90 %</b> — F-30 gives migrations, every sqlc method, package tree, tx body, the expansion algorithm, receipts</td><td>one schema amendment (F27), unregistered rows, TASKS.md ACs still generic-shop</td></tr>
+      <tr><td>FE</td><td><b>~60 %</b> — §4 of the page plan gives the file map, state ownership, loading tiers, 12 behaviors</td><td><b>the whole build spine</b>: slices, token/copy layer, store contracts, prop contracts, the payload algorithm, receipts</td></tr>
+    </table></div>
+    <div class="golden"><p><b>Why the asymmetry mattered.</b> A behavior spec tells a session
+    <em>what to check when it’s done</em>. It doesn’t tell it what to type first, which file owns
+    the shell, or that its <code>types.ts</code> is blocked on a curl transcript that doesn’t
+    exist yet. That last edge — <b>FE slices wait on BE receipts</b> — is invisible in a behavior
+    list and is now drawn in the spine.</p></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">2</span><h2>F-31 — the FE build spine</h2></div>
+    <pre class="diagram">F-2 skeleton ─┐
+F-4 api client├─▶ FE-M1 route shell + catalog queries ─▶ FE-M2 sections + cards ─▶ FE-M3 search + rail
+F-7 tokens   ─┘                    │                                                      │
+                                   ▼                                                      ▼
+                          FE-M5 detail pages                    FE-M4 cart store + summary + canh gate
+                                                                                          │
+                                                          BE-M4 guest JWT ─▶ FE-M6 confirm → POST /orders</pre>
+    <div class="table-wrap"><table>
+      <tr><th>Slice</th><th>Delivers</th><th>TASKS row</th><th>Receipt</th></tr>
+      <tr><td><code>FE-M1</code></td><td>customer shell + token scope + VN copy + RSC prefetch + the 3 catalog hooks</td><td>C-4a <span style="color:var(--amber)">(split)</span></td><td>zero-spinner first paint · streamed skeleton · error branch</td></tr>
+      <tr><td><code>FE-M2</code></td><td>header, scroll-spy nav, product/combo cards, nhân pills, 5 branches</td><td>C-4b <span style="color:var(--amber)">(split)</span></td><td>the 3 nhân states · “Hết” overlay · empty category · zero raw hex</td></tr>
+      <tr><td><code>FE-M3</code></td><td>search mode, favourites rail, custom-suất section</td><td>C-6</td><td>1-char hint → 2-char results → no-match → ✕ restores</td></tr>
+      <tr><td><code>FE-M4</code></td><td>cart store, OrderSummary, CartBottomBar, canh gate</td><td><b>T-2 — registered by F-32</b></td><td>two rows for two nhân · canh gate · <code>partialize</code> proof · store unit tests</td></tr>
+      <tr><td><code>FE-M5</code></td><td>product + combo detail, prefetch-on-hover</td><td>C-5 <span style="color:var(--amber)">(retitled)</span></td><td>cold URL vs warm hover navigation</td></tr>
+      <tr><td><code>FE-M6</code></td><td>TableConfirmModal, the one payload builder, append mode</td><td><b>O-0F — registered by F-32</b></td><td>the note round-trip · 103.000 đ → 201 · a 422 on the right line</td></tr>
+    </table></div>
+    <h3>The two sections that do the most work</h3>
+    <p><b>§5.1, the file inventory</b> — the same role §5.1 plays in the BE plan: it <em>is</em>
+    the scope contract for every FE task that follows. A file not in the tree means STOP and
+    re-scope. <b>§4.2, the token scope</b> — the customer shell re-binds F-7’s semantic token
+    <em>values</em> at the <code>(customer)</code> layout rather than editing components, so the
+    open theme question (F01) costs one table, not a refactor.</p>
+    <pre class="diagram">product line : product_&lt;productId&gt;_&lt;nhanId|plain&gt;
+combo line   : combo_&lt;comboId&gt;_&lt;sortedNhanIds|plain&gt;
+canh line    : canh_&lt;productId&gt;_&lt;rau|plain&gt;
+
+the id <b>is</b> the dedup key → same dish + same nhân increments; a different nhân is a new row
+→ <code>addItem</code> needs no comparison logic at all</pre>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">3</span><h2>What the FE reconciliation found</h2></div>
+    <div class="risk"><p>🚨 <b>F34 — canh is identified by <em>name</em> on the frontend.</b> The
+    page plan filters soup out of lists, search and combo payloads with
+    <code>isSoupName()</code>, a string match — while the backend plan seeds a real
+    <b>CANH category</b> and deliberately refuses name-matching in Go. So one business rule is
+    keyed two different ways, and renaming a dish in <code>/admin/products</code> would silently
+    break the canh gate, the double-canh guard and the payload builder <em>at once</em>. Plan
+    default: <code>isCanhProduct(p) = p.category_id === CANH_CATEGORY_ID</code> — both sides then
+    key off the same seeded fact.</p></div>
+    <div class="table-wrap"><table>
+      <tr><th>#</th><th>What</th><th>Plan default</th></tr>
+      <tr><td>F35 ⚠️</td><td><code>keys.ts</code> + FE cache policy are pre-pivot: params on the products key, a <code>cart</code> query that no longer exists, 60 s staleness, no <code>combos</code> key</td><td>params-free factory + a <code>combos</code> key + 5-min staleTime; amend <code>FE_STATE §2/§3</code> at C-4a (the FE twin of F29)</td></tr>
+      <tr><td>F36 ⚠️</td><td>The customer shell had <b>no owner</b> — three plans render “on the dark/orange shell”, no file map contained <code>app/(customer)/layout.tsx</code>, and rule 8 forbids faking it with raw hex</td><td>this plan claims it (FE-M1) as the token-scope boundary; siblings cross-link</td></tr>
+      <tr><td>F37 💡</td><td>Append mode has two sources of truth — <code>?add_to_order=</code> in the URL and <code>activeOrderId</code> in the persisted store</td><td>URL wins when present, store is the same-device fallback (FE rule 2)</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">4</span><h2>F-32 — draining the drift</h2></div>
+    <p>The plans were right and the task board was stale. Everything here is a doc catching up
+    to a decision already made, so none of it needed a ruling.</p>
+    <div class="table-wrap"><table>
+      <tr><th>Where</th><th>Was</th><th>Now</th></tr>
+      <tr><td><code>DB_SCHEMA §4.3</code></td><td>no home for a table-less guest’s identity</td><td><b><code>orders.guest_id</code> written</b> → <b>F27 closed</b>, the online path unblocked</td></tr>
+      <tr><td>TASKS C-1</td><td>“≥ 10 products across ≥ 3 categories”</td><td>the menu-complete seed AC incl. the 0-row canh-template proof</td></tr>
+      <tr><td>TASKS C-3</td><td>“category list + product search (LIKE)”</td><td>combos — categories moved to C-2, search is client-side</td></tr>
+      <tr><td>TASKS C-4</td><td>one row, “grid + category filter + paging”</td><td>split into <b>C-4a</b> (shell + queries) and <b>C-4b</b> (sections + cards)</td></tr>
+      <tr><td>TASKS O-1</td><td><code>order_lines</code></td><td><code>order_items</code> + the row-type CHECK as its AC</td></tr>
+      <tr><td>TASKS Phase 2</td><td>5 live rows for a server-side cart + stock decrement</td><td><b>⛔ superseded</b> with pointers to their real successors (T-2, O-0, O-0F)</td></tr>
+      <tr><td>TASKS</td><td>“the T phase” referenced everywhere, existed nowhere</td><td><b>Phase T added</b>; <b>T-1 · T-2 · O-0 · O-0F registered</b></td></tr>
+      <tr><td><code>PLAN.md</code></td><td>§Domains + §Business rules still describe a shipped-goods shop and claim authority</td><td>dated supersession notes per rule, pointing at the owning docs (Hard Rule 5)</td></tr>
+    </table></div>
+    <div class="flag"><p><b>On registering the four rows now.</b> Both build plans deliberately
+    deferred registration so ids couldn’t collide with a parallel session (F04/F25). That risk is
+    about concurrency, not timing — this is a single session writing all four in one commit, and
+    leaving them unregistered was itself part of the gap. Registered.</p></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">5</span><h2>Steps taken · receipt checklist</h2></div>
+    <ol class="steps">
+      <li>Audited buildability: read both menu plans against TASKS, PLAN, ENVIRONMENT, FE_STATE, DB_SCHEMA, FINDINGS and PAGE_PLAN_GUIDE; reported the measured gap before touching anything.</li>
+      <li>Registered F-31 + F-32, checkpoint commit, then wrote <code>customer_menu_FE_PLAN.md</code> as a pure delta — behavior stays in §4, rules stay in their owning docs.</li>
+      <li>Registered the <code>_FE_PLAN.md</code> doc kind as <code>PAGE_PLAN_GUIDE §12</code>, mirroring §11 (when a page needs one, structure, the BE-receipt edge §11 doesn’t have).</li>
+      <li>Drained the drift (§4), closed F27 against the schema edit, raised F34–F37.</li>
+      <li>Indexes (Hard Rule 6), receipt, checkpoint, push.</li>
+    </ol>
+    <h3>Receipt checklist</h3>
+    <ul class="checks">
+      <li>The menu folder holds 6 docs; the FE plan covers all six slices (§3 spine ↔ §8 rows ↔ §9 receipts).</li>
+      <li>4 findings rows present (F34–F37) + F27 flipped to ✅ with a pointer to the schema edit.</li>
+      <li>No TASKS.md row contradicts its owning plan; Phase T exists; T-1 · T-2 · O-0 · O-0F registered.</li>
+      <li>CONTEXT_MAP (FE routing + inventory), harness/README and PAGE_PLAN_GUIDE all point at the new file.</li>
+      <li>Receipt row in VERIFICATION.md (2026-07-24) · STATE.md checkpoint + resume point · pushed to <code>main</code>.</li>
+    </ul>
+    <div class="golden"><p><b>One fact one home:</b> this page is a snapshot. On any conflict,
+    <code>customer_menu_FE_PLAN.md</code> wins for the menu frontend’s build,
+    <code>customer_menu_PLAN.md §4</code> wins for its behavior, <code>FE_STATE.md</code> wins for
+    the FE rules, <code>DB_SCHEMA.md</code> wins for columns, and TASKS.md wins for status.</p></div>
+  </section>
+</div>
+</body>
+</html>

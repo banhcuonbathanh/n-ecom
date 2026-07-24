@@ -48,11 +48,26 @@
 
 ✅ Decided 2026-07-16 (Session 0, F-1):
 
+> ⚠ **Superseded in part 2026-07-24 (F-32).** These are the *generic-shop* domains from
+> Session 0. The F-9 pivot (restaurant platform, silence = accepted) reshaped four of
+> them, and the page plans + `TASKS.md` are now built to the reshaped form. The domain
+> *list* still stands; the parenthetical scope of the starred rows does not.
+
 - [x] Catalog — products, categories, search, product detail
-- [x] Cart — add/update/remove, guest cart, merge on login
-- [x] Checkout — address, shipping method, order placement
-- [x] Orders — lifecycle (placed → confirmed → shipped → delivered / cancelled), tracking
+      ⚠ *now:* categories · products · **toppings** · **combos**; search is **client-side**
+      (no query params) — `plans/customer_menu/customer_menu_PLAN.md §3.4`
+- [x] Cart — ~~add/update/remove, guest cart, merge on login~~
+      ⚠ *now:* **FE-only client state** (Zustand, persisted) with **no backend surface**
+      and no merge-on-login — `…_PLAN.md §4.2`; Phase 2 rows in `TASKS.md` are ⛔ superseded
+- [x] Checkout — ~~address, shipping method, order placement~~
+      ⚠ *now:* two paths — QR (in-page confirm modal) and online (name/phone); no address,
+      no shipping — `…_PLAN.md §4.4` #8
+- [x] Orders — lifecycle ~~(placed → confirmed → shipped → delivered / cancelled)~~, tracking
+      ⚠ *now:* `pending → confirmed → preparing → ready → delivered / cancelled / paid`
+      — `OVERALL_PLAN.md §3.7`; per-item state is **derived** from `qty_served`
 - [x] Accounts — register/login, JWT, profile, order history
+      ⚠ *plus:* a **guest** session tier (httpOnly guest JWT, QR or table-less) that precedes
+      accounts — `OVERALL_PLAN.md §3.4`, built in `T-1`
 - ~~Payment~~ — ⏸ deferred; v1 orders are COD/manual-confirmation
 - ~~Admin~~ — ⏸ deferred; v1 seeds/manages products via SQL scripts
 - ~~AI assistant~~ — ⏸ deferred to a later phase
@@ -61,6 +76,17 @@
 
 Proposed in Session 0 — owner may adjust before the affected task starts; a change
 here after code lands is a task of its own.
+
+> ⚠ **Rules 1–5 are superseded for the restaurant scope, 2026-07-24 (F-32).** They
+> describe a shipped-goods shop. The live rules and their homes:
+> **1 lifecycle** → `OVERALL_PLAN.md §3.7` (7 statuses, not 5) · **2 cancel window** →
+> ❓ open, tracked as [F11](FINDINGS.md) · **3 stock** → **there is no stock**; a
+> restaurant order decrements nothing (`OVERALL_PLAN.md §3.7` rule 3), which is why the
+> order tx holds writes only (`customer_menu_BE_PLAN.md §5.3`, F33) · **4 price
+> snapshot** → **still true and load-bearing**, extended to `name` +
+> `toppings_snapshot` (`DB_SCHEMA.md §4.3`) · **5 guest cart** → the cart never reaches
+> the server; guest *identity* is an httpOnly JWT instead (`OVERALL_PLAN.md §3.4`).
+> Kept below as the Session-0 record.
 
 1. **Order lifecycle (v1, no payment gateway):**
    `placed → confirmed → shipped → delivered`, terminal alternative `cancelled`.
