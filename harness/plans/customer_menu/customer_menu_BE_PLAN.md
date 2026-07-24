@@ -33,6 +33,16 @@ repeated here — each row points at its contract home.
 | 5 | `POST /api/v1/orders` | [PLAN §3.1 #5](customer_menu_PLAN.md) · algorithm §7 below | BE-M6 |
 | 6 | `POST /api/v1/orders/:id/items` | [PLAN §3.1 #6](customer_menu_PLAN.md) · algorithm §7.4 | BE-M6 |
 
+> **⛔ v1 scope cut — owner ruling 2026-07-24 ([F39](../../FINDINGS.md)).** Row 4
+> (`POST /auth/guest/online`) is **not built in v1**: no `/checkout` page means no online
+> order means no table-less session. **BE-M4 ships one mint, not two** — `POST /auth/guest/:qr_token`
+> — and BE-M6 drops the online-only branches: the `customer_name`-required validation (§5.5,
+> §6.3), the `source == "online"` check in §7.1, and the `/online` half of the T-1 receipt (§9).
+> `auth.MintGuestOnline` (§5.2) is not written. **Everything else is unchanged, including
+> `orders.guest_id`** — the column stays (F27's ruling holds; it is also the append-mode
+> ownership key for a re-scanned session) and turning the online path back on is a handler,
+> not a migration.
+
 **Also built here because the page cannot run without them:** the catalog schema +
 seed (BE-M1), the QR-side guest mint `POST /auth/guest/:qr_token` (BE-M4 — the menu
 page's other entry path), and the two detail reads `GET /products/:id` /

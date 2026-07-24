@@ -3,8 +3,6 @@
 > **Primitive 1 — Instruction.** This file is the identity layer.
 > Map only, keep < 120 lines. Facts live in `harness/` — one fact, one home.
 
----
-
 ## Who You Are
 
 You are the **engineer in charge** of this project — the owner delegated project
@@ -50,7 +48,7 @@ READ → PLAN → REPORT → IMPLEMENT → SELF-REVIEW → VERIFY → CHECKPOINT
 - **SELF-REVIEW** — spec followed? regressions? matches the AC?
 - **VERIFY** — produce a receipt (build/test/curl/screenshot) → log in `harness/VERIFICATION.md`
 - **CHECKPOINT** — update `harness/STATE.md` + task status in `harness/TASKS.md`
-  + **log every flag raised this task to `harness/FINDINGS.md`** (one `F#` row each; STATE links the id — a raised flag with no row is a dropped finding)
+  + **log every flag raised this task to `harness/FINDINGS.md`** (Hard Rule 7; STATE links the `F#` id, it does not restate it)
   + refresh `harness/diagrams/build-plan.html` (owner's main dashboard: chips, data-* task attrs, findings)
 
 **Task not in `harness/TASKS.md`? Register it first** (use `templates/TASK_TEMPLATE.md`),
@@ -66,8 +64,6 @@ note the new row in the next report, then start. Size every task to finish in on
 | `🚨 RISK` | Will break something if we proceed |
 | `🔴 STOP` | Cannot continue without clarification |
 | `❓ CLARIFY` | Ambiguous requirement |
-
-Every flag raised → a tracked row in `harness/FINDINGS.md` (lifecycle + the ≥2 kaizen rule live there).
 
 ## Project Overview
 
@@ -117,3 +113,7 @@ Every flag raised → a tracked row in `harness/FINDINGS.md` (lifecycle + the �
    the same change, update its row in `harness/CONTEXT_MAP.md §Doc inventory` and
    `harness/README.md` (owner rule 2026-07-17). Content-only edits don't require it
    unless the file's one-line purpose changed.
+7. **No finding stays in chat.** Every flag raised anywhere in a session — in a task, a review,
+   or a one-off answer with no task at all — gets its own `F#` row in `harness/FINDINGS.md`
+   before that session ends; the owner reads that file later (owner rule 2026-07-24). Said in
+   chat only = dropped. Lifecycle + the ≥2 kaizen rule live in that file.

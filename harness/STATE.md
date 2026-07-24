@@ -10,7 +10,9 @@
 
 - **Status:** ✅ F-31 (customer-menu **frontend** build plan — `…/customer_menu_FE_PLAN.md`,
   the twin of F-30) + ✅ F-32 (build-readiness reconciliation — TASKS/DB_SCHEMA/PLAN drift
-  drained). The menu page is now **plan-complete on both sides**.
+  drained) + ✅ **F-34** (gap registration — the menu is plan-complete *inside* its own
+  scope; the 5 gaps found at its edges are now [F38–F42](FINDINGS.md), with **T-3** and
+  **H-3** opened).
 - **Next:** **F-2 (dev stack skeleton)** — unchanged, prompt ready in `PROMPTS.md`. It is the
   first task that writes code; everything until now has been plans.
   Routing: C-1/C-2/C-3 + T-1 + O-0 read `customer_menu_BE_PLAN.md` first; **C-4a/C-4b/C-5 +
@@ -34,12 +36,46 @@
   URL-vs-store.
   ✅ **Closed:** [F27](FINDINGS.md) — `orders.guest_id` is in `DB_SCHEMA §4.3`; the online-order
   path is unblocked.
+  🚨 **NEW (F-34) — the QR airlock was unowned** ([F38](FINDINGS.md)): `/table/[id]` is the
+  menu's default entry, but nothing wrote `tableId`/`tableName` → **T-3** opened. Also
+  ⚠ [F39](FINDINGS.md) `/checkout` unowned (**owner ruling needed before O**: build it or
+  defer to a QR-only v1), ⚠ [F40](FINDINGS.md) combos `is_active` vs `is_available`,
+  ⚠ [F41](FINDINGS.md) nothing serves `/uploads`, ⚠ [F42](FINDINGS.md) no FE test runner
+  pinned though T-2's AC demands unit tests → pin Vitest + Playwright at F-2.
   ⚠ `personal/command.md` still tracked in git ([F14](FINDINGS.md) — say "untrack it" to fix).
   Deferred: payment gateways (→ P phase), AI.
 
 ---
 
 ## Checkpoint log
+
+### 2026-07-24 — Session 21c (H-4): findings capture made unconditional
+- Owner: "if in session have finding please put finding in `harness/FINDINGS.md`, I will check later."
+  The rule existed but was bound to a task's **CHECKPOINT** — a session with no task had nowhere to
+  land a flag, so a chat-only finding could legally evaporate. That gap is now closed.
+- Done: **H-4 ✅** — **CLAUDE.md Hard Rule 7** ("no finding stays in chat"): any flag, task or no
+  task, gets its `F#` row before the session ends. `FINDINGS.md §capture rule` gained the no-task
+  clause (`Task` = `chat`); the CHECKPOINT step + Proactive-Flags table now *point* at Rule 7
+  instead of restating it (one fact, one home). CLAUDE.md is **119 lines** — back under the cap.
+- ⚠ **Id collision, live:** this session first registered `H-3`, already claimed by another session
+  (route-ownership map) → renumbered `H-4`. Evidence appended to [F25](FINDINGS.md) — the
+  `concurrent-taskids` class it graduated F04 for is still unfixed (`NEXT_ID` counter, H-2 pending).
+- Receipt: `VERIFICATION.md` → H-4 (line count + Rule 7 body + cross-file greps).
+
+### 2026-07-24 — Session 22 (F-34): menu build-readiness gap registration
+- Owner asked: "is there enough info in the 3 menu plan docs to finish BE and FE?" Answer: **yes
+  inside their own scope** (contract, slices, algorithms, ACs, receipts all specified) — but a
+  read-through against `TASKS.md`/`DB_SCHEMA.md`/`PLAN.md §Stack`/`DEVOPS.md` found **5 gaps at
+  the edges**. Owner said register.
+- Done: **F-34 ✅** — [F38–F42](FINDINGS.md) with plan defaults; **T-3** opened (the `/table/[id]`
+  QR airlock + the missing `setTable()` action); **H-3** opened by the ≥2 kaizen rule.
+- **The real finding is structural:** four internally-complete plan sets, and the routes *between*
+  them (`(customer)/layout.tsx` F36, `/table/[id]` F38, `/checkout` F39) owned by nobody. H-3's AC
+  is therefore a *rule* change — page plans must name their in/out-links' owners — not just a map.
+- Deliberately not done: no plan-doc edits (F40's field-name fix belongs to C-3's receipt, gate 8),
+  no per-task HTML (the read-through was the plan; [F16](FINDINGS.md) ceremony budget).
+- **Needs a ruling before O:** [F39](FINDINGS.md) — build `/checkout` or ship QR-only in v1.
+- Next: unchanged — **F-2**, the compose skeleton (now also pins Vitest + Playwright, [F42](FINDINGS.md)).
 
 ### 2026-07-24 — Session 21b (F-33): HTML companion sync
 - Owner: "update html as well". The menu folder's 3 HTML companions still stated facts the two new

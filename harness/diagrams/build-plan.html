@@ -310,6 +310,23 @@
     <details class="report" open>
       <summary>
         <span class="r-date">2026-07-24</span>
+        <span class="r-title">F-34 — “Is there enough to build the menu?” — measured, and the gaps registered · delivered</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked</b> whether the three menu plan documents contain enough to finish the page, back and front. <b>Answer: yes inside their own scope</b> — endpoints, schema, the combo-expansion algorithm, cache rules, store shapes, component props, and a named receipt per slice are all there. What they don’t cover is their own <em>edges</em>. Five gaps, now registered as F38–F42, each with a default so nothing waits on a decision.</p>
+        <h4>The one that would have stopped a session 🚨</h4>
+        <p><b>Nobody owned the QR landing page.</b> A guest scanning the code at Bàn 04 arrives at <code style="font-family:var(--mono);font-size:0.85em">/table/&lt;id&gt;</code> — that route mints the session and tells the app which table it is. No plan folder described it, no task built it, and the cart had a slot for the table name that <em>nothing ever wrote to</em>. The confirm dialog would have read a table that was never set — discovered mid-build, three sessions from now. Registered as <b>T-3</b>.</p>
+        <h4>The rest</h4>
+        <p><b>The online path stops at a page nobody planned</b> — <code style="font-family:var(--mono);font-size:0.85em">/checkout</code>, where a non-seated customer types name and phone (F39). This one <b>needs you</b>: build it, or ship v1 QR-only. For a dine-in bánh cuốn shop, QR-only is a defensible launch — say the word either way before the order phase opens. The other three are small and defaulted: a combo field spelled two ways across our own docs (F40), <b>nothing actually serves the dish photos</b> (F41 — the address is built, the server route was never assigned), and <b>two acceptance criteria can’t be met yet</b> because the tools they name — a unit-test runner and a screenshot tool — were never pinned (F42, fixed at F-2).</p>
+        <p><b>The pattern underneath, and the fix.</b> Three of these — the shell, the QR page, the checkout page — are the same shape: <em>four plan sets, each internally complete, with the routes between them owned by nobody.</em> That is a rule gap, not three accidents, so it graduates into <b>H-3</b>: a route-ownership map, plus a standing rule that a page plan must name who owns the pages it links <em>to</em> and <em>from</em>, not just its own files. <b>Next up is unchanged: F-2.</b> Receipt in VERIFICATION.md.</p>
+      </div>
+    </details>
+
+    <details class="report" open>
+      <summary>
+        <span class="r-date">2026-07-24</span>
         <span class="r-title">F-31 + F-32 — The frontend build plan, and the task board caught up · delivered</span>
         <span class="chip done">done</span>
         <span class="r-hint">detail</span>
@@ -671,6 +688,7 @@
       <ul class="tasks">
         <li data-deps="C-1, F-4" data-ac="curl: httpOnly Set-Cookie on both mints, no body token; bad qr_token → 404; burst → 429; no cookie → 401"><span class="id">T-1</span><span>BE: tables + order_sequences, guest-JWT mint (QR + online), rate limit, auth middleware</span></li>
         <li data-deps="C-4b" data-ac="screenshots: two nhân ⇒ two rows; rollup; canh gate; reload keeps note drops lines; store unit tests"><span class="id">T-2</span><span>FE: cart store + OrderSummary + bottom bar + the canh gate</span></li>
+        <li data-deps="T-1, C-4a" data-ac="screenshots: valid qr_token → /menu with the Bàn 04 pill + cookie set; bad token → error branch; reload keeps the table"><span class="id">T-3</span><span>FE: the QR airlock <code style="font-family:var(--mono);font-size:0.85em">/table/[id]</code> — mint the session, bind the table <span style="color:var(--amber)">(added 2026-07-24, F-34 / F38 — the route nobody owned)</span></span></li>
       </ul>
     </div>
 
@@ -865,6 +883,7 @@
 
     <h3>Findings so far (from the checkpoint log)</h3>
     <ul class="log">
+      <li><span class="when">2026-07-24</span><span><b>Gap found (F-34):</b> the menu plans are complete inside their own scope but three <em>routes between plans</em> had no owner — the customer shell, the QR landing page, and checkout. The QR page is the menu’s default entry, so the whole seated path would have stalled mid-build. Registered F38–F42, opened <b>T-3</b>, and graduated the pattern into <b>H-3</b>: page plans must name the owners of the pages they link to and from.</span></li>
       <li><span class="when">2026-07-17</span><span><b>Process:</b> owner switched to a boss/lead model — the agent runs the project and reports; the loop's ALIGN step became REPORT (detailed plan published in section R before any build). Recorded in CLAUDE.md.</span></li>
       <li><span class="when">2026-07-16</span><span><b>Drift found:</b> the repo was not a git repository yet → fixed with <code>git init</code> + checkpoint commit <code>0b727a8</code>; <code>personal.md</code> gitignored as non-project material.</span></li>
       <li><span class="when">2026-07-16</span><span><b>Decision:</b> payment gateway cut from v1 (COD only) so every phase still ends in something clickable — scope trimmed before it could block the build.</span></li>

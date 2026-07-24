@@ -19,6 +19,54 @@
 
 ## Log (newest on top)
 
+### H-4 — Findings capture is unconditional (CLAUDE.md Hard Rule 7) · 2026-07-24
+**AC:** CLAUDE.md carries Hard Rule 7 and stays < 120 lines; `FINDINGS.md §capture rule` covers task-less sessions; the CHECKPOINT step and the Proactive-Flags table point at the rule instead of restating it.
+**Receipt:**
+```
+$ wc -l < CLAUDE.md
+119                     # under the <120 cap (was 120 — reclaimed the stray "---" + the
+                        # Proactive-Flags sentence Rule 7 now owns)
+
+$ sed -n "116,119p" CLAUDE.md
+7. **No finding stays in chat.** Every flag raised anywhere in a session — in a task, a review,
+   or a one-off answer with no task at all — gets its own `F#` row in `harness/FINDINGS.md`
+   before that session ends; the owner reads that file later (owner rule 2026-07-24). Said in
+   chat only = dropped. Lifecycle + the ≥2 kaizen rule live in that file.
+
+$ grep -n "Hard Rule 7" CLAUDE.md harness/FINDINGS.md
+CLAUDE.md:51:  + **log every flag raised this task to `harness/FINDINGS.md`** (Hard Rule 7; …)
+harness/FINDINGS.md:23:## The capture rule (CLAUDE.md Hard Rule 7)
+
+$ grep -c "Every flag raised → a tracked row" CLAUDE.md
+0                       # the old duplicate sentence is gone — one fact, one home
+```
+**Result:** ✅ — the capture rule was previously bound to CHECKPOINT, so a session with no task (a question, a doc review, plain chat) had nowhere to land a flag. Hard Rule 7 makes capture unconditional and `FINDINGS.md §capture rule` gained the no-task clause (`Task` = `chat`).
+**Collision note:** registered as `H-3` first — another session already owns `H-3` (route-ownership map). Caught by the receipt grep, renumbered to `H-4`; evidence appended to [F25](FINDINGS.md) (`concurrent-taskids`), which predicts exactly this.
+
+### F-34 — Menu build-readiness gap registration · 2026-07-24
+**AC:** every gap named in the read-through has a ledger row with a plan default and a named closing artifact; `T-3` exists with deps + AC; `H-3` registered and linked from the graduating findings; no new facts duplicated into the plan docs.
+**Receipt:**
+```
+$ python3 <gap-detection + registration check, run from harness/>
+— gap detection (re-runnable) —
+routes owned by a plan folder: /table/[id] -> 3 mentions, 0 owning file maps   → F38
+setTable action in FE_PLAN §5.2                : 0        (identity never written) → F38
+checkout page-plan folder                      : 0 folders                        → F39
+combos is_active (PLAN §3.5) vs is_available   : 2 vs 2   (both spellings live)    → F40
+static /uploads handler named in a task row    : 0                                → F41
+FE test runner in PLAN §Stack                  : 0        (T-2 AC needs one)       → F42
+
+— registration check —
+F38 row in FINDINGS.md: True     F-34 row in TASKS.md: True
+F39 row in FINDINGS.md: True     T-3  row in TASKS.md: True
+F40 row in FINDINGS.md: True     H-3  row in TASKS.md: True
+F41 row in FINDINGS.md: True
+F42 row in FINDINGS.md: True
+every new F# has a plan default (Home/action non-empty): True
+```
+**Result:** ✅ — 5 findings registered (F38 🚨 · F39–F42 ⚠️), each with a default so no slice blocks on a ruling. **F38 is the one that would have stalled a session**: `/table/[id]` is the menu's *default* entry (QR path) yet no plan folder, no task row, and no store action ever wrote `tableId`/`tableName` — `TableConfirmModal` would have read an identity nothing sets. Registered as **T-3**, which also adds the missing `setTable()` to `FE_PLAN §5.2`. The `unowned-route` slug now has **two** members (F38, F39) plus the adjacent `unowned-shell` (F36) → the ≥2 kaizen rule fired → **H-3** registered: a route-ownership map, and a `PAGE_PLAN_GUIDE` rule that a page plan must name the owners of its **in/out-links**, not only its own files. That is the actual root cause — four finished plan sets, each internally complete, with the routes *between* them owned by nobody.
+**Scope note:** ledger + task rows only. The plan docs were deliberately **not** edited — F40's field-name fix lands when C-3's curl receipt freezes the shape (gate 8), and the ledger owns the finding until then (one fact, one home). No per-task HTML page for this one: the read-through *was* the plan, and the owner approved it in-session ([F16](FINDINGS.md) ceremony budget).
+
 ### F-33 — HTML companion sync (customer_menu plan set) · 2026-07-24
 **AC:** no HTML companion states a fact its `_PLAN.md`/build plans contradict — zero live `isSoupName` occurrences, task labels match the reconciled TASKS.md rows, each page's doc-set navigation names the FE + BE build plans, zero dead relative links, tag balance clean, `_plan.html`/`_how-it-works.html` keep both themes while `_mockup-1.html` stays single-theme by design.
 **Receipt:**

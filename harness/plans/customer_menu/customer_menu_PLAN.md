@@ -27,6 +27,17 @@ Mobile-first menu for a dine-in bánh cuốn restaurant. A guest lands here two 
 - **Online path** — arrived directly: a table-less guest JWT is minted silently
   (`POST /auth/guest/online`); checkout collects name/phone.
 
+> **⛔ Deferred out of v1 — owner ruling 2026-07-24 ([F39](../../FINDINGS.md)).**
+> "Checkout is for shipping; we eat at the restaurant — no checkout page." v1 is
+> **QR dine-in only**: the online path, `/checkout`, and the table-less mint
+> (`POST /auth/guest/online`) are **not built**. Every "online path" sentence below
+> stands as the design for when delivery/takeaway opens — not as v1 work. What
+> *does* change in v1: a guest who opens `/menu` with no table can browse but cannot
+> order, so the second checkout path becomes a **"quét mã QR trên bàn" prompt**, not a
+> redirect ([F43](../../FINDINGS.md)). Schema is unaffected — `orders.guest_id`,
+> `source='online'` and the nullable customer fields stay, unused, so the path can be
+> switched on later without a migration.
+
 Core loop on the page: browse categories/combos → build a cart (client-only) →
 confirm → `POST /orders` → redirected to live order tracking. The menu page also
 re-enters in **append mode** (`?add_to_order=<id>`) to add items to an active order.
@@ -76,6 +87,11 @@ reference's memory-token + `Authorization` header).
 | 4 | `POST /auth/guest/online` | public, rate-limited | T | No body → sets 2 h guest-JWT **httpOnly cookie** (table-less, `source='online'`). Reference returned `{access_token}` for a memory store — **not adopted** (F-5 cookie decision; OVERALL_PLAN §3.4). |
 | 5 | `POST /orders` | guest JWT | O | Cart → order: server-side price/name snapshot, `toppings_snapshot JSON`, combo expansion (header row `unit_price=0` + component rows via `combo_ref_id`), `RecalculateTotalAmount` in the same tx. Returns the **full order object** (lesson 7: thin `{id}` DTOs caused "Đơn #undefined"). |
 | 6 | `POST /orders/:id/items` | guest JWT | O | Append mode; same items payload; recalc total in tx. |
+
+> **Row 4 is ⛔ deferred in v1** (owner ruling 2026-07-24, [F39](../../FINDINGS.md)) —
+> the table-less mint exists only to serve the online path, which v1 does not ship.
+> **Five endpoints in v1**; `POST /auth/guest/:qr_token` (the QR mint, T-1) is the only
+> guest mint built. The rate-limit middleware still mounts — on the one route that exists.
 
 Errors ride the Session-0 envelope; codes from `BE_STATE.md §4` (extended per phase).
 
@@ -368,6 +384,10 @@ on error the modal stays open with the envelope message and the cart untouched.
 8. **Two checkout paths:** table bound → TableConfirmModal → `POST /orders`
    (`source:'qr'`); no table → `/checkout` (online form, `source:'online'`).
    Append mode: `?add_to_order=<id>` → `POST /orders/:id/items`.
+   > **v1 = one path** (owner ruling 2026-07-24, [F39](../../FINDINGS.md)): table bound →
+   > TableConfirmModal, plus append mode. **No table → no order**: "Thanh toán" opens a
+   > *quét mã QR* prompt instead of navigating to `/checkout`, which v1 does not build
+   > ([F43](../../FINDINGS.md)). The dead end must be a designed state, not a broken link.
 9. **Cards:** price VND via `formatVND()` in the reference's format (`30.000 đ`),
    favourite heart (toggle only, stopPropagation), qty stepper, "Hết" overlay when
    86'd, fly-to-cart animation on add.
