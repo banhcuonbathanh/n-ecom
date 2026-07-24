@@ -231,46 +231,52 @@ surface. `✅` has a full 4-doc set under `harness/plans/<slug>/`; `⛔` is reso
 a set (merged away — cross-linked instead); `⬜` is unplanned. Each ⬜ row is a candidate
 `harness/plans/<slug>/` folder — make its 4-doc set with this guide.
 
-**Status as of 2026-07-24 — 13 of 34 pages resolved (12 full sets + 1 merged away), 21 ⬜.**
+**Status as of 2026-07-24 — plan sets: 13 of 34 pages resolved (12 full sets + 1 merged
+away), 21 ⬜. BE plans: 11 identified as needed — 1 ✅ (`customer_menu` F-30) + 10 ⬜;
+15 pages need none (`—`); 8 undecided (`?`).**
 Per-page task status lives in `TASKS.md`; receipts in `VERIFICATION.md`. This table owns
 only *does a plan set exist*.
 
+The **BE plan** column tracks the optional 5th doc (§11): `✅` written · `⬜` judged needed,
+not written · `—` not needed (backend fits inside `_PLAN.md §3`) · `?` decide when the page
+is planned. Verdicts for unplanned pages are **proposals** — confirm at planning time.
+
 ### 🛒 Customer (14) — 3 ✅ · 1 ⛔ · 10 ⬜
 
-| slug | plan set |
-|---|---|
-| `customer_menu` | ✅ **F-15** — 4 docs · **+5th doc** `customer_menu_BE_PLAN.md` (**F-30**, 2026-07-24): the BE *build* HOW under `_PLAN.md §3`'s WHAT. First page to get one — see §11 |
-| `customer_orders_tracking` | ✅ **F-25** — 4 docs; the merged `/orders` screen (live tracking + history + detail) |
-| `customer_favourites` | ✅ **F-24** — 4 docs |
-| `customer_order_detail` | ⛔ **F-19** — `/order/:id` merged into `/orders` by owner ruling (2026-07-19). Folder holds a stub + `_SUPPLEMENT.md` only (owns the deep-link gap F02, dropped qty stepper F03, stale redirect); **not** an unfinished set |
-| `customer_welcome` | ⬜ |
-| `customer_table_qr` | ⬜ QR airlock — mints the guest JWT the menu consumes |
-| `customer_product_detail` | ⬜ partly pre-scoped as `/menu/product/[id]` (menu plan C-5) |
-| `customer_combo_detail` | ⬜ partly pre-scoped as `/menu/combo/[id]` (menu plan C-5) |
-| `customer_checkout` | ⬜ online path — `source:'online'`, name/phone |
-| `customer_tracking` | ⬜ check for overlap with `customer_orders_tracking` before planning |
-| `customer_order_list` | ⬜ check for overlap with `customer_orders_tracking` before planning |
-| `customer_profile` | ⬜ |
-| `customer_settings` | ⬜ |
-| `customer_introduction` | ⬜ |
+| slug | plan set | BE plan |
+|---|---|---|
+| `customer_menu` | ✅ **F-15** — 4 docs | ✅ **F-30** — `customer_menu_BE_PLAN.md`, first one written; 6-slice spine, owns catalog + order-create |
+| `customer_orders_tracking` | ✅ **F-25** — 4 docs; the merged `/orders` screen (live tracking + history + detail) | ⬜ **needed** — SSE/monitor-stream contract, order state machine, `canCancel`; the biggest un-planned backend |
+| `customer_favourites` | ✅ **F-24** — 4 docs | — rides the menu catalog contract |
+| `customer_order_detail` | ⛔ **F-19** — `/order/:id` merged into `/orders` by owner ruling (2026-07-19). Folder holds a stub + `_SUPPLEMENT.md` only (owns the deep-link gap F02, dropped qty stepper F03, stale redirect); **not** an unfinished set | — merged away |
+| `customer_welcome` | ⬜ | — |
+| `customer_table_qr` | ⬜ QR airlock — mints the guest JWT the menu consumes | ⬜ **needed** — guest-JWT mint/trust boundary; F-30 §7.1 + BE-M4 depend on it |
+| `customer_product_detail` | ⬜ partly pre-scoped as `/menu/product/[id]` (menu plan C-5) | — menu catalog contract |
+| `customer_combo_detail` | ⬜ partly pre-scoped as `/menu/combo/[id]` (menu plan C-5) | — menu catalog contract |
+| `customer_checkout` | ⬜ online path — `source:'online'`, name/phone | ⬜ **needed** — 🚨 blocked by `orders.guest_id` (F27); online-order ownership gap |
+| `customer_tracking` | ⬜ check for overlap with `customer_orders_tracking` before planning | ? |
+| `customer_order_list` | ⬜ check for overlap with `customer_orders_tracking` before planning | ? |
+| `customer_profile` | ⬜ | ? |
+| `customer_settings` | ⬜ | — |
+| `customer_introduction` | ⬜ | — |
 
 ### 🛠️ Admin (13) — 9 ✅ · 4 ⬜
 
-| slug | plan set |
-|---|---|
-| `admin_overview` | ✅ **F-17** — 4 docs |
-| `admin_toppings` | ✅ **F-29** — 4 docs |
-| `admin_ingredients` | ✅ **F-21** — 4 docs |
-| `admin_todo_list` | ✅ **F-20** — 4 docs; ⚠ ~80 % overlap with `admin_task_board` (FINDINGS F05, merge ruling pending) |
-| `admin_task_board` | ✅ **F-22** — 4 docs; same F05 overlap |
-| `admin_staff` | ✅ **F-23** — 4 docs |
-| `admin_training` | ✅ **F-26** — 4 docs on disk; TASKS row sits 🔄 (planning done; AD-T1…T6 build rows are proposals until the AD phase opens) |
-| `admin_products` | ✅ **F-27** — 4 docs |
-| `admin_combos` | ✅ **F-28** — 4 docs; combo builder consumes the products contract |
-| `admin_summary` | ⬜ check for overlap with `admin_overview` before planning |
-| `admin_categories` | ⬜ likely small — cross-link `admin_products` |
-| `admin_storage` | ⬜ cross-link `admin_ingredients` (stock movements) |
-| `admin_marketing` | ⬜ |
+| slug | plan set | BE plan |
+|---|---|---|
+| `admin_overview` | ✅ **F-17** — 4 docs | ⬜ **needed** — dashboard aggregation/rollup queries + their cache policy |
+| `admin_toppings` | ✅ **F-29** — 4 docs | — CRUD; `_PLAN.md §3` is enough (shares the catalog spine) |
+| `admin_ingredients` | ✅ **F-21** — 4 docs | ⬜ **needed** — stock-movement ledger is transactional (Nhập/Xuất/Điều chỉnh), own migrations |
+| `admin_todo_list` | ✅ **F-20** — 4 docs; ⚠ ~80 % overlap with `admin_task_board` (FINDINGS F05, merge ruling pending) | ? blocked on the F05 merge ruling — one BE plan if merged |
+| `admin_task_board` | ✅ **F-22** — 4 docs; same F05 overlap | ? same |
+| `admin_staff` | ✅ **F-23** — 4 docs | ⬜ **needed** — RBAC + auth, own error-enum work (F09/F10 open) |
+| `admin_training` | ✅ **F-26** — 4 docs on disk; TASKS row sits 🔄 (planning done; AD-T1…T6 build rows are proposals until the AD phase opens) | ⬜ **needed** — the whole write path is new (reference never wrote `training_progress`/`quiz_attempts`) |
+| `admin_products` | ✅ **F-27** — 4 docs | — CRUD on the catalog spine F-30 already lays |
+| `admin_combos` | ✅ **F-28** — 4 docs; combo builder consumes the products contract | — combo expansion already specified in F-30 §7.2 |
+| `admin_summary` | ⬜ check for overlap with `admin_overview` before planning | ? |
+| `admin_categories` | ⬜ likely small — cross-link `admin_products` | — |
+| `admin_storage` | ⬜ cross-link `admin_ingredients` (stock movements) | ? folds into the ingredients BE plan if the pages merge |
+| `admin_marketing` | ⬜ | ? |
 
 ### 👨‍🍳 Staff (5) — 0 ✅ · 5 ⬜
 
@@ -278,9 +284,13 @@ only *does a plan set exist*.
 — all ⬜. Staff/admin surfaces use the neutral F-7 `design-system.html` tokens, **not**
 the customer dark/orange shell (§7).
 
+**BE plans:** `staff_pos`, `staff_kds` and `staff_cashier_payment` are all ⬜ **needed** —
+POS writes orders, KDS consumes the realtime event contract, payment closes the money path.
+`staff_login`/`staff_register` fold into the `admin_staff` auth/RBAC BE plan.
+
 ### 🌐 Public (2) — 0 ✅ · 2 ⬜
 
-`public_landing` · `public_legal` — both ⬜.
+`public_landing` · `public_legal` — both ⬜; neither needs a BE plan (static/near-static).
 
 **Suggested order** (cheapest first — most contract shared with the sets already done):
 `customer_table_qr` → `customer_product_detail` / `customer_combo_detail` →
@@ -301,18 +311,66 @@ Introduced by **F-30** for `customer_menu`. The 4-doc set answers **WHAT** the b
 must expose (`_PLAN.md §3`: endpoints, wire shapes, cache map). A `_BE_PLAN.md` answers
 **HOW it gets built** — build spine, ordered slices, migration order, per-slice receipts.
 
-- **Not part of the standard set.** Add one only when a page's backend is big enough that
-  §3 alone can't drive the build (multi-slice, own migrations). Most pages never need it.
+- **Not part of the standard set.** Most pages never need one — §10's BE-plan column marks
+  `—` for those, and that is the default.
 - **Still subordinate to `<page>_PLAN.md`** — the contract lives there and wins on conflict.
   The BE plan restates no contract; it *sequences* it.
 - Same naming law (slug prefix), same registration duty (Hard Rule 6: CONTEXT_MAP + README).
 - Route build tasks at it explicitly in `CONTEXT_MAP §Routing` (F-30 pointed C-1/C-2/C-3 and
   the T/O order rows at `customer_menu_BE_PLAN.md`).
 
-A page with one is marked in §10 as "4 docs · +5th doc".
+### 11.1 When a page needs one — the test
+
+Write a `_BE_PLAN.md` if **any** of these is true. Otherwise `_PLAN.md §3` is enough.
+
+| Trigger | Why §3 can't carry it |
+|---|---|
+| **Owns migrations** — new tables/columns, not just reads of existing ones | migration order is build sequencing, not contract |
+| **A real transaction** — multi-table write that must be atomic | tx body + rollback points need their own spec (F-30 §5.3) |
+| **≥ 3 build slices** — can't ship in one task | the slice DAG *is* the plan |
+| **A non-obvious algorithm** — expansion, rollup, state machine, pricing | "easy to get wrong" deserves prose (F-30 §7) |
+| **New auth/trust boundary** — token mint, RBAC, ownership check | trust boundaries are where bugs become breaches |
+
+CRUD on a spine another page already laid is **not** a trigger — cross-link that page's BE
+plan instead (`admin_products`/`admin_combos` ride F-30's catalog spine and get `—`).
+
+### 11.2 Structure
+
+Mirror F-30's section order — the sections it proved out:
+
+```
+1 Scope            — what the backend must ship for this page
+2 Alignment        — what governs the build (read, don't restate)
+3 Build spine      — the ordered slices + their dependency edges
+4 Data layer       — 4.1 migrations (exact files) · 4.2 seed + its AC · 4.3 sqlc queries
+5 Domain layer     — 5.1 package/file inventory (the scope-contract skeleton) · 5.2 service
+                     methods · 5.3 transaction bodies · 5.4 cache keys/TTL/invalidation ·
+                     5.5 error mapping
+6 HTTP layer       — 6.1 routes + middleware chain · 6.2 DTOs · 6.3 validation split · 6.4 auth
+7 The hard part    — the one algorithm most likely to be got wrong, drawn step by step
+8 Task mapping     — the TASKS.md rows this build needs
+9 Verify plan      — the receipt each slice owes
+10 Findings raised  — → FINDINGS.md rows
+```
+
+§5.1 is the highest-value section: it *is* the scope contract for every build task that follows.
+
+### 11.3 BE-plan build order
+
+Follow the backend's own dependency edges, not the page backlog's:
+
+`customer_menu` ✅ (catalog + order-create spine — everything below leans on it) →
+`customer_table_qr` (guest JWT; F-30 §7.1 assumes it) → `customer_orders_tracking`
+(order state machine + the SSE event contract) → `staff_pos` / `staff_kds` (first consumers
+of that contract) → `customer_checkout` (**blocked** on `orders.guest_id`, FINDINGS F27) →
+`admin_staff` (RBAC, unblocks the staff logins) → `admin_ingredients` → `admin_training` →
+`admin_overview` (rollups read everything above — cheapest last).
+
+A page with a BE plan is marked `✅` in §10's BE-plan column.
 
 ---
 
-*Written 2026-07-19, distilled from the F-15 customer_menu page-plan set. §10 backlog
-re-synced against disk + §11 added for the F-30 `_BE_PLAN.md` doc kind, 2026-07-24. This
-guide owns the page-plan format; page rules live in the docs named in §2 of any plan.*
+*Written 2026-07-19, distilled from the F-15 customer_menu page-plan set. 2026-07-24: §10
+backlog re-synced against disk and given a BE-plan column; §11 added for the `_BE_PLAN.md`
+doc kind distilled from F-30 (when to write one, structure, build order). This guide owns
+the page-plan format; page rules live in the docs named in §2 of any plan.*
