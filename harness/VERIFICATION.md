@@ -43,6 +43,27 @@ $ grep -c "Every flag raised → a tracked row" CLAUDE.md
 **Result:** ✅ — the capture rule was previously bound to CHECKPOINT, so a session with no task (a question, a doc review, plain chat) had nowhere to land a flag. Hard Rule 7 makes capture unconditional and `FINDINGS.md §capture rule` gained the no-task clause (`Task` = `chat`).
 **Collision note:** registered as `H-3` first — another session already owns `H-3` (route-ownership map). Caught by the receipt grep, renumbered to `H-4`; evidence appended to [F25](FINDINGS.md) (`concurrent-taskids`), which predicts exactly this.
 
+### F-35 — QR-only ruling drained · 2026-07-24
+**AC:** every doc that told a session to build the online path carries a dated ⛔ note pointing at the ruling; `T-1` builds one mint and proves the other absent; the no-table dead end is a designed prompt with a row; schema untouched.
+**Receipt:**
+```
+$ python3 <ruling-drain check, run from harness/>
+— ruling notes in place —
+PLAN  ⛔/QR-only notes : 3 refs | §1 True | §3.1 True | §4.4#8 True
+BE_PLAN §1 note       : True | FE_PLAN §1 note: True
+— task board —
+T-1 online mint cut   : True | proves absence: True   ("No /auth/guest/online route exists")
+T-2 carries F43 prompt: True
+F-35 row              : True
+— ledger —
+F39 status            : ["⛔ won't-fix (v1)"]
+F43 row               : True
+orders.guest_id kept  : True        # schema untouched — re-enabling is a handler, not a migration
+```
+**Result:** ✅ — owner ruling *"checkout is for shipping; we eat at the restaurant — no checkout page"* recorded as F39 ⛔ won't-fix (v1). The cut is larger than one page and the docs now say so: **no `/checkout`, no online order, therefore no table-less mint** — `POST /auth/guest/online` drops out of T-1 (one mint, not two) and BE-M6 loses its online-only branches (`customer_name` required, the `source == "online"` check). `buildOrderItemsPayload()` has two callers in v1, not three.
+**The consequence I refused to leave implicit ([F43](FINDINGS.md)):** `PLAN §4.4` #8's answer for a guest with no table was *navigate to `/checkout`* — a page that now does not exist. Deleting the destination without designing the state would have shipped a dead button, which is the reference's own "silently broken" defect class. v1 answer: "Thanh toán" with no table opens a **quét-mã-QR prompt** and keeps the cart, so scanning and returning still works. Written into T-2's AC.
+**Scope note:** dated notes over rewrites (the F-19 supersession pattern) — the online-path design stays readable as the plan for when delivery opens, marked "not v1 work". Schema deliberately untouched: `orders.guest_id`, `source='online'` and the nullable customer fields stay, unused. F27's ruling still holds — `guest_id` is also the append-mode ownership key when a guest re-scans and gets a fresh session.
+
 ### F-34 — Menu build-readiness gap registration · 2026-07-24
 **AC:** every gap named in the read-through has a ledger row with a plan default and a named closing artifact; `T-3` exists with deps + AC; `H-3` registered and linked from the graduating findings; no new facts duplicated into the plan docs.
 **Receipt:**

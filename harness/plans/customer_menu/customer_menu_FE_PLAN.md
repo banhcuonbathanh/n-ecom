@@ -36,6 +36,14 @@
 makes the dark/orange shell real, the VN copy constants file, `formatVND()`,
 `buildImageURL()`, and the typed catalog/orders API modules.
 
+> **⛔ `/checkout` is out of v1 entirely — owner ruling 2026-07-24 ([F39](../../FINDINGS.md)):**
+> QR dine-in only, no shipping, no checkout page. Two consequences for this plan:
+> **FE-M6 loses a caller** — `buildOrderItemsPayload()` has **two** call sites in v1
+> (`TableConfirmModal` + append mode), not the three §7.2 lists; and **FE-M2/M4 gain a state** —
+> a table-less guest can browse but not order, so "Thanh toán" must open a *quét mã QR* prompt
+> rather than navigate ([F43](../../FINDINGS.md)). The entry that *does* get built is
+> **T-3**, the QR airlock ([F38](../../FINDINGS.md)).
+
 **Out of scope (named so nobody builds them here):** `/checkout` (online path — its own
 page, unplanned), the `/orders` screen and everything SSE
 ([`customer_orders_tracking`](../customer_orders_tracking/customer_orders_tracking_PLAN.md)),

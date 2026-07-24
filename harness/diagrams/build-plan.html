@@ -310,6 +310,21 @@
     <details class="report" open>
       <summary>
         <span class="r-date">2026-07-24</span>
+        <span class="r-title">F-35 — Your ruling: QR dine-in only, no checkout · applied</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You ruled:</b> checkout is for shipping — we eat at the restaurant, so no checkout page. Applied. <b>The cut is bigger than one page</b>, and it is worth seeing the chain: no checkout → no online order → <b>no table-less session</b>. So the guest-session task now builds <b>one</b> door instead of two (the QR scan), and its acceptance test proves the other one <em>isn’t there</em>. The order endpoint loses its “online customers must give a name” branch, and the payload builder loses a caller. Simpler on every layer — this ruling removed work rather than adding it.</p>
+        <h4>The hole it opened, and how it’s closed ⚠️</h4>
+        <p>Someone who opens the menu <em>without</em> scanning — a bookmark, a shared link, browsing before sitting down — can still look at the food but now has nowhere to go: the old answer for “no table” was <em>send them to checkout</em>, and checkout no longer exists. Left alone that ships a <b>button that does nothing</b>, which is exactly the class of defect we catalogued from the old system. <b>v1 answer:</b> “Thanh toán” with no table opens a <em>quét mã QR trên bàn</em> prompt and keeps the cart, so scanning and coming back works. It is now part of the cart task’s acceptance test.</p>
+        <p><b>The door left open:</b> nothing was deleted from the database design — the online fields stay, unused. If you ever add delivery or takeaway, it is a handler to write, not a migration to run. The plan documents keep the online design too, clearly stamped “not v1 work”. <b>Next up is unchanged: F-2.</b></p>
+      </div>
+    </details>
+
+    <details class="report" open>
+      <summary>
+        <span class="r-date">2026-07-24</span>
         <span class="r-title">F-34 — “Is there enough to build the menu?” — measured, and the gaps registered · delivered</span>
         <span class="chip done">done</span>
         <span class="r-hint">detail</span>
@@ -686,7 +701,7 @@
       <div class="phase-head"><h4>Phase T — Table &amp; guest session</h4><span class="chip todo">todo</span></div>
       <p class="milestone">Milestone: <b>a guest can sit down and fill a cart</b> — QR mints a session, the cart lives in the browser. <span style="color:var(--amber)">Phase added 2026-07-24 (F-32) — every doc referred to “the T phase” without it existing here.</span></p>
       <ul class="tasks">
-        <li data-deps="C-1, F-4" data-ac="curl: httpOnly Set-Cookie on both mints, no body token; bad qr_token → 404; burst → 429; no cookie → 401"><span class="id">T-1</span><span>BE: tables + order_sequences, guest-JWT mint (QR + online), rate limit, auth middleware</span></li>
+        <li data-deps="C-1, F-4" data-ac="curl: httpOnly Set-Cookie on the QR mint, no body token; bad qr_token → 404; burst → 429; no cookie → 401; no /auth/guest/online route exists"><span class="id">T-1</span><span>BE: tables + order_sequences, guest-JWT mint <b>from the QR only</b>, rate limit, auth middleware <span style="color:var(--amber)">(online mint cut 2026-07-24 — owner ruling, F39)</span></span></li>
         <li data-deps="C-4b" data-ac="screenshots: two nhân ⇒ two rows; rollup; canh gate; reload keeps note drops lines; store unit tests"><span class="id">T-2</span><span>FE: cart store + OrderSummary + bottom bar + the canh gate</span></li>
         <li data-deps="T-1, C-4a" data-ac="screenshots: valid qr_token → /menu with the Bàn 04 pill + cookie set; bad token → error branch; reload keeps the table"><span class="id">T-3</span><span>FE: the QR airlock <code style="font-family:var(--mono);font-size:0.85em">/table/[id]</code> — mint the session, bind the table <span style="color:var(--amber)">(added 2026-07-24, F-34 / F38 — the route nobody owned)</span></span></li>
       </ul>
@@ -883,6 +898,7 @@
 
     <h3>Findings so far (from the checkpoint log)</h3>
     <ul class="log">
+      <li><span class="when">2026-07-24</span><span><b>Decision (owner):</b> v1 ships <b>QR dine-in only</b> — no checkout page, no online orders. Scope cut applied across the menu plans; it removed work on every layer (one guest-session door instead of two). The database design was left untouched so delivery can be switched on later without a migration. One state it created — a guest with no table — is now a designed “scan the QR” prompt instead of a dead button.</span></li>
       <li><span class="when">2026-07-24</span><span><b>Gap found (F-34):</b> the menu plans are complete inside their own scope but three <em>routes between plans</em> had no owner — the customer shell, the QR landing page, and checkout. The QR page is the menu’s default entry, so the whole seated path would have stalled mid-build. Registered F38–F42, opened <b>T-3</b>, and graduated the pattern into <b>H-3</b>: page plans must name the owners of the pages they link to and from.</span></li>
       <li><span class="when">2026-07-17</span><span><b>Process:</b> owner switched to a boss/lead model — the agent runs the project and reports; the loop's ALIGN step became REPORT (detailed plan published in section R before any build). Recorded in CLAUDE.md.</span></li>
       <li><span class="when">2026-07-16</span><span><b>Drift found:</b> the repo was not a git repository yet → fixed with <code>git init</code> + checkpoint commit <code>0b727a8</code>; <code>personal.md</code> gitignored as non-project material.</span></li>

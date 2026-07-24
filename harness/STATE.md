@@ -37,9 +37,11 @@
   ✅ **Closed:** [F27](FINDINGS.md) — `orders.guest_id` is in `DB_SCHEMA §4.3`; the online-order
   path is unblocked.
   🚨 **NEW (F-34) — the QR airlock was unowned** ([F38](FINDINGS.md)): `/table/[id]` is the
-  menu's default entry, but nothing wrote `tableId`/`tableName` → **T-3** opened. Also
-  ⚠ [F39](FINDINGS.md) `/checkout` unowned (**owner ruling needed before O**: build it or
-  defer to a QR-only v1), ⚠ [F40](FINDINGS.md) combos `is_active` vs `is_available`,
+  menu's default entry, but nothing wrote `tableId`/`tableName` → **T-3** opened.
+  ⛔ **RULED 2026-07-24 — v1 is QR dine-in only** ([F39](FINDINGS.md) closed): no `/checkout`,
+  no online order, **no table-less mint** (T-1 builds one mint). New consequence
+  ⚠ [F43](FINDINGS.md): a table-less guest can browse but not order → "Thanh toán" opens a
+  quét-mã-QR prompt (T-2's AC), never a dead link. Also ⚠ [F40](FINDINGS.md) combos `is_active` vs `is_available`,
   ⚠ [F41](FINDINGS.md) nothing serves `/uploads`, ⚠ [F42](FINDINGS.md) no FE test runner
   pinned though T-2's AC demands unit tests → pin Vitest + Playwright at F-2.
   ⚠ `personal/command.md` still tracked in git ([F14](FINDINGS.md) — say "untrack it" to fix).
@@ -61,6 +63,22 @@
   (route-ownership map) → renumbered `H-4`. Evidence appended to [F25](FINDINGS.md) — the
   `concurrent-taskids` class it graduated F04 for is still unfixed (`NEXT_ID` counter, H-2 pending).
 - Receipt: `VERIFICATION.md` → H-4 (line count + Rule 7 body + cross-file greps).
+
+### 2026-07-24 — Session 22b (F-35): the QR-only ruling, drained
+- Owner ruled on [F39](FINDINGS.md): *"checkout is for shipping; we eat at the restaurant — no
+  checkout page."* v1 = **QR dine-in only**.
+- The cut is bigger than one page, and the docs now say so: no `/checkout` → no online order →
+  **no table-less mint**. `T-1` builds **one** mint (its AC now proves `/auth/guest/online`
+  absent); BE-M6 loses the `customer_name`-required and `source == "online"` branches; the
+  payload builder has **two** callers, not three.
+- **Refused to leave the hole implicit** → ⚠ [F43](FINDINGS.md): `PLAN §4.4` #8 sent a table-less
+  guest to `/checkout`, which no longer exists. v1 answer: "Thanh toán" opens a *quét mã QR*
+  prompt and keeps the cart. In `T-2`'s AC. Deleting a destination without designing the state
+  is how the reference shipped dead buttons.
+- **Schema untouched on purpose** — `orders.guest_id`, `source='online'`, the nullable customer
+  fields all stay unused, so delivery/takeaway later is a handler, not a migration. F27 still holds
+  (`guest_id` is also the append-mode key when a guest re-scans into a fresh session).
+- Next: unchanged — **F-2**.
 
 ### 2026-07-24 — Session 22 (F-34): menu build-readiness gap registration
 - Owner asked: "is there enough info in the 3 menu plan docs to finish BE and FE?" Answer: **yes
