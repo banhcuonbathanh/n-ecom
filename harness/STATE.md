@@ -41,6 +41,23 @@
 
 ## Checkpoint log
 
+### 2026-07-24 — Session 21b (F-33): HTML companion sync
+- Owner: "update html as well". The menu folder's 3 HTML companions still stated facts the two new
+  build plans had superseded. Done inline — **not** delegated: [F16](FINDINGS.md) records that every
+  builder sub-agent spawned so far died on the usage cap and was recovered by inline authoring.
+- Done: **F-33 ✅** — `isSoupName()` → `isCanhProduct()` (by seeded CANH `category_id`) with an
+  [F34](FINDINGS.md) citation across all 3 pages; `_plan.html`'s file map, legend and task-mapping
+  table rebuilt onto **C-4a/C-4b/C-6/C-5/T-1/T-2/O-0/O-0F** (its "C-4 may split" note now reads as
+  done); all 3 pages link the two build spines; mockup footer points at the FE plan for the next
+  fidelity step.
+- **4 dead links found and fixed** (`href="PLAN.md"` ×2, `href="plan.html"` ×2) — pre-slug-prefix
+  rename leftovers, same drift class F-30 caught in the index rows. Outside the task scope but
+  broken links in the owner's own plan set → fixed in place (Hard Rule 5).
+- One AC self-correction: F-33 originally demanded "all 3 render both themes". Wrong — customer
+  mockups are single-theme *by design* (the shell **is** the dark/orange theme; the favourites and
+  orders mockups match). AC corrected rather than the file.
+- Next: unchanged — **F-2**, the compose skeleton.
+
 ### 2026-07-24 — Session 21 (F-31 + F-32): the FE build plan, and draining the drift
 - Owner asked whether FE+BE could actually be built, then "close the gap only". Measured first:
   **BE ~90 %** (F-30 is buildable), **FE ~60 %** — behavior fully specified, no build spine.

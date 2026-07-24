@@ -237,7 +237,7 @@
 <div class="page">
 
 <header>
-  <a class="back" href="plan.html">← plan.html (the build plan)</a>
+  <a class="back" href="customer_menu_plan.html">← customer_menu_plan.html (the build plan)</a>
   <div class="eyebrow" style="margin-top:18px">ecom-core · restaurant platform · runtime walkthrough · 2026-07-18</div>
   <h1>Customer menu — how it actually works</h1>
   <p class="lede">One page that traces the <code>/menu</code> machinery end to end — every flow drawn
@@ -603,7 +603,7 @@ focus   refetch-on-focus stays ON → a menu left open on a table tablet
   so they merge into one row instead of splitting the tray.</p></div>
 
   <h3>2 · Canh — a stepper, never a card</h3>
-  <p>Soup is filtered out of every list and out of search (<code>isSoupName</code>, PLAN §4.4-4) — a
+  <p>Soup is filtered out of every list and out of search (<code>isCanhProduct()</code> — by the seeded CANH <code>category_id</code>, never by name: <a href="../../FINDINGS.md">F34</a>; PLAN §4.4-4) — a
   guest can only pick canh from the stepper in <code>OrderSummary</code>, bound to the two real canh
   products:</p>
   <div class="mock">
@@ -980,9 +980,12 @@ worst case ≈ one staleTime window — bounded, self-healing, no reload needed<
 </section>
 
 <footer>
-  Runtime companion to <a href="PLAN.md">PLAN.md</a> / <a href="plan.html">plan.html</a> (F-15, this
+  Runtime companion to <a href="customer_menu_PLAN.md">customer_menu_PLAN.md</a> / <a href="customer_menu_plan.html">customer_menu_plan.html</a> (F-15, this
   folder) — this page re-draws their facts as end-to-end sequences and owns nothing itself; where
-  they disagree, PLAN.md wins. Worked example throughout: Bàn 04 · 103.000 đ · badge 13.
+  they disagree, the <code>.md</code> wins. <b>How</b> these sequences get built lives in the two
+  build spines: <a href="customer_menu_BE_PLAN.md">customer_menu_BE_PLAN.md</a> (F-30) and
+  <a href="customer_menu_FE_PLAN.md">customer_menu_FE_PLAN.md</a> (F-31).
+  Worked example throughout: Bàn 04 · 103.000 đ · badge 13. Synced 2026-07-24 (F-33).
 </footer>
 
 </div>

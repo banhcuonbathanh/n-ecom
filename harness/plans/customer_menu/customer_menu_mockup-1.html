@@ -443,7 +443,7 @@
         <li>Typing <code>≥2</code> chars <b>reshapes</b> the page: nav, rail and combo sections hide.</li>
         <li>One flat, client-side filtered product list renders (or a "Không tìm thấy" empty state).</li>
         <li><code>1</code> char → inline hint "Nhập ít nhất 2 ký tự"; ✕ restores the sectioned menu.</li>
-        <li>Canh products stay filtered out of results too (<code>isSoupName</code>, §4.4-4).</li>
+        <li>Canh products stay filtered out of results too (<code>isCanhProduct()</code> — by CANH <code>category_id</code>, not by name; F34 · §4.4-4).</li>
         <li>Query text is in the URL — shareable, survives reload (FE rule 2, not a store).</li>
       </ul>
     </div>
@@ -469,15 +469,20 @@
   </div>
 
   <div class="flag">
-    <b>⚠️ FLAG — theme, decide before C-4.</b> This wireframe uses the reference's locked
+    <b>⚠️ FLAG — theme, decide before C-4a.</b> This wireframe uses the reference's locked
     <b>dark + orange</b> shell (§7 plan default). Our F-7 design system set brand primary to
-    harness blue <code>#2B59D9</code>. The swap is one token change at build time — say if blue should win
+    harness blue <code>#2B59D9</code>. The swap is one token change at build time — the customer shell re-binds the F-7
+    semantic token <i>values</i> at the <code>(customer)</code> layout scope rather than editing
+    components (<b>FE_PLAN §4.2</b>), so flipping the hue touches one table. Say if blue should win
     for the customer surface, otherwise silence = the dark/orange shell ships.
   </div>
 
   <footer>
     Wireframe mockup #1 for the F-15 customer-menu plan · traced to
-    <b>harness/plans/customer_menu/customer_menu_PLAN.md</b> · fidelity: layout + component + behavior
-    mapping only. Next fidelity step = the C-4 build (real components, mobile-viewport screenshot receipts).
+    <a href="customer_menu_PLAN.md">customer_menu_PLAN.md</a> · fidelity: layout + component + behavior
+    mapping only. Next fidelity step = the <b>C-4a/C-4b</b> build — real components against the
+    <a href="customer_menu_FE_PLAN.md">FE build plan</a> (slices, prop contracts, mobile-viewport
+    screenshot receipts) on the catalog the <a href="customer_menu_BE_PLAN.md">BE build plan</a> seeds.
+    Synced 2026-07-24 (F-33).
   </footer>
 </div>

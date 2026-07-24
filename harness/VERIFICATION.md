@@ -19,6 +19,26 @@
 
 ## Log (newest on top)
 
+### F-33 — HTML companion sync (customer_menu plan set) · 2026-07-24
+**AC:** no HTML companion states a fact its `_PLAN.md`/build plans contradict — zero live `isSoupName` occurrences, task labels match the reconciled TASKS.md rows, each page's doc-set navigation names the FE + BE build plans, zero dead relative links, tag balance clean, `_plan.html`/`_how-it-works.html` keep both themes while `_mockup-1.html` stays single-theme by design.
+**Receipt:**
+```
+$ python3 -c "<sync check over the 3 companions>"
+  PASS customer_menu_plan.html        stale_isSoupName=0 dead_links=0 unclosed=0 tag_err=0 theme_ok=True BE=1 FE=3
+  PASS customer_menu_how-it-works.html stale_isSoupName=0 dead_links=0 unclosed=0 tag_err=0 theme_ok=True BE=2 FE=2
+  PASS customer_menu_mockup-1.html    stale_isSoupName=0 dead_links=0 unclosed=0 tag_err=0 theme_ok=True BE=1 FE=1
+ALL GREEN
+
+$ grep -c ">C-4</span>" customer_menu_plan.html
+0                       # every bare C-4 label replaced by C-4a / C-4b / C-6 / T-2 / O-0F
+
+$ <dead-link scan, before → after>
+4 → 0                   # href="PLAN.md" ×2 and href="plan.html" ×2 — pre-slug-prefix rename
+                        # leftovers, the same drift class F-30 fixed in the index rows
+```
+**Result:** ✅ — 4 `isSoupName` references retired to `isCanhProduct()` with an F34 citation (one deliberate mention survives, inside the "the original string match broke on any admin rename" explanation, and the checker excludes it by context). `plan.html`'s file map + legend + task-mapping table rebuilt onto C-4a/C-4b/C-6/C-5/T-1/T-2/O-0/O-0F, and its "C-4 may split" note now reads as done. All three pages link the two build spines. **4 dead links found and fixed** — not in the task scope, but broken links in the owner's own plan set, so fixed in place per Hard Rule 5.
+**Scope note:** the F-33 AC as first written required "all 3 render both themes". That was wrong — customer mockups are deliberately single-theme (the customer shell *is* dark/orange; `customer_favourites` and `customer_orders_tracking` mockups are the same). AC corrected in TASKS.md rather than forcing a theme toggle onto a page whose design is the theme.
+
 ### F-31 — Customer-menu frontend build plan · 2026-07-24
 **AC:** `customer_menu_FE_PLAN.md` is a pure delta on the menu plan's §4 behavior spec (links owning docs, restates neither the behaviors nor the FE rules); every slice maps to a TASKS.md row with a named receipt; the three decisions gating C-4 (F01 theme, F02 deep-link, F12 glyph) are named with a plan default so no slice is blocked; `PAGE_PLAN_GUIDE §12` defines when a page needs one; indexes updated per Hard Rule 6.
 **Receipt:**

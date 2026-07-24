@@ -181,10 +181,11 @@
   a client-only Zustand cart, and the order-creation handoff on a guest JWT — so frontend and
   backend are planned together.</p>
   <div class="facts">
-    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-15</span></span></div>
-    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="PLAN.md">PLAN.md</a> (this folder)</span></div>
+    <div class="fact"><span class="k">status</span><span class="v"><span class="chip plan">plan · F-15 · synced F-33</span></span></div>
+    <div class="fact"><span class="k">source of truth</span><span class="v"><a href="customer_menu_PLAN.md">customer_menu_PLAN.md</a> (this folder)</span></div>
+    <div class="fact"><span class="k">build spines</span><span class="v"><a href="customer_menu_BE_PLAN.md">BE_PLAN</a> (F-30) · <a href="customer_menu_FE_PLAN.md">FE_PLAN</a> (F-31)</span></div>
     <div class="fact"><span class="k">reference corpus</span><span class="v">reference/docs/system/08_pages/customer/customer_menu/ · 16 docs</span></div>
-    <div class="fact"><span class="k">ships across</span><span class="v">C-1…C-5 · T · O rows in <a href="../../TASKS.md">TASKS.md</a></span></div>
+    <div class="fact"><span class="k">ships across</span><span class="v">C-1…C-5 · T-1/T-2 · O-0/O-0F in <a href="../../TASKS.md">TASKS.md</a></span></div>
   </div>
   <div class="golden">
     <p><b>Two ways a guest lands here:</b></p>
@@ -374,36 +375,39 @@
 <section id="components">
   <div class="sec-head"><span class="sec-num">02</span><h2>Component tree — FE file map (§4.1) with owning tasks</h2></div>
   <p>Tags mark which TASKS.md row builds each file:
-  <span class="t c">C-4</span> menu page · <span class="t c">C-5</span> detail pages ·
-  <span class="t tt">T</span> cart / guest-auth tasks · <span class="t o">O</span> order-create task.</p>
+  <span class="t c">C-4a</span> shell + queries · <span class="t c">C-4b</span> sections + cards ·
+  <span class="t c">C-6</span> search + favourites · <span class="t c">C-5</span> detail pages ·
+  <span class="t tt">T</span> cart / guest-auth tasks · <span class="t o">O</span> order-create task.
+  <b>C-4 split into C-4a/C-4b</b> at F-32; slice→file ownership is owned by
+  <a href="customer_menu_FE_PLAN.md">customer_menu_FE_PLAN.md §5.1</a>.</p>
   <pre class="diagram">
 fe/src/app/(customer)/menu/
-├─ page.tsx                <span class="t c">C-4</span>  RSC: prefetch products/categories/combos → HydrationBoundary
-├─ loading.tsx             <span class="t c">C-4</span>  menu-shaped skeleton (header + rail + card grid)
-├─ error.tsx               <span class="t c">C-4</span>  segment retry
+├─ page.tsx                <span class="t c">C-4a</span>  RSC: prefetch products/categories/combos → HydrationBoundary
+├─ loading.tsx             <span class="t c">C-4a</span>  menu-shaped skeleton (header + rail + card grid)
+├─ error.tsx               <span class="t c">C-4a</span>  segment retry
 ├─ product/[id]/page.tsx   <span class="t c">C-5</span>  product detail (+ prefetch-on-hover)
 └─ combo/[id]/page.tsx     <span class="t c">C-5</span>  combo detail — combo modal is DEAD in reference; page won
 
 components/menu/
-├─ MenuHeader.tsx          <span class="t c">C-4</span>  196px photo banner, gradient, serif title — ONE banner only
-├─ MenuCategoryNav.tsx     <span class="t c">C-4</span>  THE only sticky element: scroll-spy anchor tabs (not filters)
-├─ SearchBar.tsx           <span class="t c">C-4</span>  ≥2-char client-side filter; search mode reshapes the page
-├─ FavouritesRail.tsx      <span class="t c">C-4</span>  pinned set + custom suất + fav product/combo cards
-├─ ComboSection.tsx        <span class="t c">C-4</span>  "SUẤT" — combo cards, nhân multi-select (≥1, thịt default)
-├─ CustomSuatSection.tsx   <span class="t c">C-4</span>  "SUẤT TỰ TẠO" — device-local custom suất, one-tap add
-├─ ProductList.tsx         <span class="t c">C-4</span>  category sections
-├─ ProductCard.tsx         <span class="t c">C-4</span>  nhân single-select pill; heart
+├─ MenuHeader.tsx          <span class="t c">C-4b</span>  196px photo banner, gradient, serif title — ONE banner only
+├─ MenuCategoryNav.tsx     <span class="t c">C-4b</span>  THE only sticky element: scroll-spy anchor tabs (not filters)
+├─ SearchBar.tsx           <span class="t c">C-6 </span>  ≥2-char client-side filter; search mode reshapes the page
+├─ FavouritesRail.tsx      <span class="t c">C-6 </span>  pinned set + custom suất + fav product/combo cards
+├─ ComboSection.tsx        <span class="t c">C-4b</span>  "SUẤT" — combo cards, nhân multi-select (≥1, thịt default)
+├─ CustomSuatSection.tsx   <span class="t c">C-6 </span>  "SUẤT TỰ TẠO" — device-local custom suất, one-tap add
+├─ ProductList.tsx         <span class="t c">C-4b</span>  category sections
+├─ ProductCard.tsx         <span class="t c">C-4b</span>  nhân single-select pill; heart
 ├─ OrderSummary.tsx        <span class="t tt">T</span>   cart panel: line editor, canh stepper, rollup, note, table pill
 ├─ CartBottomBar.tsx       <span class="t tt">T</span>   two floating pills: count → scroll to summary · Thanh toán
 └─ TableConfirmModal.tsx   <span class="t o">O</span>   QR path: confirm → POST /orders (reads cart.orderNote)
 
 stores/
 ├─ cart.store.ts           <span class="t tt">T</span>   licensed in FE_STATE §9 rule 7
-└─ favourites.store.ts     <span class="t c">C-4</span>  {items[], sets[], suats[]} — device-local, FE-only
+└─ favourites.store.ts     <span class="t c">C-6 </span>  {items[], sets[], suats[]} — device-local, FE-only
 
-queries/catalog.ts         <span class="t c">C-4</span>  useProducts / useCategories / useCombos (keys from keys.ts)
+queries/catalog.ts         <span class="t c">C-4a</span>  useProducts / useCategories / useCombos (keys from keys.ts)
 lib/order-payload.ts       <span class="t o">O</span>   THE one buildOrderItemsPayload() — 3 callers, 1 builder
-lib/menu-sections.ts       <span class="t c">C-4</span>  buildMenuSections() + isSoupName() — section + canh logic</pre>
+lib/menu-sections.ts       <span class="t c">C-4b</span> buildMenuSections() + isCanhProduct() — section + canh logic (F34)</pre>
 
   <h3>Never ported — dead or disabled in the reference's own final audit</h3>
   <ul class="plain">
@@ -674,8 +678,11 @@ Tier 3 · mutation  none for the cart (pure client state, fly-to-cart is the
       <b>multi-select</b> ("Nhân thịt" default, last one can't be deselected). Each combination = its own
       cart row. No modal, ever.</p></div>
     <div class="bcard"><span class="bn">B4</span><span class="bt">Canh is never a card</span>
-      <p>Soup products are filtered out of lists and search (<code>isSoupName</code>) and chosen only via the
-      OrderSummary stepper — two rows bound to the two real canh products (có rau / không rau).</p></div>
+      <p>Soup products are filtered out of lists and search and chosen only via the
+      OrderSummary stepper — two rows bound to the two real canh products (có rau / không rau).
+      <b>Identified by category, not by name</b> (<code>isCanhProduct()</code> → the seeded CANH
+      <code>category_id</code>): the original <code>isSoupName()</code> string match broke on any
+      admin rename — <a href="../../FINDINGS.md">F34</a>.</p></div>
     <div class="bcard"><span class="bn">B5</span><span class="bt">Canh gate</span>
       <p>Zero canh bowls → "Thanh toán" pill dims but still fires → error toast + auto-open the cart list +
       scroll-and-shake the canh box.</p></div>
@@ -747,16 +754,19 @@ Tier 3 · mutation  none for the cart (pure client state, fly-to-cart is the
     <tr><th>TASKS.md row</th><th>This plan's slice</th><th>Receipt type</th></tr>
     <tr><td><span class="t c">C-1</span> schema + seed</td><td>§04 tables + seed incl. combos / ₫0 toppings</td><td>migrate up/down + seed counts</td></tr>
     <tr><td><span class="t c">C-2</span> BE list/detail</td><td>Endpoints #1–2 + cache map + invalidation AC</td><td>curl transcripts (hit/miss/DEL)</td></tr>
-    <tr><td><span class="t c">C-3</span> BE categories/search → <b>combos/toppings</b></td><td>Endpoint #3</td><td>curl: combos with items</td></tr>
-    <tr><td><span class="t c">C-4</span> FE menu page</td><td>Everything FE except cart writes: shell, nav, sections, cards, favourites, search</td><td>screenshots (mobile viewport)</td></tr>
-    <tr><td><span class="t c">C-5</span> FE product detail</td><td><code>/menu/product/[id]</code> + prefetch-on-hover</td><td>screenshots</td></tr>
-    <tr><td><span class="t tt">T</span> cart task</td><td><code>cart.store.ts</code> + drawer/bottom-bar/strip + canh gate</td><td>screenshots + store unit tests</td></tr>
-    <tr><td><span class="t tt">T</span> guest auth</td><td>Endpoint #4 cookie mint + rate limit</td><td>curl: cookie set, 429 on burst</td></tr>
-    <tr><td><span class="t o">O</span> order create</td><td>Endpoints #5–6 + TableConfirmModal + append mode</td><td>curl + 2-client screenshot</td></tr>
+    <tr><td><span class="t c">C-3</span> BE <b>combos</b> <span style="color:var(--sub)">(repurposed — search is client-side)</span></td><td>Endpoint #3</td><td>curl: combos with ids-only items</td></tr>
+    <tr><td><span class="t c">C-4a</span> FE shell + menu route</td><td><code>(customer)</code> layout + token scope, RSC prefetch, layout-shaped loading/error, api/types/query layer</td><td>screenshots: zero-spinner paint, streamed skeleton, error branch</td></tr>
+    <tr><td><span class="t c">C-4b</span> FE sectioned menu</td><td>Header, scroll-spy nav, product/combo cards, nhân pills, all 5 render branches</td><td>screenshots (mobile viewport) + zero-raw-hex grep</td></tr>
+    <tr><td><span class="t c">C-6</span> FE search + favourites</td><td>Search mode, favourites rail, custom-suất section</td><td>screenshots: 1-char hint → results → no-match → ✕</td></tr>
+    <tr><td><span class="t c">C-5</span> FE detail pages</td><td><code>/menu/product/[id]</code> + <code>/menu/combo/[id]</code> + prefetch-on-hover</td><td>screenshots: cold URL vs warm hover</td></tr>
+    <tr><td><span class="t tt">T-2</span> cart task</td><td><code>cart.store.ts</code> + OrderSummary + bottom bar + canh gate</td><td>screenshots + store unit tests</td></tr>
+    <tr><td><span class="t tt">T-1</span> guest auth</td><td>Endpoint #4 cookie mint + rate limit</td><td>curl: cookie set, 429 on burst</td></tr>
+    <tr><td><span class="t o">O-0</span> order create (BE)</td><td>Endpoints #5–6: expansion, snapshot, in-tx recalc</td><td>curl: the ₫33.000 worked example + 403/409/422 rails</td></tr>
+    <tr><td><span class="t o">O-0F</span> order confirm (FE)</td><td>TableConfirmModal + the one payload builder + append mode</td><td>screenshots: note round-trip + a 422 on the right line</td></tr>
   </table></div>
   <p style="margin-top:12px"><b>Sizing:</b> each row keeps the 1-session / 1–2-file / 1-AC rule.
-  C-4 is the biggest and may split (shell+nav+cards / cart surfaces) when it opens — decided at
-  registration.</p>
+  C-4 <b>was</b> the biggest and <b>has now split</b> — C-4a (shell + queries) / C-4b (sections + cards),
+  with search + favourites on C-6 and the cart surfaces on T-2 (F-32, 2026-07-24).</p>
 </section>
 
 <section id="decisions">
@@ -807,7 +817,7 @@ Tier 3 · mutation  none for the cart (pure client state, fly-to-cart is the
 
 <footer>
   <p style="max-width:none">Written by <b>F-15</b> · 2026-07-18 · visual companion to
-  <a href="PLAN.md">PLAN.md</a> in this folder — <b>PLAN.md wins on any conflict</b> between the
+  <a href="customer_menu_PLAN.md">customer_menu_PLAN.md</a> in this folder — <b>the .md wins on any conflict</b> between the
   two. Digested from the reference corpus
   <code>reference/docs/system/08_pages/customer/customer_menu/</code> (16 docs, 2 Explore agents),
   reconciled with <code>OVERALL_PLAN.md</code> phases C/T/O and the F-5/F-7/F-8/F-11/F-12 rule
