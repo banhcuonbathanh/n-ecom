@@ -8,12 +8,14 @@
 
 ## Current resume point
 
-- **Status:** ✅ F-16 (canonical DB schema — `harness/DB_SCHEMA.md`, adopted from
-  `reference/docs/system/02_spec/object` per owner instruction).
+- **Status:** ✅ F-30 (customer-menu **backend build plan** —
+  `plans/customer_menu/customer_menu_BE_PLAN.md`; 8 findings F26–F33, one build-blocking).
 - **Next:** F-2 (dev stack skeleton) — prompt ready in `PROMPTS.md`; unchanged by F-9
   (skeleton is identical for the restaurant scope). C-4/C-5 now read
-  `plans/customer_menu/PLAN.md` first; **F-3/C-1 and every migration task read
+  `plans/customer_menu/customer_menu_PLAN.md` first; **C-1/C-2/C-3 and the T/O order rows read
+  `plans/customer_menu/customer_menu_BE_PLAN.md` first**; **F-3 and every migration task read
   `DB_SCHEMA.md` first** (CONTEXT_MAP routing updated).
+  🚨 **F27 blocks the online-order path** until `DB_SCHEMA §4.3` gains `orders.guest_id`.
   New ⚠ for owner: customer-shell theme = reference dark/orange (default) vs F-7
   blue — decide before C-4 (PLAN.md §7).
 - **Open decisions:** ⚠ **Scope pivot** (OVERALL_PLAN.md §9.1): reference = restaurant
@@ -34,6 +36,27 @@
 ---
 
 ## Checkpoint log
+
+### 2026-07-24 — Session 20 (F-30): customer-menu backend build plan
+- Done: F-30 ✅ — `harness/plans/customer_menu/customer_menu_BE_PLAN.md` (521 lines): the **HOW**
+  under the menu plan's §3 **WHAT**. Six build slices (BE-M1 catalog schema+seed → M2 cached
+  catalog GETs → M3 combos → M4 tables + guest JWT + rate limit → M5 orders schema → M6 order
+  create/append), exact migration files, the menu-complete seed AC, every sqlc `-- name:` method,
+  the package/file tree, service+tx contracts, cache-key ownership, error map (+ new `ORDER_CLOSED`),
+  routes/DTOs/validation, **the combo-expansion algorithm**, task-row mapping, per-slice curl
+  receipts. Receipt in VERIFICATION.md; Hard-Rule-6 rows in CONTEXT_MAP (routing + inventory) + README.
+- **8 findings raised — F26–F33** (details in FINDINGS.md, not restated here). Build-blocking one:
+  **F27 🚨** `orders` has no `guest_id` column, so a table-less online guest cannot own/read the
+  order they just placed — the exact bug OVERALL_PLAN §3.4 promises to fix. Schema amendment
+  *requested* (DB_SCHEMA §4.3 owns it), not written. Also: F26 combo line under-specified (server
+  expands from the template; client override ⇒ 422), F30 double-canh seed trap, F31 body
+  `table_id`/`source` must yield to the JWT, F29 cache-key/TTL drift vs ARCHITECTURE §4.
+  New root-cause slug `wire-contract-drift` hit ≥2 on arrival (F26+F28) → kaizen candidate.
+- Also fixed 3 stale index rows naming pre-slug-prefix menu files (Hard Rule 5 drift).
+- Next: unchanged — F-2 (dev stack skeleton). When C-1/C-2 open they now read
+  `customer_menu_BE_PLAN.md` first (CONTEXT_MAP "New BE endpoint" routing updated).
+  Two rows still need registering before their sessions: **T-1** (guest auth) and **O-0**
+  (order create) — drafted row text is in BE_PLAN §8.
 
 ### 2026-07-22 — Session (H-1): findings ledger + improvement loop
 - Done: H-1 ✅ — new `harness/FINDINGS.md` (Primitive 10, verification family): tracked `F#`

@@ -4,8 +4,13 @@
 > highest-traffic surface of the restaurant platform. FE and BE sides are planned
 > together here because the page is a contract: catalog reads (public, cached),
 > a client-side cart (Zustand), and the order-creation handoff (guest JWT).
-> Visual companions: [`plan.html`](plan.html) (the plan) and
-> [`how-it-works.html`](how-it-works.html) (runtime walkthrough — end-to-end sequences).
+> Visual companions: [`customer_menu_plan.html`](customer_menu_plan.html) (the plan),
+> [`customer_menu_how-it-works.html`](customer_menu_how-it-works.html) (runtime walkthrough
+> — end-to-end sequences) and [`customer_menu_mockup-1.html`](customer_menu_mockup-1.html)
+> (the UI). **Backend build plan:**
+> [`customer_menu_BE_PLAN.md`](customer_menu_BE_PLAN.md) (F-30, 2026-07-24) — how §3's
+> contract gets built: slices, migrations, sqlc queries, service/tx bodies, the order
+> expansion algorithm, receipts.
 > Source: `reference/docs/system/08_pages/customer/customer_menu/` (16 docs, digested
 > 2026-07-18 by 2 Explore agents) reconciled with `OVERALL_PLAN.md` phases C/T/O and
 > the F-5/F-8/F-11/F-12 rule sets. **One fact one home:** this file owns the menu
@@ -54,6 +59,12 @@ conflict, the harness wins (established F-9 pattern — e.g. cookie JWT beats th
 reference's memory-token + `Authorization` header).
 
 ## 3. BE plan
+
+> **Contract only.** This section owns *what* the backend exposes. *How* it is built —
+> build slices, migration/query/file inventory, service + transaction bodies, the combo
+> expansion algorithm, per-slice curl receipts — is owned by
+> [`customer_menu_BE_PLAN.md`](customer_menu_BE_PLAN.md) (F-30), which also logs the
+> 8 contract reconciliations it found (F26–F33 in `FINDINGS.md`).
 
 ### 3.1 Endpoints the page consumes (all under `/api/v1`)
 

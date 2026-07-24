@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-30 — Customer-menu backend build plan · task plan</title>
+<style>
+  :root {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE6E4;
+    --sans: "Avenir Next", Seravek, "Segoe UI", system-ui, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+      --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+      --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+      --red: #F2938C; --red-soft: #3A1714;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141C; --surface: #171E29; --ink: #E6EAF2; --muted: #97A1B0;
+    --line: #2A3342; --accent: #8AA8F8; --accent-soft: #1D2A4A;
+    --done: #4FC08D; --done-soft: #14332A; --amber: #D9A83E; --amber-soft: #34290F;
+    --red: #F2938C; --red-soft: #3A1714;
+  }
+  :root[data-theme="light"] {
+    --paper: #F6F6F3; --surface: #FFFFFF; --ink: #1D2530; --muted: #5C6675;
+    --line: #DCE0E6; --accent: #2B59D9; --accent-soft: #E8EDFB;
+    --done: #1E8A5A; --done-soft: #E2F2EA; --amber: #96690A; --amber-soft: #F6EDD8;
+    --red: #B3261E; --red-soft: #FBE6E4;
+  }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.6; font-size: 16px; margin: 0; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 8px 0 12px; }
+  h2 { font-size: 1.4rem; font-weight: 600; margin: 0 0 6px; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 26px 0 8px; }
+  p { margin: 0 0 14px; max-width: 70ch; }
+  .lede { font-size: 1.05rem; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  a { color: var(--accent); }
+  a.back { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .fact .k { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .fact .v { font-family: var(--mono); font-size: 0.82rem; font-weight: 600; }
+  .golden { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .golden p { margin: 0; }
+  .flag { border-left: 4px solid var(--amber); background: var(--amber-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .flag p { margin: 0 0 8px; } .flag p:last-child { margin: 0; }
+  .risk { border-left: 4px solid var(--red); background: var(--red-soft); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 20px 0; max-width: 70ch; }
+  .risk p { margin: 0 0 8px; } .risk p:last-child { margin: 0; }
+  section { margin-top: 56px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 20px; }
+  .sec-num { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; }
+  td code, .golden code, .flag code, .risk code, pre code { border: none; background: transparent; padding: 0; }
+  pre.diagram { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; font-family: var(--mono); font-size: 0.78rem; line-height: 1.5; margin: 0 0 18px; }
+  ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  ol.steps li::marker { font-family: var(--mono); color: var(--accent); font-weight: 700; }
+  ul.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.92rem; }
+  ul.checks li::before { content: "☑ "; color: var(--done); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="build-plan.html#report">← build-plan.html §R</a>
+  <p class="eyebrow" style="margin-top:18px">Task plan · Phase F</p>
+  <h1>F-30 — Customer-menu <em>backend</em> build plan</h1>
+  <p class="lede">Owner ask (2026-07-24): “make a plan for BE and put the BE plan in
+  <code>harness/plans/customer_menu</code>.” Deliverable:
+  <a href="../plans/customer_menu/customer_menu_BE_PLAN.md">customer_menu_BE_PLAN.md</a> — the
+  <b>HOW</b> under the menu plan’s <b>WHAT</b>. The page plan’s §3 already owned the contract
+  (6 endpoints, wire shapes, cache map); nothing owned the build.</p>
+  <div class="facts">
+    <div class="fact"><span class="k">Status</span><span class="v">✅ delivered 2026-07-24</span></div>
+    <div class="fact"><span class="k">Deps</span><span class="v">F-15 · F-16 · F-11 · F-8</span></div>
+    <div class="fact"><span class="k">Size</span><span class="v">521 lines · 60 doc links</span></div>
+    <div class="fact"><span class="k">Findings</span><span class="v">8 raised (F26–F33)</span></div>
+    <div class="fact"><span class="k">Branch</span><span class="v">main (docs task)</span></div>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">1</span><h2>Objective &amp; scope contract</h2></div>
+    <p>Turn the menu page’s BE <em>contract</em> into a buildable <em>plan</em>: which
+    migrations, which sqlc queries, which packages, which service and transaction bodies,
+    which routes, and what receipt each slice owes — reconciled against
+    <code>BE_STATE.md</code>, <code>BE_PLAYBOOK.md</code>, <code>DB_SCHEMA.md</code>,
+    <code>ARCHITECTURE.md</code> and <code>OVERALL_PLAN.md</code>. Plan only — no app code
+    (there is still no <code>be/</code> directory; F-2 creates it).</p>
+    <div class="table-wrap"><table>
+      <tr><th>File</th><th>Change</th></tr>
+      <tr><td><code>harness/plans/customer_menu/customer_menu_BE_PLAN.md</code></td><td><b>new</b> — the backend build plan (owns the HOW; restates no contract, no rule)</td></tr>
+      <tr><td><code>harness/plans/customer_menu/customer_menu_PLAN.md</code></td><td>2 pointers — TL;DR link + a §3 “contract only” boundary note</td></tr>
+      <tr><td><code>harness/FINDINGS.md</code></td><td>8 rows F26–F33 + kaizen-watch update (<code>wire-contract-drift</code> at ≥2)</td></tr>
+      <tr><td><code>harness/TASKS.md</code> · <code>STATE.md</code> · <code>VERIFICATION.md</code></td><td>F-30 row · checkpoint + resume point · receipt</td></tr>
+      <tr><td><code>harness/CONTEXT_MAP.md</code> · <code>harness/README.md</code></td><td>inventory + “New BE endpoint” routing rows (Hard Rule 6); 3 stale menu rows fixed (Rule 5)</td></tr>
+      <tr><td><code>harness/diagrams/task-F-30.html</code> · <code>build-plan.html</code></td><td><b>new</b> — this page · §R report</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">2</span><h2>The build spine — six slices</h2></div>
+    <pre class="diagram">F-2 skeleton ─┐
+F-3 goose+sqlc├─▶ BE-M1 catalog schema+seed ─▶ BE-M2 categories+products ─▶ BE-M3 combos
+F-4 errs+CI  ─┘                                          │
+                                                         ▼
+              BE-M4 tables + guest JWT + rate limit ─▶ BE-M5 orders schema ─▶ BE-M6 POST /orders (+append)</pre>
+    <div class="table-wrap"><table>
+      <tr><th>Slice</th><th>Delivers</th><th>TASKS row</th><th>Receipt</th></tr>
+      <tr><td><code>BE-M1</code></td><td>catalog migration (6 tables) + menu-complete seed</td><td>C-1 <span style="color:var(--amber)">(AC widened)</span></td><td>migrate up/down/up + seed counts + the 0-row canh proof</td></tr>
+      <tr><td><code>BE-M2</code></td><td><code>GET /categories</code> · <code>/products</code> · <code>/products/:id</code> + cache-aside</td><td>C-2</td><td>curl + Redis miss→SET(300s)→hit→DEL + cache-down fail-open</td></tr>
+      <tr><td><code>BE-M3</code></td><td><code>GET /combos</code> · <code>/combos/:id</code></td><td>C-3 <span style="color:var(--amber)">(repurposed)</span></td><td>curl: ids-only <code>combo_items</code></td></tr>
+      <tr><td><code>BE-M4</code></td><td><code>tables</code> + <code>order_sequences</code>, both guest mints, rate limit, guest middleware</td><td><b>T-1 — no row yet</b></td><td>curl: <code>Set-Cookie</code> httpOnly, 401, 429 on burst</td></tr>
+      <tr><td><code>BE-M5</code></td><td><code>orders</code> + <code>order_items</code> migration</td><td>O-1 <span style="color:var(--amber)">(retitle)</span></td><td>up/down clean + the row-type CHECK rejecting a bad header row</td></tr>
+      <tr><td><code>BE-M6</code></td><td><code>POST /orders</code> · <code>POST /orders/:id/items</code></td><td><b>O-0 — no row yet</b></td><td>the ₫33,000 worked example → 5 rows; 403 / 409 / 422 rails</td></tr>
+    </table></div>
+    <p style="font-size:0.92rem;color:var(--muted)">Row text for T-1 and O-0 is drafted in the plan’s §8 so registration is a paste — they are
+    registered when the phase opens, not now, so the ids can’t collide with a parallel session (F04/F25).</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">3</span><h2>The centrepiece — combo expansion</h2></div>
+    <p>The one algorithm nobody can improvise. Two request lines become five
+    <code>order_items</code> rows; every name and price is snapshotted server-side.</p>
+    <pre class="diagram">product line  → 1 standalone row      name/price snapshot · toppings_snapshot = real values
+
+combo line    → 1 header row          combo_id set · <b>unit_price = 0</b> (label row, prevents double-count)
+                + N sub-item rows     from the <b>DB template</b>, never the body
+                                      quantity = template.qty × line.qty      ← multiply, don't copy
+                                      unit_price = product price (the real charge lives here)
+                                      combo_ref_id = header.id
+
+canh          → never inside a combo. FE sends it standalone; seeded templates carry no canh row.</pre>
+    <div class="golden"><p><b>Trust boundary first.</b> <code>source</code> and
+    <code>table_id</code> come from the guest JWT — the body’s copies are assertions to
+    check (<code>403</code> on disagreement), never inputs. <code>status</code> is BE-set,
+    <code>created_by</code> stays <code>NULL</code>, and the order number is allocated
+    in-transaction.</p></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">4</span><h2>What the reconciliation found</h2></div>
+    <div class="risk"><p>🚨 <b>F27 — online orders are unownable.</b> The table-less guest JWT
+    identifies a guest, but <code>orders</code> has no column to store that identity
+    (<code>DB_SCHEMA §4.3</code>), so every ownership gate fails for <code>table_id IS NULL</code>
+    orders — a guest cannot read the order they just placed. This is <em>exactly</em> the old-system
+    bug <code>OVERALL_PLAN §3.4</code> promises to fix. Plan requests
+    <code>orders.guest_id CHAR(36) NULL</code> in migration <code>004</code>; the amendment is
+    <b>not written here</b> — <code>DB_SCHEMA.md</code> owns it. Blocks the online path of the
+    order-create slice, nothing before it.</p></div>
+    <div class="table-wrap"><table>
+      <tr><th>#</th><th>What</th><th>Plan default</th></tr>
+      <tr><td>F26 ⚠️</td><td>Combo line under-specified — schema’s worked example sends a client <code>combo_items</code> override, the page plan doesn’t; nor does any doc say where a combo’s <code>topping_ids</code> land</td><td>server expands from the template (client override ⇒ 422); toppings snapshot onto each allowed sub-item</td></tr>
+      <tr><td>F28 ⚠️</td><td><code>order_number</code> is <code>NOT NULL UNIQUE</code> and printed by the FE, but missing from the 201 shape</td><td>include it in the response DTO — the second half of the “Đơn #undefined” lesson</td></tr>
+      <tr><td>F29 ⚠️</td><td>Cache keys/TTL: <code>ARCHITECTURE §4</code> says <code>v1:catalog:…</code> @ 60 s; four page plans say <code>products:list</code> @ 5 min</td><td>short names + 5 min (matches FE <code>staleTime</code>); amend ARCHITECTURE at C-2</td></tr>
+      <tr><td>F30 ⚠️</td><td>Double-canh trap — FE strips soup from combos, so a template containing canh re-adds it server-side</td><td>seeded templates carry no canh rows; C-1 proves it with a 0-row query</td></tr>
+      <tr><td>F31 ⚠️</td><td><code>table_id</code>/<code>source</code> in the POST body could point at another table</td><td>JWT wins; disagreement ⇒ 403</td></tr>
+      <tr><td>F32 💡</td><td>Order-number source: schema makes Redis primary with a DB fallback + re-seed rule</td><td>in-tx <code>order_sequences</code> upsert only — race-free, no re-seed failure mode</td></tr>
+      <tr><td>F33 ⚠️</td><td><code>BE_STATE §3</code>’s “place order” tx locks stock; a restaurant order is stock-free</td><td>writes-only tx (§5.3); add the restaurant row to BE_STATE when O opens</td></tr>
+    </table></div>
+    <div class="flag"><p><b>Kaizen:</b> <code>wire-contract-drift</code> (F26 + F28) hits the ≥2
+    threshold on its first outing, and <code>schema-amend-request</code> reaches three (F07, F08,
+    F27) — with F27 the first that <em>blocks a build</em> rather than being a nicety.</p></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">5</span><h2>Steps taken · receipt checklist</h2></div>
+    <ol class="steps">
+      <li>Read the routing set: menu <code>_PLAN.md</code>, BE_STATE, BE_PLAYBOOK, DB_SCHEMA, ARCHITECTURE, OVERALL_PLAN §3.4/§3.6/§3.7, TASKS, FINDINGS.</li>
+      <li>Wrote the plan as a <b>delta</b>: contract facts stay in §3 of the page plan, rules stay in their owning docs — 60 outbound links, no restatement.</li>
+      <li>Every doc-vs-doc conflict found while writing became a plan default <b>plus</b> an <code>F#</code> row — no finding left in prose only.</li>
+      <li>Indexes (Hard Rule 6) + the 3 stale menu rows fixed in the same change (Rule 5); receipt, checkpoint, push.</li>
+    </ol>
+    <h3>Receipt checklist</h3>
+    <ul class="checks">
+      <li>Folder holds the 5 files; BE plan is 521 lines and covers all six slices (§3 spine ↔ §8 rows ↔ §9 receipts).</li>
+      <li>8 findings rows present (<code>grep -c '^| F2[6-9] \|^| F3[0-3] '</code> → 8).</li>
+      <li>CONTEXT_MAP (routing + inventory), harness/README, TASKS.md and the page plan all point at the new file.</li>
+      <li>Receipt row in VERIFICATION.md (2026-07-24) · STATE.md checkpoint + resume point · TASKS.md F-30 ✅ · pushed to <code>main</code>.</li>
+    </ul>
+    <div class="golden"><p><b>One fact one home:</b> this page is a snapshot. On any conflict,
+    <code>customer_menu_BE_PLAN.md</code> wins for the menu backend’s build,
+    <code>customer_menu_PLAN.md §3</code> wins for its contract, <code>DB_SCHEMA.md</code> wins for
+    columns, and TASKS.md wins for status.</p></div>
+  </section>
+</div>
+</body>
+</html>

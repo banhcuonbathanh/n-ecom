@@ -19,6 +19,43 @@
 
 ## Log (newest on top)
 
+### F-30 — Customer-menu backend build plan · 2026-07-24
+**AC:** `harness/plans/customer_menu/customer_menu_BE_PLAN.md` is a pure delta on the menu plan's §3 contract (links owning docs, restates neither the contract nor the rules); every build slice maps to a TASKS.md row (existing or drafted) with a named receipt; every doc-vs-doc conflict found gets a plan default **and** an `F#` row in FINDINGS.md; indexes updated per Hard Rule 6.
+**Receipt:**
+```
+$ ls harness/plans/customer_menu/
+customer_menu_BE_PLAN.md        customer_menu_how-it-works.html
+customer_menu_PLAN.md           customer_menu_mockup-1.html
+customer_menu_plan.html
+
+$ wc -l < harness/plans/customer_menu/customer_menu_BE_PLAN.md
+521
+
+$ grep -o 'BE-M[1-6]' …/customer_menu_BE_PLAN.md | sort -u | tr '\n' ' '   # 6 slices, all
+BE-M1 BE-M2 BE-M3 BE-M4 BE-M5 BE-M6                                        #   §3 spine,
+                                                                           #   §8 rows,
+                                                                           #   §9 receipts
+
+$ grep -o '(\.\./\.\./[A-Za-z_]*\.md)' …/customer_menu_BE_PLAN.md | sort | uniq -c | sort -rn
+  15 (../../DB_SCHEMA.md)      11 (../../BE_STATE.md)     5 (../../ARCHITECTURE.md)
+  12 (../../BE_PLAYBOOK.md)     7 (../../OVERALL_PLAN.md)  5 (../../FINDINGS.md)
+   2 (../../TASKS.md)           2 (../../ENVIRONMENT.md)   1 (../../VERIFICATION.md)
+                               # 60 outbound links to owning docs = links, not restatement
+
+$ grep -c '^| F2[6-9] \|^| F3[0-3] ' harness/FINDINGS.md    # the 8 findings, one row each
+8
+
+$ for f in harness/CONTEXT_MAP.md harness/README.md harness/TASKS.md \
+>          harness/plans/customer_menu/customer_menu_PLAN.md; do
+>   printf "%-52s " "$f"; grep -c 'customer_menu_BE_PLAN' "$f"; done
+harness/CONTEXT_MAP.md                               2   # routing row + doc-inventory row
+harness/README.md                                    1   # plans/ index row
+harness/TASKS.md                                     1   # F-30 row
+…/customer_menu_PLAN.md                              2   # TL;DR pointer + §3 boundary note
+```
+Same change also fixed three stale `CONTEXT_MAP`/`README` rows still naming the pre-slug-prefix files (`plans/customer_menu/PLAN.md`, `plan.html`, `how-it-works.html`) — doc drift, Hard Rule 5. Docs-only change; committed to `main`.
+**Findings raised:** F26–F33 (see FINDINGS.md). Headline: **F27 🚨** — online orders have no ownership column (`orders.guest_id`), so a table-less guest cannot read the order they just placed; this is the exact old-system bug `OVERALL_PLAN §3.4` promises to fix, and it blocks the online path of the order-create slice until `DB_SCHEMA §4.3` is amended.
+
 ### H-1 — Findings ledger + improvement loop · 2026-07-22
 **AC:** `harness/FINDINGS.md` exists with the status-lifecycle + ≥2-root-cause kaizen protocol and a seeded ledger; CLAUDE.md CHECKPOINT step + Harness Map reference it while staying < 120 lines; CONTEXT_MAP routing + doc inventory and README carry rows (Hard Rule 6).
 **Receipt:**

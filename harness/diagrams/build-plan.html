@@ -309,6 +309,23 @@
 
     <details class="report" open>
       <summary>
+        <span class="r-date">2026-07-24</span>
+        <span class="r-title">F-30 — Customer-menu backend build plan · delivered (1 risk for you)</span>
+        <span class="chip done">done</span>
+        <span class="r-hint">detail</span>
+      </summary>
+      <div class="report-body">
+        <p style="margin-top:14px"><b>You asked:</b> "make a plan for BE and put the BE plan in <code style="font-family:var(--mono);font-size:0.85em">harness/plans/customer_menu</code>." Delivered: <b><code style="font-family:var(--mono);font-size:0.85em">harness/plans/customer_menu/customer_menu_BE_PLAN.md</code></b> — the <b>how</b> under the menu plan's <b>what</b>. The page plan's §3 already owned the contract (6 endpoints, wire shapes, cache map); nothing owned the build. Task page: <a href="task-F-30.html">task-F-30.html</a>.</p>
+        <p><b>TL;DR:</b> the menu backend now ships as <b>six slices</b> — catalog schema + a menu-complete seed → the two cached catalog GETs → combos → tables + guest-JWT mint with rate limiting → the orders schema → order create/append. Each slice names its exact migration files, its sqlc query methods, its packages, its service and transaction bodies, and the curl receipt it owes. The centrepiece is the <b>combo-expansion algorithm</b> written out step by step (header row at ₫0 + sub-items carrying the real price, quantities multiplied not copied, every name and price snapshotted server-side, canh never inside a combo) — the one part of this backend nobody can improvise, and the part the old system got wrong.</p>
+        <p><b>Why it was worth writing before any code:</b> reconciling the plan against the schema and the BE rule docs surfaced <b>8 conflicts between documents we had all previously signed off</b> (now tracked as F26–F33). Three of them would have become real bugs at build time: the double-canh seed trap, the order-create body being trusted for <code style="font-family:var(--mono);font-size:0.85em">table_id</code>, and the one below.</p>
+        <h4>One risk for your eye 🚨</h4>
+        <p><b>Online orders can't be owned.</b> A guest who orders <em>without</em> scanning a table gets a table-less session — but the <code style="font-family:var(--mono);font-size:0.85em">orders</code> table has nowhere to record which guest that was, so every ownership check fails and the guest cannot read the order they just placed. That is precisely the old system's bug our auth design promised to fix. The plan asks for one new column (<code style="font-family:var(--mono);font-size:0.85em">orders.guest_id</code>) in the orders migration; I did <b>not</b> write it into the schema doc — that file owns its own columns, and this is a decision, not a typo. Nothing is blocked until the order-create slice opens. Say "add the column" (or "online path is out of v1") whenever you like.</p>
+        <p style="font-size:0.92rem">Also: two task rows still need registering when their phase opens (guest auth, order create) — drafted text is in the plan's §8, deliberately not registered now so the ids can't collide with a parallel session. Receipt in VERIFICATION.md.</p>
+      </div>
+    </details>
+
+    <details class="report" open>
+      <summary>
         <span class="r-date">2026-07-18</span>
         <span class="r-title">F-16 — Database design adopted from the reference object models · delivered</span>
         <span class="chip done">done</span>
